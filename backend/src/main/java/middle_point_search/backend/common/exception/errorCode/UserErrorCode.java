@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 import lombok.Getter;
 
 @Getter
-public enum UserErrorCode implements ErrorCode{
+public enum UserErrorCode implements ErrorCode {
 
 	INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "Token이 유효하지 않습니다."),
 	ACCESS_DENIED(HttpStatus.FORBIDDEN, "접근 권한이 없습니다."),
@@ -23,17 +23,12 @@ public enum UserErrorCode implements ErrorCode{
 	}
 
 	@Override
-	public String getName() {
-		return null;
-	}
-
-	@Override
 	public HttpStatus getHttpStatus() {
-		return null;
+		return this.httpStatus;
 	}
 
 	@Override
 	public String getMessage() {
-		return null;
+		return this.message;
 	}
 }

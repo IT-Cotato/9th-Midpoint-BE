@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 import lombok.Getter;
 
 @Getter
-public enum CommonErrorCode implements ErrorCode{
+public enum CommonErrorCode implements ErrorCode {
 
 	INVALID_PARAMETER(HttpStatus.BAD_REQUEST, "Invalid parameter included"),
 	RESOURCE_NOT_FOUND(HttpStatus.NOT_FOUND, "Resource not exists"),
@@ -21,17 +21,12 @@ public enum CommonErrorCode implements ErrorCode{
 	}
 
 	@Override
-	public String getName() {
-		return null;
-	}
-
-	@Override
 	public HttpStatus getHttpStatus() {
-		return null;
+		return this.httpStatus;
 	}
 
 	@Override
 	public String getMessage() {
-		return null;
+		return this.message;
 	}
 }
