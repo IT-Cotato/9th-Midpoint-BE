@@ -11,6 +11,9 @@ public enum UserErrorCode implements ErrorCode {
 	ACCESS_DENIED(HttpStatus.FORBIDDEN, "접근 권한이 없습니다."),
 
 	MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 회원입니다."),
+	API_UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "API 인증 정보가 정확하지 않습니다."),
+
+	API_INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "API 서버에 문제가 발생하였습니다.")
 
 	;
 
@@ -31,4 +34,5 @@ public enum UserErrorCode implements ErrorCode {
 	public String getMessage() {
 		return this.message;
 	}
+
 }
