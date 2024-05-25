@@ -30,13 +30,13 @@ public class Market {
 	private String siDo;
 
 	@Column(nullable = false)
-	private Float addressLatitude;
+	private Double addressLatitude;
 
 	@Column(nullable = false)
-	private Float addressLongitude;
+	private Double addressLongitude;
 
-	private Market(String name, String siGunGu, String siDo, Float addressLatitude,
-		Float addressLongitude) {
+	private Market(String name, String siGunGu, String siDo, Double addressLatitude,
+		Double addressLongitude) {
 		this.name = name;
 		this.siGunGu = siGunGu;
 		this.siDo = siDo;
@@ -54,23 +54,23 @@ public class Market {
 		String name = marketApiData.getName();
 		String siGunGu = marketApiData.getSiGunGu();
 		String siDo = marketApiData.getSiDo();
-		Float addressLatitude = parseCoordinatesToLatitude(marketApiData.getCoordinates());
-		Float addressLongitude = parseCoordinatesToLongitude(marketApiData.getCoordinates());
+		Double addressLatitude = parseCoordinatesToLatitude(marketApiData.getCoordinates());
+		Double addressLongitude = parseCoordinatesToLongitude(marketApiData.getCoordinates());
 
 		return new Market(name, siGunGu, siDo, addressLatitude, addressLongitude);
 	}
 
-	private static Float parseCoordinatesToLatitude(String coordinates) {
-		String coordinate = coordinates.split("\\|")[0];
+	private static Double parseCoordinatesToLatitude(String coordinates) {
+		String coordinate = coordinates.split("|")[0];
 		String[] coordinateParts = coordinate.split(",");
 
-		return Float.parseFloat(coordinateParts[1]);
+		return Double.parseDouble(coordinateParts[1]);
 	}
 
-	private static Float parseCoordinatesToLongitude(String coordinates) {
+	private static Double parseCoordinatesToLongitude(String coordinates) {
 		String coordinate = coordinates.split("/")[0];
 		String[] coordinateParts = coordinate.split(",");
 
-		return Float.parseFloat(coordinateParts[0]);
+		return Double.parseDouble(coordinateParts[0]);
 	}
 }
