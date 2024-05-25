@@ -15,10 +15,10 @@ import lombok.Getter;
 public class BaseResponse {
 	@JsonFormat(pattern = "yyyy-MM-dd kk:mm:ss")
 	private final LocalDateTime timestamp = LocalDateTime.now();
-	private final boolean isSuccess;
+	private final Boolean isSuccess;
 	private final HttpStatusCode status;
 
-	protected BaseResponse(boolean isSuccess, HttpStatusCode status) {
+	protected BaseResponse(Boolean isSuccess, HttpStatusCode status) {
 		this.isSuccess = isSuccess;
 		this.status = status;
 	}
