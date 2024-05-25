@@ -30,18 +30,18 @@ public class Market {
 	private String siDo;
 
 	@Column(nullable = false)
-	private Float address_latitude;
+	private Float addressLatitude;
 
 	@Column(nullable = false)
-	private Float address_longitude;
+	private Float addressLongitude;
 
-	private Market(String name, String siGunGu, String siDo, Float address_latitude,
-		Float address_longitude) {
+	private Market(String name, String siGunGu, String siDo, Float addressLatitude,
+		Float addressLongitude) {
 		this.name = name;
 		this.siGunGu = siGunGu;
 		this.siDo = siDo;
-		this.address_latitude = address_latitude;
-		this.address_longitude = address_longitude;
+		this.addressLatitude = addressLatitude;
+		this.addressLongitude = addressLongitude;
 	}
 
 	// public static Market of() {
@@ -54,10 +54,10 @@ public class Market {
 		String name = marketApiData.getName();
 		String siGunGu = marketApiData.getSiGunGu();
 		String siDo = marketApiData.getSiDo();
-		Float address_latitude = parseCoordinatesToLatitude(marketApiData.getCoordinates());
-		Float address_longitude = parseCoordinatesToLongitude(marketApiData.getCoordinates());
+		Float addressLatitude = parseCoordinatesToLatitude(marketApiData.getCoordinates());
+		Float addressLongitude = parseCoordinatesToLongitude(marketApiData.getCoordinates());
 
-		return new Market(name, siGunGu, siDo, address_latitude, address_longitude);
+		return new Market(name, siGunGu, siDo, addressLatitude, addressLongitude);
 	}
 
 	private static Float parseCoordinatesToLatitude(String coordinates) {
