@@ -12,7 +12,6 @@ import middle_point_search.backend.common.util.WebClientUtil;
 import middle_point_search.backend.domains.market.domain.Market;
 import middle_point_search.backend.domains.market.dto.response.MarketApiResponse;
 import middle_point_search.backend.domains.market.repository.MarketRepository;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Slf4j
@@ -47,10 +46,10 @@ public class MarketService {
 
 	// market api를 요청하고 가져온 데이터를 저장하는 메서드
 	private void requestAndSaveMarkets(int totalPage) {
-		for (int i = 1; i <= totalPage ; i++) {
+		for (int i = 1; i <= totalPage; i++) {
 			String url = String.format(MARKET_API_URL, i, MARKET_API_REQUEST_UNIT, MARKET_API_SECRET_KEY);
 
-			Flux<MarketApiResponse> response = webClientUtil.getFlux(url, MarketApiResponse.class);
+			Mono<MarketApiResponse> response = webClientUtil.getMono(url, MarketApiResponse.class);
 
 			response.map(MarketApiResponse::getData)
 				.map(marketApiDatas -> marketApiDatas.stream().map(Market::from).toList())
@@ -66,7 +65,6 @@ public class MarketService {
 
 		return count / MARKET_API_REQUEST_UNIT + 1;
 	}
-
 
 	// Market List 저장
 	private void saveAllMarket(List<Market> markets) {
