@@ -28,5 +28,4 @@ public class MarketController {
 			.status(HttpStatus.OK)
 			.body(BaseResponse.ok());
 	}
-
 }
