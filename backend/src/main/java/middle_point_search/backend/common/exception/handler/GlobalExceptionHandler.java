@@ -1,5 +1,6 @@
 package middle_point_search.backend.common.exception.handler;
 
+import org.springframework.core.io.buffer.DataBufferLimitException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -43,6 +44,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		log.warn("handleIllegalArgument", e);
 
 		ErrorCode errorCode = CommonErrorCode.INVALID_PARAMETER;
+		return makeErrorResponseEntity(errorCode);
+	}
+
+	@ExceptionHandler(DataBufferLimitException.class)
+	public ResponseEntity<Object> handleDataBufferLimitException(DataBufferLimitException e) {
+		log.warn("handleDataBufferLimitException", e);
+
+		CommonErrorCode errorCode = CommonErrorCode.DATA_BUFFER_LIMIT_ERROR;
 		return makeErrorResponseEntity(errorCode);
 	}
 

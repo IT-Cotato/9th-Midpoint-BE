@@ -5,9 +5,13 @@ import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.exception.errorCode.ErrorCode;
 
 @Getter
-@RequiredArgsConstructor
 public class CustomException extends RuntimeException {
 
 	private final ErrorCode errorCode;
+
+	public CustomException(ErrorCode errorCode) {
+		super(errorCode.getMessage());
+		this.errorCode = errorCode;
+	}
 }
 
