@@ -61,14 +61,14 @@ public class Market {
 	}
 
 	private static Double parseCoordinatesToLatitude(String coordinates) {
-		String coordinate = coordinates.split("|")[0];
+		String coordinate = coordinates.split("\\|")[0];
 		String[] coordinateParts = coordinate.split(",");
 
 		return Double.parseDouble(coordinateParts[1]);
 	}
 
 	private static Double parseCoordinatesToLongitude(String coordinates) {
-		String coordinate = coordinates.split("/")[0];
+		String coordinate = coordinates.split("\\|")[0];
 		String[] coordinateParts = coordinate.split(",");
 
 		return Double.parseDouble(coordinateParts[0]);
