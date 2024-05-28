@@ -43,5 +43,4 @@ public class WebClientUtil {
 				clientResponse -> Mono.error(new CustomException(API_INTERNAL_SERVER_ERROR)))
 			.bodyToFlux(responseDtoClass);
 	}
-
 }
