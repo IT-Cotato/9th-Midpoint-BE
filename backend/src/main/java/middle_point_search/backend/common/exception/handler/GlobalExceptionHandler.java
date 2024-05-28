@@ -7,8 +7,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import lombok.extern.slf4j.Slf4j;
 import middle_point_search.backend.common.dto.ErrorResponse;
@@ -33,6 +35,19 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
 		ErrorCode errorCode = CommonErrorCode.INVALID_PARAMETER;
 		return makeErrorResponseEntity(errorCode);
+	}
+
+	@Override
+	protected ResponseEntity<Object> handleNoResourceFoundException(NoResourceFoundException ex, HttpHeaders headers,
+		HttpStatusCode status, WebRequest request) {
+		log.warn("handleNoResourceFoundException", ex);
+
+		ServletWebRequest servletWebRequest = (ServletWebRequest)request;
+		String path = servletWebRequest.getRequest().getRequestURI();
+
+		ErrorCode errorCode = CommonErrorCode.RESOURCE_NOT_FOUND;
+
+		return makeErrorResponseEntity(errorCode, path);
 	}
 
 	@Override
@@ -68,5 +83,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		return ResponseEntity
 			.status(errorCode.getHttpStatus())
 			.body(ErrorResponse.from(errorCode));
+	}
+
+	private ResponseEntity<Object> makeErrorResponseEntity(ErrorCode errorCode, String path) {
+		return ResponseEntity
+			.status(errorCode.getHttpStatus())
+			.body(ErrorResponse.of(errorCode, path));
 	}
 }
