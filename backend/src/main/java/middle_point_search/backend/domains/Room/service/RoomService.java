@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.domains.Room.domain.Room;
-import middle_point_search.backend.domains.Room.dto.RoomDTO;
 import middle_point_search.backend.domains.Room.repository.RoomRepository;
 
 @Service
@@ -28,5 +27,11 @@ public class RoomService {
 		roomRepository.save(room);
 
 		return RoomCreateResponse.from(room.getIdentityNumber());
+	}
+
+	public RoomExistenceCheckResponse checkRoomExistence(String identityNumber) {
+		boolean existence = roomRepository.existsByIdentityNumber(identityNumber);
+
+		return RoomExistenceCheckResponse.from(existence);
 	}
 }

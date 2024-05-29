@@ -15,4 +15,14 @@ public class RoomDTO {
 			return new RoomCreateResponse(id);
 		}
 	}
+
+	@Getter
+	@AllArgsConstructor(access = AccessLevel.PRIVATE)
+	public static class RoomExistenceCheckResponse {
+		private Boolean duplication;
+
+		public static RoomExistenceCheckResponse from(Boolean duplication) {
+			return new RoomExistenceCheckResponse(duplication);
+		}
+	}
 }
