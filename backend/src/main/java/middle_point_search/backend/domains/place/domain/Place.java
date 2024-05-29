@@ -7,15 +7,17 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.domains.member.domain.Transport;
+import middle_point_search.backend.domains.room.domain.PrivateRoom;
 
 @Entity
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class Place {
 
 	@Id
@@ -23,32 +25,46 @@ public class Place {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@NonNull
 	@Enumerated(EnumType.STRING)
 	private Transport transport;
 
-	@NonNull
 	@Column(nullable = false)
 	private String siDo;
 
-	@NonNull
 	@Column(nullable = false)
 	private String siGunGu;
 
-	@NonNull
 	@Column(nullable = false)
 	private String roadNameAddress;
 
-	@NonNull
 	@Column(nullable = false)
 	private Double addressLatitude;
 
-	@NonNull
 	@Column(nullable = false)
 	private Double addressLongitude;
 
+	@ManyToOne
+	@JoinColumn(name = "ROOM_ID")
+	private PrivateRoom privateRoom;
+
+	public Place(Transport transport, String siDo, String siGunGu, String roadNameAddress, Double addressLatitude,
+		Double addressLongitude, PrivateRoom privateRoom) {
+		this.transport = transport;
+		this.siDo = siDo;
+		this.siGunGu = siGunGu;
+		this.roadNameAddress = roadNameAddress;
+		this.addressLatitude = addressLatitude;
+		this.addressLongitude = addressLongitude;
+		addPrivateRoom(privateRoom);
+	}
+
 	public static Place of(Transport transport, String siDo, String siGunGu, String roadNameAddress,
-		Double addressLatitude, Double addressLongitude) {
-		return new Place(transport, siDo, siGunGu, roadNameAddress, addressLatitude, addressLongitude);
+		Double addressLatitude, Double addressLongitude, PrivateRoom privateRoom) {
+		return new Place(transport, siDo, siGunGu, roadNameAddress, addressLatitude, addressLongitude, privateRoom);
+	}
+
+	private void addPrivateRoom(PrivateRoom privateRoom) {
+		this.privateRoom = privateRoom;
+		privateRoom.getPlaces().add(this);
 	}
 }
