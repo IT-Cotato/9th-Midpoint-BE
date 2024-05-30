@@ -1,6 +1,5 @@
-package middle_point_search.backend.domains.Room.controller;
+package middle_point_search.backend.domains.room.controller;
 
-import static middle_point_search.backend.domains.Room.dto.RoomDTO.*;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,7 +10,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.dto.DataResponse;
-import middle_point_search.backend.domains.Room.service.RoomService;
+import middle_point_search.backend.domains.room.dto.RoomDTO.RoomCreateResponse;
+import middle_point_search.backend.domains.room.dto.RoomDTO.RoomExistenceCheckResponse;
+import middle_point_search.backend.domains.room.service.RoomService;
 
 @RestController
 @RequestMapping("/api/rooms")

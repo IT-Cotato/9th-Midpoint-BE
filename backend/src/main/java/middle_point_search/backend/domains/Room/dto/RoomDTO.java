@@ -1,4 +1,4 @@
-package middle_point_search.backend.domains.Room.dto;
+package middle_point_search.backend.domains.room.dto;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
