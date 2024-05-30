@@ -15,7 +15,7 @@ import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import middle_point_search.backend.domains.room.domain.GroupRoom;
+import middle_point_search.backend.domains.room.domain.Room;
 
 @Entity
 @Getter
@@ -30,7 +30,7 @@ public class Member {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ROOM_ID")
-	private GroupRoom room;
+	private Room room;
 
 	@Column(nullable = false)
 	private String name;
@@ -38,46 +38,19 @@ public class Member {
 	@Column(nullable = false)
 	private String pw;
 
-	@Enumerated(EnumType.STRING)
-	private Transport transport;
-
-	@Column(nullable = false)
-	private String siDo;
-
-	@Column(nullable = false)
-	private String siGunGu;
-
-	@Column(nullable = false)
-	private String roadNameAddress;
-
-	@Column(nullable = false)
-	private Double addressLatitude;
-
-	@Column(nullable = false)
-	private Double addressLongitude;
-
-	private Member(GroupRoom room, String name, String pw, Transport transport,
-		String siDo, String siGunGu, String roadNameAddress, Double addressLatitude,
-		Double addressLongitude) {
-		addRoom(room);
+	public Member(Room room, String name, String pw) {
+		this.room = room;
 		this.name = name;
 		this.pw = pw;
-		this.transport = transport;
-		this.siDo = siDo;
-		this.siGunGu = siGunGu;
-		this.roadNameAddress = roadNameAddress;
-		this.addressLatitude = addressLatitude;
-		this.addressLongitude = addressLongitude;
 	}
 
-	public Member from(GroupRoom room, String name, String pw, Transport transport, String siDo, String siGunGu,
-		String roadNameAddress, Double addressLatitude, Double addressLongitude) {
+	public Member from(Room room, String name, String pw) {
 		addRoom(room);
 
-		return new Member(room, name, pw, transport, siDo, siGunGu, roadNameAddress, addressLatitude, addressLongitude);
+		return new Member(room, name, pw);
 	}
 
-	public void addRoom(GroupRoom room) {
+	public void addRoom(Room room) {
 		this.room = room;
 		room.getMembers().add(this);
 	}
