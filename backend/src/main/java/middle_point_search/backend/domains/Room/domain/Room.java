@@ -16,6 +16,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import middle_point_search.backend.domains.member.domain.Member;
+import middle_point_search.backend.domains.place.domain.Place;
 
 @Entity
 @Getter
@@ -32,8 +33,12 @@ public class Room {
 
 	private LocalDateTime createDate;
 
-	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "room", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<Member> members = new ArrayList<>();
+
+	@OneToMany(mappedBy = "room", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private List<Place> places
+		= new ArrayList<>();
 
 	public Room(String identityNumber) {
 		this.identityNumber = identityNumber;

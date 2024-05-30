@@ -1,20 +1,22 @@
 package middle_point_search.backend.domains.member.domain;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import middle_point_search.backend.domains.place.domain.Place;
 import middle_point_search.backend.domains.room.domain.Room;
 
 @Entity
@@ -37,6 +39,11 @@ public class Member {
 
 	@Column(nullable = false)
 	private String pw;
+
+	@Setter
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "PLACE_ID")
+	private Place place;
 
 	public Member(Room room, String name, String pw) {
 		this.room = room;
