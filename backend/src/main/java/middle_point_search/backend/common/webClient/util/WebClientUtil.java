@@ -1,4 +1,4 @@
-package middle_point_search.backend.common.util;
+package middle_point_search.backend.common.webClient.util;
 
 import static middle_point_search.backend.common.exception.errorCode.UserErrorCode.*;
 
@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
-import middle_point_search.backend.common.conf.WebClientConf;
+import middle_point_search.backend.common.webClient.conf.WebClientConf;
 import middle_point_search.backend.common.exception.CustomException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;

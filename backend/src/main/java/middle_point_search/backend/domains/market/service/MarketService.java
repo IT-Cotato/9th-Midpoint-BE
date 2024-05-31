@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import middle_point_search.backend.common.util.WebClientUtil;
+import middle_point_search.backend.common.webClient.util.WebClientUtil;
 import middle_point_search.backend.domains.market.domain.Market;
 import middle_point_search.backend.domains.market.dto.response.MarketApiResponse;
 import middle_point_search.backend.domains.market.repository.MarketRepository;
