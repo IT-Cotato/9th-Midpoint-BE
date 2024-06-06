@@ -27,14 +27,14 @@ public class JwtProperties {
 	@Getter
 	@RequiredArgsConstructor
 	public static class Access {
-		private int expiration;
+		private long expiration;
 		private String header;
 	}
 
 	@Getter
 	@RequiredArgsConstructor
 	public static class Refresh {
-		private int expiration;
+		private long expiration;
 		private String header;
 	}
 }
