@@ -1,9 +1,12 @@
-package middle_point_search.backend.common.security.jwt.service;
+package middle_point_search.backend.common.security.jwt.provider;
+
+import static middle_point_search.backend.common.exception.errorCode.UserErrorCode.*;
 
 import java.security.Key;
 import java.util.Date;
 import java.util.Optional;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,7 +25,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import middle_point_search.backend.common.exception.CustomException;
 import middle_point_search.backend.common.exception.errorCode.UserErrorCode;
+import middle_point_search.backend.common.security.dto.CustomUserDetails;
+import middle_point_search.backend.common.security.dto.CustomUserDetailsImpl;
+import middle_point_search.backend.common.security.dto.CustomUsernamePasswordAuthenticationToken;
 import middle_point_search.backend.common.security.jwt.constants.JwtProperties;
+import middle_point_search.backend.common.security.jwt.provider.JwtTokenProvider;
 import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.member.repository.MemberRepository;
 
@@ -30,13 +37,27 @@ import middle_point_search.backend.domains.member.repository.MemberRepository;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class JwtServiceImpl implements JwtService {
+public class JwtTokenProviderImpl implements JwtTokenProvider {
 
 	private final JwtProperties jwtProperties;
 	private final MemberRepository memberRepository;
 	private final ObjectMapper objectMapper;
 
 	private final Key key = Keys.hmacShaKeyFor(jwtProperties.getSecret().getBytes());
+
+	//authentication을 만들어주는 메서드
+	@Override
+	public Authentication getAuthentication(String accessToken) {
+		String name = extractName(accessToken).orElseThrow(() -> new CustomException(INVALID_TOKEN));
+		String roomId = extractRoomId(accessToken).orElseThrow(() -> new CustomException(INVALID_TOKEN));
+
+		Member member = memberRepository.findByRoom_IdentityNumberAndName(roomId, name)
+			.orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+
+		CustomUserDetails userDetails = CustomUserDetailsImpl.from(member);
+
+		return CustomUsernamePasswordAuthenticationToken.from(userDetails);
+	}
 
 	@Override
 	public String createAccessToken(String roomId, String name) {
@@ -114,6 +135,26 @@ public class JwtServiceImpl implements JwtService {
 				.getBody();
 		} catch (ExpiredJwtException e) {
 			return e.getClaims();
+		}
+	}
+
+	@Override
+	public Optional<String> extractName(String accessToken) {
+		try {
+			return Optional.ofNullable(parseClaims(accessToken).get(jwtProperties.getNAME_CLAIM(), String.class));
+		} catch (Exception e) {
+			log.error("액세스 토큰이 유효하지 않습니다. token: {}", accessToken);
+			return Optional.empty();
+		}
+	}
+
+	@Override
+	public Optional<String> extractRoomId(String accessToken) {
+		try {
+			return Optional.ofNullable(parseClaims(accessToken).get(jwtProperties.getNAME_CLAIM(), String.class));
+		} catch (Exception e) {
+			log.error("액세스 토큰이 유효하지 않습니다. token: {}", accessToken);
+			return Optional.empty();
 		}
 	}
 
