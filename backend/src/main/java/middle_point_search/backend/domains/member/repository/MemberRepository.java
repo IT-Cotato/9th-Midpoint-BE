@@ -9,5 +9,7 @@ import middle_point_search.backend.domains.room.domain.Room;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
 
-	Optional<Member> findByRoomAndName(Room room, String name);
+	Optional<Member> findByRoom_IdentityNumberAndName(String identityNumber, String name);
+
+	Optional<Member> findByRefreshToken(String refreshToken);
 }

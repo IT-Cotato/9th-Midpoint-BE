@@ -45,6 +45,9 @@ public class Member {
 	@JoinColumn(name = "PLACE_ID")
 	private Place place;
 
+	@Column(length = 1000)
+	private String refreshToken;
+
 	public Member(Room room, String name, String pw) {
 		this.room = room;
 		this.name = name;
@@ -60,5 +63,13 @@ public class Member {
 	public void addRoom(Room room) {
 		this.room = room;
 		room.getMembers().add(this);
+	}
+
+	public void updateRefreshToken(String refreshToken) {
+		this.refreshToken = refreshToken;
+	}
+
+	public void destroyRefreshToken() {
+		this.refreshToken = null;
 	}
 }
