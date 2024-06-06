@@ -39,7 +39,7 @@ public class JwtServiceImpl implements JwtService {
 	private final Key key = Keys.hmacShaKeyFor(jwtProperties.getSecret().getBytes());
 
 	@Override
-	public String createAccessToken(String name, String roomId) {
+	public String createAccessToken(String roomId, String name) {
 		return Jwts.builder()
 			.setSubject(jwtProperties.getACCESS_TOKEN_SUBJECT())
 			.claim(jwtProperties.getNAME_CLAIM(), name)
@@ -59,7 +59,7 @@ public class JwtServiceImpl implements JwtService {
 	}
 
 	@Override
-	public void updateRefreshToken(String name, String roomId, String refreshToken) {
+	public void updateRefreshToken(String roomId, String name, String refreshToken) {
 		memberRepository.findByRefreshToken(refreshToken)
 			.ifPresentOrElse(
 				member -> member.updateRefreshToken(refreshToken),
@@ -67,7 +67,7 @@ public class JwtServiceImpl implements JwtService {
 	}
 
 	@Override
-	public void destroyRefreshToken(String name, String roomId) {
+	public void destroyRefreshToken(String roomId, String name) {
 		memberRepository.findByRoom_IdentityNumberAndName(roomId, name)
 			.ifPresentOrElse(
 				Member::destroyRefreshToken,
@@ -104,7 +104,8 @@ public class JwtServiceImpl implements JwtService {
 		).map(refreshToken -> refreshToken.replace(jwtProperties.getBEARER(), ""));
 	}
 
-	private Claims parseClaims(String accessToken) {
+	@Override
+	public Claims parseClaims(String accessToken) {
 		try {
 			return Jwts.parserBuilder()
 				.setSigningKey(key)
