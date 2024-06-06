@@ -168,6 +168,7 @@ public class JwtTokenProviderImpl implements JwtTokenProvider {
 		response.setHeader(jwtProperties.getRefresh().getHeader(), refreshToken);
 	}
 
+	//access, refresh 토큰의 유효성을 검사하며, 기간, 형식, 변조, 공백 등을 확인
 	@Override
 	public boolean isTokenValid(String token) {
 		try {
