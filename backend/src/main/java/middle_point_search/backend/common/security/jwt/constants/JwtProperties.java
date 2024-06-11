@@ -1,15 +1,12 @@
 package middle_point_search.backend.common.security.jwt.constants;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
 
-import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 @Getter
-@Component
-@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+@Setter
 @ConfigurationProperties(prefix = "jwt")
 public class JwtProperties {
 
@@ -18,23 +15,23 @@ public class JwtProperties {
 	private Access access;
 	private Refresh refresh;
 
-	private final String ACCESS_TOKEN_SUBJECT = "AccessToken";
-	private final String REFRESH_TOKEN_SUBJECT = "RefreshToken";
-	private final String NAME_CLAIM = "id";
-	private final String ROOM_ID_CLAIM = "roomId";
-	private final String BEARER = "Bearer ";
+	private String ACCESS_TOKEN_SUBJECT = "AccessToken";
+	private String REFRESH_TOKEN_SUBJECT = "RefreshToken";
+	private String NAME_CLAIM = "id";
+	private String ROOM_ID_CLAIM = "roomId";
+	private String BEARER = "Bearer ";
 
 	@Getter
-	@RequiredArgsConstructor
+	@Setter
 	public static class Access {
-		private long expiration;
+		private int expiration;
 		private String header;
 	}
 
 	@Getter
-	@RequiredArgsConstructor
+	@Setter
 	public static class Refresh {
-		private long expiration;
+		private int expiration;
 		private String header;
 	}
 }
