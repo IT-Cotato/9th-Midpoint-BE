@@ -45,7 +45,7 @@ public class Member {
 	@JoinColumn(name = "PLACE_ID")
 	private Place place;
 
-	@Column(length = 1000)
+	@Column(length = 3000)
 	private String refreshToken;
 
 	private Member(Room room, String name, String pw) {
