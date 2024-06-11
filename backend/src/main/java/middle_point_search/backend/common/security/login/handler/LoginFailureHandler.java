@@ -12,7 +12,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.dto.DataResponse;
 import middle_point_search.backend.common.dto.ErrorResponse;
-import middle_point_search.backend.common.exception.RoomNotFoundException;
+import middle_point_search.backend.common.security.exception.RoomNotFoundException;
 import middle_point_search.backend.common.util.ResponseWriter;
 
 @Component
