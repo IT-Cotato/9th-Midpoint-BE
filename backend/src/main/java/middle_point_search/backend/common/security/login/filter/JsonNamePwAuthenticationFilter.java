@@ -15,7 +15,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import middle_point_search.backend.common.security.dto.CustomUsernamePasswordAuthenticationToken;
+import middle_point_search.backend.common.security.dto.MemberAuthenticationToken;
 
 public class JsonNamePwAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 
@@ -25,7 +25,7 @@ public class JsonNamePwAuthenticationFilter extends AbstractAuthenticationProces
 	private final ObjectMapper objectMapper;
 	private static final String USERNAME_KEY = "name";
 	private static final String PASSWORD_KEY = "pw";
-	private static final String PLACE_ROOM_ID_KEY = "placeRoomId";
+	private static final String ROOM_ID_KEY = "roomId";
 
 	private static final AntPathRequestMatcher DEFAULT_LOGIN_PATH_REQUEST_MATCHER =
 		new AntPathRequestMatcher(DEFAULT_LOGIN_REQUEST_URL, HTTP_METHOD); //=>   /login 의 요청에, POST로 온 요청에 매칭
@@ -47,11 +47,11 @@ public class JsonNamePwAuthenticationFilter extends AbstractAuthenticationProces
 
 		Map<String, String> usernamePasswordMap = objectMapper.readValue(messageBody, Map.class);
 
+		String roomId = usernamePasswordMap.get(ROOM_ID_KEY);
 		String name = usernamePasswordMap.get(USERNAME_KEY);
 		String pw = usernamePasswordMap.get(PASSWORD_KEY);
-		String placeRoomId = usernamePasswordMap.get(PLACE_ROOM_ID_KEY);
 
-		CustomUsernamePasswordAuthenticationToken authRequest = CustomUsernamePasswordAuthenticationToken.of(name, pw, placeRoomId);
+		MemberAuthenticationToken authRequest = MemberAuthenticationToken.unauthenticated(roomId, name, pw);
 
 		return this.getAuthenticationManager().authenticate(authRequest);
 	}
