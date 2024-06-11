@@ -15,8 +15,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import middle_point_search.backend.common.security.dto.MemberAuthenticationToken;
 
+@Slf4j
 public class JsonNamePwAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 
 	private static final String DEFAULT_LOGIN_REQUEST_URL = "/api/auth/login";
@@ -38,6 +40,8 @@ public class JsonNamePwAuthenticationFilter extends AbstractAuthenticationProces
 	@Override
 	public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws
 		AuthenticationException, IOException {
+		log.info("JsonNamePwAuthenticationFilter");
+
 		// 요청 형식 확인
 		if (request.getContentType() == null || !request.getContentType().equals(CONTENT_TYPE)) {
 			throw new AuthenticationServiceException("Authentication Content-Type not supported: " + request.getContentType());
