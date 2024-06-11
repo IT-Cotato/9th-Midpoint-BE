@@ -3,7 +3,6 @@ package middle_point_search.backend.common.security.dto;
 import java.util.Collection;
 
 import org.springframework.security.authentication.AbstractAuthenticationToken;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.util.Assert;
 
