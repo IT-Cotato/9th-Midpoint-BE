@@ -1,4 +1,4 @@
-package middle_point_search.backend.common.exception;
+package middle_point_search.backend.common.security.exception;
 
 import org.springframework.security.core.AuthenticationException;
 

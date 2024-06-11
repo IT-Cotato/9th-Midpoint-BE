@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
-import middle_point_search.backend.common.exception.RoomNotFoundException;
+import middle_point_search.backend.common.security.exception.RoomNotFoundException;
 import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.member.repository.MemberRepository;
 import middle_point_search.backend.domains.room.domain.Room;
