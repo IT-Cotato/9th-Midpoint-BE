@@ -48,19 +48,20 @@ public class Member {
 	@Column(length = 1000)
 	private String refreshToken;
 
-	public Member(Room room, String name, String pw) {
+	private Member(Room room, String name, String pw) {
+		addRoom(room);
 		this.room = room;
 		this.name = name;
 		this.pw = pw;
 	}
 
-	public Member from(Room room, String name, String pw) {
-		addRoom(room);
+	public static Member from(Room room, String name, String pw) {
+
 
 		return new Member(room, name, pw);
 	}
 
-	public void addRoom(Room room) {
+	private void addRoom(Room room) {
 		this.room = room;
 		room.getMembers().add(this);
 	}
