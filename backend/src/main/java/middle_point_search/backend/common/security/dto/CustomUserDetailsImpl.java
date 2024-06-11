@@ -14,7 +14,6 @@ import middle_point_search.backend.domains.member.domain.Member;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class CustomUserDetailsImpl implements CustomUserDetails {
 
-	@Getter
 	private String roomId;
 	private String name;
 	private String pw;
