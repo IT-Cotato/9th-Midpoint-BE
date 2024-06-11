@@ -4,11 +4,12 @@ import static middle_point_search.backend.common.exception.errorCode.CommonError
 import static middle_point_search.backend.common.exception.errorCode.UserErrorCode.*;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import jakarta.servlet.FilterChain;
@@ -17,25 +18,29 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.exception.CustomException;
+import middle_point_search.backend.common.security.conf.SecurityConfig;
 import middle_point_search.backend.common.security.jwt.provider.JwtTokenProvider;
 import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.member.repository.MemberRepository;
 
-@Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	private final JwtTokenProvider jwtTokenProvider;
 	private final MemberRepository memberRepository;
-	private final String NO_CHECK_URL = "/api/auth/login";
+	private static final List<String> ALLOWED_URLS = List.of(
+		"/api/auth/login"
+	);
+
+	@Override
+	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+		String path = request.getRequestURI();
+		return Arrays.stream(SecurityConfig.PERMIT_URLS).anyMatch(path::startsWith);
+	}
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
 		FilterChain filterChain) throws ServletException, IOException {
-		if (request.getRequestURI().equals(NO_CHECK_URL)) {
-			filterChain.doFilter(request, response);
-			return;//안해주면 아래로 내려가서 계속 필터를 진행하게됨
-		}
 
 		final String refreshToken = jwtTokenProvider.extractRefreshToken(request).orElse(null);
 		final String accessToken = jwtTokenProvider.extractAccessToken(request).orElse(null);
@@ -58,6 +63,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		} else {
 			throw new CustomException(INVALID_PARAMETER);
 		}
+	}
+
+	private boolean isAllowedUrl(String uri) {
+		return ALLOWED_URLS.stream().anyMatch(uri::startsWith);
 	}
 
 	private void saveAuthentication(Authentication authentication) {
