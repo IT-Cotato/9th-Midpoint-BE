@@ -4,10 +4,13 @@ import static middle_point_search.backend.common.exception.errorCode.UserErrorCo
 
 import java.security.Key;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,9 +26,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import middle_point_search.backend.common.dto.DataResponse;
 import middle_point_search.backend.common.exception.CustomException;
-import middle_point_search.backend.common.security.dto.CustomUserDetails;
-import middle_point_search.backend.common.security.dto.CustomUserDetailsImpl;
-import middle_point_search.backend.common.security.dto.CustomUsernamePasswordAuthenticationToken;
+import middle_point_search.backend.common.security.dto.MemberAuthenticationToken;
 import middle_point_search.backend.common.security.jwt.constants.JwtProperties;
 import middle_point_search.backend.common.security.jwt.dto.JwtDTO.AccessAndRefreshTokenResponse;
 import middle_point_search.backend.common.security.jwt.dto.JwtDTO.AccessTokenResponse;
@@ -33,7 +34,7 @@ import middle_point_search.backend.common.util.ResponseWriter;
 import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.member.repository.MemberRepository;
 
-@Transactional
+@Transactional(readOnly = true)
 @Service
 @Slf4j
 public class JwtTokenProviderImpl implements JwtTokenProvider {
@@ -48,20 +49,20 @@ public class JwtTokenProviderImpl implements JwtTokenProvider {
 		this.key = Keys.hmacShaKeyFor(jwtProperties.getSecret().getBytes());
 	}
 
-	// private final Key key = Keys.hmacShaKeyFor(jwtProperties.getSecret().getBytes());
-
 	//authentication을 만들어주는 메서드
 	@Override
 	public Authentication getAuthentication(String accessToken) {
-		String name = extractName(accessToken).orElseThrow(() -> new CustomException(UNAUTHORIZED));
-		String roomId = extractRoomId(accessToken).orElseThrow(() -> new CustomException(UNAUTHORIZED));
+		String roomId = extractRoomId(accessToken).orElseThrow(() -> new CustomException(INVALID_ACCESS_TOKEN));
+		String name = extractName(accessToken).orElseThrow(() -> new CustomException(INVALID_ACCESS_TOKEN));
 
 		Member member = memberRepository.findByRoom_IdentityNumberAndName(roomId, name)
 			.orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
 
-		CustomUserDetails userDetails = CustomUserDetailsImpl.from(member);
+		String pw = member.getPw();
 
-		return CustomUsernamePasswordAuthenticationToken.from(userDetails);
+		List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("USER"));
+
+		return MemberAuthenticationToken.authenticated(roomId, name, pw, authorities);
 	}
 
 	@Override
@@ -85,12 +86,16 @@ public class JwtTokenProviderImpl implements JwtTokenProvider {
 	}
 
 	@Override
+	@Transactional
 	public void updateRefreshToken(String roomId, String name, String refreshToken) {
-		memberRepository.findByRefreshToken(refreshToken)
+		log.info("updateRefreshToken");
+		memberRepository.findByRoom_IdentityNumberAndName(roomId, name)
 			.ifPresent(member -> member.updateRefreshToken(refreshToken));
+
 	}
 
 	@Override
+	@Transactional
 	public void destroyRefreshToken(String roomId, String name) {
 		memberRepository.findByRoom_IdentityNumberAndName(roomId, name)
 			.ifPresent(Member::destroyRefreshToken);
@@ -119,8 +124,8 @@ public class JwtTokenProviderImpl implements JwtTokenProvider {
 	@Override
 	public Optional<String> extractAccessToken(HttpServletRequest request) {
 		return Optional.ofNullable(request.getHeader(jwtProperties.getAccess().getHeader())).filter(
-			refreshToken -> refreshToken.startsWith(jwtProperties.getBEARER())
-		).map(refreshToken -> refreshToken.replace(jwtProperties.getBEARER(), ""));
+			accessToken -> accessToken.startsWith(jwtProperties.getBEARER())
+		).map(accessToken -> accessToken.replace(jwtProperties.getBEARER(), ""));
 	}
 
 	@Override
@@ -156,7 +161,7 @@ public class JwtTokenProviderImpl implements JwtTokenProvider {
 	@Override
 	public Optional<String> extractRoomId(String accessToken) {
 		try {
-			return Optional.ofNullable(parseClaims(accessToken).get(jwtProperties.getNAME_CLAIM(), String.class));
+			return Optional.ofNullable(parseClaims(accessToken).get(jwtProperties.getROOM_ID_CLAIM(), String.class));
 		} catch (Exception e) {
 			log.error("액세스 토큰이 유효하지 않습니다. token: {}", accessToken);
 			return Optional.empty();
@@ -192,5 +197,13 @@ public class JwtTokenProviderImpl implements JwtTokenProvider {
 			log.info("JWT claims string is empty.", e);
 		}
 		return false;
+	}
+
+	public void checkRefreshTokenAndReIssueAccessToken(HttpServletResponse response, String refreshToken) {
+		Member member = memberRepository.findByRefreshToken(refreshToken)
+			.orElseThrow(() -> new CustomException(INVALID_REFRESH_TOKEN));
+		sendAccessToken(
+			response,
+			createAccessToken(member.getRoom().getIdentityNumber(), member.getName()));
 	}
 }
