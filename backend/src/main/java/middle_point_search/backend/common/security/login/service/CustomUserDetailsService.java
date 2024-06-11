@@ -6,5 +6,5 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 public interface CustomUserDetailsService extends UserDetailsService {
 
-	UserDetails loadUserByUsernameAndRoomId(String username, String roomId) throws UsernameNotFoundException;
+	UserDetails loadUserByUsernameAndRoomId(String roomId, String name, String pw) throws UsernameNotFoundException;
 }
