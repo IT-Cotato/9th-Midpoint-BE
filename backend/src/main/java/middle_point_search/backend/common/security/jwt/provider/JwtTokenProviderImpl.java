@@ -6,11 +6,10 @@ import java.security.Key;
 import java.util.Date;
 import java.util.Optional;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -21,35 +20,41 @@ import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import middle_point_search.backend.common.dto.DataResponse;
 import middle_point_search.backend.common.exception.CustomException;
-import middle_point_search.backend.common.exception.errorCode.UserErrorCode;
 import middle_point_search.backend.common.security.dto.CustomUserDetails;
 import middle_point_search.backend.common.security.dto.CustomUserDetailsImpl;
 import middle_point_search.backend.common.security.dto.CustomUsernamePasswordAuthenticationToken;
 import middle_point_search.backend.common.security.jwt.constants.JwtProperties;
-import middle_point_search.backend.common.security.jwt.provider.JwtTokenProvider;
+import middle_point_search.backend.common.security.jwt.dto.JwtDTO.AccessAndRefreshTokenResponse;
+import middle_point_search.backend.common.security.jwt.dto.JwtDTO.AccessTokenResponse;
+import middle_point_search.backend.common.util.ResponseWriter;
 import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.member.repository.MemberRepository;
 
 @Transactional
 @Service
-@RequiredArgsConstructor
 @Slf4j
 public class JwtTokenProviderImpl implements JwtTokenProvider {
 
 	private final JwtProperties jwtProperties;
 	private final MemberRepository memberRepository;
-	private final ObjectMapper objectMapper;
+	private final Key key;
 
-	private final Key key = Keys.hmacShaKeyFor(jwtProperties.getSecret().getBytes());
+	public JwtTokenProviderImpl(JwtProperties jwtProperties, MemberRepository memberRepository) {
+		this.jwtProperties = jwtProperties;
+		this.memberRepository = memberRepository;
+		this.key = Keys.hmacShaKeyFor(jwtProperties.getSecret().getBytes());
+	}
+
+	// private final Key key = Keys.hmacShaKeyFor(jwtProperties.getSecret().getBytes());
 
 	//authentication을 만들어주는 메서드
 	@Override
 	public Authentication getAuthentication(String accessToken) {
-		String name = extractName(accessToken).orElseThrow(() -> new CustomException(INVALID_TOKEN));
-		String roomId = extractRoomId(accessToken).orElseThrow(() -> new CustomException(INVALID_TOKEN));
+		String name = extractName(accessToken).orElseThrow(() -> new CustomException(UNAUTHORIZED));
+		String roomId = extractRoomId(accessToken).orElseThrow(() -> new CustomException(UNAUTHORIZED));
 
 		Member member = memberRepository.findByRoom_IdentityNumberAndName(roomId, name)
 			.orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
@@ -82,33 +87,33 @@ public class JwtTokenProviderImpl implements JwtTokenProvider {
 	@Override
 	public void updateRefreshToken(String roomId, String name, String refreshToken) {
 		memberRepository.findByRefreshToken(refreshToken)
-			.ifPresentOrElse(
-				member -> member.updateRefreshToken(refreshToken),
-				() -> new CustomException(UserErrorCode.INVALID_TOKEN));
+			.ifPresent(member -> member.updateRefreshToken(refreshToken));
 	}
 
 	@Override
 	public void destroyRefreshToken(String roomId, String name) {
 		memberRepository.findByRoom_IdentityNumberAndName(roomId, name)
-			.ifPresentOrElse(
-				Member::destroyRefreshToken,
-				() -> new CustomException(UserErrorCode.MEMBER_NOT_FOUND)
-			);
+			.ifPresent(Member::destroyRefreshToken);
 	}
 
 	@Override
 	public void sendAccessAndRefreshToken(HttpServletResponse response, String accessToken, String refreshToken) {
-		response.setStatus(HttpServletResponse.SC_OK);
-
 		setAccessTokenHeader(response, accessToken);
 		setRefreshTokenHeader(response, refreshToken);
+
+		AccessAndRefreshTokenResponse accessAndRefreshTokenResponse = AccessAndRefreshTokenResponse.from(accessToken,
+			refreshToken);
+
+		ResponseWriter.writeResponse(response, DataResponse.from(accessAndRefreshTokenResponse), HttpStatus.OK);
 	}
 
 	@Override
 	public void sendAccessToken(HttpServletResponse response, String accessToken) {
-		response.setStatus(HttpServletResponse.SC_OK);
-
 		setAccessTokenHeader(response, accessToken);
+
+		AccessTokenResponse accessTokenResponse = AccessTokenResponse.from(accessToken);
+
+		ResponseWriter.writeResponse(response, DataResponse.from(accessTokenResponse), HttpStatus.OK);
 	}
 
 	@Override
