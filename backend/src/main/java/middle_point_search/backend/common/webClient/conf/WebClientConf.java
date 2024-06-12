@@ -1,4 +1,4 @@
-package middle_point_search.backend.common.conf;
+package middle_point_search.backend.common.webClient.conf;
 
 import java.time.Duration;
 

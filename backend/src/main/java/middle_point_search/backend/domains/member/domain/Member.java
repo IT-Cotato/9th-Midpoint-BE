@@ -45,20 +45,32 @@ public class Member {
 	@JoinColumn(name = "PLACE_ID")
 	private Place place;
 
-	public Member(Room room, String name, String pw) {
+	@Column(length = 3000)
+	private String refreshToken;
+
+	private Member(Room room, String name, String pw) {
+		addRoom(room);
 		this.room = room;
 		this.name = name;
 		this.pw = pw;
 	}
 
-	public Member from(Room room, String name, String pw) {
-		addRoom(room);
+	public static Member from(Room room, String name, String pw) {
+
 
 		return new Member(room, name, pw);
 	}
 
-	public void addRoom(Room room) {
+	private void addRoom(Room room) {
 		this.room = room;
 		room.getMembers().add(this);
+	}
+
+	public void updateRefreshToken(String refreshToken) {
+		this.refreshToken = refreshToken;
+	}
+
+	public void destroyRefreshToken() {
+		this.refreshToken = null;
 	}
 }
