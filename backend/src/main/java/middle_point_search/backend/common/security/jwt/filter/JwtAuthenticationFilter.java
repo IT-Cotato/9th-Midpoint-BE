@@ -57,7 +57,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			throw new CustomException(INVALID_ACCESS_TOKEN);
 		} else if (refreshToken != null && jwtTokenProvider.isTokenValid(refreshToken)) {
 			log.info("refresh토큰 인증 성공");
-			jwtTokenProvider.checkRefreshTokenAndReIssueAccessToken(response, refreshToken);
+			jwtTokenProvider.checkRefreshTokenAndReIssueAccessAndRefreshToken(response, refreshToken);
 		} else if (refreshToken != null && !jwtTokenProvider.isTokenValid(refreshToken)) {
 			log.info("refresh토큰 인증 실패");
 			throw new CustomException(INVALID_REFRESH_TOKEN);

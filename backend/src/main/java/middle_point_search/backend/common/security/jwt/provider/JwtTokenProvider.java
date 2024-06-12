@@ -40,5 +40,5 @@ public interface JwtTokenProvider {
 
 	boolean isTokenValid(String token);
 
-	void checkRefreshTokenAndReIssueAccessToken(HttpServletResponse response, String refreshToken);
+	void checkRefreshTokenAndReIssueAccessAndRefreshToken(HttpServletResponse response, String refreshToken);
 }

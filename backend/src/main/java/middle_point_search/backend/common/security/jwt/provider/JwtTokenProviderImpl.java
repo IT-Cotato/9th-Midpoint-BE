@@ -199,11 +199,17 @@ public class JwtTokenProviderImpl implements JwtTokenProvider {
 		return false;
 	}
 
-	public void checkRefreshTokenAndReIssueAccessToken(HttpServletResponse response, String refreshToken) {
+	public void checkRefreshTokenAndReIssueAccessAndRefreshToken(HttpServletResponse response, String refreshToken) {
 		Member member = memberRepository.findByRefreshToken(refreshToken)
 			.orElseThrow(() -> new CustomException(INVALID_REFRESH_TOKEN));
-		sendAccessToken(
-			response,
-			createAccessToken(member.getRoom().getIdentityNumber(), member.getName()));
+		String roomId = member.getRoom().getIdentityNumber();
+		String name = member.getName();
+
+		String accessToken = createAccessToken(roomId, name);
+		String newRefreshToken = createRefreshToken();
+
+		updateRefreshToken(roomId, name, newRefreshToken);
+
+		sendAccessAndRefreshToken(response, accessToken, refreshToken);
 	}
 }
