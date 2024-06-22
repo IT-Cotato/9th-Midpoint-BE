@@ -1,5 +1,6 @@
 package middle_point_search.backend.domains.place.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,5 +13,5 @@ public interface PlaceRepository extends JpaRepository<Place, Long> {
 
 	Optional<Place> findByRoomAndMember(Room room, Member member);
 
-	Boolean existsByRoomAndMember(Room room, Member member);
+	List<Place>	findAllByRoom_IdentityNumber(String roomId);
 }
