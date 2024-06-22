@@ -106,4 +106,13 @@ public class Place {
 		this.member = member;
 		member.setPlace(this);
 	}
+
+	public void update(PlaceSaveRequest placeSaveRequest) {
+		this.transport = placeSaveRequest.getTransport();
+		this.siDo = placeSaveRequest.getSiDo();
+		this.siGunGu = placeSaveRequest.getSiGunGu();
+		this.roadNameAddress = placeSaveRequest.getRoadNameAddress();
+		this.addressLatitude = placeSaveRequest.getAddressLat();
+		this.addressLongitude = placeSaveRequest.getAddressLong();
+	}
 }

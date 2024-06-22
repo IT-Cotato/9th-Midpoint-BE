@@ -1,5 +1,7 @@
 package middle_point_search.backend.domains.place.service;
 
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,7 +27,14 @@ public class PlaceService {
 		Room room = memberLoader.getRoom();
 		Member member = memberLoader.getMember();
 
-		Place place = Place.from(placeSaveRequest, room, member);
-		placeRepository.save(place);
+		Optional<Place> place = placeRepository.findByRoomAndMember(room, member);
+
+		//1. 기존에 존재하는 데이터가 없으면 저장
+		//2. 기존에 존재하는 데이터가 있으면 변경
+		if (place.isEmpty()) {
+			placeRepository.save(Place.from(placeSaveRequest, room, member));
+		} else {
+			place.get().update(placeSaveRequest);
+		}
 	}
 }
