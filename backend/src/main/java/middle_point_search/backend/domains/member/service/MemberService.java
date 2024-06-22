@@ -38,7 +38,7 @@ public class MemberService {
 
 	@Transactional(readOnly = false)
 	public void logoutMember() {
-		Member member = memberLoader.getMember().orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+		Member member = memberLoader.getMember();
 
 		member.destroyRefreshToken();
 	}
