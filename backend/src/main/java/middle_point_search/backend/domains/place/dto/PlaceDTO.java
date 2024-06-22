@@ -10,7 +10,7 @@ public class PlaceDTO {
 	@Getter
 	@AllArgsConstructor(access = AccessLevel.PRIVATE)
 	public static class PlaceSaveRequest {
-		private final String placeRoomId;
+
 		private final String siDo;
 		private final String siGunGu;
 		private final String roadNameAddress;
