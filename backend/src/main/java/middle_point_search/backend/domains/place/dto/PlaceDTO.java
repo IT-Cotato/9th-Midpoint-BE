@@ -20,4 +20,37 @@ public class PlaceDTO {
 		private Double addressLong;
 		private Transport transport;
 	}
+
+	@Getter
+	@AllArgsConstructor(access = AccessLevel.PRIVATE)
+	public static class PlacesFindResponse {
+
+		private final String memberName;
+		private final String siDo;
+		private final String siGunGu;
+		private final String roadNameAddress;
+		private final Double addressLat;
+		private final Double addressLong;
+		private final Transport transport;
+
+		public static PlacesFindResponse from(Place place) {
+
+			String memberName = place.getMember().getName();
+			String siDo = place.getSiDo();
+			String siGunGu = place.getSiGunGu();
+			String roadNameAddress = place.getRoadNameAddress();
+			Double addressLat = place.getAddressLatitude();
+			Double addressLong = place.getAddressLongitude();
+			Transport transport = place.getTransport();
+
+			return new PlacesFindResponse(
+				memberName,
+				siDo,
+				siGunGu,
+				roadNameAddress,
+				addressLat,
+				addressLong,
+				transport);
+		}
+	}
 }
