@@ -20,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import middle_point_search.backend.common.exception.CustomException;
 import middle_point_search.backend.common.security.conf.SecurityConfig;
 import middle_point_search.backend.common.security.jwt.provider.JwtTokenProvider;
+import middle_point_search.backend.common.security.properties.SecurityProperties;
 import middle_point_search.backend.domains.member.repository.MemberRepository;
 
 @Slf4j
@@ -28,11 +29,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	private final JwtTokenProvider jwtTokenProvider;
 	private final MemberRepository memberRepository;
+	private final SecurityProperties securityProperties;
 
 	@Override
 	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
 		String path = request.getRequestURI();
-		return Arrays.stream(SecurityConfig.PERMIT_URLS).anyMatch(path::equals);
+		return Arrays.stream(securityProperties.getPermitUrls()).anyMatch(path::equals);
 	}
 
 	@Override
