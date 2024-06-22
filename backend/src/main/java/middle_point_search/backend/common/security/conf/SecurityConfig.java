@@ -28,6 +28,7 @@ import middle_point_search.backend.common.security.login.handler.LoginFailureHan
 import middle_point_search.backend.common.security.login.handler.LoginSuccessHandler;
 import middle_point_search.backend.common.security.login.provider.CustomAuthenticationProvider;
 import middle_point_search.backend.common.security.login.service.CustomUserDetailsService;
+import middle_point_search.backend.common.security.properties.SecurityProperties;
 import middle_point_search.backend.domains.member.repository.MemberRepository;
 
 @Configuration
@@ -40,17 +41,11 @@ public class SecurityConfig {
 	private final JwtTokenProvider jwtTokenProvider;
 	private final MemberRepository memberRepository;
 
+	private final SecurityProperties securityProperties;
 	private final UrlBasedCorsConfigurationSource ConfigurationSource;
 
 	private final LoginSuccessHandler loginSuccessHandler;
 	private final LoginFailureHandler loginFailureHandler;
-
-	//인증, 인가를 거치치 않는 url 명단
-	public final static String[] PERMIT_URLS = {
-		"/api/auth/login",
-		"/api/rooms",
-		"/api/rooms/*/existence"
-	};
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -60,7 +55,7 @@ public class SecurityConfig {
 			.cors(cors -> cors.configurationSource(ConfigurationSource))
 			.formLogin(AbstractHttpConfigurer::disable) //json을 이용하여 로그인을 하므로 기본 Login 비활성화
 			.authorizeHttpRequests((authorize) -> authorize // PERMIT_URLS만 바로 접근 가능, 나머지 URL은 인증 필요
-				.requestMatchers(PERMIT_URLS).permitAll()
+				.requestMatchers(securityProperties.getPermitUrls()).permitAll()
 				.anyRequest().authenticated()
 			)
 			.logout(LogoutConfigurer::permitAll)
@@ -117,7 +112,7 @@ public class SecurityConfig {
 	//JWT 필터 등록
 	@Bean
 	public JwtAuthenticationFilter jwtAuthenticationFilter() {
-		return new JwtAuthenticationFilter(jwtTokenProvider, memberRepository);
+		return new JwtAuthenticationFilter(jwtTokenProvider, memberRepository, securityProperties);
 	}
 
 	//예외 핸들링 필터 등록

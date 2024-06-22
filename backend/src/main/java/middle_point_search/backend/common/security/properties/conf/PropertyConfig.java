@@ -9,6 +9,6 @@ import middle_point_search.backend.common.security.properties.SecurityProperties
 
 // 전역적으로 사용되는 상수
 @Configuration
-@EnableConfigurationProperties(value = {JwtProperties.class, CorsProperties.class})
+@EnableConfigurationProperties(value = {JwtProperties.class, CorsProperties.class, SecurityProperties.class})
 public class PropertyConfig {
 }
