@@ -15,6 +15,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.member.domain.Transport;
+import middle_point_search.backend.domains.place.dto.PlaceDTO.PlaceSaveRequest;
 import middle_point_search.backend.domains.room.domain.Room;
 
 @Entity
@@ -52,7 +53,7 @@ public class Place {
 	@OneToOne(mappedBy = "place")
 	private Member member;
 
-	public Place(Transport transport, String siDo, String siGunGu, String roadNameAddress, Double addressLatitude,
+	private Place(Transport transport, String siDo, String siGunGu, String roadNameAddress, Double addressLatitude,
 		Double addressLongitude, Room room) {
 		this.transport = transport;
 		this.siDo = siDo;
@@ -63,7 +64,7 @@ public class Place {
 		addRoom(room);
 	}
 
-	public Place(Transport transport, String siDo, String siGunGu, String roadNameAddress, Double addressLatitude,
+	private Place(Transport transport, String siDo, String siGunGu, String roadNameAddress, Double addressLatitude,
 		Double addressLongitude, Room room, Member member) {
 		this.transport = transport;
 		this.siDo = siDo;
@@ -82,6 +83,17 @@ public class Place {
 
 	public static Place of(Transport transport, String siDo, String siGunGu, String roadNameAddress,
 		Double addressLatitude, Double addressLongitude, Room room, Member member) {
+		return new Place(transport, siDo, siGunGu, roadNameAddress, addressLatitude, addressLongitude, room, member);
+	}
+
+	public static Place from(PlaceSaveRequest placeSaveRequest, Room room, Member member) {
+		Transport transport = placeSaveRequest.getTransport();
+		String siDo = placeSaveRequest.getSiDo();
+		String siGunGu = placeSaveRequest.getSiGunGu();
+		String roadNameAddress = placeSaveRequest.getRoadNameAddress();
+		Double addressLatitude = placeSaveRequest.getAddressLat();
+		Double addressLongitude = placeSaveRequest.getAddressLong();
+
 		return new Place(transport, siDo, siGunGu, roadNameAddress, addressLatitude, addressLongitude, room, member);
 	}
 
