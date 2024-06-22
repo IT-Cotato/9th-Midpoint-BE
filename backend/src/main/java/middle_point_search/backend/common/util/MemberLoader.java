@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.security.dto.MemberAuthenticationToken;
 import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.member.repository.MemberRepository;
+import middle_point_search.backend.domains.room.domain.Room;
+import middle_point_search.backend.domains.room.repository.RoomRepository;
 
 @Component
 @Transactional(readOnly = true)
@@ -18,6 +20,7 @@ import middle_point_search.backend.domains.member.repository.MemberRepository;
 public class MemberLoader {
 
 	private final MemberRepository memberRepository;
+	private final RoomRepository roomRepository;
 
 	@Transactional
 	public Optional<Member> getMember() {
@@ -25,6 +28,13 @@ public class MemberLoader {
 		String name = getName();
 
 		return memberRepository.findByRoom_IdentityNumberAndName(roomId, name);
+	}
+
+	@Transactional
+	public Optional<Room> getRoom() {
+		String roomId = getRoomId();
+
+		return roomRepository.findRoomByIdentityNumber(roomId);
 	}
 
 	public String getName() {
