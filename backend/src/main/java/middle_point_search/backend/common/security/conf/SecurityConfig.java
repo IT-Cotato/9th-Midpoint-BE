@@ -13,16 +13,17 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.security.exception.hadlingFilter.ExceptionHandlingFilter;
-import middle_point_search.backend.common.security.login.filter.JsonNamePwAuthenticationFilter;
-import middle_point_search.backend.common.security.jwt.filter.JwtAuthenticationFilter;
-import middle_point_search.backend.common.security.jwt.provider.JwtTokenProvider;
 import middle_point_search.backend.common.security.handler.CustomAccessDeniedHandler;
 import middle_point_search.backend.common.security.handler.CustomAuthenticationEntryPoint;
+import middle_point_search.backend.common.security.jwt.filter.JwtAuthenticationFilter;
+import middle_point_search.backend.common.security.jwt.provider.JwtTokenProvider;
+import middle_point_search.backend.common.security.login.filter.JsonNamePwAuthenticationFilter;
 import middle_point_search.backend.common.security.login.handler.LoginFailureHandler;
 import middle_point_search.backend.common.security.login.handler.LoginSuccessHandler;
 import middle_point_search.backend.common.security.login.provider.CustomAuthenticationProvider;
@@ -39,6 +40,8 @@ public class SecurityConfig {
 	private final JwtTokenProvider jwtTokenProvider;
 	private final MemberRepository memberRepository;
 
+	private final UrlBasedCorsConfigurationSource ConfigurationSource;
+
 	private final LoginSuccessHandler loginSuccessHandler;
 	private final LoginFailureHandler loginFailureHandler;
 
@@ -54,7 +57,7 @@ public class SecurityConfig {
 		http
 			.csrf(AbstractHttpConfigurer::disable) // 세션을 사용안하므로 csrf 공격 없으므로 csrf 비활성화
 			.httpBasic(AbstractHttpConfigurer::disable) // 기본 인증 방식 비활성화
-			.cors(AbstractHttpConfigurer::disable)
+			.cors(cors -> cors.configurationSource(ConfigurationSource))
 			.formLogin(AbstractHttpConfigurer::disable) //json을 이용하여 로그인을 하므로 기본 Login 비활성화
 			.authorizeHttpRequests((authorize) -> authorize // PERMIT_URLS만 바로 접근 가능, 나머지 URL은 인증 필요
 				.requestMatchers(PERMIT_URLS).permitAll()
@@ -74,21 +77,22 @@ public class SecurityConfig {
 		//예외 처리 추가
 		http
 			.exceptionHandling(
-				httpSecurityExceptionHandlingConfigurer ->httpSecurityExceptionHandlingConfigurer.authenticationEntryPoint(new CustomAuthenticationEntryPoint())
+				httpSecurityExceptionHandlingConfigurer -> httpSecurityExceptionHandlingConfigurer.authenticationEntryPoint(
+					new CustomAuthenticationEntryPoint())
 			)
 			.exceptionHandling(
-				httpSecurityExceptionHandlingConfigurer -> httpSecurityExceptionHandlingConfigurer.accessDeniedHandler(new CustomAccessDeniedHandler())
+				httpSecurityExceptionHandlingConfigurer -> httpSecurityExceptionHandlingConfigurer.accessDeniedHandler(
+					new CustomAccessDeniedHandler())
 			);
 
 		return http.build();
 	}
 
-
-
 	//authentication Provider 관리를 위한 Manager 등록
 	@Bean
 	public AuthenticationManager authenticationManager() throws Exception {
-		CustomAuthenticationProvider authenticationProvider = new CustomAuthenticationProvider(customUserDetailsService);
+		CustomAuthenticationProvider authenticationProvider = new CustomAuthenticationProvider(
+			customUserDetailsService);
 		return new ProviderManager(authenticationProvider);
 	}
 
@@ -100,7 +104,8 @@ public class SecurityConfig {
 	//로그인 필터 등록
 	@Bean
 	public JsonNamePwAuthenticationFilter jsonUsernamePasswordLoginFilter() throws Exception {
-		JsonNamePwAuthenticationFilter jsonUsernamePasswordLoginFilter = new JsonNamePwAuthenticationFilter(objectMapper);
+		JsonNamePwAuthenticationFilter jsonUsernamePasswordLoginFilter = new JsonNamePwAuthenticationFilter(
+			objectMapper);
 		jsonUsernamePasswordLoginFilter.setAuthenticationManager(authenticationManager());
 
 		jsonUsernamePasswordLoginFilter.setAuthenticationSuccessHandler(loginSuccessHandler);
@@ -111,7 +116,7 @@ public class SecurityConfig {
 
 	//JWT 필터 등록
 	@Bean
-	public JwtAuthenticationFilter jwtAuthenticationFilter(){
+	public JwtAuthenticationFilter jwtAuthenticationFilter() {
 		return new JwtAuthenticationFilter(jwtTokenProvider, memberRepository);
 	}
 
@@ -120,4 +125,5 @@ public class SecurityConfig {
 	public ExceptionHandlingFilter exceptionHandlingFilter() {
 		return new ExceptionHandlingFilter();
 	}
+
 }
