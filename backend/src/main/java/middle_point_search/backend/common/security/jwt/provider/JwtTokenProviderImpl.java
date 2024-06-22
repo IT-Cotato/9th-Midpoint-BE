@@ -27,7 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 import middle_point_search.backend.common.dto.DataResponse;
 import middle_point_search.backend.common.exception.CustomException;
 import middle_point_search.backend.common.security.dto.MemberAuthenticationToken;
-import middle_point_search.backend.common.security.jwt.constants.JwtProperties;
+import middle_point_search.backend.common.security.properties.JwtProperties;
 import middle_point_search.backend.common.security.jwt.dto.JwtDTO.AccessAndRefreshTokenResponse;
 import middle_point_search.backend.common.security.jwt.dto.JwtDTO.AccessTokenResponse;
 import middle_point_search.backend.common.util.ResponseWriter;

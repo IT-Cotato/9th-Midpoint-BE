@@ -1,4 +1,4 @@
-package middle_point_search.backend.common.security.jwt.constants;
+package middle_point_search.backend.common.security.properties;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

@@ -1,4 +1,4 @@
-package middle_point_search.backend.common.security.cors.constants;
+package middle_point_search.backend.common.security.properties;
 
 import java.util.List;
 
