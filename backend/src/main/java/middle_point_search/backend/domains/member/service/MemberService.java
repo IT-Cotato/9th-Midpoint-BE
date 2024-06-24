@@ -1,13 +1,9 @@
 package middle_point_search.backend.domains.member.service;
 
-import static middle_point_search.backend.common.exception.errorCode.UserErrorCode.*;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
-import middle_point_search.backend.common.exception.CustomException;
-import middle_point_search.backend.common.exception.errorCode.UserErrorCode;
 import middle_point_search.backend.common.security.exception.RoomNotFoundException;
 import middle_point_search.backend.common.util.MemberLoader;
 import middle_point_search.backend.domains.member.domain.Member;
@@ -38,7 +34,7 @@ public class MemberService {
 
 	@Transactional(readOnly = false)
 	public void logoutMember() {
-		Member member = memberLoader.getMember().orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+		Member member = memberLoader.getMember();
 
 		member.destroyRefreshToken();
 	}
