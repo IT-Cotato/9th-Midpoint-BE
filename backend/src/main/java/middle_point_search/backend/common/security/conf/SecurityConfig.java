@@ -13,6 +13,7 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -46,6 +47,8 @@ public class SecurityConfig {
 
 	private final LoginSuccessHandler loginSuccessHandler;
 	private final LoginFailureHandler loginFailureHandler;
+
+	private AntPathMatcher pathMatcher = new AntPathMatcher();
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -112,7 +115,7 @@ public class SecurityConfig {
 	//JWT 필터 등록
 	@Bean
 	public JwtAuthenticationFilter jwtAuthenticationFilter() {
-		return new JwtAuthenticationFilter(jwtTokenProvider, memberRepository, securityProperties);
+		return new JwtAuthenticationFilter(jwtTokenProvider, memberRepository, securityProperties, pathMatcher);
 	}
 
 	//예외 핸들링 필터 등록
