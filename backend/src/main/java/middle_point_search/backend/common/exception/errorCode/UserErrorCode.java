@@ -17,6 +17,7 @@ public enum UserErrorCode implements ErrorCode {
 	MEMBER_CREDENTIAL_UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "비밀번호가 일치하지 않습니다"),
 	API_UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "API 인증 정보가 정확하지 않습니다."),
 	ROOM_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 방입니다."),
+	PLACE_NOT_FOUND(HttpStatus.NOT_FOUND, "방에 입력된 장소가 없습니다."),
 	//5xx
 	API_INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "API 서버에 문제가 발생하였습니다.")
 

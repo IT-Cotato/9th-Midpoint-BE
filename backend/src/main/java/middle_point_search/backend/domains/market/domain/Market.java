@@ -1,5 +1,7 @@
 package middle_point_search.backend.domains.market.domain;
 
+import java.util.Objects;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -44,20 +46,22 @@ public class Market {
 		this.addressLongitude = addressLongitude;
 	}
 
-	// public static Market of() {
-	//
-	// }
-	//
 	public static Market from(MarketApiData marketApiData) {
 		System.out.println(marketApiData);
 
-		String name = marketApiData.getName();
+		String name = parseName(marketApiData.getName());
 		String siGunGu = marketApiData.getSiGunGu();
 		String siDo = marketApiData.getSiDo();
 		Double addressLatitude = parseCoordinatesToLatitude(marketApiData.getCoordinates());
 		Double addressLongitude = parseCoordinatesToLongitude(marketApiData.getCoordinates());
 
 		return new Market(name, siGunGu, siDo, addressLatitude, addressLongitude);
+	}
+
+	private static String parseName(String name) {
+		String[] s = name.split("_");
+
+		return s[0];
 	}
 
 	private static Double parseCoordinatesToLatitude(String coordinates) {
@@ -72,5 +76,18 @@ public class Market {
 		String[] coordinateParts = coordinate.split(",");
 
 		return Double.parseDouble(coordinateParts[0]);
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		Market market = (Market) o;
+		return Objects.equals(name, market.name);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(name);
 	}
 }
