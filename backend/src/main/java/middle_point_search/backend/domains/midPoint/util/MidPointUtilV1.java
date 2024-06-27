@@ -1,21 +1,29 @@
 package middle_point_search.backend.domains.midPoint.util;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import middle_point_search.backend.domains.market.domain.Market;
+import middle_point_search.backend.domains.market.repository.MarketRepository;
 import middle_point_search.backend.domains.midPoint.dto.MidPointDTO.AddressDTO;
 import middle_point_search.backend.domains.midPoint.dto.MidPointDTO.CoordinateDTO;
+import middle_point_search.backend.domains.midPoint.dto.MidPointDTO.MidPointsFindResponse;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class MidPointUtilV1 implements MidPointUtil {
 
+	private final MarketRepository marketRepository;
+
 	@Override
-	public List<AddressDTO> findMidPoints(List<AddressDTO> addresses) {
+	public List<MidPointsFindResponse> findMidPoints(List<AddressDTO> addresses) {
 		List<CoordinateDTO> coordinates = addresses.stream()
 			.map(address -> new CoordinateDTO(address.getAddressLong(), address.getAddressLat()))
 			.collect(Collectors.toList());
@@ -26,8 +34,31 @@ public class MidPointUtilV1 implements MidPointUtil {
 	}
 
 	// 주어진 중간 위치 좌표를 통해 추천 장소를 구하는 메서드
-	private List<AddressDTO> findMidPointsByCoordinate(CoordinateDTO coordinateDTO) {
-		return null;
+	private List<MidPointsFindResponse> findMidPointsByCoordinate(CoordinateDTO mid) {
+		double midX = mid.getX();
+		double midY = mid.getY();
+
+		List<Market> all = marketRepository.findAll();
+
+		Market nearMarket = null;
+		double distMin = Double.MAX_VALUE;
+
+		for (Market market : all) {
+			double x = market.getAddressLongitude();
+			double y = market.getAddressLatitude();
+
+			double dist = calcDist(x, y, midX, midY);
+			if (dist < distMin) {
+				distMin = dist;
+				nearMarket = market;
+			}
+		}
+
+		MidPointsFindResponse response = MidPointsFindResponse.from(nearMarket);
+
+		List<MidPointsFindResponse> responses = new ArrayList<>();
+		responses.add(response);
+		return responses;
 	}
 
 	// 여러 좌표의 무게 중심 구하는 메서드
@@ -100,7 +131,6 @@ public class MidPointUtilV1 implements MidPointUtil {
 		return S.stream().toList();
 	}
 
-
 	// 기준 좌표 구하기
 	private CoordinateDTO findStandardPoint(List<CoordinateDTO> coordinateDTOs) {
 		CoordinateDTO first = coordinateDTOs.get(0);
@@ -116,7 +146,7 @@ public class MidPointUtilV1 implements MidPointUtil {
 			// y가 같은 경우 x가 더 작은 것을 선택한다.
 			if (y < firstY) {
 				first = coordinateDTO;
-			} else if (y == firstY){
+			} else if (y == firstY) {
 				if (x < firstX) {
 					first = coordinateDTO;
 				}
@@ -124,5 +154,10 @@ public class MidPointUtilV1 implements MidPointUtil {
 		}
 
 		return first;
+	}
+
+	// 두 점 사이의 거리 제곱을 리턴하는 함수
+	public Double calcDist(double x1, double y1, double x2, double y2) {
+		return Math.pow(y2 - y1, 2D) + Math.pow(x2 - x1, 2D);
 	}
 }
