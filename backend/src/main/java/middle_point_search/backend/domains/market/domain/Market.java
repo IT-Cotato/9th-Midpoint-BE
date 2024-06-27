@@ -44,10 +44,6 @@ public class Market {
 		this.addressLongitude = addressLongitude;
 	}
 
-	// public static Market of() {
-	//
-	// }
-	//
 	public static Market from(MarketApiData marketApiData) {
 		System.out.println(marketApiData);
 

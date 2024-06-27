@@ -21,6 +21,7 @@ import middle_point_search.backend.domains.midPoint.dto.MidPointDTO.MidPointsFin
 public class MidPointUtilV1 implements MidPointUtil {
 
 	private final MarketRepository marketRepository;
+	private final int NUMBER_OF_RESULT = 5;
 
 	@Override
 	public List<MidPointsFindResponse> findMidPoints(List<AddressDTO> addresses) {
@@ -38,26 +39,26 @@ public class MidPointUtilV1 implements MidPointUtil {
 		double midX = mid.getX();
 		double midY = mid.getY();
 
-		List<Market> all = marketRepository.findAll();
+		List<Market> markets = marketRepository.findAll();
 
-		Market nearMarket = null;
-		double distMin = Double.MAX_VALUE;
+		markets.sort((o1, o2) -> {
+			double x1 = o1.getAddressLongitude();
+			double y1 = o1.getAddressLatitude();
+			double x2 = o2.getAddressLongitude();
+			double y2 = o2.getAddressLatitude();
 
-		for (Market market : all) {
-			double x = market.getAddressLongitude();
-			double y = market.getAddressLatitude();
+			double dist1 = calcDist(midX, midY, x1, y1);
+			double dist2 = calcDist(midX, midY, x2, y2);
 
-			double dist = calcDist(x, y, midX, midY);
-			if (dist < distMin) {
-				distMin = dist;
-				nearMarket = market;
-			}
-		}
-
-		MidPointsFindResponse response = MidPointsFindResponse.from(nearMarket);
+			return (int)(dist1 - dist2);
+		});
 
 		List<MidPointsFindResponse> responses = new ArrayList<>();
-		responses.add(response);
+
+		for (int i = 0; i < NUMBER_OF_RESULT; i++) {
+			responses.add(MidPointsFindResponse.from(markets.get(i)));
+		}
+
 		return responses;
 	}
 
