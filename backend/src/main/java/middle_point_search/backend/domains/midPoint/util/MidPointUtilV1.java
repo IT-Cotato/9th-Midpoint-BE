@@ -1,5 +1,7 @@
 package middle_point_search.backend.domains.midPoint.util;
 
+import static middle_point_search.backend.common.exception.errorCode.UserErrorCode.*;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
@@ -9,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import middle_point_search.backend.common.exception.CustomException;
 import middle_point_search.backend.domains.market.domain.Market;
 import middle_point_search.backend.domains.market.repository.MarketRepository;
 import middle_point_search.backend.domains.midPoint.dto.MidPointDTO.AddressDTO;
@@ -25,6 +28,11 @@ public class MidPointUtilV1 implements MidPointUtil {
 
 	@Override
 	public List<MidPointsFindResponse> findMidPoints(List<AddressDTO> addresses) {
+		// address가 없을 경우
+		if (addresses.isEmpty()) {
+			throw new CustomException(PLACE_NOT_FOUND);
+		}
+
 		List<CoordinateDTO> coordinates = addresses.stream()
 			.map(address -> new CoordinateDTO(address.getAddressLong(), address.getAddressLat()))
 			.collect(Collectors.toList());
