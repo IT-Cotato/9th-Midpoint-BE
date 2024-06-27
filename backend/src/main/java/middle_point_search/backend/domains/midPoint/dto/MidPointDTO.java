@@ -6,6 +6,7 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import middle_point_search.backend.domains.market.domain.Market;
 import middle_point_search.backend.domains.member.domain.Transport;
 import middle_point_search.backend.domains.place.domain.Place;
 
@@ -39,6 +40,7 @@ public class MidPointDTO {
 				place.getTransport()
 			);
 		}
+
 	}
 
 	@Getter
@@ -54,6 +56,7 @@ public class MidPointDTO {
 		}
 	}
 
+	@Getter
 	@AllArgsConstructor(access = AccessLevel.PUBLIC)
 	public static class MidPointsFindResponse {
 
@@ -63,5 +66,16 @@ public class MidPointDTO {
 		private String roadNameAddress;
 		private Double addressLat;
 		private Double addressLong;
+
+		public static MidPointsFindResponse from(Market market) {
+			return new MidPointsFindResponse(
+				market.getName(),
+				market.getSiDo(),
+				market.getSiGunGu(),
+				null,
+				market.getAddressLatitude(),
+				market.getAddressLongitude()
+			);
+		}
 	}
 }
