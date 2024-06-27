@@ -52,7 +52,10 @@ public class MarketService {
 			Mono<MarketApiResponse> response = webClientUtil.getMono(url, MarketApiResponse.class);
 
 			response.map(MarketApiResponse::getData)
-				.map(marketApiDatas -> marketApiDatas.stream().map(Market::from).toList())
+				.map(marketApiDatas -> marketApiDatas.stream()
+					.map(Market::from)
+					.distinct()
+					.toList())
 				.subscribe(this::saveAllMarket);
 		}
 	}
