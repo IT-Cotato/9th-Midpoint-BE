@@ -9,6 +9,7 @@ import java.util.Arrays;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import jakarta.servlet.FilterChain;
@@ -30,11 +31,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	private final JwtTokenProvider jwtTokenProvider;
 	private final MemberRepository memberRepository;
 	private final SecurityProperties securityProperties;
+	private final AntPathMatcher pathMatcher;
 
 	@Override
 	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
 		String path = request.getRequestURI();
-		return Arrays.stream(securityProperties.getPermitUrls()).anyMatch(path::equals);
+
+		return Arrays.stream(securityProperties.getPermitUrls())
+			.anyMatch(permitUrl -> pathMatcher.match(permitUrl, path));
 	}
 
 	@Override
