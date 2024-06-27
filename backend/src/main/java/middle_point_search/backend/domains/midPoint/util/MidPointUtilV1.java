@@ -34,7 +34,9 @@ public class MidPointUtilV1 implements MidPointUtil {
 		}
 
 		List<CoordinateDTO> coordinates = addresses.stream()
-			.map(address -> new CoordinateDTO(address.getAddressLong(), address.getAddressLat()))
+			.map(address -> {
+				return new CoordinateDTO(address.getAddressLong(), address.getAddressLat());
+			})
 			.collect(Collectors.toList());
 
 		CoordinateDTO coordinate = calcMidPointCoordinate(coordinates);
@@ -58,7 +60,13 @@ public class MidPointUtilV1 implements MidPointUtil {
 			double dist1 = calcDist(midX, midY, x1, y1);
 			double dist2 = calcDist(midX, midY, x2, y2);
 
-			return (int)(dist1 - dist2);
+			if (dist1 > dist2) {
+				return 1;
+			} else if (dist1 == dist2) {
+				return 0;
+			} else {
+				return -1;
+			}
 		});
 
 		List<MidPointsFindResponse> responses = new ArrayList<>();
@@ -167,6 +175,6 @@ public class MidPointUtilV1 implements MidPointUtil {
 
 	// 두 점 사이의 거리 제곱을 리턴하는 함수
 	public Double calcDist(double x1, double y1, double x2, double y2) {
-		return Math.pow(y2 - y1, 2D) + Math.pow(x2 - x1, 2D);
+		return Math.pow(y2 - y1, 2) + Math.pow(x2 - x1, 2);
 	}
 }
