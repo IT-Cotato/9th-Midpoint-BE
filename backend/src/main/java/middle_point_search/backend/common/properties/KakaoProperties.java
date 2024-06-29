@@ -11,6 +11,7 @@ import lombok.Setter;
 public class KakaoProperties {
 
 	private String key;
+	private String baseUrl;
 	private String keywordSearchUrl;
 	private String categorySearchUrl;
 	private String paramX;
@@ -18,8 +19,10 @@ public class KakaoProperties {
 	private String paramRadius;
 	private String paramPage;
 	private String paramSize;
-	private String size;
 	private String paramSort;
-	private String sort;
 	private String paramGroup;
+
+	private String radius;
+	private String size;
+	private String sort;
 }
