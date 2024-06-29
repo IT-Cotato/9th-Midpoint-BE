@@ -11,6 +11,7 @@ import lombok.Setter;
 public class MarketProperties {
 
 	private String key;
+	private String baseUrl;
 	private String marketApiCountUrl;
 	private String marketApiUrl;
 	private Integer marketApiRequestUnit;
