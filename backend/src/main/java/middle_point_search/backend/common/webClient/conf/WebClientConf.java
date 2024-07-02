@@ -39,11 +39,10 @@ public class WebClientConf {
 
 	@Bean
 	public WebClient webClientForKakao() {
-		DefaultUriBuilderFactory factory = new DefaultUriBuilderFactory();
+		DefaultUriBuilderFactory factory = new DefaultUriBuilderFactory(kakaoProperties.getBaseUrl());
 		factory.setEncodingMode(DefaultUriBuilderFactory.EncodingMode.VALUES_ONLY);
 		return WebClient.builder()
 			.uriBuilderFactory(factory)
-			.baseUrl(kakaoProperties.getBaseUrl())
 			.codecs(configurer -> configurer.defaultCodecs()
 				.maxInMemorySize(2 * 1024 * 1024)) // 응답 payload가 클 경우 나는 에러 방지, 최대 2MB
 			.clientConnector(new ReactorClientHttpConnector(httpClient))

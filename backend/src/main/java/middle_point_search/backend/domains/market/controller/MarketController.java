@@ -1,7 +1,11 @@
 package middle_point_search.backend.domains.market.controller;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -9,6 +13,9 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import middle_point_search.backend.common.dto.BaseResponse;
+import middle_point_search.backend.common.dto.DataResponse;
+import middle_point_search.backend.domains.market.dto.request.RecommendPlacesFindRequest;
+import middle_point_search.backend.domains.market.dto.response.RecommendPlacesFindResponse;
 import middle_point_search.backend.domains.market.service.MarketService;
 
 @Slf4j
@@ -21,11 +28,18 @@ public class MarketController {
 
 	@PostMapping("/market")
 	public ResponseEntity<BaseResponse> marketUpdate() {
-		log.info("marketUpdate");
 		marketService.updateMarket();
 
 		return ResponseEntity
 			.status(HttpStatus.OK)
 			.body(BaseResponse.ok());
+	}
+
+	@GetMapping("recommend-places")
+	public ResponseEntity<BaseResponse> recommendPlacesFind(@ModelAttribute RecommendPlacesFindRequest request) {
+
+		List<RecommendPlacesFindResponse> recommendPlaces = marketService.findRecommendPlaces(request);
+
+		return ResponseEntity.ok(DataResponse.from(recommendPlaces));
 	}
 }

@@ -19,6 +19,7 @@ import middle_point_search.backend.domains.market.domain.Market;
 import middle_point_search.backend.domains.market.dto.request.RecommendPlacesFindRequest;
 import middle_point_search.backend.domains.market.dto.response.KakaoSearchResponse;
 import middle_point_search.backend.domains.market.dto.response.MarketApiResponse;
+import middle_point_search.backend.domains.market.dto.response.RecommendPlacesFindResponse;
 import middle_point_search.backend.domains.market.repository.MarketRepository;
 
 @Slf4j
@@ -103,5 +104,28 @@ public class MarketService {
 	// Market List 저장
 	private void saveAllMarket(List<Market> markets) {
 		marketRepository.saveAll(markets);
+	}
+
+	// 키워드로 주위 장소 조회
+	public List<RecommendPlacesFindResponse> findRecommendPlaces(RecommendPlacesFindRequest request) {
+
+		if (!Objects.nonNull(request.getPage())) {
+			throw new CustomException(CommonErrorCode.INVALID_PARAMETER);
+		}
+
+		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+		params.add(kakaoProperties.getParamX(), request.getAddressLong().toString());
+		params.add(kakaoProperties.getParamY(), request.getAddressLat().toString());
+		params.add(kakaoProperties.getParamRadius(), kakaoProperties.getRadius());
+		params.add(kakaoProperties.getParamSize(), kakaoProperties.getSize());
+		params.add(kakaoProperties.getParamPage(), request.getPage().toString());
+		params.add(kakaoProperties.getParamGroup(), request.getPlaceStandard().getCode());
+
+		KakaoSearchResponse response = webClientUtil.getKakao(kakaoProperties.getCategorySearchUrl(), params,
+			KakaoSearchResponse.class);
+
+		return response.getDocuments().stream()
+			.map(RecommendPlacesFindResponse::from)
+			.toList();
 	}
 }
