@@ -1,46 +1,53 @@
 package middle_point_search.backend.common.webClient.util;
 
-import static middle_point_search.backend.common.exception.errorCode.UserErrorCode.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.client.reactive.ReactorClientHttpConnector;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.util.DefaultUriBuilderFactory;
 
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.stereotype.Component;
-
+import io.netty.channel.ChannelOption;
 import lombok.RequiredArgsConstructor;
-import middle_point_search.backend.common.webClient.conf.WebClientConf;
-import middle_point_search.backend.common.exception.CustomException;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
+import lombok.extern.slf4j.Slf4j;
+import middle_point_search.backend.common.properties.KakaoProperties;
+import middle_point_search.backend.common.properties.MarketProperties;
+import reactor.netty.http.client.HttpClient;
 
-@Component
+@Slf4j
+@Configuration
 @RequiredArgsConstructor
 public class WebClientUtil {
 
-	private final WebClientConf webClientConf;
+	private final MarketProperties marketProperties;
+	private final KakaoProperties kakaoProperties;
 
-	// WebClient Conf 세팅을 이용하며, url과 응답 클래스를 제공하여 요청을 해 Mono로 응답받는 메서드
-	public <T> Mono<T> getMono(String url, Class<T> responseDtoClass) {
-		return webClientConf.webClient()
-			.method(HttpMethod.GET)
-			.uri(url)
-			.retrieve()
-			.onStatus(HttpStatusCode::is4xxClientError,
-				clientResponse -> Mono.error(new CustomException(API_UNAUTHORIZED)))
-			.onStatus(HttpStatusCode::is5xxServerError,
-				clientResponse -> Mono.error(new CustomException(API_INTERNAL_SERVER_ERROR)))
-			.bodyToMono(responseDtoClass);
+	private DefaultUriBuilderFactory factory = new DefaultUriBuilderFactory();
+	private HttpClient httpClient = HttpClient.create()
+		.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000); // 5초
+
+	@Bean
+	public WebClient webClientForMarket() {
+		factory.setEncodingMode(DefaultUriBuilderFactory.EncodingMode.VALUES_ONLY);
+		return WebClient.builder()
+			.uriBuilderFactory(factory) //secret Key 인코딩되는 문제 방지하기 위해, DefaultUriBuilderFactory를 이욯
+			.baseUrl(marketProperties.getBaseUrl())
+			.codecs(configurer -> configurer.defaultCodecs()
+				.maxInMemorySize(2 * 1024 * 1024)) // 응답 payload가 클 경우 나는 에러 방지, 최대 2MB
+			.clientConnector(new ReactorClientHttpConnector(httpClient))
+			.build();
 	}
 
-	// WebClient Conf 세팅을 이용하며, url과 응답 클래스를 제공하여 요청을 해 Flux로 응답받는 메서드
-	public <T> Flux<T> getFlux(String url, Class<T> responseDtoClass) {
-		return webClientConf.webClient()
-			.method(HttpMethod.GET)
-			.uri(url)
-			.retrieve()
-			.onStatus(HttpStatusCode::is4xxClientError,
-				clientResponse -> Mono.error(new CustomException(API_UNAUTHORIZED)))
-			.onStatus(HttpStatusCode::is5xxServerError,
-				clientResponse -> Mono.error(new CustomException(API_INTERNAL_SERVER_ERROR)))
-			.bodyToFlux(responseDtoClass);
+	@Bean
+	public WebClient webClientForKakao() {
+		factory.setEncodingMode(DefaultUriBuilderFactory.EncodingMode.VALUES_ONLY);
+		return WebClient.builder()
+			.uriBuilderFactory(factory)
+			.baseUrl(kakaoProperties.getBaseUrl())
+			.codecs(configurer -> configurer.defaultCodecs()
+				.maxInMemorySize(2 * 1024 * 1024)) // 응답 payload가 클 경우 나는 에러 방지, 최대 2MB
+			.clientConnector(new ReactorClientHttpConnector(httpClient))
+			.build();
 	}
 }
