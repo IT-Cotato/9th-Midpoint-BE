@@ -15,4 +15,8 @@ public class MarketProperties {
 	private String marketApiCountUrl;
 	private String marketApiUrl;
 	private Integer marketApiRequestUnit;
+
+	private String paramPage;
+	private String paramPerPage;
+	private String paramKey;
 }
