@@ -44,6 +44,8 @@ public class SecurityConfig {
 
 	//인증, 인가를 거치치 않는 url 명단
 	public final static String[] PERMIT_URLS = {
+
+			"/api/place-vote-rooms",
 		"/api/auth/login",
 		"/api/rooms",
 		"/api/rooms/*/existence"

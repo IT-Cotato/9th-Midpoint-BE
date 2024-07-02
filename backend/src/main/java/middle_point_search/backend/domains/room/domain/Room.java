@@ -46,6 +46,7 @@ public class Room {
 	}
 
 	public static Room from(String identityNumber) {
+
 		return new Room(identityNumber);
 	}
 }
