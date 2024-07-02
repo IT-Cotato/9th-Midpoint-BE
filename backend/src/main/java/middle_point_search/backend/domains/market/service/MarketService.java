@@ -1,18 +1,25 @@
 package middle_point_search.backend.domains.market.service;
 
 import java.util.List;
+import java.util.Objects;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import middle_point_search.backend.common.exception.CustomException;
+import middle_point_search.backend.common.exception.errorCode.CommonErrorCode;
+import middle_point_search.backend.common.properties.KakaoProperties;
+import middle_point_search.backend.common.properties.MarketProperties;
 import middle_point_search.backend.common.webClient.util.WebClientUtil;
 import middle_point_search.backend.domains.market.domain.Market;
+import middle_point_search.backend.domains.market.dto.request.RecommendPlacesFindRequest;
+import middle_point_search.backend.domains.market.dto.response.KakaoSearchResponse;
 import middle_point_search.backend.domains.market.dto.response.MarketApiResponse;
 import middle_point_search.backend.domains.market.repository.MarketRepository;
-import reactor.core.publisher.Mono;
 
 @Slf4j
 @Service
@@ -20,53 +27,77 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class MarketService {
 
-	private final WebClientUtil webClientUtil;
 	private final MarketRepository marketRepository;
 
-	@Value("${market-api-key}")
-	private String MARKET_API_SECRET_KEY;
+	private final MarketProperties marketProperties;
+	private final KakaoProperties kakaoProperties;
 
-	private final String MARKET_API_COUNT_URL = "https://api.odcloud.kr/api/15090955/v1/uddi:10a9cf5c-77d1-4e5d-b7ff-e527e022612e?page=1&perPage=1&serviceKey=%s";
-	private final String MARKET_API_URL = "https://api.odcloud.kr/api/15090955/v1/uddi:10a9cf5c-77d1-4e5d-b7ff-e527e022612e?page=%d&perPage=%d&serviceKey=%s";
-	private final int MARKET_API_REQUEST_UNIT = 1000;
+	private final WebClientUtil webClientUtil;
 
 	@Transactional
 	public void updateMarket() {
-		String countUrl = String.format(MARKET_API_COUNT_URL, MARKET_API_SECRET_KEY);
 
+		log.info("{}", marketProperties.getBaseUrl());
 		marketRepository.deleteAll();
 
-		Mono<MarketApiResponse> countMonoResponse = webClientUtil.getMono(countUrl, MarketApiResponse.class);
-		countMonoResponse.subscribe(marketApiResponse -> {
-			int totalPage = parseCountToPage(marketApiResponse.getTotalCount());
+		int marketCount = getMarketCount();
 
-			requestAndSaveMarkets(totalPage);
-		});
+		log.info("{}", marketCount);
+		int totalPage = parseCountToPage(marketCount);
+
+		requestAndSaveMarkets(totalPage);
+	}
+
+	private int getMarketCount() {
+		String url = marketProperties.getMarketApiUrl();
+
+		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+		params.add(marketProperties.getParamKey(), marketProperties.getKey());
+		params.add(marketProperties.getParamPage(), "1");
+		params.add(marketProperties.getParamPerPage(), "1");
+
+		MarketApiResponse response = webClientUtil.getMarket(url, params, MarketApiResponse.class);
+
+		if (!Objects.nonNull(response)) {
+			throw new CustomException(CommonErrorCode.EXTERNAL_SERVER_ERROR);
+		}
+
+		return response.getTotalCount();
 	}
 
 	// market api를 요청하고 가져온 데이터를 저장하는 메서드
 	private void requestAndSaveMarkets(int totalPage) {
 		for (int i = 1; i <= totalPage; i++) {
-			String url = String.format(MARKET_API_URL, i, MARKET_API_REQUEST_UNIT, MARKET_API_SECRET_KEY);
+			String url = marketProperties.getMarketApiUrl();
 
-			Mono<MarketApiResponse> response = webClientUtil.getMono(url, MarketApiResponse.class);
+			MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+			params.add(marketProperties.getParamKey(), marketProperties.getKey());
+			params.add(marketProperties.getParamPage(), String.valueOf(i));
+			params.add(marketProperties.getParamPerPage(), marketProperties.getMarketApiRequestUnit().toString());
 
-			response.map(MarketApiResponse::getData)
-				.map(marketApiDatas -> marketApiDatas.stream()
-					.map(Market::from)
-					.distinct()
-					.toList())
-				.subscribe(this::saveAllMarket);
+			MarketApiResponse response = webClientUtil.getMarket(url, params, MarketApiResponse.class);
+
+			if (!Objects.nonNull(response)) {
+				throw new CustomException(CommonErrorCode.EXTERNAL_SERVER_ERROR);
+			}
+
+			List<Market> markets = response.getData()
+				.stream()
+				.map(Market::from)
+				.distinct()
+				.toList();
+
+			saveAllMarket(markets);
 		}
 	}
 
 	// 데이터 개수를 페이지로 변환해주는 메서드(개수가 2001이면 1,2,3 페이지로 3 페이지가 리턴)
 	private int parseCountToPage(int count) {
-		if (count % MARKET_API_REQUEST_UNIT == 0) {
-			return count / MARKET_API_REQUEST_UNIT;
+		if (count % marketProperties.getMarketApiRequestUnit() == 0) {
+			return count / marketProperties.getMarketApiRequestUnit();
 		}
 
-		return count / MARKET_API_REQUEST_UNIT + 1;
+		return count / marketProperties.getMarketApiRequestUnit() + 1;
 	}
 
 	// Market List 저장
