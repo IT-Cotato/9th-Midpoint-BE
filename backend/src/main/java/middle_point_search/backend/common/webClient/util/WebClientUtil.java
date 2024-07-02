@@ -1,53 +1,78 @@
 package middle_point_search.backend.common.webClient.util;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.client.reactive.ReactorClientHttpConnector;
+import org.springframework.http.HttpMethod;
+import org.springframework.stereotype.Component;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.util.DefaultUriBuilderFactory;
 
-import io.netty.channel.ChannelOption;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import middle_point_search.backend.common.properties.KakaoProperties;
 import middle_point_search.backend.common.properties.MarketProperties;
-import reactor.netty.http.client.HttpClient;
 
-@Slf4j
-@Configuration
+@Component
 @RequiredArgsConstructor
 public class WebClientUtil {
 
-	private final MarketProperties marketProperties;
 	private final KakaoProperties kakaoProperties;
+	private final MarketProperties marketProperties;
 
-	private DefaultUriBuilderFactory factory = new DefaultUriBuilderFactory();
-	private HttpClient httpClient = HttpClient.create()
-		.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000); // 5초
+	@Qualifier("webClientForMarket")
+	private final WebClient webClientForMarket;
 
-	@Bean
-	public WebClient webClientForMarket() {
-		factory.setEncodingMode(DefaultUriBuilderFactory.EncodingMode.VALUES_ONLY);
-		return WebClient.builder()
-			.uriBuilderFactory(factory) //secret Key 인코딩되는 문제 방지하기 위해, DefaultUriBuilderFactory를 이욯
-			.baseUrl(marketProperties.getBaseUrl())
-			.codecs(configurer -> configurer.defaultCodecs()
-				.maxInMemorySize(2 * 1024 * 1024)) // 응답 payload가 클 경우 나는 에러 방지, 최대 2MB
-			.clientConnector(new ReactorClientHttpConnector(httpClient))
-			.build();
+	@Qualifier("webClientForKakao")
+	private final WebClient webClientForKakao;
+
+	// WebClient Conf 세팅을 이용하며, url과 응답 클래스 및 파라미터를 제공하여 요청을 해 Mono로 응답받는 메서드
+	public <T> T getMarket(String url, MultiValueMap<String, String> params, Class<T> response) {
+		return webClientForMarket
+			.method(HttpMethod.GET)
+			.uri(uriBuilder -> uriBuilder
+				.path(url)
+				.queryParam(marketProperties.getParamKey(), marketProperties)
+				.queryParams(params)
+				.build())
+			.retrieve()
+			.bodyToMono(response)
+			.block();
 	}
 
-	@Bean
-	public WebClient webClientForKakao() {
-		factory.setEncodingMode(DefaultUriBuilderFactory.EncodingMode.VALUES_ONLY);
-		return WebClient.builder()
-			.uriBuilderFactory(factory)
-			.baseUrl(kakaoProperties.getBaseUrl())
-			.codecs(configurer -> configurer.defaultCodecs()
-				.maxInMemorySize(2 * 1024 * 1024)) // 응답 payload가 클 경우 나는 에러 방지, 최대 2MB
-			.clientConnector(new ReactorClientHttpConnector(httpClient))
-			.build();
+	// WebClient Conf 세팅을 이용하며, url과 응답 클래스를 제공하여 요청을 해 Mono로 응답받는 메서드
+	public <T> T getMarket(String url, Class<T> response) {
+		return webClientForMarket
+			.method(HttpMethod.GET)
+			.uri(uriBuilder -> uriBuilder
+				.path(url)
+				.queryParam(marketProperties.getParamKey(), marketProperties)
+				.build())
+			.retrieve()
+			.bodyToMono(response)
+			.block();
+	}
+
+	// WebClient Conf 세팅을 이용하며, url과 응답 클래스 및 파라미터를 제공하여 요청을 해 Mono로 응답받는 메서드
+	public <T> T getKakao(String url, MultiValueMap<String, String> params, Class<T> response) {
+		return webClientForKakao
+			.method(HttpMethod.GET)
+			.uri(uriBuilder -> uriBuilder
+				.path(url)
+				.queryParams(params)
+				.build())
+			.header(HttpHeaders.AUTHORIZATION, kakaoProperties.getKey())
+			.retrieve()
+			.bodyToMono(response)
+			.block();
+	}
+
+	// WebClient Conf 세팅을 이용하며, url과 응답 클래스를 제공하여 요청을 해 Mono로 응답받는 메서드
+	public <T> T getKakao(String url, Class<T> response) {
+		return webClientForKakao
+			.method(HttpMethod.GET)
+			.uri(url)
+			.header(HttpHeaders.AUTHORIZATION, kakaoProperties.getKey())
+			.retrieve()
+			.bodyToMono(response)
+			.block();
 	}
 }
