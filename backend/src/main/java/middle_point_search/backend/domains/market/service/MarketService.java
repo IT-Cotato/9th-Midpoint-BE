@@ -109,10 +109,6 @@ public class MarketService {
 	// 키워드로 주위 장소 조회
 	public List<RecommendPlacesFindResponse> findRecommendPlaces(RecommendPlacesFindRequest request) {
 
-		if (!Objects.nonNull(request.getPage())) {
-			throw new CustomException(CommonErrorCode.INVALID_PARAMETER);
-		}
-
 		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
 		params.add(kakaoProperties.getParamX(), request.getAddressLong().toString());
 		params.add(kakaoProperties.getParamY(), request.getAddressLat().toString());

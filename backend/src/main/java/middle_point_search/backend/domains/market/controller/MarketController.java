@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import middle_point_search.backend.common.dto.BaseResponse;
@@ -36,7 +37,7 @@ public class MarketController {
 	}
 
 	@GetMapping("recommend-places")
-	public ResponseEntity<BaseResponse> recommendPlacesFind(@ModelAttribute RecommendPlacesFindRequest request) {
+	public ResponseEntity<BaseResponse> recommendPlacesFind(@Valid @ModelAttribute RecommendPlacesFindRequest request) {
 
 		List<RecommendPlacesFindResponse> recommendPlaces = marketService.findRecommendPlaces(request);
 
