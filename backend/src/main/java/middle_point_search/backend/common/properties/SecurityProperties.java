@@ -1,6 +1,4 @@
-package middle_point_search.backend.common.security.properties;
-
-import java.util.List;
+package middle_point_search.backend.common.properties;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

@@ -29,7 +29,7 @@ import middle_point_search.backend.common.security.login.handler.LoginFailureHan
 import middle_point_search.backend.common.security.login.handler.LoginSuccessHandler;
 import middle_point_search.backend.common.security.login.provider.CustomAuthenticationProvider;
 import middle_point_search.backend.common.security.login.service.CustomUserDetailsService;
-import middle_point_search.backend.common.security.properties.SecurityProperties;
+import middle_point_search.backend.common.properties.SecurityProperties;
 import middle_point_search.backend.domains.member.repository.MemberRepository;
 
 @Configuration

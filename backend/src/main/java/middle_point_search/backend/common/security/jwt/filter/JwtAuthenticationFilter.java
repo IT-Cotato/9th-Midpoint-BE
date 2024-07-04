@@ -19,9 +19,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import middle_point_search.backend.common.exception.CustomException;
-import middle_point_search.backend.common.security.conf.SecurityConfig;
 import middle_point_search.backend.common.security.jwt.provider.JwtTokenProvider;
-import middle_point_search.backend.common.security.properties.SecurityProperties;
+import middle_point_search.backend.common.properties.SecurityProperties;
 import middle_point_search.backend.domains.member.repository.MemberRepository;
 
 @Slf4j
