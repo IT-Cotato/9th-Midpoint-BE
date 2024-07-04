@@ -26,7 +26,7 @@ public class RecommendPlacesFindResponse {
 		String siGunGu = null;
 		String roadNameAddress = null;
 		if (splitAddress.length < 3) {
-			log.warn("RecommendPlacesFindResponse : {}의 Index가 범위를 초과했습니다.", document.getRoad_address_name());
+			log.warn("RecommendPlacesFindResponse : {}({})의 Index가 범위를 초과했습니다.", document.getPlace_name() ,document.getRoad_address_name());
 		} else {
 			siDo = splitAddress[0];
 			siGunGu = splitAddress[1];
