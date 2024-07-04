@@ -31,7 +31,7 @@ public class KakaoSearchResponse {
 
 	@Getter
 	@NoArgsConstructor(access = AccessLevel.PRIVATE)
-	public static class Document {
+	public static class Document implements Comparable<Document>{
 		private String place_name;
 		private String distance;
 		private String place_url;
@@ -44,5 +44,10 @@ public class KakaoSearchResponse {
 		private String category_group_name;
 		private String x;
 		private String y;
+
+		@Override
+		public int compareTo(Document o) {
+			return Integer.parseInt(this.distance) - Integer.parseInt(o.distance);
+		}
 	}
 }
