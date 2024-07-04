@@ -1,15 +1,21 @@
 package middle_point_search.backend.common.webClient.util;
 
+import static middle_point_search.backend.common.exception.errorCode.CommonErrorCode.*;
+import static middle_point_search.backend.common.exception.errorCode.UserErrorCode.*;
+
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Component;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import lombok.RequiredArgsConstructor;
+import middle_point_search.backend.common.exception.CustomException;
 import middle_point_search.backend.common.properties.KakaoProperties;
 import middle_point_search.backend.common.properties.MarketProperties;
+import reactor.core.publisher.Mono;
 
 @Component
 @RequiredArgsConstructor
@@ -34,6 +40,10 @@ public class WebClientUtil {
 				.queryParams(params)
 				.build())
 			.retrieve()
+			.onStatus(HttpStatusCode::is4xxClientError,
+				clientResponse -> Mono.error(new CustomException(BAD_REQUEST)))
+			.onStatus(HttpStatusCode::is5xxServerError,
+				clientResponse -> Mono.error(new CustomException(API_INTERNAL_SERVER_ERROR)))
 			.bodyToMono(response)
 			.block();
 	}
@@ -47,6 +57,10 @@ public class WebClientUtil {
 				.queryParam(marketProperties.getParamKey(), marketProperties)
 				.build())
 			.retrieve()
+			.onStatus(HttpStatusCode::is4xxClientError,
+				clientResponse -> Mono.error(new CustomException(BAD_REQUEST)))
+			.onStatus(HttpStatusCode::is5xxServerError,
+				clientResponse -> Mono.error(new CustomException(API_INTERNAL_SERVER_ERROR)))
 			.bodyToMono(response)
 			.block();
 	}
@@ -61,6 +75,10 @@ public class WebClientUtil {
 				.build())
 			.header(HttpHeaders.AUTHORIZATION, kakaoProperties.getKey())
 			.retrieve()
+			.onStatus(HttpStatusCode::is4xxClientError,
+				clientResponse -> Mono.error(new CustomException(BAD_REQUEST)))
+			.onStatus(HttpStatusCode::is5xxServerError,
+				clientResponse -> Mono.error(new CustomException(API_INTERNAL_SERVER_ERROR)))
 			.bodyToMono(response)
 			.block();
 	}
@@ -72,6 +90,10 @@ public class WebClientUtil {
 			.uri(url)
 			.header(HttpHeaders.AUTHORIZATION, kakaoProperties.getKey())
 			.retrieve()
+			.onStatus(HttpStatusCode::is4xxClientError,
+				clientResponse -> Mono.error(new CustomException(BAD_REQUEST)))
+			.onStatus(HttpStatusCode::is5xxServerError,
+				clientResponse -> Mono.error(new CustomException(API_INTERNAL_SERVER_ERROR)))
 			.bodyToMono(response)
 			.block();
 	}
