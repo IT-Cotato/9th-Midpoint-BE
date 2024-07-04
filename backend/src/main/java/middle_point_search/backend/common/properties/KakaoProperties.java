@@ -21,6 +21,7 @@ public class KakaoProperties {
 	private String paramSize;
 	private String paramSort;
 	private String paramGroup;
+	private String paramQuery;
 
 	private String radius;
 	private String size;
