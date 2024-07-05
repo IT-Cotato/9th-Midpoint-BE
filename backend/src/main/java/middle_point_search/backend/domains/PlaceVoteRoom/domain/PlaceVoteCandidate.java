@@ -2,9 +2,12 @@ package middle_point_search.backend.domains.PlaceVoteRoom.domain;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import middle_point_search.backend.domains.member.domain.Member;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -20,33 +23,65 @@ public class PlaceVoteCandidate {
     @Column(name = "name")
     private String name;
 
-    //이거 넣는게 맞는거 같아
+    //투표수
     private int count;
 
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "placeVoteRoom_id") //이렇게 하는게 맞나?
+    @JoinColumn(name = "placeVoteRoom_id")
     private PlaceVoteRoom placeVoteRoom;
 
+
+    @OneToMany(mappedBy = "placeVoteCandidate", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
+    private List<PlaceVoteCandidateMember> voters = new ArrayList<>();
 
     public PlaceVoteCandidate(String name, PlaceVoteRoom placeVoteRoom) {
         this.name = name;
         this.placeVoteRoom = placeVoteRoom;
     }
 
-    @Builder
-    public PlaceVoteCandidate(PlaceVoteRoom placeVoteRoom, String name){
-        this.placeVoteRoom = placeVoteRoom;
-        this.name=name;
-        this.count = 0;
 
-    }
 
-    public void vote() {
-        count++;
-    }
     public void setPlaceVoteRoom(PlaceVoteRoom placeVoteRoom) {
         this.placeVoteRoom = placeVoteRoom;
     }
 
+
+    //투표는 한번만 할 수 있도록
+   public void addVoter(Member member) {
+       if (!hasVoter(member)) {
+           PlaceVoteCandidateMember voteCandidateMember = new PlaceVoteCandidateMember(this, member);
+           voters.add(voteCandidateMember);
+           this.count++;
+       }
+   }
+    public void addUpdateVoter(Member member) {
+        PlaceVoteCandidateMember voteCandidateMember = new PlaceVoteCandidateMember(this, member);
+        voters.add(voteCandidateMember);
+        this.count++;
+    }
+
+    public void removeVoter(Member member) {
+        PlaceVoteCandidateMember toRemove = voters.stream()
+                .filter(voter -> voter.getMember().equals(member))
+                .findFirst()
+                .orElse(null);
+        if (toRemove != null) {
+            voters.remove(toRemove);
+            this.count--;
+        }
+    }
+
+
+    public int getCount() {
+    return count;
+}
+
+    public void setCount(int count) {
+        this.count = count;
+    }
+
+    public boolean hasVoter(Member member) {
+        return voters.stream().anyMatch(voter -> voter.getMember().equals(member));
+    }
 }

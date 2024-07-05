@@ -5,7 +5,9 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.room.domain.Room;
+
 
 import java.util.List;
 
@@ -46,7 +48,6 @@ public class PlaceVoteRoom {
         this.duplication = duplication;
         this.numVoter = numVoter;
 
-      //  this.url= url;
 
     }
 
@@ -55,7 +56,6 @@ public class PlaceVoteRoom {
             this.url = url;
         }
     }
-
     public void setPlaceVoteCandidates(List<PlaceVoteCandidate> placeVoteCandidates) {
         this.placeVoteCandidates = placeVoteCandidates;
         for (PlaceVoteCandidate candidate : placeVoteCandidates) {
@@ -63,6 +63,20 @@ public class PlaceVoteRoom {
         }
     }
 
+    public void vote(Member member, PlaceVoteCandidate candidate) {
+        PlaceVoteCandidateMember voteCandidateMember = new PlaceVoteCandidateMember(candidate, member);
+        if (duplication) {
+            candidate.addVoter(member);
+        } else {
+            for (PlaceVoteCandidate c : placeVoteCandidates) {
+                c.removeVoter(member);
+            }
+            candidate.addVoter(member);
+        }
+    }
 
+    public boolean isDuplication() {
+        return duplication;
+    }
 }
 

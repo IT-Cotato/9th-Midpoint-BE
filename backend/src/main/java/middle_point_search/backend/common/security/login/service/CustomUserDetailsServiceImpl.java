@@ -16,6 +16,7 @@ import middle_point_search.backend.domains.member.repository.MemberRepository;
 import middle_point_search.backend.domains.member.service.MemberService;
 import middle_point_search.backend.domains.room.repository.RoomRepository;
 
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -28,27 +29,23 @@ public class CustomUserDetailsServiceImpl implements CustomUserDetailsService {
 
 	@Override
 	@Transactional
-	public UserDetails loadUserByUsernameAndRoomId(String roomId, String name, String pw) throws
-		UsernameNotFoundException,
-		RoomNotFoundException {
+	public UserDetails loadUserByUsernameAndRoomId(String roomId, String name, String pw) throws UsernameNotFoundException, RoomNotFoundException {
 
 		roomRepository.findRoomByIdentityNumber(roomId);
 		if (!roomRepository.existsByIdentityNumber(roomId)) {
 			throw new RoomNotFoundException("해당하는 방이 존재하지 않습니다");
 		}
 
-		Optional<Member> optionalMember = memberRepository
-			.findByRoom_IdentityNumberAndName(roomId, name);
+		Optional<Member> optionalMember = memberRepository.findByRoom_IdentityNumberAndName(roomId, name);
 
-		//멤버가 존재하지 않으면 생성
+		// 멤버가 존재하지 않으면 생성
 		Member member = optionalMember.orElseGet(() -> memberService.createMember(roomId, name, pw));
 
-		return CustomUserDetailsImpl.of(roomId, name, member.getPw(), "USER", true);
+		return CustomUserDetailsImpl.of(member.getId(), roomId, name, member.getPw(), "USER", true); // id 추가
 	}
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		return null;
 	}
-
 }

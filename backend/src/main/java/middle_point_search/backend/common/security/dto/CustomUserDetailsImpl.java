@@ -11,17 +11,19 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import middle_point_search.backend.domains.member.domain.Member;
 
+
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class CustomUserDetailsImpl implements CustomUserDetails {
 
+	private Long id; // 추가
 	private String roomId;
 	private String name;
 	private String pw;
 	private String authority;
 	private boolean enabled;
 
-	public static CustomUserDetailsImpl of(String roomId, String name, String pw, String authority, boolean enabled) {
-		return new CustomUserDetailsImpl(roomId, name, pw, authority, enabled);
+	public static CustomUserDetailsImpl of(Long id, String roomId, String name, String pw, String authority, boolean enabled) {
+		return new CustomUserDetailsImpl(id, roomId, name, pw, authority, enabled);
 	}
 
 	public static CustomUserDetailsImpl from(Member member) {
@@ -30,8 +32,9 @@ public class CustomUserDetailsImpl implements CustomUserDetails {
 		String pw = member.getPw();
 		String authority = "USER";
 		boolean enabled = true;
+		Long id = member.getId(); // 추가
 
-		return new CustomUserDetailsImpl(roomId, name, pw, authority, enabled);
+		return new CustomUserDetailsImpl(id, roomId, name, pw, authority, enabled);
 	}
 
 	@Override
@@ -54,6 +57,11 @@ public class CustomUserDetailsImpl implements CustomUserDetails {
 	@Override
 	public String getRoomId() {
 		return roomId;
+	}
+
+	@Override
+	public Long getId() { // 추가
+		return id;
 	}
 
 	@Override
