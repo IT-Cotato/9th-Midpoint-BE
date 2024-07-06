@@ -39,5 +39,3 @@ out/
 src/main/resources/application.properties
 ### application-security ###
 src/main/resources/application-security.properties
-### applcation-api ###
-src/main/resources/application-api.properties
