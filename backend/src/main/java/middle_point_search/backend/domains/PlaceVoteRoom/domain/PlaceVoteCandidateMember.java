@@ -12,16 +12,16 @@ import middle_point_search.backend.domains.member.domain.Member;
 public class PlaceVoteCandidateMember {
 
     @Id
-    @Column(name = "placeVoteCandidateMember_id")
+    @Column(name = "place_vote_candidate_member_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "placeVoteCandidate_id")
+    @JoinColumn(name = "place_vote_candidate_id")
     private PlaceVoteCandidate placeVoteCandidate;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "MEMBER_ID")
+    @JoinColumn(name = "member_id")
     private Member member;
     public PlaceVoteCandidateMember(PlaceVoteCandidate placeVoteCandidate, Member member) {
         this.placeVoteCandidate = placeVoteCandidate;

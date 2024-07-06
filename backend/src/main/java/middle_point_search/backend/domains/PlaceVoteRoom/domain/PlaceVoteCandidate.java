@@ -13,17 +13,15 @@ import java.util.List;
 public class PlaceVoteCandidate {
 
     @Id
-    @Column(name = "placeVoteCandidate_id")
+    @Column(name = "place_vote_candidate_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "name")
     private String name;
-    //투표수
-    private int count;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "placeVoteRoom_id")
+    @JoinColumn(name = "place_vote_room_id")
     private PlaceVoteRoom placeVoteRoom;
 
     @OneToMany(mappedBy = "placeVoteCandidate", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
@@ -41,32 +39,26 @@ public class PlaceVoteCandidate {
         if (!hasVoter(member)) {
             PlaceVoteCandidateMember voteCandidateMember = new PlaceVoteCandidateMember(this, member);
             voters.add(voteCandidateMember);
-            this.count++;
         }
     }
-
     public void addUpdateVoter(Member member) {
         PlaceVoteCandidateMember voteCandidateMember = new PlaceVoteCandidateMember(this, member);
         voters.add(voteCandidateMember);
-        this.count++;
     }
-
     public void removeVoter(Member member) {
-        PlaceVoteCandidateMember toRemove = voters.stream().filter(voter -> voter.getMember().equals(member)).findFirst().orElse(null);
+        PlaceVoteCandidateMember toRemove = voters.stream()
+                .filter(voter -> voter.getMember().equals(member))
+                .findFirst()
+                .orElse(null);
         if (toRemove != null) {
             voters.remove(toRemove);
-            this.count--;
         }
     }
-    public int getCount() {
-        return count;
-    }
-
-    public void setCount(int count) {
-        this.count = count;
-    }
-
     public boolean hasVoter(Member member) {
         return voters.stream().anyMatch(voter -> voter.getMember().equals(member));
     }
+    public int getCount() {
+        return voters.size();
+    }
 }
+

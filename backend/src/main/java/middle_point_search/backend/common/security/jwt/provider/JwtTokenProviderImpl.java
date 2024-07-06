@@ -1,13 +1,15 @@
 package middle_point_search.backend.common.security.jwt.provider;
 
 import static middle_point_search.backend.common.exception.errorCode.UserErrorCode.*;
+
 import java.security.Key;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
-import middle_point_search.backend.common.properties.JwtProperties;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import io.jsonwebtoken.Claims;
@@ -22,8 +24,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import middle_point_search.backend.common.dto.DataResponse;
 import middle_point_search.backend.common.exception.CustomException;
-import middle_point_search.backend.common.security.dto.CustomUserDetails;
-import middle_point_search.backend.common.security.dto.CustomUserDetailsImpl;
+import middle_point_search.backend.common.security.dto.MemberAuthenticationToken;
+import middle_point_search.backend.common.properties.JwtProperties;
 import middle_point_search.backend.common.security.jwt.dto.JwtDTO.AccessAndRefreshTokenResponse;
 import middle_point_search.backend.common.security.jwt.dto.JwtDTO.AccessTokenResponse;
 import middle_point_search.backend.common.util.ResponseWriter;
@@ -45,7 +47,7 @@ public class JwtTokenProviderImpl implements JwtTokenProvider {
         this.key = Keys.hmacShaKeyFor(jwtProperties.getSecret().getBytes());
     }
 
-
+    //authentication을 만들어주는 메서드
     @Override
     public Authentication getAuthentication(String accessToken) {
         String roomId = extractRoomId(accessToken).orElseThrow(() -> new CustomException(INVALID_ACCESS_TOKEN));
@@ -54,11 +56,12 @@ public class JwtTokenProviderImpl implements JwtTokenProvider {
         Member member = memberRepository.findByRoom_IdentityNumberAndName(roomId, name)
                 .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
 
-        CustomUserDetails userDetails = CustomUserDetailsImpl.from(member);
+        String pw = member.getPw();
 
-        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+        List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("USER"));
+
+        return MemberAuthenticationToken.authenticated(roomId, name, pw, authorities);
     }
-
 
     @Override
     public String createAccessToken(String roomId, String name) {
@@ -193,7 +196,6 @@ public class JwtTokenProviderImpl implements JwtTokenProvider {
         return false;
     }
 
-    @Override
     public void checkRefreshTokenAndReIssueAccessAndRefreshToken(HttpServletResponse response, String refreshToken) {
         Member member = memberRepository.findByRefreshToken(refreshToken)
                 .orElseThrow(() -> new CustomException(INVALID_REFRESH_TOKEN));
@@ -204,7 +206,6 @@ public class JwtTokenProviderImpl implements JwtTokenProvider {
         String newRefreshToken = createRefreshToken();
 
         updateRefreshToken(roomId, name, newRefreshToken);
-
-        sendAccessAndRefreshToken(response, accessToken, newRefreshToken);
+        sendAccessAndRefreshToken(response, accessToken, refreshToken);
     }
 }

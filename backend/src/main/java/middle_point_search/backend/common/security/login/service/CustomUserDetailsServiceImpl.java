@@ -41,7 +41,7 @@ public class CustomUserDetailsServiceImpl implements CustomUserDetailsService {
 		// 멤버가 존재하지 않으면 생성
 		Member member = optionalMember.orElseGet(() -> memberService.createMember(roomId, name, pw));
 
-		return CustomUserDetailsImpl.of(member.getId(), roomId, name, member.getPw(), "USER", true); // id 추가
+		return CustomUserDetailsImpl.of(roomId, name, member.getPw(), "USER", true); // id 추가
 	}
 
 	@Override

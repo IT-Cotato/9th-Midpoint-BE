@@ -14,21 +14,21 @@ import java.util.List;
 public class PlaceVoteRoom {
 
     @Id
-    @Column(name = "placeVoteRoom_id")
+    @Column(name = "place_vote_room_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "duplication")
     private Boolean duplication;
 
-    @Column(name = "numVoter")
+    @Column(name = "num_voter")
     private Integer numVoter;
 
     @Column(name = "url")
     private String url;
 
     @OneToOne
-    @JoinColumn(name = "ROOM_ID")
+    @JoinColumn(name = "room_id")
     private Room room;
 
     @OneToMany(mappedBy = "placeVoteRoom", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
