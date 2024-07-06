@@ -4,7 +4,6 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
 import java.util.List;
 
 
@@ -15,10 +14,12 @@ public class PlaceVoteRoomDTO {
     public static class PlaceVoteRoomCreateResponse {
         private final Long id;
         private final String url;
+
         public static PlaceVoteRoomCreateResponse from(Long id, String url) {
             return new PlaceVoteRoomCreateResponse(id, url);
         }
     }
+
     @Getter
     @AllArgsConstructor
     @NoArgsConstructor

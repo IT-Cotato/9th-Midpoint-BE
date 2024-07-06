@@ -16,19 +16,13 @@ public class PlaceVoteCandidateMember {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "placeVoteCandidate_id")
     private PlaceVoteCandidate placeVoteCandidate;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name ="MEMBER_ID")
+    @JoinColumn(name = "MEMBER_ID")
     private Member member;
-
-
-
-
-
     public PlaceVoteCandidateMember(PlaceVoteCandidate placeVoteCandidate, Member member) {
         this.placeVoteCandidate = placeVoteCandidate;
         this.member = member;

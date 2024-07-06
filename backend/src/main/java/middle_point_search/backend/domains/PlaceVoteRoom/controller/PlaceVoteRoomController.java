@@ -1,6 +1,5 @@
 package middle_point_search.backend.domains.PlaceVoteRoom.controller;
 
-
 import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.dto.DataResponse;
 import middle_point_search.backend.common.dto.ErrorResponse;
@@ -10,7 +9,6 @@ import middle_point_search.backend.domains.PlaceVoteRoom.dto.PlaceVoteRequestDTO
 import middle_point_search.backend.domains.PlaceVoteRoom.dto.PlaceVoteRoomDTO;
 import middle_point_search.backend.domains.PlaceVoteRoom.dto.PlaceVoteRoomRequestDTO;
 import middle_point_search.backend.domains.PlaceVoteRoom.service.PlaceVoteRoomService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +21,6 @@ public class PlaceVoteRoomController {
 
 
     private final PlaceVoteRoomService placeVoteRoomService;
-
 
     @PostMapping
     public ResponseEntity<DataResponse<PlaceVoteRoomDTO.PlaceVoteRoomCreateResponse>> createPlaceVoteRoom(@RequestBody PlaceVoteRoomRequestDTO request) {
@@ -38,7 +35,6 @@ public class PlaceVoteRoomController {
     }
 
 
-
     @PostMapping("/{place-vote-rooms-id}/vote")
     public ResponseEntity<?> vote(@PathVariable("place-vote-rooms-id") Long placeVoteRoomId, @RequestBody PlaceVoteRequestDTO placeVoteRequest) {
         try {
@@ -50,7 +46,7 @@ public class PlaceVoteRoomController {
         }
     }
 
-   @PatchMapping("/{place-vote-rooms-id}/vote")
+    @PatchMapping("/{place-vote-rooms-id}/vote")
     public ResponseEntity<?> updateVote(@PathVariable("place-vote-rooms-id") Long placeVoteRoomId, @RequestBody PlaceVoteRequestDTO placeVoteRequest) {
         placeVoteRoomService.updateVote(placeVoteRoomId, placeVoteRequest);
         return ResponseEntity.ok(DataResponse.from(null));

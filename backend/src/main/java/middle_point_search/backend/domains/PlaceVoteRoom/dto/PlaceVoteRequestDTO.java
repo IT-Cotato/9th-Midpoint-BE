@@ -1,6 +1,5 @@
 package middle_point_search.backend.domains.PlaceVoteRoom.dto;
 
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

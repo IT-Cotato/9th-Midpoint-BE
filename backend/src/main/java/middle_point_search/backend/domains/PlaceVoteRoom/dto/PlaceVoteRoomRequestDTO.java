@@ -1,7 +1,6 @@
 package middle_point_search.backend.domains.PlaceVoteRoom.dto;
 
 import lombok.Getter;
-
 import java.util.List;
 
 @Getter

@@ -1,6 +1,5 @@
 package middle_point_search.backend.domains.PlaceVoteRoom.service;
 
-
 import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.exception.AlreadyVotedException;
 import middle_point_search.backend.common.exception.DuplicateVoteRoomException;
