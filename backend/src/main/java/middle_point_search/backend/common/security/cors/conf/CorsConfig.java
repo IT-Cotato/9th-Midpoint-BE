@@ -6,7 +6,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import lombok.RequiredArgsConstructor;
-import middle_point_search.backend.common.security.properties.CorsProperties;
+import middle_point_search.backend.common.properties.CorsProperties;
 
 @Configuration
 @RequiredArgsConstructor

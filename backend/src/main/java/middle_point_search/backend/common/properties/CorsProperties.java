@@ -1,4 +1,4 @@
-package middle_point_search.backend.common.security.properties;
+package middle_point_search.backend.common.properties;
 
 import java.util.List;
 
