@@ -9,8 +9,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.util.AntPathMatcher;
@@ -19,6 +17,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
+import middle_point_search.backend.common.properties.SecurityProperties;
 import middle_point_search.backend.common.security.exception.hadlingFilter.ExceptionHandlingFilter;
 import middle_point_search.backend.common.security.handler.CustomAccessDeniedHandler;
 import middle_point_search.backend.common.security.handler.CustomAuthenticationEntryPoint;
@@ -28,8 +27,6 @@ import middle_point_search.backend.common.security.login.filter.JsonNamePwAuthen
 import middle_point_search.backend.common.security.login.handler.LoginFailureHandler;
 import middle_point_search.backend.common.security.login.handler.LoginSuccessHandler;
 import middle_point_search.backend.common.security.login.provider.CustomAuthenticationProvider;
-import middle_point_search.backend.common.security.login.service.CustomUserDetailsService;
-import middle_point_search.backend.common.properties.SecurityProperties;
 import middle_point_search.backend.domains.member.repository.MemberRepository;
 
 @Configuration
@@ -38,7 +35,7 @@ import middle_point_search.backend.domains.member.repository.MemberRepository;
 public class SecurityConfig {
 
 	private final ObjectMapper objectMapper;
-	private final CustomUserDetailsService customUserDetailsService;
+	private final CustomAuthenticationProvider authenticationProvider;
 	private final JwtTokenProvider jwtTokenProvider;
 	private final MemberRepository memberRepository;
 
@@ -48,7 +45,7 @@ public class SecurityConfig {
 	private final LoginSuccessHandler loginSuccessHandler;
 	private final LoginFailureHandler loginFailureHandler;
 
-	private AntPathMatcher pathMatcher = new AntPathMatcher();
+	private final AntPathMatcher pathMatcher = new AntPathMatcher();
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -89,14 +86,7 @@ public class SecurityConfig {
 	//authentication Provider 관리를 위한 Manager 등록
 	@Bean
 	public AuthenticationManager authenticationManager() throws Exception {
-		CustomAuthenticationProvider authenticationProvider = new CustomAuthenticationProvider(
-			customUserDetailsService);
 		return new ProviderManager(authenticationProvider);
-	}
-
-	@Bean
-	public PasswordEncoder passwordEncoder() {
-		return PasswordEncoderFactories.createDelegatingPasswordEncoder(); //
 	}
 
 	//로그인 필터 등록
