@@ -8,7 +8,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import middle_point_search.backend.domains.member.domain.Member;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)

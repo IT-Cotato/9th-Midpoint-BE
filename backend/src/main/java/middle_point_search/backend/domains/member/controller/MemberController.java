@@ -1,16 +1,12 @@
 package middle_point_search.backend.domains.member.controller;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.dto.BaseResponse;
-import middle_point_search.backend.common.dto.DataResponse;
-import middle_point_search.backend.common.security.dto.MemberAuthenticationToken;
 import middle_point_search.backend.domains.member.service.MemberService;
 
 @RestController
@@ -27,3 +23,4 @@ public class MemberController {
 		return ResponseEntity.ok(BaseResponse.ok());
 	}
 }
+
