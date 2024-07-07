@@ -6,7 +6,6 @@ import static middle_point_search.backend.common.exception.errorCode.UserErrorCo
 import java.io.IOException;
 import java.util.Arrays;
 
-import middle_point_search.backend.common.properties.SecurityProperties;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,6 +19,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import middle_point_search.backend.common.exception.CustomException;
+import middle_point_search.backend.common.properties.SecurityProperties;
 import middle_point_search.backend.common.security.jwt.provider.JwtTokenProvider;
 import middle_point_search.backend.domains.member.repository.MemberRepository;
 
@@ -37,26 +37,25 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		String path = request.getRequestURI();
 
 		return Arrays.stream(securityProperties.getPermitUrls())
-				.anyMatch(permitUrl -> pathMatcher.match(permitUrl, path));
+			.anyMatch(permitUrl -> pathMatcher.match(permitUrl, path));
 	}
-
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
-									FilterChain filterChain) throws ServletException, IOException, CustomException {
+		FilterChain filterChain) throws ServletException, IOException, CustomException {
 
 		final String refreshToken = jwtTokenProvider.extractRefreshToken(request).orElse(null);
 		final String accessToken = jwtTokenProvider.extractAccessToken(request).orElse(null);
+
 		//1. access토큰이 존재하며, accessToken이 유효하면 인증
 		//2. access토큰이 존재하며, accesToken이 유효하지 않으면 에러 리턴
 		//3. refresh토큰이 존재하며, refreshToken이 유효하면 access 토큰 재발급
 		//4. refresh토큰이 존재하며, refreshToken이 유효하지 않으면 로그인 유도
 		//5. 그 외 모든 경우는 에러 리턴
-
 		if (accessToken != null && jwtTokenProvider.isTokenValid(accessToken)) {
 			log.info("access토큰 인증 성공");
 			Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
-			SecurityContextHolder.getContext().setAuthentication(authentication);
+			saveAuthentication(authentication);
 			filterChain.doFilter(request, response);
 		} else if (accessToken != null && !jwtTokenProvider.isTokenValid(accessToken)) {
 			log.info("access토큰 인증 실패");
@@ -72,7 +71,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			throw new CustomException(UNAUTHORIZED);
 		}
 	}
-
 
 	private void saveAuthentication(Authentication authentication) {
 		SecurityContext context = SecurityContextHolder.createEmptyContext();
