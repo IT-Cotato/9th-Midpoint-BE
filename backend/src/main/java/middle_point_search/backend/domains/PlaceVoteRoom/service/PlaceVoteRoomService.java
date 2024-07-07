@@ -111,4 +111,12 @@ public class PlaceVoteRoomService {
         });
         placeVoteRoomRepository.save(placeVoteRoom);
     }
+
+    //다시 투표시 투표방 삭제
+    @Transactional
+    public void deletePlaceVoteRoom(Long placeVoteRoomId) {
+        PlaceVoteRoom placeVoteRoom = placeVoteRoomRepository.findById(placeVoteRoomId)
+                .orElseThrow(() -> new CustomException(CommonErrorCode.INVALID_PARAMETER));
+        placeVoteRoomRepository.delete(placeVoteRoom);
+    }
 }

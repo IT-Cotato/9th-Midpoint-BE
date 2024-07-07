@@ -14,6 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import static middle_point_search.backend.domains.PlaceVoteRoom.dto.PlaceVoteRoomDTO.*;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/place-vote-rooms")
@@ -24,17 +26,15 @@ public class PlaceVoteRoomController {
     private final PlaceVoteRoomService placeVoteRoomService;
 
     @PostMapping
-    public ResponseEntity<DataResponse<PlaceVoteRoomDTO.PlaceVoteRoomCreateResponse>> placeVoteRoomCreate(@RequestBody PlaceVoteRoomRequestDTO request) {
-        PlaceVoteRoomDTO.PlaceVoteRoomCreateResponse response = placeVoteRoomService.createPlaceVoteRoom(request);
+    public ResponseEntity<DataResponse<PlaceVoteRoomCreateResponse>> placeVoteRoomCreate(@RequestBody PlaceVoteRoomRequestDTO request) {
+        PlaceVoteRoomCreateResponse response = placeVoteRoomService.createPlaceVoteRoom(request);
         return ResponseEntity.ok(DataResponse.from(response));
     }
-
     @GetMapping("/{placeVoteRoomId}")
-    public ResponseEntity<DataResponse<PlaceVoteRoomDTO.PlaceVoteInfoResponse>> placeVoteRoomGet(@PathVariable Long placeVoteRoomId) {
-        PlaceVoteRoomDTO.PlaceVoteInfoResponse response = placeVoteRoomService.getPlaceVoteRoom(placeVoteRoomId);
+    public ResponseEntity<DataResponse<PlaceVoteInfoResponse>> placeVoteRoomGet(@PathVariable Long placeVoteRoomId) {
+        PlaceVoteInfoResponse response = placeVoteRoomService.getPlaceVoteRoom(placeVoteRoomId);
         return ResponseEntity.ok(DataResponse.from(response));
     }
-
 
     @PostMapping("/{place-vote-rooms-id}/vote")
     public ResponseEntity<?> vote(@PathVariable("place-vote-rooms-id") Long placeVoteRoomId, @RequestBody PlaceVoteRequestDTO placeVoteRequest) {
@@ -46,10 +46,14 @@ public class PlaceVoteRoomController {
                     .body(ErrorResponse.from(UserErrorCode.ALREADY_VOTED));
         }
     }
-
     @PatchMapping("/{place-vote-rooms-id}/vote")
     public ResponseEntity<?> voteUpdate(@PathVariable("place-vote-rooms-id") Long placeVoteRoomId, @RequestBody PlaceVoteRequestDTO placeVoteRequest) {
         placeVoteRoomService.updateVote(placeVoteRoomId, placeVoteRequest);
+        return ResponseEntity.ok(BaseResponse.ok());
+    }
+    @DeleteMapping("/{placeVoteRoomId}")
+    public ResponseEntity<?> placeVoteRoomDelete(@PathVariable Long placeVoteRoomId) {
+        placeVoteRoomService.deletePlaceVoteRoom(placeVoteRoomId);
         return ResponseEntity.ok(BaseResponse.ok());
     }
 }
