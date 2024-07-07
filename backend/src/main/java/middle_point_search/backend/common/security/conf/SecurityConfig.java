@@ -86,8 +86,6 @@ public class SecurityConfig {
 		return http.build();
 	}
 
-
-
 	//authentication Provider 관리를 위한 Manager 등록
 	@Bean
 	public AuthenticationManager authenticationManager() throws Exception {
