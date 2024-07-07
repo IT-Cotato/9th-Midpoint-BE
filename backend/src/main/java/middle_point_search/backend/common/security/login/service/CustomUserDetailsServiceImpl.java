@@ -9,8 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import middle_point_search.backend.common.security.exception.RoomNotFoundException;
 import middle_point_search.backend.common.security.dto.CustomUserDetailsImpl;
+import middle_point_search.backend.common.security.exception.RoomNotFoundException;
 import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.member.repository.MemberRepository;
 import middle_point_search.backend.domains.member.service.MemberService;

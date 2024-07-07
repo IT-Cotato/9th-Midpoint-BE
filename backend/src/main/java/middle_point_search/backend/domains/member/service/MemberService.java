@@ -1,5 +1,6 @@
 package middle_point_search.backend.domains.member.service;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,9 +20,11 @@ public class MemberService {
 	private final RoomRepository roomRepository;
 	private final MemberRepository memberRepository;
 	private final MemberLoader memberLoader;
+	private final PasswordEncoder passwordEncoder;
 
 	@Transactional(readOnly = false)
 	public Member createMember(String roomId, String name, String pw) throws RoomNotFoundException {
+		pw = encodePassword(pw);
 
 		Room room = roomRepository.findRoomByIdentityNumber(roomId)
 			.orElseThrow(() -> new RoomNotFoundException("해당하는 방이 존재하지 않습니다"));
@@ -37,5 +40,15 @@ public class MemberService {
 		Member member = memberLoader.getMember();
 
 		member.destroyRefreshToken();
+	}
+
+	// 패스워드 인코딩
+	private String encodePassword(String rawPw) {
+		return passwordEncoder.encode(rawPw);
+	}
+
+	// 요청된 pw와 Member의 pw가 일치하는 지 확인
+	public boolean matchPassword(String rawPw, String pw) {
+		return passwordEncoder.matches(rawPw, pw);
 	}
 }
