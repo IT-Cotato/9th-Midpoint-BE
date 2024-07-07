@@ -8,6 +8,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,12 +16,15 @@ import middle_point_search.backend.common.security.dto.CustomUserDetails;
 import middle_point_search.backend.common.security.dto.CustomUserDetailsImpl;
 import middle_point_search.backend.common.security.dto.MemberAuthenticationToken;
 import middle_point_search.backend.common.security.login.service.CustomUserDetailsService;
+import middle_point_search.backend.domains.member.service.MemberService;
 
+@Component
 @Slf4j
 @RequiredArgsConstructor
 public class CustomAuthenticationProvider implements AuthenticationProvider {
 
 	private final CustomUserDetailsService userDetailsService;
+	private final MemberService memberService;
 
 	@Override
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
@@ -33,7 +37,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 			name, password);
 
 		// 비밀번호 확인
-		if (!matchPassword(password, user.getPassword())) {
+		if (!memberService.matchPassword(password, user.getPassword())) {
 			throw new BadCredentialsException("비밀번호가 틀렸습니다.");
 		}
 
@@ -46,9 +50,4 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 	public boolean supports(Class<?> authentication) {
 		return true;
 	}
-
-	private boolean matchPassword(String loginPwd, String password) {
-		return loginPwd.equals(password);
-	}
-
 }
