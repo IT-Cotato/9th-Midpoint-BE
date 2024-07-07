@@ -27,3 +27,4 @@ public class MemberController {
 		return ResponseEntity.ok(BaseResponse.ok());
 	}
 }
+

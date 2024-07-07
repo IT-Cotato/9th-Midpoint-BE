@@ -20,6 +20,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.security.exception.hadlingFilter.ExceptionHandlingFilter;
+import middle_point_search.backend.common.security.login.filter.JsonNamePwAuthenticationFilter;
+import middle_point_search.backend.common.security.jwt.filter.JwtAuthenticationFilter;
+import middle_point_search.backend.common.security.jwt.provider.JwtTokenProvider;
 import middle_point_search.backend.common.security.handler.CustomAccessDeniedHandler;
 import middle_point_search.backend.common.security.handler.CustomAuthenticationEntryPoint;
 import middle_point_search.backend.common.security.jwt.filter.JwtAuthenticationFilter;
@@ -85,6 +88,8 @@ public class SecurityConfig {
 
 		return http.build();
 	}
+
+
 
 	//authentication Provider 관리를 위한 Manager 등록
 	@Bean
