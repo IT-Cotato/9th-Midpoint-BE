@@ -4,6 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -46,11 +47,11 @@ public class Place {
 	@Column(nullable = false)
 	private Double addressLongitude;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ROOM_ID")
 	private Room room;
 
-	@OneToOne(mappedBy = "place")
+	@OneToOne(mappedBy = "place", fetch = FetchType.LAZY)
 	private Member member;
 
 	private Place(Transport transport, String siDo, String siGunGu, String roadNameAddress, Double addressLatitude,
