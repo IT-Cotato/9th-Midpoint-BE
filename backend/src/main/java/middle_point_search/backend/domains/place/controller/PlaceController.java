@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.dto.BaseResponse;
 import middle_point_search.backend.common.dto.DataResponse;
-import middle_point_search.backend.domains.place.dto.PlaceDTO;
+import middle_point_search.backend.domains.place.dto.PlaceDTO.PlaceSaveRequest;
 import middle_point_search.backend.domains.place.dto.PlaceDTO.PlacesFindResponse;
 import middle_point_search.backend.domains.place.service.PlaceService;
 
@@ -25,7 +25,7 @@ public class PlaceController {
 	private final PlaceService placeService;
 
 	@PostMapping
-	public ResponseEntity<BaseResponse> placeSave(@RequestBody PlaceDTO.PlaceSaveRequest placeSaveRequest) {
+	public ResponseEntity<BaseResponse> placeSave(@RequestBody PlaceSaveRequest placeSaveRequest) {
 
 		placeService.savePlace(placeSaveRequest);
 
