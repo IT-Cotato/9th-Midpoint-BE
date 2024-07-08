@@ -15,12 +15,12 @@ import middle_point_search.backend.domains.room.repository.RoomRepository;
 @Transactional(readOnly = true)
 public class SchedulingService {
 
-	private RoomRepository roomRepository;
+	private final RoomRepository roomRepository;
 
 	@Transactional(readOnly = false)
 	@Async
-	@Scheduled(cron = "0 0 12 * * *")
+	@Scheduled(cron = "0 0 2 * * *") //오전 두시에 매번 초기화
 	public void autoDelete() {
-		roomRepository.deleteByCreateDateLessThanEqual(LocalDateTime.now().minusDays(3));
+		roomRepository.deleteByCreatedAtBefore(LocalDateTime.now().minusDays(3));
 	}
 }

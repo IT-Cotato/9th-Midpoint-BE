@@ -13,6 +13,7 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
 
 	Optional<Room> findRoomByIdentityNumber(String identityNumber);
 
-	void deleteByCreateDateLessThanEqual(LocalDateTime localDateTime);
+	void deleteByCreatedAtBefore(LocalDateTime localDateTime);
+
 	Optional<Room> findByIdentityNumber(String identityNumber);
 }
