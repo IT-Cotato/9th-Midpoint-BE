@@ -32,8 +32,8 @@ public class PlaceController {
 		return ResponseEntity.ok(BaseResponse.ok());
 	}
 
-	@GetMapping("/{placeRoomId}")
-	public ResponseEntity<DataResponse<List<PlacesFindResponse>>> placesFind(@PathVariable("placeRoomId") String roomId) {
+	@GetMapping("/{roomId}")
+	public ResponseEntity<DataResponse<List<PlacesFindResponse>>> placesFind(@PathVariable("roomId") String roomId) {
 
 		List<PlacesFindResponse> places = placeService.findPlaces(roomId);
 
