@@ -7,6 +7,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
@@ -113,91 +117,114 @@ public class MarketService {
 	}
 
 	// 키워드로 주위 장소 조회
-	public List<RecommendPlacesFindResponse> findRecommendPlaces(RecommendPlacesFindRequest request) {
+	public Page<RecommendPlacesFindResponse> findRecommendPlaces(RecommendPlacesFindRequest request) {
 		String x = request.getAddressLong().toString();
 		String y = request.getAddressLat().toString();
-		String page = request.getPage().toString();
-		String size = kakaoProperties.getSize();
+		Integer page = request.getPage();
+		Integer size = kakaoProperties.getSize();
 
-		List<Document> response;
+		Pageable pageable = PageRequest.of(page, size);
+
+		KakaoSearchResponse response;
 		if (request.getPlaceStandard() == PlaceStandard.ALL) {
-			response = getKaKaoForAll(x, y, page, size);
+			response = getKaKaoForAll(x, y, pageable);
 		} else if (request.getPlaceStandard() == PlaceStandard.STUDY) {
-			response = getKaKaoForStudy(x, y, page, size);
+			response = getKaKaoForStudy(x, y, pageable);
 		} else if (request.getPlaceStandard() == PlaceStandard.CAFE){
-			response = getKaKaoForCafe(x, y, page, size);
+			response = getKaKaoForCafe(x, y, pageable);
 		} else if (request.getPlaceStandard() == PlaceStandard.RESTAURANT) {
-			response = getKaKaoForRestaurant(x, y, page, size);
+			response = getKaKaoForRestaurant(x, y, pageable);
 		} else {
 			throw new CustomException(CommonErrorCode.INVALID_PARAMETER);
 		}
 
-		return response.stream()
+		int totalCount = response.getMeta().getPageable_count();
+
+		return new PageImpl<>(response.getDocuments().stream()
 			.map(RecommendPlacesFindResponse::from)
-			.toList();
+			.toList(), pageable , totalCount);
 	}
 
 	//Cafe, Study, Restaurant 한번에 가져오기
-	private List<Document> getKaKaoForAll(String x, String y, String page, String size) {
-		String cafeSize =  String.valueOf(Integer.parseInt(size) / 3);
-		String restaurantSize = String.valueOf(Integer.parseInt(size) - Integer.parseInt(size) / 3 * 2);
-		String studySize = cafeSize;
+	private KakaoSearchResponse getKaKaoForAll(String x, String y, Pageable pageable) {
+		int size = pageable.getPageSize();
+		int page = pageable.getPageNumber();
 
-		List<Document> document1 = getKaKaoForStudy(x, y, page, studySize);
-		List<Document> document2 = getKaKaoForCafe(x, y, page, cafeSize);
-		List<Document> document3 = getKaKaoForRestaurant(x, y, page, restaurantSize);
+		int cafeSize =  size / 3;
+		int restaurantSize = size - size / 3 * 2;
+		int studySize = cafeSize;
 
-		document1.addAll(document2);
-		document1.addAll(document3);
+		KakaoSearchResponse response1 = getKaKaoForStudy(x, y, PageRequest.of(page, studySize));
+		KakaoSearchResponse response2 = getKaKaoForCafe(x, y, PageRequest.of(page, cafeSize));
+		KakaoSearchResponse response3 = getKaKaoForRestaurant(x, y, PageRequest.of(page, restaurantSize));
 
-		Collections.sort(document1);
+		//위 셋의 응답을 response1로 합치기
+		int count1 = response1.getMeta().getPageable_count();
+		int count2 = response2.getMeta().getPageable_count();
+		int count3 = response3.getMeta().getPageable_count();
 
-		return document1;
+		response1.getMeta().setPageable_count(count1 + count2 + count3);
+
+		response1.getDocuments().addAll(response2.getDocuments());
+		response1.getDocuments().addAll(response3.getDocuments());
+
+		Collections.sort(response1.getDocuments());
+
+		return response1;
 	}
 
 	//Cafe 가져오기
-	private List<Document> getKaKaoForCafe(String x, String y, String page, String size) {
+	private KakaoSearchResponse getKaKaoForCafe(String x, String y, Pageable pageable) {
+		int size = pageable.getPageSize();
+		int page = pageable.getPageNumber();
+
 		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
 		params.add(kakaoProperties.getParamX(), x);
 		params.add(kakaoProperties.getParamY(), y);
 		params.add(kakaoProperties.getParamRadius(), kakaoProperties.getRadius());
-		params.add(kakaoProperties.getParamSize(), size);
-		params.add(kakaoProperties.getParamPage(), page);
+		params.add(kakaoProperties.getParamSize(), String.valueOf(size));
+		params.add(kakaoProperties.getParamPage(), String.valueOf(page));
 		params.add(kakaoProperties.getParamGroup(), PlaceStandard.CAFE.getCode());
 
 		String url = kakaoProperties.getCategorySearchUrl();
 
-		return webClientUtil.getKakao(url, params, KakaoSearchResponse.class).getDocuments();
+		return webClientUtil.getKakao(url, params, KakaoSearchResponse.class);
 	}
 
 	//Study 가져오기
-	private List<Document> getKaKaoForStudy(String x, String y, String page, String size) {
+	private KakaoSearchResponse getKaKaoForStudy(String x, String y, Pageable pageable) {
+		int size = pageable.getPageSize();
+		int page = pageable.getPageNumber();
+
 		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
 		params.add(kakaoProperties.getParamX(), x);
 		params.add(kakaoProperties.getParamY(), y);
 		params.add(kakaoProperties.getParamRadius(), kakaoProperties.getRadius());
-		params.add(kakaoProperties.getParamSize(), size);
-		params.add(kakaoProperties.getParamPage(), page);
+		params.add(kakaoProperties.getParamSize(), String.valueOf(size));
+		params.add(kakaoProperties.getParamPage(), String.valueOf(page));
 
 		params.add(kakaoProperties.getParamQuery(), URLEncoder.encode("스터디", UTF_8));
 
 		String url = kakaoProperties.getKeywordSearchUrl();
 
-		return webClientUtil.getKakao(url, params, KakaoSearchResponse.class).getDocuments();
+		return webClientUtil.getKakao(url, params, KakaoSearchResponse.class);
 	}
 
 	//Restaurant 가져오기
-	private List<Document> getKaKaoForRestaurant(String x, String y, String page, String size) {
+	private KakaoSearchResponse getKaKaoForRestaurant(String x, String y, Pageable pageable) {
+		int size = pageable.getPageSize();
+		int page = pageable.getPageNumber();
+
 		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
 		params.add(kakaoProperties.getParamX(), x);
 		params.add(kakaoProperties.getParamY(), y);
 		params.add(kakaoProperties.getParamRadius(), kakaoProperties.getRadius());
-		params.add(kakaoProperties.getParamSize(), size);
-		params.add(kakaoProperties.getParamPage(), page);
+		params.add(kakaoProperties.getParamSize(), String.valueOf(size));
+		params.add(kakaoProperties.getParamPage(), String.valueOf(page));
 		params.add(kakaoProperties.getParamGroup(), PlaceStandard.RESTAURANT.getCode());
 
 		String url = kakaoProperties.getCategorySearchUrl();
 
-		return webClientUtil.getKakao(url, params, KakaoSearchResponse.class).getDocuments();
+		return webClientUtil.getKakao(url, params, KakaoSearchResponse.class);
 	}
 }

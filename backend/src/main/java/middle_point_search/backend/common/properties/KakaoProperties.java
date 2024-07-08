@@ -24,6 +24,6 @@ public class KakaoProperties {
 	private String paramQuery;
 
 	private String radius;
-	private String size;
+	private Integer size;
 	private String sort;
 }

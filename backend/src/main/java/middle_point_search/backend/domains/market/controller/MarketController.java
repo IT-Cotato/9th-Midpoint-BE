@@ -2,6 +2,7 @@ package middle_point_search.backend.domains.market.controller;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,9 +38,9 @@ public class MarketController {
 	}
 
 	@GetMapping("recommend-places")
-	public ResponseEntity<BaseResponse> recommendPlacesFind(@Valid @ModelAttribute RecommendPlacesFindRequest request) {
+	public ResponseEntity<DataResponse<Page<RecommendPlacesFindResponse>>> recommendPlacesFind(@Valid @ModelAttribute RecommendPlacesFindRequest request) {
 
-		List<RecommendPlacesFindResponse> recommendPlaces = marketService.findRecommendPlaces(request);
+		Page<RecommendPlacesFindResponse> recommendPlaces = marketService.findRecommendPlaces(request);
 
 		return ResponseEntity.ok(DataResponse.from(recommendPlaces));
 	}
