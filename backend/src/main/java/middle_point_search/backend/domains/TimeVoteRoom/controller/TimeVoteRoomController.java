@@ -1,14 +1,17 @@
 package middle_point_search.backend.domains.TimeVoteRoom.controller;
 
 import lombok.RequiredArgsConstructor;
+import middle_point_search.backend.common.dto.BaseResponse;
 import middle_point_search.backend.common.dto.DataResponse;
+import middle_point_search.backend.common.dto.ErrorResponse;
+import middle_point_search.backend.common.exception.AlreadyVotedException;
+import middle_point_search.backend.common.exception.errorCode.UserErrorCode;
+import middle_point_search.backend.domains.PlaceVoteRoom.dto.PlaceVoteRequestDTO;
 import middle_point_search.backend.domains.TimeVoteRoom.dto.TimeVoteRoomDTO;
 import middle_point_search.backend.domains.TimeVoteRoom.service.TimeVoteRoomService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static middle_point_search.backend.domains.TimeVoteRoom.dto.TimeVoteRoomDTO.*;
 
@@ -22,5 +25,11 @@ public class TimeVoteRoomController {
     public ResponseEntity<DataResponse<TimeVoteRoomCreateResponse>> timeVoteRoomCreate(@RequestBody TimeVoteRoomCreateRequest request) {
         TimeVoteRoomCreateResponse response = timeVoteRoomService.createTimeVoteRoom(request);
         return ResponseEntity.ok(DataResponse.from(response));
+    }
+
+    @PostMapping("/{time-vote-rooms-id}/vote")
+    public ResponseEntity<?> vote(@PathVariable("time-vote-rooms-id") Long timeVoteRoomId, @RequestBody TimeVoteRoomVoteRequest request) {
+        timeVoteRoomService.vote(timeVoteRoomId, request);
+        return ResponseEntity.ok(BaseResponse.ok());
     }
 }

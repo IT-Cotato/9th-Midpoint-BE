@@ -1,16 +1,29 @@
 package middle_point_search.backend.domains.TimeVoteRoom.service;
 
 import lombok.RequiredArgsConstructor;
+import middle_point_search.backend.common.exception.AlreadyVotedException;
 import middle_point_search.backend.common.exception.CustomException;
 import middle_point_search.backend.common.exception.DuplicateVoteRoomException;
 import middle_point_search.backend.common.exception.errorCode.CommonErrorCode;
 import middle_point_search.backend.common.util.MemberLoader;
+import middle_point_search.backend.domains.TimeVoteRoom.domain.MeetingDate;
+import middle_point_search.backend.domains.TimeVoteRoom.domain.TimeVote;
 import middle_point_search.backend.domains.TimeVoteRoom.domain.TimeVoteRoom;
+import middle_point_search.backend.domains.TimeVoteRoom.repository.MeetingDateRepository;
+import middle_point_search.backend.domains.TimeVoteRoom.repository.TimeVoteRepository;
 import middle_point_search.backend.domains.TimeVoteRoom.repository.TimeVoteRoomRepository;
+import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.room.domain.Room;
 import middle_point_search.backend.domains.room.repository.RoomRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import static middle_point_search.backend.domains.TimeVoteRoom.dto.TimeVoteRoomDTO.*;
 import static middle_point_search.backend.domains.TimeVoteRoom.dto.TimeVoteRoomDTO.TimeVoteRoomCreateRequest;
 import static middle_point_search.backend.domains.TimeVoteRoom.dto.TimeVoteRoomDTO.TimeVoteRoomCreateResponse;
 
@@ -20,8 +33,12 @@ import static middle_point_search.backend.domains.TimeVoteRoom.dto.TimeVoteRoomD
 public class TimeVoteRoomService {
 
     private final TimeVoteRoomRepository timeVoteRoomRepository;
+    private final TimeVoteRepository timeVoteRepository;
     private final RoomRepository roomRepository;
+    private final MeetingDateRepository meetingDateRepository;
     private final MemberLoader memberLoader;
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
 
     //시간 투표방 생성
     @Transactional
@@ -46,7 +63,28 @@ public class TimeVoteRoomService {
     }
 
     private String generateVotePageUrl(TimeVoteRoom timeVoteRoom) {
-        // URL 생성 로직 (예: 특정 패턴에 따라 URL 생성)
         return "http://api/place-vote-room/" + timeVoteRoom.getId();
+    }
+
+    //시간투표하기
+    @Transactional
+    public void vote(Long timeVoteRoomId, TimeVoteRoomVoteRequest request) {
+        TimeVoteRoom timeVoteRoom = timeVoteRoomRepository.findById(timeVoteRoomId).orElseThrow(() -> new CustomException(CommonErrorCode.INVALID_PARAMETER));
+        Member member = memberLoader.getMember();
+        boolean alreadyVoted = timeVoteRepository.existsByTimeVoteRoomAndMember(timeVoteRoom, member);
+        if (alreadyVoted) {
+            throw new AlreadyVotedException();
+        }
+        List<TimeVote> timeVotes = new ArrayList<>();
+        for (List<String> timeRange : request.getDateTime()) {
+            LocalDateTime memberAvailableStartTime = LocalDateTime.parse(timeRange.get(0),formatter);
+            LocalDateTime memberAvailableEndTime = LocalDateTime.parse(timeRange.get(1),formatter);
+            Optional<MeetingDate> meetingDateOpt = meetingDateRepository.findByTimeVoteRoomAndDate(timeVoteRoom, memberAvailableStartTime.toLocalDate());
+            MeetingDate meetingDate = meetingDateOpt.orElseThrow(() -> new CustomException(CommonErrorCode.INVALID_PARAMETER));
+            TimeVote timeVote = new TimeVote(timeVoteRoom, meetingDate, member, memberAvailableStartTime, memberAvailableEndTime);
+            timeVotes.add(timeVote);
+        }
+
+        timeVoteRepository.saveAll(timeVotes);
     }
 }
