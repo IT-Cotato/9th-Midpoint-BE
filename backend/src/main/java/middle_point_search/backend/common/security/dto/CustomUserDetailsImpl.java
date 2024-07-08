@@ -8,9 +8,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import middle_point_search.backend.domains.member.domain.Member;
-
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class CustomUserDetailsImpl implements CustomUserDetails {
@@ -20,6 +18,7 @@ public class CustomUserDetailsImpl implements CustomUserDetails {
 	private String pw;
 	private String authority;
 	private boolean enabled;
+
 	public static CustomUserDetailsImpl of(String roomId, String name, String pw, String authority, boolean enabled) {
 		return new CustomUserDetailsImpl(roomId, name, pw, authority, enabled);
 	}
@@ -55,7 +54,6 @@ public class CustomUserDetailsImpl implements CustomUserDetails {
 	public String getRoomId() {
 		return roomId;
 	}
-
 
 	@Override
 	public boolean isAccountNonExpired() {
