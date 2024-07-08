@@ -98,6 +98,17 @@ public class Place {
 		return new Place(transport, siDo, siGunGu, roadNameAddress, addressLatitude, addressLongitude, room, member);
 	}
 
+	public static Place from(PlaceSaveRequest placeSaveRequest, Room room) {
+		Transport transport = placeSaveRequest.getTransport();
+		String siDo = placeSaveRequest.getSiDo();
+		String siGunGu = placeSaveRequest.getSiGunGu();
+		String roadNameAddress = placeSaveRequest.getRoadNameAddress();
+		Double addressLatitude = placeSaveRequest.getAddressLat();
+		Double addressLongitude = placeSaveRequest.getAddressLong();
+
+		return new Place(transport, siDo, siGunGu, roadNameAddress, addressLatitude, addressLongitude, room);
+	}
+
 	private void addRoom(Room room) {
 		this.room = room;
 		room.getPlaces().add(this);
