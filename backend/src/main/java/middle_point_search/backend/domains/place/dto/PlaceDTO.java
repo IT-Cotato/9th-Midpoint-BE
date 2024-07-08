@@ -1,5 +1,7 @@
 package middle_point_search.backend.domains.place.dto;
 
+import java.util.List;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,6 +21,13 @@ public class PlaceDTO {
 		private Double addressLat;
 		private Double addressLong;
 		private Transport transport;
+	}
+
+	@Getter
+	@NoArgsConstructor(access = AccessLevel.PRIVATE)
+	public static class PlacesSaveBySelfRequest {
+
+		List<PlaceSaveRequest> addresses;
 	}
 
 	@Getter

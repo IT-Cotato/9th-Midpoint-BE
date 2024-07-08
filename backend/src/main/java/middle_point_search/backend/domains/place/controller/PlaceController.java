@@ -15,6 +15,7 @@ import middle_point_search.backend.common.dto.BaseResponse;
 import middle_point_search.backend.common.dto.DataResponse;
 import middle_point_search.backend.domains.place.dto.PlaceDTO.PlaceSaveRequest;
 import middle_point_search.backend.domains.place.dto.PlaceDTO.PlacesFindResponse;
+import middle_point_search.backend.domains.place.dto.PlaceDTO.PlacesSaveBySelfRequest;
 import middle_point_search.backend.domains.place.service.PlaceService;
 
 @RestController
@@ -25,9 +26,17 @@ public class PlaceController {
 	private final PlaceService placeService;
 
 	@PostMapping
-	public ResponseEntity<BaseResponse> placeSave(@RequestBody PlaceSaveRequest placeSaveRequest) {
+	public ResponseEntity<BaseResponse> placeSave(@RequestBody PlaceSaveRequest request) {
 
-		placeService.savePlace(placeSaveRequest);
+		placeService.savePlace(request);
+
+		return ResponseEntity.ok(BaseResponse.ok());
+	}
+
+	@PostMapping("/self")
+	public ResponseEntity<BaseResponse> placesSaveBySelf(@RequestBody PlacesSaveBySelfRequest request) {
+
+		placeService.savePlacesBySelf(request);
 
 		return ResponseEntity.ok(BaseResponse.ok());
 	}

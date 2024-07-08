@@ -14,4 +14,8 @@ public interface PlaceRepository extends JpaRepository<Place, Long> {
 	Optional<Place> findByRoomAndMember(Room room, Member member);
 
 	List<Place>	findAllByRoom_IdentityNumber(String roomId);
+
+	Boolean existsByRoom_IdentityNumber(String roomId);
+
+	void deleteAllByRoom_IdentityNumber(String roomId);
 }
