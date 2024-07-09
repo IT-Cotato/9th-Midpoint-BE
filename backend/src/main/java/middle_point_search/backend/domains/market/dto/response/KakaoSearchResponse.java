@@ -5,6 +5,7 @@ import java.util.List;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -16,6 +17,7 @@ public class KakaoSearchResponse {
 	@NoArgsConstructor(access = AccessLevel.PRIVATE)
 	public static class Meta {
 		private SameName same_name;
+		@Setter
 		private int pageable_count;
 		private int total_count;
 		private boolean is_end;

@@ -4,6 +4,7 @@ import org.springframework.core.io.buffer.DataBufferLimitException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -70,6 +71,15 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		return makeErrorResponseEntity(errorCode);
 	}
 
+	@Override
+	protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex,
+		HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+		log.warn("handleHttpMessageNotReadableException", ex);
+
+		ErrorCode errorCode = CommonErrorCode.BAD_REQUEST;
+		return makeErrorResponseEntity(errorCode);
+	}
+
 	@ExceptionHandler({Exception.class})
 	public ResponseEntity<Object> handleAllException(Exception e) {
 		log.warn("handleAllException", e);
@@ -77,6 +87,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		ErrorCode errorCode = CommonErrorCode.INTERNAL_SERVER_ERROR;
 		return makeErrorResponseEntity(errorCode);
 	}
+
+
 
 	// ErrorCode를 받아서 Response를 만드는 메서드
 	private ResponseEntity<Object> makeErrorResponseEntity(ErrorCode errorCode) {
