@@ -10,9 +10,9 @@ import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.util.MemberLoader;
 import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.place.domain.Place;
-import middle_point_search.backend.domains.place.dto.PlaceDTO;
 import middle_point_search.backend.domains.place.dto.PlaceDTO.PlaceSaveRequest;
 import middle_point_search.backend.domains.place.dto.PlaceDTO.PlacesFindResponse;
+import middle_point_search.backend.domains.place.dto.PlaceDTO.PlacesSaveBySelfRequest;
 import middle_point_search.backend.domains.place.repository.PlaceRepository;
 import middle_point_search.backend.domains.room.domain.Room;
 
@@ -41,6 +41,25 @@ public class PlaceService {
 		}
 	}
 
+	@Transactional(readOnly = false)
+	public void savePlacesBySelf(PlacesSaveBySelfRequest request) {
+		Room room = memberLoader.getRoom();
+		String roomId = memberLoader.getRoomId();
+
+		List<PlaceSaveRequest> placesSaveBySelfRequests = request.getAddresses();
+		List<Place> places = placesSaveBySelfRequests.stream()
+			.map(placeSaveRequest -> Place.from(placeSaveRequest, room))
+			.toList();
+
+		Boolean existence = placeRepository.existsByRoom_IdentityNumber(roomId);
+
+		if (existence) {
+			placeRepository.saveAll(places);
+		} else {
+			updatePlaces(roomId, places);
+		}
+	}
+
 	public List<PlacesFindResponse> findPlaces(String roomId) {
 
 		List<Place> places = placeRepository.findAllByRoom_IdentityNumber(roomId);
@@ -48,5 +67,13 @@ public class PlaceService {
 		return places.stream()
 			.map(PlacesFindResponse::from)
 			.toList();
+	}
+
+	// Places 업데이트 하기, 여러 개이므로 다 삭제하고 다시 생성한다.
+	@Transactional(readOnly = true)
+	public void updatePlaces(String roomId, List<Place> places) {
+		placeRepository.deleteAllByRoom_IdentityNumber(roomId);
+
+		placeRepository.saveAll(places);
 	}
 }
