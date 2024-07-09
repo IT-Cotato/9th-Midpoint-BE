@@ -46,7 +46,7 @@ public class PlaceDTO {
 	@AllArgsConstructor(access = AccessLevel.PRIVATE)
 	public static class PlacesFindResponse {
 
-		private final String memberName;
+		private final Long placeId;
 		private final String siDo;
 		private final String siGunGu;
 		private final String roadNameAddress;
@@ -56,7 +56,7 @@ public class PlaceDTO {
 
 		public static PlacesFindResponse from(Place place) {
 
-			String memberName = place.getMember().getName();
+			Long placeId = place.getId();
 			String siDo = place.getSiDo();
 			String siGunGu = place.getSiGunGu();
 			String roadNameAddress = place.getRoadNameAddress();
@@ -65,7 +65,7 @@ public class PlaceDTO {
 			Transport transport = place.getTransport();
 
 			return new PlacesFindResponse(
-				memberName,
+				placeId,
 				siDo,
 				siGunGu,
 				roadNameAddress,
