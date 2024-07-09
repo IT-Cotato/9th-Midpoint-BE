@@ -16,11 +16,13 @@ import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.dto.BaseResponse;
 import middle_point_search.backend.common.dto.DataResponse;
 import middle_point_search.backend.common.util.MemberLoader;
+import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.place.dto.PlaceDTO.PlaceSaveRequest;
 import middle_point_search.backend.domains.place.dto.PlaceDTO.PlaceUpdateRequest;
 import middle_point_search.backend.domains.place.dto.PlaceDTO.PlacesFindResponse;
 import middle_point_search.backend.domains.place.dto.PlaceDTO.PlacesSaveBySelfRequest;
 import middle_point_search.backend.domains.place.service.PlaceService;
+import middle_point_search.backend.domains.room.domain.Room;
 
 @RestController
 @RequiredArgsConstructor
@@ -33,7 +35,10 @@ public class PlaceController {
 	@PostMapping
 	public ResponseEntity<BaseResponse> placeSave(@RequestBody PlaceSaveRequest request) {
 
-		placeService.savePlace(request);
+		Room room = memberLoader.getRoom();
+		Member member = memberLoader.getMember();
+
+		placeService.savePlace(room, member, request);
 
 		return ResponseEntity.ok(BaseResponse.ok());
 	}
@@ -41,7 +46,9 @@ public class PlaceController {
 	@PostMapping("/self")
 	public ResponseEntity<BaseResponse> placesSaveBySelf(@RequestBody PlacesSaveBySelfRequest request) {
 
-		placeService.savePlacesBySelf(request);
+		Room room = memberLoader.getRoom();
+
+		placeService.savePlacesBySelf(room,request);
 
 		return ResponseEntity.ok(BaseResponse.ok());
 	}

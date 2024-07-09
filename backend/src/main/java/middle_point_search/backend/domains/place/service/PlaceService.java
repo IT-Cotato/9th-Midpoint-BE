@@ -9,10 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.exception.CustomException;
-import middle_point_search.backend.common.util.MemberLoader;
 import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.place.domain.Place;
-import middle_point_search.backend.domains.place.dto.PlaceDTO;
 import middle_point_search.backend.domains.place.dto.PlaceDTO.PlaceSaveRequest;
 import middle_point_search.backend.domains.place.dto.PlaceDTO.PlaceUpdateRequest;
 import middle_point_search.backend.domains.place.dto.PlaceDTO.PlacesFindResponse;
@@ -25,14 +23,10 @@ import middle_point_search.backend.domains.room.domain.Room;
 @Transactional(readOnly = true)
 public class PlaceService {
 
-	private final MemberLoader memberLoader;
 	private final PlaceRepository placeRepository;
 
 	@Transactional(readOnly = false)
-	public void savePlace(PlaceSaveRequest placeSaveRequest) {
-
-		Room room = memberLoader.getRoom();
-		Member member = memberLoader.getMember();
+	public void savePlace(Room room, Member member, PlaceSaveRequest placeSaveRequest) {
 
 		Boolean existence = placeRepository.existsByRoom_IdentityNumberAndMember_Name(room.getIdentityNumber(),
 			member.getName());
@@ -47,9 +41,9 @@ public class PlaceService {
 	}
 
 	@Transactional(readOnly = false)
-	public void savePlacesBySelf(PlacesSaveBySelfRequest request) {
-		Room room = memberLoader.getRoom();
-		String roomId = memberLoader.getRoomId();
+	public void savePlacesBySelf(Room room, PlacesSaveBySelfRequest request) {
+
+		String roomId = room.getIdentityNumber();
 
 		Boolean existence = placeRepository.existsByRoom_IdentityNumber(roomId);
 
