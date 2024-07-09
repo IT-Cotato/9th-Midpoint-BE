@@ -10,22 +10,18 @@ import java.util.List;
 
 public class TimeVoteRoomDTO {
     @Getter
+    @NoArgsConstructor
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
     public static class TimeVoteRoomCreateRequest {
-        private final String roomId;
-        private final String meetingName;
-        private final List<LocalDate> dates;
-
+        private  List<LocalDate> dates;
     }
 
     @Getter
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
     public static class TimeVoteRoomCreateResponse {
         private final Long id;
-        private final String url;
-
-        public static TimeVoteRoomCreateResponse from(Long id, String url) {
-            return new TimeVoteRoomCreateResponse(id, url);
+        public static TimeVoteRoomCreateResponse from(Long id) {
+            return new TimeVoteRoomCreateResponse(id);
         }
     }
 

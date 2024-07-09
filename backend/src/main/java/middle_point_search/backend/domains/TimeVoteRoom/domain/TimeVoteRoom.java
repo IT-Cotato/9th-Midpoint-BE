@@ -20,7 +20,7 @@ public class TimeVoteRoom {
     private Long id;
 
     @OneToOne
-    @JoinColumn(name = "room_id")
+    @JoinColumn(name = "room_id",unique = true)
     private Room room;
 
     @OneToMany(mappedBy = "timeVoteRoom", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -29,15 +29,11 @@ public class TimeVoteRoom {
     @OneToMany(mappedBy = "timeVoteRoom", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<MeetingDate> meetingDates;
 
-    @Column(name = "meeting_name")
-    private String meetingName;
 
-    @Column(name = "url")
-    private String url;
 
-    public TimeVoteRoom(Room room, String meetingName) {
+    public TimeVoteRoom(Room room) {
         this.room = room;
-        this.meetingName = meetingName;
+
     }
     public void setMeetingDates(List<LocalDate> dates) {
         // MeetingDate 엔티티를 생성하여 연관 관계 설정
@@ -45,13 +41,6 @@ public class TimeVoteRoom {
                 .map(date -> new MeetingDate(this, date))
                 .collect(Collectors.toList());
     }
-    public void setUrl(String url) {
-        if (this.url == null) {
-            this.url = url;
-        }
-    }
-
-
 }
 
 

@@ -43,43 +43,47 @@ public class TimeVoteRoomService {
     //시간 투표방 생성
     @Transactional
     public TimeVoteRoomCreateResponse createTimeVoteRoom(TimeVoteRoomCreateRequest request) {
-        Room room = roomRepository.findByIdentityNumber(request.getRoomId()).orElseThrow(() -> new CustomException(CommonErrorCode.INVALID_PARAMETER));
+        Member member = memberLoader.getMember();
+        String roomId = member.getRoom().getIdentityNumber();
+        Room room = roomRepository.findByIdentityNumber(roomId).orElseThrow(() -> new CustomException(CommonErrorCode.INVALID_PARAMETER));
 
         boolean exists = timeVoteRoomRepository.existsByRoom(room);
         if (exists) {
             throw new DuplicateVoteRoomException();
         }
 
-        TimeVoteRoom timeVoteRoom = new TimeVoteRoom(room, request.getMeetingName());
+        TimeVoteRoom timeVoteRoom = new TimeVoteRoom(room);
         timeVoteRoom.setMeetingDates(request.getDates());
 
         // 시간투표방 저장하여 ID 생성
         TimeVoteRoom savedTimeVoteRoom = timeVoteRoomRepository.save(timeVoteRoom);
         // URL 생성 및 설정
-        String votePageUrl = generateVotePageUrl(savedTimeVoteRoom);
-        savedTimeVoteRoom.setUrl(votePageUrl);
-
-        return TimeVoteRoomCreateResponse.from(savedTimeVoteRoom.getId(), savedTimeVoteRoom.getUrl());
+        return TimeVoteRoomCreateResponse.from(savedTimeVoteRoom.getId());
     }
 
-    private String generateVotePageUrl(TimeVoteRoom timeVoteRoom) {
-        return "http://api/place-vote-room/" + timeVoteRoom.getId();
-    }
 
     //시간투표하기
     @Transactional
-    public void vote(Long timeVoteRoomId, TimeVoteRoomVoteRequest request) {
-        TimeVoteRoom timeVoteRoom = timeVoteRoomRepository.findById(timeVoteRoomId).orElseThrow(() -> new CustomException(CommonErrorCode.INVALID_PARAMETER));
+    public void vote(TimeVoteRoomVoteRequest request) {
         Member member = memberLoader.getMember();
+        String roomId = member.getRoom().getIdentityNumber();
+        Room room = roomRepository.findRoomByIdentityNumber(roomId).orElseThrow(() -> new CustomException(CommonErrorCode.INVALID_PARAMETER));
+
+        TimeVoteRoom timeVoteRoom = timeVoteRoomRepository.findByRoom_IdentityNumber(roomId)
+                .orElseThrow(() -> new CustomException(CommonErrorCode.INVALID_PARAMETER));
+
         boolean alreadyVoted = timeVoteRepository.existsByTimeVoteRoomAndMember(timeVoteRoom, member);
         if (alreadyVoted) {
             throw new AlreadyVotedException();
         }
         List<TimeVote> timeVotes = new ArrayList<>();
         for (List<String> timeRange : request.getDateTime()) {
-            LocalDateTime memberAvailableStartTime = LocalDateTime.parse(timeRange.get(0),formatter);
-            LocalDateTime memberAvailableEndTime = LocalDateTime.parse(timeRange.get(1),formatter);
+            LocalDateTime memberAvailableStartTime = LocalDateTime.parse(timeRange.get(0), formatter);
+            LocalDateTime memberAvailableEndTime = LocalDateTime.parse(timeRange.get(1), formatter);
             Optional<MeetingDate> meetingDateOpt = meetingDateRepository.findByTimeVoteRoomAndDate(timeVoteRoom, memberAvailableStartTime.toLocalDate());
+            if (meetingDateOpt.isEmpty()) {
+                System.out.println("MeetingDate not found for date: " + memberAvailableStartTime.toLocalDate());
+            }
             MeetingDate meetingDate = meetingDateOpt.orElseThrow(() -> new CustomException(CommonErrorCode.INVALID_PARAMETER));
             TimeVote timeVote = new TimeVote(timeVoteRoom, meetingDate, member, memberAvailableStartTime, memberAvailableEndTime);
             timeVotes.add(timeVote);

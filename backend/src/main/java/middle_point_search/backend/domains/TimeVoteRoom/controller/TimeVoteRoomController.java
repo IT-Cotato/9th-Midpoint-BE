@@ -27,9 +27,9 @@ public class TimeVoteRoomController {
         return ResponseEntity.ok(DataResponse.from(response));
     }
 
-    @PostMapping("/{time-vote-rooms-id}/vote")
-    public ResponseEntity<?> vote(@PathVariable("time-vote-rooms-id") Long timeVoteRoomId, @RequestBody TimeVoteRoomVoteRequest request) {
-        timeVoteRoomService.vote(timeVoteRoomId, request);
+    @PostMapping("/vote")
+    public ResponseEntity<?> vote(@RequestBody TimeVoteRoomVoteRequest request) {
+        timeVoteRoomService.vote(request);
         return ResponseEntity.ok(BaseResponse.ok());
     }
 }
