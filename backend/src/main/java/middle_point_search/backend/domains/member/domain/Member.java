@@ -73,4 +73,8 @@ public class Member {
 	public void destroyRefreshToken() {
 		this.refreshToken = null;
 	}
+
+	public void deletePlace() {
+		this.place = null;
+	}
 }
