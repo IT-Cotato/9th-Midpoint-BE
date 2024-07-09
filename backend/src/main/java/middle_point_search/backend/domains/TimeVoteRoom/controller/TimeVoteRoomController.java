@@ -21,15 +21,26 @@ import static middle_point_search.backend.domains.TimeVoteRoom.dto.TimeVoteRoomD
 public class TimeVoteRoomController {
     private final TimeVoteRoomService timeVoteRoomService;
 
+    //투표방 생성
     @PostMapping
     public ResponseEntity<DataResponse<TimeVoteRoomCreateResponse>> timeVoteRoomCreate(@RequestBody TimeVoteRoomCreateRequest request) {
         TimeVoteRoomCreateResponse response = timeVoteRoomService.createTimeVoteRoom(request);
         return ResponseEntity.ok(DataResponse.from(response));
     }
 
+    //투표
     @PostMapping("/vote")
     public ResponseEntity<?> vote(@RequestBody TimeVoteRoomVoteRequest request) {
         timeVoteRoomService.vote(request);
         return ResponseEntity.ok(BaseResponse.ok());
     }
+
+    //재투표,투표 수정
+    @PutMapping("/vote")
+    public ResponseEntity<?> voteUpdate(@RequestBody TimeVoteRoomVoteRequest request) {
+        timeVoteRoomService.updateVote(request);
+        return ResponseEntity.ok(BaseResponse.ok());
+    }
+
+
 }
