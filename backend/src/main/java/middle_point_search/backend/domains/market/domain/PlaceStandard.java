@@ -1,12 +1,6 @@
 package middle_point_search.backend.domains.market.domain;
 
-import java.util.Arrays;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
-
 import lombok.Getter;
-import middle_point_search.backend.domains.member.domain.Transport;
 
 @Getter
 public enum PlaceStandard {

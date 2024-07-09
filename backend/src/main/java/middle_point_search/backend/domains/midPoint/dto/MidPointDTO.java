@@ -7,7 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import middle_point_search.backend.domains.market.domain.Market;
-import middle_point_search.backend.domains.member.domain.Transport;
 import middle_point_search.backend.domains.place.domain.Place;
 
 public class MidPointDTO {
@@ -28,7 +27,6 @@ public class MidPointDTO {
 		private String roadNameAddress;
 		private Double addressLat;
 		private Double addressLong;
-		private Transport transport;
 
 		public static AddressDTO from(Place place) {
 			return new AddressDTO(
@@ -36,8 +34,7 @@ public class MidPointDTO {
 				place.getSiGunGu(),
 				place.getRoadNameAddress(),
 				place.getAddressLatitude(),
-				place.getAddressLongitude(),
-				place.getTransport()
+				place.getAddressLongitude()
 			);
 		}
 
