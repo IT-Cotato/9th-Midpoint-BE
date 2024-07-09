@@ -3,11 +3,13 @@ package middle_point_search.backend.domains.place.service;
 import static middle_point_search.backend.common.exception.errorCode.UserErrorCode.*;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import middle_point_search.backend.common.exception.CustomException;
 import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.place.domain.Place;
@@ -18,6 +20,7 @@ import middle_point_search.backend.domains.place.dto.PlaceDTO.PlacesSaveBySelfRe
 import middle_point_search.backend.domains.place.repository.PlaceRepository;
 import middle_point_search.backend.domains.room.domain.Room;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -84,6 +87,14 @@ public class PlaceService {
 	@Transactional(readOnly = false)
 	public void deletePlace(Long placeId) {
 
-		placeRepository.deleteById(placeId);
+		Place place = placeRepository.findById(placeId).orElseThrow(() -> new CustomException(PLACE_NOT_FOUND));
+
+		Member member = place.getMember();
+
+		if (member != null) {
+			member.deletePlace();
+		}
+
+		placeRepository.delete(place);
 	}
 }
