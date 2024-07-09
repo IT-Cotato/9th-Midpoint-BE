@@ -71,7 +71,7 @@ public class PlaceService {
 	}
 
 	// Place 업데이트 하기
-	@Transactional(readOnly = true)
+	@Transactional(readOnly = false)
 	public void updatePlaces(Long placeId, PlaceUpdateRequest request) {
 
 		Place place = placeRepository.findById(placeId)
@@ -80,6 +80,8 @@ public class PlaceService {
 		place.update(request);
 	}
 
+	// Place 삭제하기
+	@Transactional(readOnly = false)
 	public void deletePlace(Long placeId) {
 
 		placeRepository.deleteById(placeId);
