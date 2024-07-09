@@ -30,6 +30,29 @@ public class PlaceDTO {
 		List<PlaceSaveRequest> addresses;
 	}
 
+
+
+	@Getter
+	@NoArgsConstructor(access = AccessLevel.PRIVATE)
+	public static class PlacesUpdateRequest {
+
+		List<PlaceUpdateRequest> places;
+
+		@Getter
+		@NoArgsConstructor(access = AccessLevel.PRIVATE)
+		public static class PlaceUpdateRequest {
+
+			private Long placeId;
+			private String siDo;
+			private String siGunGu;
+			private String roadNameAddress;
+			private Double addressLat;
+			private Double addressLong;
+			private Transport transport;
+		}
+	}
+
+
 	@Getter
 	@AllArgsConstructor(access = AccessLevel.PRIVATE)
 	public static class PlacesFindResponse {

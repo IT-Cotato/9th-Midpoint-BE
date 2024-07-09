@@ -17,6 +17,7 @@ import lombok.NoArgsConstructor;
 import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.member.domain.Transport;
 import middle_point_search.backend.domains.place.dto.PlaceDTO.PlaceSaveRequest;
+import middle_point_search.backend.domains.place.dto.PlaceDTO.PlacesUpdateRequest.PlaceUpdateRequest;
 import middle_point_search.backend.domains.room.domain.Room;
 
 @Entity
@@ -119,12 +120,12 @@ public class Place {
 		member.setPlace(this);
 	}
 
-	public void update(PlaceSaveRequest placeSaveRequest) {
-		this.transport = placeSaveRequest.getTransport();
-		this.siDo = placeSaveRequest.getSiDo();
-		this.siGunGu = placeSaveRequest.getSiGunGu();
-		this.roadNameAddress = placeSaveRequest.getRoadNameAddress();
-		this.addressLatitude = placeSaveRequest.getAddressLat();
-		this.addressLongitude = placeSaveRequest.getAddressLong();
+	public void update(PlaceUpdateRequest request) {
+		this.transport = request.getTransport();
+		this.siDo = request.getSiDo();
+		this.siGunGu = request.getSiGunGu();
+		this.roadNameAddress = request.getRoadNameAddress();
+		this.addressLatitude = request.getAddressLat();
+		this.addressLongitude = request.getAddressLong();
 	}
 }

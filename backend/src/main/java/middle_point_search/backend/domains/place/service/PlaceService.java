@@ -13,6 +13,8 @@ import middle_point_search.backend.domains.place.domain.Place;
 import middle_point_search.backend.domains.place.dto.PlaceDTO.PlaceSaveRequest;
 import middle_point_search.backend.domains.place.dto.PlaceDTO.PlacesFindResponse;
 import middle_point_search.backend.domains.place.dto.PlaceDTO.PlacesSaveBySelfRequest;
+import middle_point_search.backend.domains.place.dto.PlaceDTO.PlacesUpdateRequest;
+import middle_point_search.backend.domains.place.dto.PlaceDTO.PlacesUpdateRequest.PlaceUpdateRequest;
 import middle_point_search.backend.domains.place.repository.PlaceRepository;
 import middle_point_search.backend.domains.room.domain.Room;
 
@@ -71,8 +73,12 @@ public class PlaceService {
 
 	// Places 업데이트 하기, 여러 개이므로 다 삭제하고 다시 생성한다.
 	@Transactional(readOnly = true)
-	public void updatePlaces(String roomId, List<Place> places) {
-		placeRepository.deleteAllByRoom_IdentityNumber(roomId);
+	public void updatePlaces(PlacesUpdateRequest request) {
+		List<PlaceUpdateRequest> placeUpdateRequests = request.getPlaces();
+
+		placeUpdateRequests.stream()
+			.forEach(placeUpdateRequest -> {
+				Long id = placeUpdateRequest.getPlaceId();
 
 		placeRepository.saveAll(places);
 	}
