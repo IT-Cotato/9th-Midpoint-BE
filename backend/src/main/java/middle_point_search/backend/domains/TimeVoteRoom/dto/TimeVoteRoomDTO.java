@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 public class TimeVoteRoomDTO {
     @Getter
@@ -30,5 +31,23 @@ public class TimeVoteRoomDTO {
     @AllArgsConstructor
     public static class TimeVoteRoomVoteRequest {
         private List<List<String>> dateTime;
+    }
+    @Getter
+    @AllArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class TimeVoteRoomResultResponse {
+        private Map<String, List<TimeVoteDetail>> result;
+        // 정적 팩토리 메서드
+        public static TimeVoteRoomResultResponse from(Map<String, List<TimeVoteDetail>> result) {
+            return new TimeVoteRoomResultResponse(result);
+        }
+    }
+    @Getter
+    @AllArgsConstructor
+    public static class TimeVoteDetail {
+        private String memberName;
+        private List<String> dateTime;
+        public static TimeVoteDetail from(String memberName, List<String> dateTime) {
+            return new TimeVoteDetail(memberName, dateTime);
+        }
     }
 }

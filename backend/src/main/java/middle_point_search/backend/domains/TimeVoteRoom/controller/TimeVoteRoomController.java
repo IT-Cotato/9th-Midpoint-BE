@@ -44,15 +44,22 @@ public class TimeVoteRoomController {
 
     //투표방존재확인
     @GetMapping("/exists")
-    public ResponseEntity<DataResponse<Boolean>> hasTimeVoteRoom() {
+    public ResponseEntity<DataResponse<Boolean>> timeVoteRoomHas() {
         boolean exists = timeVoteRoomService.hasTimeVoteRoom();
         return ResponseEntity.ok(DataResponse.from(exists));
     }
+    //투표여부
     @GetMapping("/voted")
-    public ResponseEntity<DataResponse<Boolean>> hasVoted() {
+    public ResponseEntity<DataResponse<Boolean>> votedHas() {
         boolean hasVoted = timeVoteRoomService.hasVoted();
         return ResponseEntity.ok(DataResponse.from(hasVoted));
     }
 
+    //투표 결과
+    @GetMapping("/result")
+    public ResponseEntity<DataResponse<TimeVoteRoomDTO.TimeVoteRoomResultResponse>> timeVoteResultsGet() {
+        TimeVoteRoomDTO.TimeVoteRoomResultResponse result = timeVoteRoomService.getTimeVoteResult();
+        return ResponseEntity.ok(DataResponse.from(result));
+    }
 
 }

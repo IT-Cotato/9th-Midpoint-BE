@@ -10,6 +10,7 @@ import middle_point_search.backend.common.util.MemberLoader;
 import middle_point_search.backend.domains.TimeVoteRoom.domain.MeetingDate;
 import middle_point_search.backend.domains.TimeVoteRoom.domain.TimeVote;
 import middle_point_search.backend.domains.TimeVoteRoom.domain.TimeVoteRoom;
+import middle_point_search.backend.domains.TimeVoteRoom.dto.TimeVoteRoomDTO;
 import middle_point_search.backend.domains.TimeVoteRoom.repository.MeetingDateRepository;
 import middle_point_search.backend.domains.TimeVoteRoom.repository.TimeVoteRepository;
 import middle_point_search.backend.domains.TimeVoteRoom.repository.TimeVoteRoomRepository;
@@ -20,9 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static middle_point_search.backend.domains.TimeVoteRoom.dto.TimeVoteRoomDTO.*;
 import static middle_point_search.backend.domains.TimeVoteRoom.dto.TimeVoteRoomDTO.TimeVoteRoomCreateRequest;
@@ -143,5 +142,37 @@ public class TimeVoteRoomService {
                 .orElseThrow(() -> new CustomException(UserErrorCode.VOTE_ROOM_NOT_FOUND));
 
         return timeVoteRepository.existsByTimeVoteRoomAndMember(timeVoteRoom, member);
+    }
+
+    // 시간 투표 현황 정보 조회
+    public TimeVoteRoomResultResponse getTimeVoteResult() {
+        Member member = memberLoader.getMember();
+        String roomId = member.getRoom().getIdentityNumber();
+        Room room = roomRepository.findByIdentityNumber(roomId).orElseThrow(() -> new CustomException(CommonErrorCode.INVALID_PARAMETER));
+
+        TimeVoteRoom timeVoteRoom = timeVoteRoomRepository.findByRoom_IdentityNumber(roomId)
+                .orElseThrow(() -> new CustomException(UserErrorCode.VOTE_ROOM_NOT_FOUND));
+
+        List<MeetingDate> meetingDates = meetingDateRepository.findByTimeVoteRoom(timeVoteRoom);
+
+        Map<String, List<TimeVoteDetail>> result = new LinkedHashMap<>();
+        meetingDates.sort(Comparator.comparing(MeetingDate::getDate));
+
+        for (MeetingDate meetingDate : meetingDates) {
+            String date = meetingDate.getDate().toString();
+            List<TimeVoteDetail> details = new ArrayList<>();
+
+            // 해당 날짜의 모든 투표 정보 가져오기
+            List<TimeVote> timeVotes = timeVoteRepository.findByTimeVoteRoomAndMeetingDate(timeVoteRoom, meetingDate);
+            for (TimeVote vote : timeVotes) {
+                TimeVoteDetail detail = TimeVoteDetail.from(
+                        vote.getMember().getName(),
+                        Arrays.asList(vote.getMemberAvailableStartTime().format(formatter), vote.getMemberAvailableEndTime().format(formatter))
+                );
+                details.add(detail);
+            }
+            result.put(date, details);
+        }
+        return TimeVoteRoomResultResponse.from(result);
     }
 }
