@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.dto.BaseResponse;
 import middle_point_search.backend.common.dto.DataResponse;
-import middle_point_search.backend.domains.place.dto.PlaceDTO;
+import middle_point_search.backend.common.util.MemberLoader;
 import middle_point_search.backend.domains.place.dto.PlaceDTO.PlaceSaveRequest;
 import middle_point_search.backend.domains.place.dto.PlaceDTO.PlaceUpdateRequest;
 import middle_point_search.backend.domains.place.dto.PlaceDTO.PlacesFindResponse;
@@ -28,6 +28,7 @@ import middle_point_search.backend.domains.place.service.PlaceService;
 public class PlaceController {
 
 	private final PlaceService placeService;
+	private final MemberLoader memberLoader;
 
 	@PostMapping
 	public ResponseEntity<BaseResponse> placeSave(@RequestBody PlaceSaveRequest request) {
@@ -46,15 +47,17 @@ public class PlaceController {
 	}
 
 	@PutMapping("/{placeId}")
-	public ResponseEntity<BaseResponse> placeUpdate(@PathVariable("placeId") Long placeId, @RequestBody PlaceUpdateRequest request) {
+	public ResponseEntity<BaseResponse> placeUpdate(@PathVariable("placeId") Long placeId,
+		@RequestBody PlaceUpdateRequest request) {
 
 		placeService.updatePlaces(placeId, request);
 
 		return ResponseEntity.ok(BaseResponse.ok());
 	}
 
-	@GetMapping("/{roomId}")
-	public ResponseEntity<DataResponse<List<PlacesFindResponse>>> placesFind(@PathVariable("roomId") String roomId) {
+	@GetMapping
+	public ResponseEntity<DataResponse<List<PlacesFindResponse>>> placesFind() {
+		String roomId = memberLoader.getRoomId();
 
 		List<PlacesFindResponse> places = placeService.findPlaces(roomId);
 
