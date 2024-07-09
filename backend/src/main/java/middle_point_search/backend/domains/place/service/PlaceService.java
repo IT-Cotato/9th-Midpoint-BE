@@ -87,4 +87,9 @@ public class PlaceService {
 
 		placeRepository.saveAll(places);
 	}
+
+	public void deletePlace(Long placeId) {
+
+		placeRepository.deleteById(placeId);
+	}
 }

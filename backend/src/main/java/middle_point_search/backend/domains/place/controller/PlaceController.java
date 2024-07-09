@@ -58,4 +58,12 @@ public class PlaceController {
 
 		return ResponseEntity.ok(DataResponse.from(places));
 	}
+
+	@DeleteMapping("/{placeId}")
+	public ResponseEntity<BaseResponse> placeDelete(@PathVariable Long placeId) {
+
+		placeService.deletePlace(placeId);
+
+		return ResponseEntity.ok(BaseResponse.ok());
+	}
 }
