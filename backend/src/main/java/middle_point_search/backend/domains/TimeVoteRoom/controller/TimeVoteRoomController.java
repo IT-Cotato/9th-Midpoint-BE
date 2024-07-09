@@ -42,5 +42,17 @@ public class TimeVoteRoomController {
         return ResponseEntity.ok(BaseResponse.ok());
     }
 
+    //투표방존재확인
+    @GetMapping("/exists")
+    public ResponseEntity<DataResponse<Boolean>> hasTimeVoteRoom() {
+        boolean exists = timeVoteRoomService.hasTimeVoteRoom();
+        return ResponseEntity.ok(DataResponse.from(exists));
+    }
+    @GetMapping("/voted")
+    public ResponseEntity<DataResponse<Boolean>> hasVoted() {
+        boolean hasVoted = timeVoteRoomService.hasVoted();
+        return ResponseEntity.ok(DataResponse.from(hasVoted));
+    }
+
 
 }

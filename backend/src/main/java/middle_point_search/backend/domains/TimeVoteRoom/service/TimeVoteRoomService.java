@@ -123,4 +123,25 @@ public class TimeVoteRoomService {
 
         timeVoteRepository.saveAll(timeVotes);
     }
+
+    //투표나 수정 로직에서 투표방, 투표현황체크하지만 쓰일 경우 대비
+    public boolean hasTimeVoteRoom() {
+        Member member = memberLoader.getMember();
+        String roomId = member.getRoom().getIdentityNumber();
+        Room room = roomRepository.findByIdentityNumber(roomId).orElseThrow(() -> new CustomException(CommonErrorCode.INVALID_PARAMETER));
+
+        return timeVoteRoomRepository.existsByRoom(room);
+    }
+
+    //투표방이 없다면 투표방없다고 메세지, 있을때 투표 true, 투표안했을때 false
+    public boolean hasVoted() {
+        Member member = memberLoader.getMember();
+        String roomId = member.getRoom().getIdentityNumber();
+        Room room = roomRepository.findByIdentityNumber(roomId).orElseThrow(() -> new CustomException(CommonErrorCode.INVALID_PARAMETER));
+
+        TimeVoteRoom timeVoteRoom = timeVoteRoomRepository.findByRoom_IdentityNumber(roomId)
+                .orElseThrow(() -> new CustomException(UserErrorCode.VOTE_ROOM_NOT_FOUND));
+
+        return timeVoteRepository.existsByTimeVoteRoomAndMember(timeVoteRoom, member);
+    }
 }
