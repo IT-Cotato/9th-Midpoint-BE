@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.member.domain.Transport;
 import middle_point_search.backend.domains.place.dto.PlaceDTO.PlaceSaveRequest;
-import middle_point_search.backend.domains.place.dto.PlaceDTO.PlacesUpdateRequest.PlaceUpdateRequest;
+import middle_point_search.backend.domains.place.dto.PlaceDTO.PlaceUpdateRequest;
 import middle_point_search.backend.domains.room.domain.Room;
 
 @Entity

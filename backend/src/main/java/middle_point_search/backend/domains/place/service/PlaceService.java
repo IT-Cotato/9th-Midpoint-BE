@@ -12,11 +12,11 @@ import middle_point_search.backend.common.exception.CustomException;
 import middle_point_search.backend.common.util.MemberLoader;
 import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.place.domain.Place;
+import middle_point_search.backend.domains.place.dto.PlaceDTO;
 import middle_point_search.backend.domains.place.dto.PlaceDTO.PlaceSaveRequest;
+import middle_point_search.backend.domains.place.dto.PlaceDTO.PlaceUpdateRequest;
 import middle_point_search.backend.domains.place.dto.PlaceDTO.PlacesFindResponse;
 import middle_point_search.backend.domains.place.dto.PlaceDTO.PlacesSaveBySelfRequest;
-import middle_point_search.backend.domains.place.dto.PlaceDTO.PlacesUpdateRequest;
-import middle_point_search.backend.domains.place.dto.PlaceDTO.PlacesUpdateRequest.PlaceUpdateRequest;
 import middle_point_search.backend.domains.place.repository.PlaceRepository;
 import middle_point_search.backend.domains.room.domain.Room;
 
@@ -76,16 +76,14 @@ public class PlaceService {
 			.toList();
 	}
 
-	// Places 업데이트 하기, 여러 개이므로 다 삭제하고 다시 생성한다.
+	// Place 업데이트 하기
 	@Transactional(readOnly = true)
-	public void updatePlaces(PlacesUpdateRequest request) {
-		List<PlaceUpdateRequest> placeUpdateRequests = request.getPlaces();
+	public void updatePlaces(Long placeId, PlaceUpdateRequest request) {
 
-		placeUpdateRequests.stream()
-			.forEach(placeUpdateRequest -> {
-				Long id = placeUpdateRequest.getPlaceId();
+		Place place = placeRepository.findById(placeId)
+			.orElseThrow(() -> new CustomException(PLACE_NOT_FOUND));
 
-		placeRepository.saveAll(places);
+		place.update(request);
 	}
 
 	public void deletePlace(Long placeId) {
