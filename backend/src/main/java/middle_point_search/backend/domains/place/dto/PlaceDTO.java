@@ -6,7 +6,6 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import middle_point_search.backend.domains.member.domain.Transport;
 import middle_point_search.backend.domains.place.domain.Place;
 
 public class PlaceDTO {
@@ -20,7 +19,6 @@ public class PlaceDTO {
 		private String roadNameAddress;
 		private Double addressLat;
 		private Double addressLong;
-		private Transport transport;
 	}
 
 	@Getter
@@ -39,7 +37,6 @@ public class PlaceDTO {
 		private String roadNameAddress;
 		private Double addressLat;
 		private Double addressLong;
-		private Transport transport;
 	}
 
 	@Getter
@@ -52,7 +49,6 @@ public class PlaceDTO {
 		private final String roadNameAddress;
 		private final Double addressLat;
 		private final Double addressLong;
-		private final Transport transport;
 
 		public static PlacesFindResponse from(Place place) {
 
@@ -62,7 +58,6 @@ public class PlaceDTO {
 			String roadNameAddress = place.getRoadNameAddress();
 			Double addressLat = place.getAddressLatitude();
 			Double addressLong = place.getAddressLongitude();
-			Transport transport = place.getTransport();
 
 			return new PlacesFindResponse(
 				placeId,
@@ -70,8 +65,7 @@ public class PlaceDTO {
 				siGunGu,
 				roadNameAddress,
 				addressLat,
-				addressLong,
-				transport);
+				addressLong);
 		}
 	}
 }
