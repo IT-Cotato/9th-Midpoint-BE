@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface PlaceVoteRoomRepository extends JpaRepository<PlaceVoteRoom, Long> {
-    boolean existsByRoomAndDuplication(Room room, boolean duplication);
+    boolean existsByRoom(Room room);
 }
 
 

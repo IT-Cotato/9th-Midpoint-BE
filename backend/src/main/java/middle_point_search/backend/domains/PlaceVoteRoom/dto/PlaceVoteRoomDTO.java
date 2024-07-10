@@ -13,10 +13,8 @@ public class PlaceVoteRoomDTO {
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
     public static class PlaceVoteRoomCreateResponse {
         private final Long id;
-        private final String url;
-
-        public static PlaceVoteRoomCreateResponse from(Long id, String url) {
-            return new PlaceVoteRoomCreateResponse(id, url);
+        public static PlaceVoteRoomCreateResponse from(Long id) {
+            return new PlaceVoteRoomCreateResponse(id);
         }
     }
 
@@ -25,8 +23,6 @@ public class PlaceVoteRoomDTO {
     @NoArgsConstructor
     public static class PlaceVoteInfoResponse {
         private List<PlaceVoteCandidateInfo> placeCandidates;
-        private int numVoter;
-        private boolean duplication;
 
         @Getter
         @AllArgsConstructor

@@ -18,15 +18,6 @@ public class PlaceVoteRoom {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "duplication")
-    private Boolean duplication;
-
-    @Column(name = "num_voter")
-    private Integer numVoter;
-
-    @Column(name = "url")
-    private String url;
-
     @OneToOne
     @JoinColumn(name = "room_id")
     private Room room;
@@ -34,39 +25,15 @@ public class PlaceVoteRoom {
     @OneToMany(mappedBy = "placeVoteRoom", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<PlaceVoteCandidate> placeVoteCandidates;
 
-    //url 생성일때 그냥 방/vote로
-    public PlaceVoteRoom(Room room,Boolean duplication, Integer  numVoter){
-        this.room =room;
-        this.duplication = duplication;
-        this.numVoter = numVoter;
-    }
 
-    public void setUrl(String url) {
-        if (this.url == null) {
-            this.url = url;
-        }
+    public PlaceVoteRoom(Room room){
+        this.room =room;
     }
     public void setPlaceVoteCandidates(List<PlaceVoteCandidate> placeVoteCandidates) {
         this.placeVoteCandidates = placeVoteCandidates;
         for (PlaceVoteCandidate candidate : placeVoteCandidates) {
             candidate.setPlaceVoteRoom(this);
         }
-    }
-
-    public void vote(Member member, PlaceVoteCandidate candidate) {
-        PlaceVoteCandidateMember voteCandidateMember = new PlaceVoteCandidateMember(candidate, member);
-        if (duplication) {
-            candidate.addVoter(member);
-        } else {
-            for (PlaceVoteCandidate c : placeVoteCandidates) {
-                c.removeVoter(member);
-            }
-            candidate.addVoter(member);
-        }
-    }
-
-    public boolean isDuplication() {
-        return duplication;
     }
 }
 

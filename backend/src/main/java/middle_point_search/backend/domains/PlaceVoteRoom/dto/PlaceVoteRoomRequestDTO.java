@@ -5,9 +5,6 @@ import java.util.List;
 
 @Getter
 public class PlaceVoteRoomRequestDTO {
-
     private String roomId;
     private List<String> placeCandidates;
-    private boolean duplication;
-    private int numVoter;
 }

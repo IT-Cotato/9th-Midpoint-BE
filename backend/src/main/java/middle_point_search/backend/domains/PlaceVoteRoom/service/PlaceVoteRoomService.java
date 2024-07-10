@@ -36,30 +36,23 @@ public class PlaceVoteRoomService {
     // 장소투표방 생성
     @Transactional
     public PlaceVoteRoomCreateResponse createPlaceVoteRoom(PlaceVoteRoomRequestDTO request) {
-        Room room = roomRepository.findByIdentityNumber(request.getRoomId()).orElseThrow(() -> new CustomException(CommonErrorCode.INVALID_PARAMETER));
+        Member member = memberLoader.getMember();
+        String roomId = member.getRoom().getIdentityNumber();
+        Room room = roomRepository.findByIdentityNumber(roomId).orElseThrow(() -> new CustomException(CommonErrorCode.INVALID_PARAMETER));
 
-        boolean exists = placeVoteRoomRepository.existsByRoomAndDuplication(room, request.isDuplication());
+        boolean exists = placeVoteRoomRepository.existsByRoom(room);
         if (exists) {
             throw new DuplicateVoteRoomException();
         }
-        PlaceVoteRoom placeVoteRoom = new PlaceVoteRoom(room, request.isDuplication(), request.getNumVoter());
+        PlaceVoteRoom placeVoteRoom = new PlaceVoteRoom(room);
 
         List<PlaceVoteCandidate> placeVoteCandidates = request.getPlaceCandidates().stream().map(candidateName -> new PlaceVoteCandidate(candidateName, placeVoteRoom)).collect(Collectors.toList());
         placeVoteRoom.setPlaceVoteCandidates(placeVoteCandidates);
 
         // placeVoteRoom을 저장하여 ID를 생성
         PlaceVoteRoom savedPlaceVoteRoom = placeVoteRoomRepository.save(placeVoteRoom);
-        // URL 생성 및 설정
-        String votePageUrl = generateVotePageUrl(savedPlaceVoteRoom);
-        savedPlaceVoteRoom.setUrl(votePageUrl);
 
-        return PlaceVoteRoomCreateResponse.from(savedPlaceVoteRoom.getId(), savedPlaceVoteRoom.getUrl());
-    }
-
-
-    private String generateVotePageUrl(PlaceVoteRoom placeVoteRoom) {
-        String baseUrl = "http://api/place-vote-room/";
-        return baseUrl + placeVoteRoom.getId();
+        return PlaceVoteRoomCreateResponse.from(savedPlaceVoteRoom.getId());
     }
 
     // 장소투표방 조회
@@ -68,7 +61,7 @@ public class PlaceVoteRoomService {
 
         List<PlaceVoteInfoResponse.PlaceVoteCandidateInfo> candidates = placeVoteRoom.getPlaceVoteCandidates().stream().map(candidate -> new PlaceVoteInfoResponse.PlaceVoteCandidateInfo(candidate.getId(), candidate.getName(), candidate.getCount(), candidate.getVoters().stream().map(v -> v.getMember().getName()).collect(Collectors.toList()))).collect(Collectors.toList());
 
-        return new PlaceVoteInfoResponse(candidates, placeVoteRoom.getNumVoter(), placeVoteRoom.isDuplication());
+        return new PlaceVoteInfoResponse(candidates);
     }
 
     // 투표 처리
