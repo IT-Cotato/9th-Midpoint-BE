@@ -18,6 +18,8 @@ public enum UserErrorCode implements ErrorCode {
 	API_UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "API 인증 정보가 정확하지 않습니다."),
 	ROOM_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 방입니다."),
 	PLACE_NOT_FOUND(HttpStatus.NOT_FOUND, "방에 입력된 장소가 없습니다."),
+	PLACE_CONFLICT(HttpStatus.CONFLICT, "이미 장소를 저장하였습니다."),
+
 	VOTE_NOT_FOUND(HttpStatus.BAD_REQUEST, "투표를 한 적이 없습니다."),
 	VOTE_ROOM_NOT_FOUND(HttpStatus.BAD_REQUEST, "생성된 투표방이 없습니다."),
 	ALREADY_VOTED(HttpStatus.BAD_REQUEST, "이미 투표를 하였습니다."),

@@ -9,5 +9,4 @@ import java.util.Optional;
 public interface TimeVoteRoomRepository extends JpaRepository<TimeVoteRoom, Long> {
     boolean existsByRoom(Room room);
     Optional<TimeVoteRoom> findByRoom_IdentityNumber(String roomId);
-
 }
