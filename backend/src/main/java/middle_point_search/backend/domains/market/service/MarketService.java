@@ -125,24 +125,34 @@ public class MarketService {
 
 		Pageable pageable = PageRequest.of(page, size);
 
-		KakaoSearchResponse response;
-		if (request.getPlaceStandard() == PlaceStandard.ALL) {
-			response = getKaKaoForAll(x, y, pageable);
-		} else if (request.getPlaceStandard() == PlaceStandard.STUDY) {
-			response = getKaKaoForStudy(x, y, pageable);
-		} else if (request.getPlaceStandard() == PlaceStandard.CAFE){
-			response = getKaKaoForCafe(x, y, pageable);
-		} else if (request.getPlaceStandard() == PlaceStandard.RESTAURANT) {
-			response = getKaKaoForRestaurant(x, y, pageable);
-		} else {
-			throw new CustomException(CommonErrorCode.INVALID_PARAMETER);
-		}
+		KakaoSearchResponse response = checkPlaceStandardAndGetResponse(request, x, y, pageable);
 
 		int totalCount = response.getMeta().getPageable_count();
 
 		return new PageImpl<>(response.getDocuments().stream()
 			.map(RecommendPlacesFindResponse::from)
 			.toList(), pageable , totalCount);
+	}
+
+	//PlaceStandard에 따른 KakaoSearchResponse를 가져오는 메서드
+	private KakaoSearchResponse checkPlaceStandardAndGetResponse(
+		RecommendPlacesFindRequest request,
+		String x,
+		String y,
+		Pageable pageable)
+	{
+
+		if (request.getPlaceStandard() == PlaceStandard.ALL) {
+			return getKaKaoForAll(x, y, pageable);
+		} else if (request.getPlaceStandard() == PlaceStandard.STUDY) {
+			return getKaKaoForStudy(x, y, pageable);
+		} else if (request.getPlaceStandard() == PlaceStandard.CAFE){
+			return getKaKaoForCafe(x, y, pageable);
+		} else if (request.getPlaceStandard() == PlaceStandard.RESTAURANT) {
+			return getKaKaoForRestaurant(x, y, pageable);
+		}
+
+		throw new CustomException(CommonErrorCode.INVALID_PARAMETER);
 	}
 
 	//Cafe, Study, Restaurant 한번에 가져오기
