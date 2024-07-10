@@ -28,6 +28,14 @@ public class TimeVoteRoomController {
         return ResponseEntity.ok(DataResponse.from(response));
     }
 
+    //투표방 재생성
+    @PutMapping
+    public ResponseEntity<DataResponse<TimeVoteRoomCreateResponse>> timeVoteRoomRecreate(@RequestBody TimeVoteRoomCreateRequest request) {
+        TimeVoteRoomCreateResponse response = timeVoteRoomService.recreateTimeVoteRoom(request);
+        return ResponseEntity.ok(DataResponse.from(response));
+    }
+
+
     //투표
     @PostMapping("/vote")
     public ResponseEntity<?> vote(@RequestBody TimeVoteRoomVoteRequest request) {
@@ -57,8 +65,8 @@ public class TimeVoteRoomController {
 
     //투표 결과
     @GetMapping("/result")
-    public ResponseEntity<DataResponse<TimeVoteRoomDTO.TimeVoteRoomResultResponse>> timeVoteResultsGet() {
-        TimeVoteRoomDTO.TimeVoteRoomResultResponse result = timeVoteRoomService.getTimeVoteResult();
+    public ResponseEntity<DataResponse<TimeVoteRoomResultResponse>> timeVoteResultsGet() {
+        TimeVoteRoomResultResponse result = timeVoteRoomService.getTimeVoteResult();
         return ResponseEntity.ok(DataResponse.from(result));
     }
 
