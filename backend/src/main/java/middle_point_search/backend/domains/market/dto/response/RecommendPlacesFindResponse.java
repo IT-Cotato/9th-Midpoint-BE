@@ -18,6 +18,8 @@ public class RecommendPlacesFindResponse {
 	private final String roadNameAddress;
 	private final Double addressLat;
 	private final Double addressLong;
+	private final String phoneNumber;
+	private final String placeUrl;
 
 	public static RecommendPlacesFindResponse from(Document document) {
 		String[] splitAddress = document.getRoad_address_name().split(" ", 3);
@@ -39,7 +41,9 @@ public class RecommendPlacesFindResponse {
 			siGunGu,
 			roadNameAddress,
 			Double.parseDouble(document.getY()),
-			Double.parseDouble(document.getY())
+			Double.parseDouble(document.getY()),
+			document.getPhone(),
+			document.getPlace_url()
 		);
 	}
 }
