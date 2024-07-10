@@ -6,6 +6,7 @@ import java.net.URLEncoder;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -27,8 +28,8 @@ import middle_point_search.backend.domains.market.domain.Market;
 import middle_point_search.backend.domains.market.domain.PlaceStandard;
 import middle_point_search.backend.domains.market.dto.request.RecommendPlacesFindRequest;
 import middle_point_search.backend.domains.market.dto.response.KakaoSearchResponse;
-import middle_point_search.backend.domains.market.dto.response.KakaoSearchResponse.Document;
 import middle_point_search.backend.domains.market.dto.response.MarketApiResponse;
+import middle_point_search.backend.domains.market.dto.response.RecommendPlacesDto;
 import middle_point_search.backend.domains.market.dto.response.RecommendPlacesFindResponse;
 import middle_point_search.backend.domains.market.repository.MarketRepository;
 
@@ -125,28 +126,36 @@ public class MarketService {
 
 		Pageable pageable = PageRequest.of(page, size);
 
-		KakaoSearchResponse response;
+		RecommendPlacesDto response = checkPlaceStandardAndGetResponse(request, x, y, pageable);
+
+		int totalCount = response.getPageableCount();
+
+		return new PageImpl<>(response.getRecommendPlaces(), pageable , totalCount);
+	}
+
+	//PlaceStandard에 따라 KakaoSearchResponse를 가져오는 메서드
+	private RecommendPlacesDto checkPlaceStandardAndGetResponse(
+		RecommendPlacesFindRequest request,
+		String x,
+		String y,
+		Pageable pageable)
+	{
+
 		if (request.getPlaceStandard() == PlaceStandard.ALL) {
-			response = getKaKaoForAll(x, y, pageable);
+			return getKaKaoForAll(x, y, pageable);
 		} else if (request.getPlaceStandard() == PlaceStandard.STUDY) {
-			response = getKaKaoForStudy(x, y, pageable);
+			return getKaKaoForStudy(x, y, pageable);
 		} else if (request.getPlaceStandard() == PlaceStandard.CAFE){
-			response = getKaKaoForCafe(x, y, pageable);
+			return getKaKaoForCafe(x, y, pageable);
 		} else if (request.getPlaceStandard() == PlaceStandard.RESTAURANT) {
-			response = getKaKaoForRestaurant(x, y, pageable);
-		} else {
-			throw new CustomException(CommonErrorCode.INVALID_PARAMETER);
+			return getKaKaoForRestaurant(x, y, pageable);
 		}
 
-		int totalCount = response.getMeta().getPageable_count();
-
-		return new PageImpl<>(response.getDocuments().stream()
-			.map(RecommendPlacesFindResponse::from)
-			.toList(), pageable , totalCount);
+		throw new CustomException(CommonErrorCode.INVALID_PARAMETER);
 	}
 
 	//Cafe, Study, Restaurant 한번에 가져오기
-	private KakaoSearchResponse getKaKaoForAll(String x, String y, Pageable pageable) {
+	private RecommendPlacesDto getKaKaoForAll(String x, String y, Pageable pageable) {
 		int size = pageable.getPageSize();
 		int page = pageable.getPageNumber();
 
@@ -154,27 +163,27 @@ public class MarketService {
 		int restaurantSize = size - size / 3 * 2;
 		int studySize = cafeSize;
 
-		KakaoSearchResponse response1 = getKaKaoForStudy(x, y, PageRequest.of(page, studySize));
-		KakaoSearchResponse response2 = getKaKaoForCafe(x, y, PageRequest.of(page, cafeSize));
-		KakaoSearchResponse response3 = getKaKaoForRestaurant(x, y, PageRequest.of(page, restaurantSize));
+		RecommendPlacesDto response1 = getKaKaoForStudy(x, y, PageRequest.of(page, studySize));
+		RecommendPlacesDto response2 = getKaKaoForCafe(x, y, PageRequest.of(page, cafeSize));
+		RecommendPlacesDto response3 = getKaKaoForRestaurant(x, y, PageRequest.of(page, restaurantSize));
 
 		//위 셋의 응답을 response1로 합치기
-		int count1 = response1.getMeta().getPageable_count();
-		int count2 = response2.getMeta().getPageable_count();
-		int count3 = response3.getMeta().getPageable_count();
+		int count1 = response1.getPageableCount();
+		int count2 = response2.getPageableCount();
+		int count3 = response3.getPageableCount();
 
-		response1.getMeta().setPageable_count(count1 + count2 + count3);
+		response1.setPageableCount(count1 + count2 + count3);
 
-		response1.getDocuments().addAll(response2.getDocuments());
-		response1.getDocuments().addAll(response3.getDocuments());
+		response1.getRecommendPlaces().addAll(response2.getRecommendPlaces());
+		response1.getRecommendPlaces().addAll(response3.getRecommendPlaces());
 
-		Collections.sort(response1.getDocuments());
+		Collections.sort(response1.getRecommendPlaces());
 
 		return response1;
 	}
 
 	//Cafe 가져오기
-	private KakaoSearchResponse getKaKaoForCafe(String x, String y, Pageable pageable) {
+	private RecommendPlacesDto getKaKaoForCafe(String x, String y, Pageable pageable) {
 		int size = pageable.getPageSize();
 		int page = pageable.getPageNumber();
 
@@ -188,11 +197,20 @@ public class MarketService {
 
 		String url = kakaoProperties.getCategorySearchUrl();
 
-		return webClientUtil.getKakao(url, params, KakaoSearchResponse.class);
+		KakaoSearchResponse kakaoSearchResponse = webClientUtil.getKakao(url, params, KakaoSearchResponse.class);
+		int pageableCount = kakaoSearchResponse.getMeta().getPageable_count();
+
+		List<RecommendPlacesFindResponse> recommendPlacesFindResponses = kakaoSearchResponse
+			.getDocuments()
+			.stream()
+			.map(document -> RecommendPlacesFindResponse.from(document, PlaceStandard.CAFE))
+			.collect(Collectors.toList());
+
+		return RecommendPlacesDto.from(pageableCount, recommendPlacesFindResponses);
 	}
 
 	//Study 가져오기
-	private KakaoSearchResponse getKaKaoForStudy(String x, String y, Pageable pageable) {
+	private RecommendPlacesDto getKaKaoForStudy(String x, String y, Pageable pageable) {
 		int size = pageable.getPageSize();
 		int page = pageable.getPageNumber();
 
@@ -207,11 +225,21 @@ public class MarketService {
 
 		String url = kakaoProperties.getKeywordSearchUrl();
 
-		return webClientUtil.getKakao(url, params, KakaoSearchResponse.class);
+		KakaoSearchResponse kakaoSearchResponse = webClientUtil.getKakao(url, params, KakaoSearchResponse.class);
+		int pageableCount = kakaoSearchResponse.getMeta().getPageable_count();
+
+		List<RecommendPlacesFindResponse> recommendPlacesFindResponses = kakaoSearchResponse
+			.getDocuments()
+			.stream()
+			.filter(document -> Objects.equals(document.getCategory_group_name(), "")) //학원 제외, 스터디는 그룹이 따로 없다.
+			.map(document -> RecommendPlacesFindResponse.from(document, PlaceStandard.STUDY))
+			.collect(Collectors.toList());
+
+		return RecommendPlacesDto.from(pageableCount, recommendPlacesFindResponses);
 	}
 
 	//Restaurant 가져오기
-	private KakaoSearchResponse getKaKaoForRestaurant(String x, String y, Pageable pageable) {
+	private RecommendPlacesDto getKaKaoForRestaurant(String x, String y, Pageable pageable) {
 		int size = pageable.getPageSize();
 		int page = pageable.getPageNumber();
 
@@ -225,6 +253,15 @@ public class MarketService {
 
 		String url = kakaoProperties.getCategorySearchUrl();
 
-		return webClientUtil.getKakao(url, params, KakaoSearchResponse.class);
+		KakaoSearchResponse kakaoSearchResponse = webClientUtil.getKakao(url, params, KakaoSearchResponse.class);
+		int pageableCount = kakaoSearchResponse.getMeta().getPageable_count();
+
+		List<RecommendPlacesFindResponse> recommendPlacesFindResponses = kakaoSearchResponse
+			.getDocuments()
+			.stream()
+			.map(document -> RecommendPlacesFindResponse.from(document, PlaceStandard.RESTAURANT))
+			.collect(Collectors.toList());
+
+		return RecommendPlacesDto.from(pageableCount, recommendPlacesFindResponses);
 	}
 }
