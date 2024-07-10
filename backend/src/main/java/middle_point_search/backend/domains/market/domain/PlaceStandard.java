@@ -8,7 +8,7 @@ public enum PlaceStandard {
 	ALL("전체", null),
 	STUDY("스터디", null),
 	CAFE("카페", "CE7"),
-	RESTAURANT("식당", "FD6"),
+	RESTAURANT("음식점", "FD6"),
 	;
 
 	private final String name;

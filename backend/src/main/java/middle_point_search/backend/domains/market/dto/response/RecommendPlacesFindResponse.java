@@ -1,19 +1,16 @@
 package middle_point_search.backend.domains.market.dto.response;
 
-import java.util.Objects;
-
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import middle_point_search.backend.common.exception.CustomException;
 import middle_point_search.backend.domains.market.domain.PlaceStandard;
 import middle_point_search.backend.domains.market.dto.response.KakaoSearchResponse.Document;
 
 @Slf4j
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class RecommendPlacesFindResponse {
+public class RecommendPlacesFindResponse implements Comparable<RecommendPlacesFindResponse> {
 
 	private final String name;
 	private final String siDo;
@@ -24,6 +21,7 @@ public class RecommendPlacesFindResponse {
 	private final String phoneNumber;
 	private final String placeUrl;
 	private final PlaceStandard placeStandard;
+	private final String distance;
 
 	public static RecommendPlacesFindResponse from(Document document, PlaceStandard placeStandard) {
 
@@ -42,7 +40,8 @@ public class RecommendPlacesFindResponse {
 			Double.parseDouble(document.getY()),
 			document.getPhone(),
 			document.getPlace_url(),
-			placeStandard
+			placeStandard,
+			document.getDistance()
 		);
 	}
 
@@ -56,5 +55,10 @@ public class RecommendPlacesFindResponse {
 		}
 
 		return result;
+	}
+
+	@Override
+	public int compareTo(RecommendPlacesFindResponse o) {
+		return Integer.parseInt(this.distance) - Integer.parseInt(o.distance);
 	}
 }
