@@ -32,9 +32,9 @@ public class PlaceVoteRoomController {
         return ResponseEntity.ok(DataResponse.from(response));
     }
     //투표 결과
-    @GetMapping("/{placeVoteRoomId}")
-    public ResponseEntity<DataResponse<PlaceVoteInfoResponse>> placeVoteRoomGet(@PathVariable Long placeVoteRoomId) {
-        PlaceVoteInfoResponse response = placeVoteRoomService.getPlaceVoteRoom(placeVoteRoomId);
+    @GetMapping("/result")
+    public ResponseEntity<DataResponse<PlaceVoteInfoResponse>> placeVoteRoomGet() {
+        PlaceVoteInfoResponse response = placeVoteRoomService.getPlaceVoteRoom();
         return ResponseEntity.ok(DataResponse.from(response));
     }
     //투표

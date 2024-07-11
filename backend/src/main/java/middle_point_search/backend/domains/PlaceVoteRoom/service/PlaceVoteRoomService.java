@@ -56,8 +56,12 @@ public class PlaceVoteRoomService {
     }
 
     // 장소투표방 조회
-    public PlaceVoteInfoResponse getPlaceVoteRoom(Long placeVoteRoomId) {
-        PlaceVoteRoom placeVoteRoom = placeVoteRoomRepository.findById(placeVoteRoomId).orElseThrow(() -> new CustomException(CommonErrorCode.INVALID_PARAMETER));
+    public PlaceVoteInfoResponse getPlaceVoteRoom() {
+        Member member = memberLoader.getMember();
+        String roomId = member.getRoom().getIdentityNumber();
+        Room room = roomRepository.findByIdentityNumber(roomId).orElseThrow(() -> new CustomException(CommonErrorCode.INVALID_PARAMETER));
+
+        PlaceVoteRoom placeVoteRoom = placeVoteRoomRepository.findByRoom_IdentityNumber(roomId).orElseThrow(() -> new CustomException(CommonErrorCode.INVALID_PARAMETER));
 
         List<PlaceVoteInfoResponse.PlaceVoteCandidateInfo> candidates = placeVoteRoom.getPlaceVoteCandidates().stream().map(candidate -> new PlaceVoteInfoResponse.PlaceVoteCandidateInfo(candidate.getId(), candidate.getName(), candidate.getCount(), candidate.getVoters().stream().map(v -> v.getMember().getName()).collect(Collectors.toList()))).collect(Collectors.toList());
 
