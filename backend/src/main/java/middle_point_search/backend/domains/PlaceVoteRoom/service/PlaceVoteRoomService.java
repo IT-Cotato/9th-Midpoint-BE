@@ -8,6 +8,7 @@ import middle_point_search.backend.common.exception.errorCode.CommonErrorCode;
 import middle_point_search.backend.common.exception.errorCode.UserErrorCode;
 import middle_point_search.backend.common.util.MemberLoader;
 import middle_point_search.backend.domains.PlaceVoteRoom.domain.PlaceVoteCandidate;
+import middle_point_search.backend.domains.PlaceVoteRoom.domain.PlaceVoteCandidateMember;
 import middle_point_search.backend.domains.PlaceVoteRoom.domain.PlaceVoteRoom;
 import middle_point_search.backend.domains.PlaceVoteRoom.dto.PlaceVoteRequestDTO;
 import middle_point_search.backend.domains.PlaceVoteRoom.dto.PlaceVoteRoomRequestDTO;
@@ -86,18 +87,22 @@ public class PlaceVoteRoomService {
         placeVoteRoomRepository.save(placeVoteRoom);
     }
 
-    // 투표 수정 처리
+    // 재투표
     @Transactional
-    public void updateVote(Long placeVoteRoomId, PlaceVoteRequestDTO voteRequest) {
-        PlaceVoteRoom placeVoteRoom = placeVoteRoomRepository.findById(placeVoteRoomId).orElseThrow(() -> new CustomException(CommonErrorCode.INVALID_PARAMETER));
+    public void updateVote(PlaceVoteRequestDTO voteRequest) {
 
         Member member = memberLoader.getMember();
-        // 기존 투표 제거
-        placeVoteRoom.getPlaceVoteCandidates().forEach(candidate -> {
-            if (candidate.hasVoter(member)) {
-                candidate.removeVoter(member);
-            }
-        });
+        String roomId = member.getRoom().getIdentityNumber();
+        PlaceVoteRoom placeVoteRoom = placeVoteRoomRepository.findByRoom_IdentityNumber(roomId).orElseThrow(() -> new CustomException(UserErrorCode.VOTE_ROOM_NOT_FOUND));
+        //기존투표제거
+        boolean alreadyVoted = placeVoteCandidateMemberRepository.existsByPlaceVoteCandidate_PlaceVoteRoomAndMember(placeVoteRoom, member);
+        if (!alreadyVoted) {
+            throw new CustomException(UserErrorCode.VOTE_NOT_FOUND); // 투표를 한적이 없다는걸 나타냄
+        }
+
+        List<PlaceVoteCandidateMember> existingVotes = placeVoteCandidateMemberRepository.findAllByPlaceVoteCandidate_PlaceVoteRoomAndMember(placeVoteRoom, member);
+        placeVoteCandidateMemberRepository.deleteAll(existingVotes);
+
         // 새로 받은 항목으로 업데이트
         voteRequest.getChoicePlaces().forEach(candidateId -> {
             PlaceVoteCandidate candidate = placeVoteRoom.getPlaceVoteCandidates().stream().filter(c -> c.getId().equals(candidateId)).findFirst().orElseThrow(() -> new CustomException(CommonErrorCode.INVALID_PARAMETER));
