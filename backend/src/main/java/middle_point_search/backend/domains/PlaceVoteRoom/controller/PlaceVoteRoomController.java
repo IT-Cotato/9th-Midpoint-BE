@@ -54,6 +54,13 @@ public class PlaceVoteRoomController {
         return ResponseEntity.ok(DataResponse.from(exists));
     }
 
+    //투표여부
+    @GetMapping("/voted")
+    public ResponseEntity<DataResponse<Boolean>> votedHas() {
+        boolean hasVoted = placeVoteRoomService.hasVoted();
+        return ResponseEntity.ok(DataResponse.from(hasVoted));
+    }
+
     //투표방 삭제
     @DeleteMapping("/{placeVoteRoomId}")
     public ResponseEntity<?> placeVoteRoomDelete(@PathVariable Long placeVoteRoomId) {

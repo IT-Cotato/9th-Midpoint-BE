@@ -120,6 +120,15 @@ public class PlaceVoteRoomService {
         return placeVoteRoomRepository.existsByRoom(room);
     }
 
+    //투표여부
+    public boolean hasVoted() {
+        Member member = memberLoader.getMember();
+        String roomId = member.getRoom().getIdentityNumber();
+        PlaceVoteRoom placeVoteRoom = placeVoteRoomRepository.findByRoom_IdentityNumber(roomId).orElseThrow(() -> new CustomException(UserErrorCode.VOTE_ROOM_NOT_FOUND));
+
+        return placeVoteCandidateMemberRepository.existsByPlaceVoteCandidate_PlaceVoteRoomAndMember(placeVoteRoom, member);
+    }
+
     //다시 투표시 투표방 삭제
     @Transactional
     public void deletePlaceVoteRoom(Long placeVoteRoomId) {
