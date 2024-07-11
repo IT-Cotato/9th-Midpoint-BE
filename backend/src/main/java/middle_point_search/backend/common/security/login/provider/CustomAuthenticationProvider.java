@@ -1,5 +1,6 @@
 package middle_point_search.backend.common.security.login.provider;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -41,7 +42,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 			throw new BadCredentialsException("비밀번호가 틀렸습니다.");
 		}
 
-		List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("USER"));
+		Collection<GrantedAuthority> authorities = (Collection<GrantedAuthority>)user.getAuthorities();
 
 		return MemberAuthenticationToken.authenticated(roomId, name, password, authorities);
 	}

@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.security.exception.RoomNotFoundException;
 import middle_point_search.backend.common.util.MemberLoader;
 import middle_point_search.backend.domains.member.domain.Member;
+import middle_point_search.backend.domains.member.domain.Role;
 import middle_point_search.backend.domains.member.repository.MemberRepository;
 import middle_point_search.backend.domains.room.domain.Room;
 import middle_point_search.backend.domains.room.repository.RoomRepository;
@@ -24,12 +25,14 @@ public class MemberService {
 
 	@Transactional(readOnly = false)
 	public Member createMember(String roomId, String name, String pw) throws RoomNotFoundException {
+
+		Role role = Role.GUEST; // 회원 가입시 권한은 GUEST
 		pw = encodePassword(pw);
 
 		Room room = roomRepository.findRoomByIdentityNumber(roomId)
 			.orElseThrow(() -> new RoomNotFoundException("해당하는 방이 존재하지 않습니다"));
 
-		Member member = Member.from(room, name, pw);
+		Member member = Member.from(room, name, pw, role);
 		memberRepository.save(member);
 
 		return member;
