@@ -17,7 +17,6 @@ import static middle_point_search.backend.domains.PlaceVoteRoom.dto.PlaceVoteRoo
 @RequestMapping("/api/place-vote-rooms")
 public class PlaceVoteRoomController {
 
-
     private final PlaceVoteRoomService placeVoteRoomService;
 
     //투표방 생성
@@ -44,13 +43,15 @@ public class PlaceVoteRoomController {
     //재투표
     @PutMapping("/vote")
     public ResponseEntity<?> voteUpdate(@RequestBody PlaceVoteRequestDTO placeVoteRequest) {
-        long startTime = System.currentTimeMillis();
-
         placeVoteRoomService.updateVote(placeVoteRequest);
-        long stopTime = System.currentTimeMillis();
-        System.out.println("코드 실행 시간: " + (stopTime - startTime));
         return ResponseEntity.ok(BaseResponse.ok());
+    }
 
+    //투표방 존재 확인
+    @GetMapping("/existence")
+    public ResponseEntity<DataResponse<Boolean>> placeVoteRoomHas() {
+        boolean exists = placeVoteRoomService.hasPlaceVoteRoom();
+        return ResponseEntity.ok(DataResponse.from(exists));
     }
 
     //투표방 삭제

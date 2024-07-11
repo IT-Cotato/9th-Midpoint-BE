@@ -111,6 +111,15 @@ public class PlaceVoteRoomService {
         placeVoteRoomRepository.save(placeVoteRoom);
     }
 
+    //투표방생성여부
+    public boolean hasPlaceVoteRoom() {
+        Member member = memberLoader.getMember();
+        String roomId = member.getRoom().getIdentityNumber();
+        Room room = roomRepository.findByIdentityNumber(roomId).orElseThrow(() -> new CustomException(CommonErrorCode.INVALID_PARAMETER));
+
+        return placeVoteRoomRepository.existsByRoom(room);
+    }
+
     //다시 투표시 투표방 삭제
     @Transactional
     public void deletePlaceVoteRoom(Long placeVoteRoomId) {
