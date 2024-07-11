@@ -1,8 +1,8 @@
 package middle_point_search.backend.domains.member.domain;
 
 public enum Role {
-	USER("유저"),
-	GUEST("게스트"),
+	USER("ROLE_USER"),
+	GUEST("ROLE_GUEST"),
 	;
 
 	private final String name;
