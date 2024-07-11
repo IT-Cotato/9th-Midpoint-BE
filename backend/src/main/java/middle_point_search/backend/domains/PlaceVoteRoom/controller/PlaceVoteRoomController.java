@@ -3,14 +3,12 @@ package middle_point_search.backend.domains.PlaceVoteRoom.controller;
 import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.dto.BaseResponse;
 import middle_point_search.backend.common.dto.DataResponse;
-import middle_point_search.backend.domains.PlaceVoteRoom.dto.PlaceVoteRequestDTO;
-import middle_point_search.backend.domains.PlaceVoteRoom.dto.PlaceVoteRoomRequestDTO;
+import middle_point_search.backend.domains.PlaceVoteRoom.dto.PlaceVoteRoomDTO;
 import middle_point_search.backend.domains.PlaceVoteRoom.service.PlaceVoteRoomService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import static middle_point_search.backend.domains.PlaceVoteRoom.dto.PlaceVoteRoomDTO.PlaceVoteInfoResponse;
-import static middle_point_search.backend.domains.PlaceVoteRoom.dto.PlaceVoteRoomDTO.PlaceVoteRoomCreateResponse;
+import static middle_point_search.backend.domains.PlaceVoteRoom.dto.PlaceVoteRoomDTO.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,7 +19,7 @@ public class PlaceVoteRoomController {
 
     //투표방 생성
     @PostMapping
-    public ResponseEntity<DataResponse<PlaceVoteRoomCreateResponse>> placeVoteRoomCreate(@RequestBody PlaceVoteRoomRequestDTO request) {
+    public ResponseEntity<DataResponse<PlaceVoteRoomCreateResponse>> placeVoteRoomCreate(@RequestBody PlaceVoteRoomCreateRequest request) {
         PlaceVoteRoomCreateResponse response = placeVoteRoomService.createPlaceVoteRoom(request);
         return ResponseEntity.ok(DataResponse.from(response));
     }
@@ -35,15 +33,15 @@ public class PlaceVoteRoomController {
 
     //투표
     @PostMapping("/vote")
-    public ResponseEntity<?> vote(@RequestBody PlaceVoteRequestDTO placeVoteRequest) {
-        placeVoteRoomService.vote(placeVoteRequest);
+    public ResponseEntity<?> vote(@RequestBody PlaceVoteRequest request) {
+        placeVoteRoomService.vote(request);
         return ResponseEntity.ok(BaseResponse.ok());
     }
 
     //재투표
     @PutMapping("/vote")
-    public ResponseEntity<?> voteUpdate(@RequestBody PlaceVoteRequestDTO placeVoteRequest) {
-        placeVoteRoomService.updateVote(placeVoteRequest);
+    public ResponseEntity<?> voteUpdate(@RequestBody PlaceVoteRoomDTO.PlaceVoteRequest request) {
+        placeVoteRoomService.updateVote(request);
         return ResponseEntity.ok(BaseResponse.ok());
     }
 

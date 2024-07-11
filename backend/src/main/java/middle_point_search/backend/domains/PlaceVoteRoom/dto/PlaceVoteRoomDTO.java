@@ -8,6 +8,13 @@ import java.util.List;
 
 
 public class PlaceVoteRoomDTO {
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class PlaceVoteRoomCreateRequest {
+        private List<String> placeCandidates;
+    }
+
 
     @Getter
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -17,6 +24,7 @@ public class PlaceVoteRoomDTO {
             return new PlaceVoteRoomCreateResponse(id);
         }
     }
+
 
     @Getter
     @AllArgsConstructor
@@ -34,5 +42,12 @@ public class PlaceVoteRoomDTO {
             private List<String> voters;
         }
     }
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PlaceVoteRequest{
+        private List<Long> choicePlaces;
+    }
+
 }
 

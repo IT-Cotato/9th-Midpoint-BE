@@ -10,8 +10,6 @@ import middle_point_search.backend.common.util.MemberLoader;
 import middle_point_search.backend.domains.PlaceVoteRoom.domain.PlaceVoteCandidate;
 import middle_point_search.backend.domains.PlaceVoteRoom.domain.PlaceVoteCandidateMember;
 import middle_point_search.backend.domains.PlaceVoteRoom.domain.PlaceVoteRoom;
-import middle_point_search.backend.domains.PlaceVoteRoom.dto.PlaceVoteRequestDTO;
-import middle_point_search.backend.domains.PlaceVoteRoom.dto.PlaceVoteRoomRequestDTO;
 import middle_point_search.backend.domains.PlaceVoteRoom.repository.PlaceVoteCandidateMemberRepository;
 import middle_point_search.backend.domains.PlaceVoteRoom.repository.PlaceVoteRoomRepository;
 import middle_point_search.backend.domains.member.domain.Member;
@@ -23,8 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static middle_point_search.backend.domains.PlaceVoteRoom.dto.PlaceVoteRoomDTO.PlaceVoteInfoResponse;
-import static middle_point_search.backend.domains.PlaceVoteRoom.dto.PlaceVoteRoomDTO.PlaceVoteRoomCreateResponse;
+import static middle_point_search.backend.domains.PlaceVoteRoom.dto.PlaceVoteRoomDTO.*;
 
 @Service
 @RequiredArgsConstructor
@@ -38,7 +35,7 @@ public class PlaceVoteRoomService {
 
     // 장소투표방 생성
     @Transactional
-    public PlaceVoteRoomCreateResponse createPlaceVoteRoom(PlaceVoteRoomRequestDTO request) {
+    public PlaceVoteRoomCreateResponse createPlaceVoteRoom(PlaceVoteRoomCreateRequest request) {
         Member member = memberLoader.getMember();
         String roomId = member.getRoom().getIdentityNumber();
         Room room = roomRepository.findByIdentityNumber(roomId).orElseThrow(() -> new CustomException(UserErrorCode.ROOM_NOT_FOUND));
@@ -70,7 +67,7 @@ public class PlaceVoteRoomService {
 
     // 투표 처리
     @Transactional
-    public void vote(PlaceVoteRequestDTO voteRequest) {
+    public void vote(PlaceVoteRequest voteRequest) {
         Member member = memberLoader.getMember();
         String roomId = member.getRoom().getIdentityNumber();
         PlaceVoteRoom placeVoteRoom = placeVoteRoomRepository.findByRoom_IdentityNumber(roomId).orElseThrow(() -> new CustomException(UserErrorCode.VOTE_ROOM_NOT_FOUND));
@@ -89,7 +86,7 @@ public class PlaceVoteRoomService {
 
     // 재투표
     @Transactional
-    public void updateVote(PlaceVoteRequestDTO voteRequest) {
+    public void updateVote(PlaceVoteRequest voteRequest) {
 
         Member member = memberLoader.getMember();
         String roomId = member.getRoom().getIdentityNumber();
@@ -97,7 +94,7 @@ public class PlaceVoteRoomService {
         //기존투표제거
         boolean alreadyVoted = placeVoteCandidateMemberRepository.existsByPlaceVoteCandidate_PlaceVoteRoomAndMember(placeVoteRoom, member);
         if (!alreadyVoted) {
-            throw new CustomException(UserErrorCode.VOTE_NOT_FOUND); // 투표를 한적이 없다는걸 나타냄
+            throw new CustomException(UserErrorCode.VOTE_NOT_FOUND);
         }
 
         List<PlaceVoteCandidateMember> existingVotes = placeVoteCandidateMemberRepository.findAllByPlaceVoteCandidate_PlaceVoteRoomAndMember(placeVoteRoom, member);
