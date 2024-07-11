@@ -38,10 +38,10 @@ public class PlaceVoteRoomController {
         return ResponseEntity.ok(DataResponse.from(response));
     }
     //투표
-    @PostMapping("/{place-vote-rooms-id}/vote")
-    public ResponseEntity<?> vote(@PathVariable("place-vote-rooms-id") Long placeVoteRoomId, @RequestBody PlaceVoteRequestDTO placeVoteRequest) {
+    @PostMapping("/vote")
+    public ResponseEntity<?> vote(@RequestBody PlaceVoteRequestDTO placeVoteRequest) {
         try {
-            placeVoteRoomService.vote(placeVoteRoomId, placeVoteRequest);
+            placeVoteRoomService.vote(placeVoteRequest);
             return ResponseEntity.ok(BaseResponse.ok());
         } catch (AlreadyVotedException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)

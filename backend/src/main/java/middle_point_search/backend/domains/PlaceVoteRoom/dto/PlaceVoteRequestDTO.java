@@ -9,9 +9,4 @@ import java.util.List;
 @NoArgsConstructor
 public class PlaceVoteRequestDTO {
     private List<Long> choicePlaces;
-    public PlaceVoteRequestDTO(List<Long> choicePlaces) {
-        this.choicePlaces = choicePlaces;
-    }
-
-
 }
