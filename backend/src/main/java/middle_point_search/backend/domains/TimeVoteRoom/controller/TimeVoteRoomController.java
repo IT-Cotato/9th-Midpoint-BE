@@ -3,13 +3,7 @@ package middle_point_search.backend.domains.TimeVoteRoom.controller;
 import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.dto.BaseResponse;
 import middle_point_search.backend.common.dto.DataResponse;
-import middle_point_search.backend.common.dto.ErrorResponse;
-import middle_point_search.backend.common.exception.AlreadyVotedException;
-import middle_point_search.backend.common.exception.errorCode.UserErrorCode;
-import middle_point_search.backend.domains.PlaceVoteRoom.dto.PlaceVoteRequestDTO;
-import middle_point_search.backend.domains.TimeVoteRoom.dto.TimeVoteRoomDTO;
 import middle_point_search.backend.domains.TimeVoteRoom.service.TimeVoteRoomService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,7 +29,6 @@ public class TimeVoteRoomController {
         return ResponseEntity.ok(DataResponse.from(response));
     }
 
-
     //투표
     @PostMapping("/vote")
     public ResponseEntity<?> vote(@RequestBody TimeVoteRoomVoteRequest request) {
@@ -51,11 +44,12 @@ public class TimeVoteRoomController {
     }
 
     //투표방존재확인
-    @GetMapping("/exists")
+    @GetMapping("/existence")
     public ResponseEntity<DataResponse<Boolean>> timeVoteRoomHas() {
         boolean exists = timeVoteRoomService.hasTimeVoteRoom();
         return ResponseEntity.ok(DataResponse.from(exists));
     }
+
     //투표여부
     @GetMapping("/voted")
     public ResponseEntity<DataResponse<Boolean>> votedHas() {

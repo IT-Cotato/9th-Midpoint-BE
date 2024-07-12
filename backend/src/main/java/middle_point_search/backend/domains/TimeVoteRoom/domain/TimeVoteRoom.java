@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import middle_point_search.backend.domains.room.domain.Room;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,19 +25,13 @@ public class TimeVoteRoom {
     private Room room;
 
     @OneToMany(mappedBy = "timeVoteRoom", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<TimeVote> timeVotes;
+    private List<TimeVote> timeVotes= new ArrayList<>();;
 
     @OneToMany(mappedBy = "timeVoteRoom", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<MeetingDate> meetingDates;
+    private List<MeetingDate> meetingDates= new ArrayList<>();;
 
-
-
-    public TimeVoteRoom(Room room) {
+    public TimeVoteRoom(Room room, List<LocalDate> dates) {
         this.room = room;
-
-    }
-    public void setMeetingDates(List<LocalDate> dates) {
-        // MeetingDate 엔티티를 생성하여 연관 관계 설정
         this.meetingDates = dates.stream()
                 .map(date -> new MeetingDate(this, date))
                 .collect(Collectors.toList());

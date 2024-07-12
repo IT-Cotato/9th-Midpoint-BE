@@ -12,5 +12,4 @@ public interface TimeVoteRepository extends JpaRepository<TimeVote,Long> {
     boolean existsByTimeVoteRoomAndMember(TimeVoteRoom timeVoteRoom, Member member);
     List<TimeVote> findByTimeVoteRoomAndMember(TimeVoteRoom timeVoteRoom, Member member);
     List<TimeVote> findByTimeVoteRoomAndMeetingDate(TimeVoteRoom timeVoteRoom, MeetingDate meetingDate);
-    List<TimeVote> findByTimeVoteRoom(TimeVoteRoom timeVoteRoom);
 }
