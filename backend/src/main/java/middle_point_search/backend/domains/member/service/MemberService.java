@@ -1,5 +1,7 @@
 package middle_point_search.backend.domains.member.service;
 
+import java.util.List;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -58,5 +60,12 @@ public class MemberService {
 	@Transactional(readOnly = false)
 	public void updateMemberRole(Member member, Role role) {
 		member.updateRole(role);
+	}
+
+	@Transactional(readOnly = false)
+	public void updateRomeMembersRole(String roomId, Role role) {
+		List<Member> members = memberRepository.findAllByRoom_IdentityNumber(roomId);
+
+		members.forEach(member -> member.updateRole(role));
 	}
 }

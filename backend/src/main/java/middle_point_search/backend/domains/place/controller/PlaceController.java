@@ -17,6 +17,8 @@ import middle_point_search.backend.common.dto.BaseResponse;
 import middle_point_search.backend.common.dto.DataResponse;
 import middle_point_search.backend.common.util.MemberLoader;
 import middle_point_search.backend.domains.member.domain.Member;
+import middle_point_search.backend.domains.member.domain.Role;
+import middle_point_search.backend.domains.member.service.MemberService;
 import middle_point_search.backend.domains.place.dto.PlaceDTO.PlaceSaveRequest;
 import middle_point_search.backend.domains.place.dto.PlaceDTO.PlaceUpdateRequest;
 import middle_point_search.backend.domains.place.dto.PlaceDTO.PlacesFindResponse;
@@ -30,6 +32,7 @@ import middle_point_search.backend.domains.room.domain.Room;
 public class PlaceController {
 
 	private final PlaceService placeService;
+	private final MemberService memberService;
 	private final MemberLoader memberLoader;
 
 	@PostMapping
@@ -37,8 +40,10 @@ public class PlaceController {
 
 		Room room = memberLoader.getRoom();
 		Member member = memberLoader.getMember();
+		String roomId = memberLoader.getRoomId();
 
 		placeService.savePlace(room, member, request);
+		memberService.updateRomeMembersRole(roomId, Role.USER);
 
 		return ResponseEntity.ok(BaseResponse.ok());
 	}
@@ -47,8 +52,10 @@ public class PlaceController {
 	public ResponseEntity<BaseResponse> placesSaveBySelf(@RequestBody PlacesSaveBySelfRequest request) {
 
 		Room room = memberLoader.getRoom();
+		Member member = memberLoader.getMember();
 
 		placeService.savePlacesBySelf(room,request);
+		memberService.updateMemberRole(member, Role.USER);
 
 		return ResponseEntity.ok(BaseResponse.ok());
 	}
