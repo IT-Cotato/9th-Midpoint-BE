@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.exception.AlreadyVotedException;
 import middle_point_search.backend.common.exception.CustomException;
 import middle_point_search.backend.common.exception.DuplicateVoteRoomException;
-import middle_point_search.backend.common.exception.errorCode.CommonErrorCode;
 import middle_point_search.backend.common.exception.errorCode.UserErrorCode;
 import middle_point_search.backend.common.util.MemberLoader;
 import middle_point_search.backend.domains.TimeVoteRoom.domain.MeetingDate;
@@ -24,8 +23,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import static middle_point_search.backend.domains.TimeVoteRoom.dto.TimeVoteRoomDTO.*;
-import static middle_point_search.backend.domains.TimeVoteRoom.dto.TimeVoteRoomDTO.TimeVoteRoomCreateRequest;
-import static middle_point_search.backend.domains.TimeVoteRoom.dto.TimeVoteRoomDTO.TimeVoteRoomCreateResponse;
 
 @Service
 @RequiredArgsConstructor
