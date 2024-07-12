@@ -32,7 +32,7 @@ import static middle_point_search.backend.domains.TimeVoteRoom.dto.TimeVoteRoomD
 @Transactional(readOnly = true)
 public class TimeVoteRoomService {
 
-    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
     private final TimeVoteRoomRepository timeVoteRoomRepository;
     private final TimeVoteRepository timeVoteRepository;
     private final RoomRepository roomRepository;
@@ -42,15 +42,15 @@ public class TimeVoteRoomService {
     //시간 투표방 생성
     @Transactional
     public TimeVoteRoomCreateResponse createTimeVoteRoom(TimeVoteRoomCreateRequest request) {
-        Member member = memberLoader.getMember();
-        String roomId = member.getRoom().getIdentityNumber();
-        Room room = roomRepository.findByIdentityNumber(roomId).orElseThrow(() -> new CustomException(CommonErrorCode.INVALID_PARAMETER));
+
+        Room room = memberLoader.getRoom();
 
         boolean exists = timeVoteRoomRepository.existsByRoom(room);
+
         if (exists) {
             throw new DuplicateVoteRoomException();
         }
-        TimeVoteRoom timeVoteRoom = new TimeVoteRoom(room,request.getDates());
+        TimeVoteRoom timeVoteRoom = new TimeVoteRoom(room, request.getDates());
         TimeVoteRoom savedTimeVoteRoom = timeVoteRoomRepository.save(timeVoteRoom);
 
         return TimeVoteRoomCreateResponse.from(savedTimeVoteRoom.getId());
@@ -59,34 +59,33 @@ public class TimeVoteRoomService {
     //시간투표방 재생성하기
     @Transactional
     public TimeVoteRoomCreateResponse recreateTimeVoteRoom(TimeVoteRoomCreateRequest request) {
-        Member member = memberLoader.getMember();
-        String roomId = member.getRoom().getIdentityNumber();
-        Room room = roomRepository.findByIdentityNumber(roomId).orElseThrow(() -> new CustomException(UserErrorCode.ROOM_NOT_FOUND));
+
+        Room room = memberLoader.getRoom();
 
         // 기존 투표방 삭제
-        TimeVoteRoom existingTimeVoteRoom = timeVoteRoomRepository.findByRoom_IdentityNumber(roomId).orElseThrow(() -> new CustomException(UserErrorCode.VOTE_ROOM_NOT_FOUND));
+        TimeVoteRoom existingTimeVoteRoom = timeVoteRoomRepository.findByRoom(room).orElseThrow(() -> new CustomException(UserErrorCode.VOTE_ROOM_NOT_FOUND));
 
         // 먼저 투표와 관련된 모든 데이터 삭제
         timeVoteRoomRepository.delete(existingTimeVoteRoom);
         timeVoteRoomRepository.flush();
 
         // 새로운 투표방 생성
-        TimeVoteRoom timeVoteRoom = new TimeVoteRoom(room,request.getDates());
+        TimeVoteRoom timeVoteRoom = new TimeVoteRoom(room, request.getDates());
         TimeVoteRoom savedTimeVoteRoom = timeVoteRoomRepository.save(timeVoteRoom);
 
         return TimeVoteRoomCreateResponse.from(savedTimeVoteRoom.getId());
     }
 
-
     //시간투표하기
     @Transactional
     public void vote(TimeVoteRoomVoteRequest request) {
-        Member member = memberLoader.getMember();
-        String roomId = member.getRoom().getIdentityNumber();
 
-        TimeVoteRoom timeVoteRoom = timeVoteRoomRepository.findByRoom_IdentityNumber(roomId).orElseThrow(() -> new CustomException(UserErrorCode.VOTE_ROOM_NOT_FOUND));
+        Member member = memberLoader.getMember();
+        Room room = memberLoader.getRoom();
+        TimeVoteRoom timeVoteRoom = timeVoteRoomRepository.findByRoom(room).orElseThrow(() -> new CustomException(UserErrorCode.VOTE_ROOM_NOT_FOUND));
 
         boolean alreadyVoted = timeVoteRepository.existsByTimeVoteRoomAndMember(timeVoteRoom, member);
+
         if (alreadyVoted) {
             throw new AlreadyVotedException();
         }
@@ -97,10 +96,10 @@ public class TimeVoteRoomService {
     // 시간 투표 수정
     @Transactional
     public void updateVote(TimeVoteRoomVoteRequest request) {
-        Member member = memberLoader.getMember();
-        String roomId = member.getRoom().getIdentityNumber();
 
-        TimeVoteRoom timeVoteRoom = timeVoteRoomRepository.findByRoom_IdentityNumber(roomId).orElseThrow(() -> new CustomException(UserErrorCode.VOTE_ROOM_NOT_FOUND));
+        Member member = memberLoader.getMember();
+        Room room = memberLoader.getRoom();
+        TimeVoteRoom timeVoteRoom = timeVoteRoomRepository.findByRoom(room).orElseThrow(() -> new CustomException(UserErrorCode.VOTE_ROOM_NOT_FOUND));
 
         List<TimeVote> existingVotes = timeVoteRepository.findByTimeVoteRoomAndMember(timeVoteRoom, member);
         if (existingVotes.isEmpty()) {
@@ -128,30 +127,27 @@ public class TimeVoteRoomService {
 
     //투표나 수정 로직에서 투표방, 투표현황체크하지만 쓰일 경우 대비
     public boolean hasTimeVoteRoom() {
-        Member member = memberLoader.getMember();
-        String roomId = member.getRoom().getIdentityNumber();
-        Room room = roomRepository.findByIdentityNumber(roomId).orElseThrow(() -> new CustomException(UserErrorCode.ROOM_NOT_FOUND));
+
+        Room room = memberLoader.getRoom();
 
         return timeVoteRoomRepository.existsByRoom(room);
     }
 
     //투표방이 없다면 투표방없다고 메세지, 있을때 투표 true, 투표안했을때 false
     public boolean hasVoted() {
-        Member member = memberLoader.getMember();
-        String roomId = member.getRoom().getIdentityNumber();
 
-        TimeVoteRoom timeVoteRoom = timeVoteRoomRepository.findByRoom_IdentityNumber(roomId).orElseThrow(() -> new CustomException(UserErrorCode.VOTE_ROOM_NOT_FOUND));
+        Member member = memberLoader.getMember();
+        Room room = memberLoader.getRoom();
+        TimeVoteRoom timeVoteRoom = timeVoteRoomRepository.findByRoom(room).orElseThrow(() -> new CustomException(UserErrorCode.VOTE_ROOM_NOT_FOUND));
 
         return timeVoteRepository.existsByTimeVoteRoomAndMember(timeVoteRoom, member);
     }
 
     // 시간 투표 현황 정보 조회
     public TimeVoteRoomResultResponse getTimeVoteResult() {
-        Member member = memberLoader.getMember();
-        String roomId = member.getRoom().getIdentityNumber();
 
-        TimeVoteRoom timeVoteRoom = timeVoteRoomRepository.findByRoom_IdentityNumber(roomId).orElseThrow(() -> new CustomException(UserErrorCode.VOTE_ROOM_NOT_FOUND));
-
+        Room room = memberLoader.getRoom();
+        TimeVoteRoom timeVoteRoom = timeVoteRoomRepository.findByRoom(room).orElseThrow(() -> new CustomException(UserErrorCode.VOTE_ROOM_NOT_FOUND));
         List<MeetingDate> meetingDates = meetingDateRepository.findByTimeVoteRoom(timeVoteRoom);
 
         Map<String, List<TimeVoteDetail>> result = new LinkedHashMap<>();

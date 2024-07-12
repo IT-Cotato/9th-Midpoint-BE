@@ -31,12 +31,8 @@ public class TimeVote {
     @JoinColumn(name = "meeting_date_id")
     private MeetingDate meetingDate;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime memberAvailableStartTime;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime memberAvailableEndTime;
 
     public TimeVote(TimeVoteRoom timeVoteRoom, MeetingDate meetingDate, Member member, LocalDateTime memberAvailableStartTime, LocalDateTime memberAvailableEndTime) {
