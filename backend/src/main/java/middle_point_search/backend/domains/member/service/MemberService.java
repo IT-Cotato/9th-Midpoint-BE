@@ -54,4 +54,9 @@ public class MemberService {
 	public boolean matchPassword(String rawPw, String pw) {
 		return passwordEncoder.matches(rawPw, pw);
 	}
+
+	@Transactional(readOnly = false)
+	public void updateMemberRole(Member member, Role role) {
+		member.updateRole(role);
+	}
 }

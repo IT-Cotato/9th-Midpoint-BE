@@ -84,4 +84,8 @@ public class Member {
 	public void deletePlace() {
 		this.place = null;
 	}
+
+	public void updateRole(Role role) {
+		this.role = role;
+	}
 }
