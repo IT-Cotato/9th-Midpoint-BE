@@ -40,7 +40,7 @@ public class PlaceVoteRoomController {
 
     //재투표
     @PutMapping("/vote")
-    public ResponseEntity<?> voteUpdate(@RequestBody PlaceVoteRoomDTO.PlaceVoteRequest request) {
+    public ResponseEntity<?> voteUpdate(@RequestBody PlaceVoteRequest request) {
         placeVoteRoomService.updateVote(request);
         return ResponseEntity.ok(BaseResponse.ok());
     }
