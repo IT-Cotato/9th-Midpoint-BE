@@ -1,12 +1,10 @@
 package middle_point_search.backend.domains.TimeVoteRoom.domain;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import middle_point_search.backend.domains.member.domain.Member;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 
@@ -31,12 +29,8 @@ public class TimeVote {
     @JoinColumn(name = "meeting_date_id")
     private MeetingDate meetingDate;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime memberAvailableStartTime;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime memberAvailableEndTime;
 
     public TimeVote(TimeVoteRoom timeVoteRoom, MeetingDate meetingDate, Member member, LocalDateTime memberAvailableStartTime, LocalDateTime memberAvailableEndTime) {

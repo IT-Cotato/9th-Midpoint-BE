@@ -21,6 +21,7 @@ public class MeetingDate {
 
     @Column(name = "date")
     private LocalDate date;
+
     public MeetingDate(TimeVoteRoom timeVoteRoom, LocalDate date) {
         this.timeVoteRoom = timeVoteRoom;
         this.date = date;
