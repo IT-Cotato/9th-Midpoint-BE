@@ -14,7 +14,6 @@ public class PlaceVoteRoomDTO {
         private List<String> placeCandidates;
     }
 
-
     @Getter
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
     public static class PlaceVoteRoomCreateResponse {
@@ -24,7 +23,6 @@ public class PlaceVoteRoomDTO {
         }
     }
 
-
     @Getter
     @AllArgsConstructor
     public static class PlaceVoteInfoResponse {
@@ -32,7 +30,6 @@ public class PlaceVoteRoomDTO {
 
         @Getter
         @AllArgsConstructor
-        @NoArgsConstructor(access = AccessLevel.PRIVATE)
         public static class PlaceVoteCandidateInfo {
             private Long id;
             private String name;
@@ -40,6 +37,7 @@ public class PlaceVoteRoomDTO {
             private List<String> voters;
         }
     }
+
     @Getter
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class PlaceVoteRequest{

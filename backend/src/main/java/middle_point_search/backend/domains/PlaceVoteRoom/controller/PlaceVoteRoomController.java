@@ -3,7 +3,6 @@ package middle_point_search.backend.domains.PlaceVoteRoom.controller;
 import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.dto.BaseResponse;
 import middle_point_search.backend.common.dto.DataResponse;
-import middle_point_search.backend.domains.PlaceVoteRoom.dto.PlaceVoteRoomDTO;
 import middle_point_search.backend.domains.PlaceVoteRoom.service.PlaceVoteRoomService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

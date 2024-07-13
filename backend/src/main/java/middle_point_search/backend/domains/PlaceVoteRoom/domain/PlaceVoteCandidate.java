@@ -30,9 +30,6 @@ public class PlaceVoteCandidate {
         this.name = name;
         this.placeVoteRoom = placeVoteRoom;
     }
-    public void setPlaceVoteRoom(PlaceVoteRoom placeVoteRoom) {
-        this.placeVoteRoom = placeVoteRoom;
-    }
 
     //투표는 한번만 할 수 있도록
     public void addVoter(Member member) {

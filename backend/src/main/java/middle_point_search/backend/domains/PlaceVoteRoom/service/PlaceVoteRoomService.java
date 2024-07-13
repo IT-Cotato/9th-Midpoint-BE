@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.exception.AlreadyVotedException;
 import middle_point_search.backend.common.exception.CustomException;
 import middle_point_search.backend.common.exception.DuplicateVoteRoomException;
-import middle_point_search.backend.common.exception.errorCode.CommonErrorCode;
 import middle_point_search.backend.common.exception.errorCode.UserErrorCode;
 import middle_point_search.backend.common.util.MemberLoader;
 import middle_point_search.backend.domains.PlaceVoteRoom.domain.PlaceVoteCandidate;
@@ -43,11 +42,8 @@ public class PlaceVoteRoomService {
         if (exists) {
             throw new DuplicateVoteRoomException();
         }
-        PlaceVoteRoom placeVoteRoom = new PlaceVoteRoom(room);
 
-        List<PlaceVoteCandidate> placeVoteCandidates = request.getPlaceCandidates().stream().map(candidateName -> new PlaceVoteCandidate(candidateName, placeVoteRoom)).collect(Collectors.toList());
-        placeVoteRoom.setPlaceVoteCandidates(placeVoteCandidates);
-
+        PlaceVoteRoom placeVoteRoom = new PlaceVoteRoom(room,request.getPlaceCandidates());
         PlaceVoteRoom savedPlaceVoteRoom = placeVoteRoomRepository.save(placeVoteRoom);
 
         return PlaceVoteRoomCreateResponse.from(savedPlaceVoteRoom.getId());

@@ -4,11 +4,11 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.room.domain.Room;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -25,17 +25,13 @@ public class PlaceVoteRoom {
     private Room room;
 
     @OneToMany(mappedBy = "placeVoteRoom", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<PlaceVoteCandidate> placeVoteCandidates = new ArrayList<>();;
+    private List<PlaceVoteCandidate> placeVoteCandidates = new ArrayList<>();
 
-
-    public PlaceVoteRoom(Room room){
+    public PlaceVoteRoom(Room room, List<String> names){
         this.room =room;
-    }
-    public void setPlaceVoteCandidates(List<PlaceVoteCandidate> placeVoteCandidates) {
-        this.placeVoteCandidates = placeVoteCandidates;
-        for (PlaceVoteCandidate candidate : placeVoteCandidates) {
-            candidate.setPlaceVoteRoom(this);
-        }
+        this.placeVoteCandidates=names.stream()
+                .map(candidateName -> new PlaceVoteCandidate(candidateName, this))
+                .collect(Collectors.toList());;
     }
 }
 
