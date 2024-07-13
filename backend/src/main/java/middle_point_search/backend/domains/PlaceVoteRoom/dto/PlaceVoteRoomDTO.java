@@ -32,7 +32,7 @@ public class PlaceVoteRoomDTO {
 
         @Getter
         @AllArgsConstructor
-        @NoArgsConstructor
+        @NoArgsConstructor(access = AccessLevel.PRIVATE)
         public static class PlaceVoteCandidateInfo {
             private Long id;
             private String name;

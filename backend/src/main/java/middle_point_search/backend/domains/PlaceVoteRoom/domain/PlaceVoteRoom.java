@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.room.domain.Room;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -23,7 +25,7 @@ public class PlaceVoteRoom {
     private Room room;
 
     @OneToMany(mappedBy = "placeVoteRoom", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<PlaceVoteCandidate> placeVoteCandidates;
+    private List<PlaceVoteCandidate> placeVoteCandidates = new ArrayList<>();;
 
 
     public PlaceVoteRoom(Room room){

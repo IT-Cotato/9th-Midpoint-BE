@@ -36,9 +36,8 @@ public class PlaceVoteRoomService {
     // 장소투표방 생성
     @Transactional
     public PlaceVoteRoomCreateResponse createPlaceVoteRoom(PlaceVoteRoomCreateRequest request) {
-        Member member = memberLoader.getMember();
-        String roomId = member.getRoom().getIdentityNumber();
-        Room room = roomRepository.findByIdentityNumber(roomId).orElseThrow(() -> new CustomException(UserErrorCode.ROOM_NOT_FOUND));
+
+        Room room = memberLoader.getRoom();
 
         boolean exists = placeVoteRoomRepository.existsByRoom(room);
         if (exists) {
@@ -56,10 +55,8 @@ public class PlaceVoteRoomService {
 
     // 장소투표방 조회
     public PlaceVoteInfoResponse getPlaceVoteRoom() {
-        Member member = memberLoader.getMember();
-        String roomId = member.getRoom().getIdentityNumber();
-
-        PlaceVoteRoom placeVoteRoom = placeVoteRoomRepository.findByRoom_IdentityNumber(roomId).orElseThrow(() -> new CustomException(UserErrorCode.VOTE_ROOM_NOT_FOUND));
+        Room room = memberLoader.getRoom();
+        PlaceVoteRoom placeVoteRoom = placeVoteRoomRepository.findByRoom(room).orElseThrow(() -> new CustomException(UserErrorCode.VOTE_ROOM_NOT_FOUND));
         List<PlaceVoteInfoResponse.PlaceVoteCandidateInfo> candidates = placeVoteRoom.getPlaceVoteCandidates().stream().map(candidate -> new PlaceVoteInfoResponse.PlaceVoteCandidateInfo(candidate.getId(), candidate.getName(), candidate.getCount(), candidate.getVoters().stream().map(v -> v.getMember().getName()).collect(Collectors.toList()))).collect(Collectors.toList());
 
         return new PlaceVoteInfoResponse(candidates);
@@ -69,8 +66,8 @@ public class PlaceVoteRoomService {
     @Transactional
     public void vote(PlaceVoteRequest voteRequest) {
         Member member = memberLoader.getMember();
-        String roomId = member.getRoom().getIdentityNumber();
-        PlaceVoteRoom placeVoteRoom = placeVoteRoomRepository.findByRoom_IdentityNumber(roomId).orElseThrow(() -> new CustomException(UserErrorCode.VOTE_ROOM_NOT_FOUND));
+        Room room = memberLoader.getRoom();
+        PlaceVoteRoom placeVoteRoom = placeVoteRoomRepository.findByRoom(room).orElseThrow(() -> new CustomException(UserErrorCode.VOTE_ROOM_NOT_FOUND));
 
         boolean alreadyVoted = placeVoteCandidateMemberRepository.existsByPlaceVoteCandidate_PlaceVoteRoomAndMember(placeVoteRoom, member);
         if (alreadyVoted) {
@@ -89,8 +86,9 @@ public class PlaceVoteRoomService {
     public void updateVote(PlaceVoteRequest voteRequest) {
 
         Member member = memberLoader.getMember();
-        String roomId = member.getRoom().getIdentityNumber();
-        PlaceVoteRoom placeVoteRoom = placeVoteRoomRepository.findByRoom_IdentityNumber(roomId).orElseThrow(() -> new CustomException(UserErrorCode.VOTE_ROOM_NOT_FOUND));
+        Room room = memberLoader.getRoom();
+        PlaceVoteRoom placeVoteRoom = placeVoteRoomRepository.findByRoom(room).orElseThrow(() -> new CustomException(UserErrorCode.VOTE_ROOM_NOT_FOUND));
+
         //기존투표제거
         boolean alreadyVoted = placeVoteCandidateMemberRepository.existsByPlaceVoteCandidate_PlaceVoteRoomAndMember(placeVoteRoom, member);
         if (!alreadyVoted) {
@@ -102,7 +100,7 @@ public class PlaceVoteRoomService {
 
         // 새로 받은 항목으로 업데이트
         voteRequest.getChoicePlaces().forEach(candidateId -> {
-            PlaceVoteCandidate candidate = placeVoteRoom.getPlaceVoteCandidates().stream().filter(c -> c.getId().equals(candidateId)).findFirst().orElseThrow(() -> new CustomException(CommonErrorCode.INVALID_PARAMETER));
+            PlaceVoteCandidate candidate = placeVoteRoom.getPlaceVoteCandidates().stream().filter(c -> c.getId().equals(candidateId)).findFirst().orElseThrow(() -> new CustomException(UserErrorCode.VOTE_ROOM_NOT_FOUND));
             candidate.addUpdateVoter(member);
         });
         placeVoteRoomRepository.save(placeVoteRoom);
@@ -110,9 +108,7 @@ public class PlaceVoteRoomService {
 
     //투표방생성여부
     public boolean hasPlaceVoteRoom() {
-        Member member = memberLoader.getMember();
-        String roomId = member.getRoom().getIdentityNumber();
-        Room room = roomRepository.findByIdentityNumber(roomId).orElseThrow(() -> new CustomException(CommonErrorCode.INVALID_PARAMETER));
+        Room room = memberLoader.getRoom();
 
         return placeVoteRoomRepository.existsByRoom(room);
     }
@@ -120,8 +116,8 @@ public class PlaceVoteRoomService {
     //투표여부
     public boolean hasVoted() {
         Member member = memberLoader.getMember();
-        String roomId = member.getRoom().getIdentityNumber();
-        PlaceVoteRoom placeVoteRoom = placeVoteRoomRepository.findByRoom_IdentityNumber(roomId).orElseThrow(() -> new CustomException(UserErrorCode.VOTE_ROOM_NOT_FOUND));
+        Room room = memberLoader.getRoom();
+        PlaceVoteRoom placeVoteRoom = placeVoteRoomRepository.findByRoom(room).orElseThrow(() -> new CustomException(UserErrorCode.VOTE_ROOM_NOT_FOUND));
 
         return placeVoteCandidateMemberRepository.existsByPlaceVoteCandidate_PlaceVoteRoomAndMember(placeVoteRoom, member);
     }
