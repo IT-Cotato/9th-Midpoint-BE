@@ -25,7 +25,7 @@ public class TimeVoteRoom {
     private Room room;
 
     @OneToMany(mappedBy = "timeVoteRoom", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<TimeVote> timeVotes= new ArrayList<>();;
+    private List<TimeVote> timeVotes= new ArrayList<>();
 
     @OneToMany(mappedBy = "timeVoteRoom", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<MeetingDate> meetingDates= new ArrayList<>();;
