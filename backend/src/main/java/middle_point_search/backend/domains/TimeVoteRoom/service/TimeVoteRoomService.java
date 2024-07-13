@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import static middle_point_search.backend.domains.TimeVoteRoom.dto.TimeVoteRoomDTO.*;
@@ -28,7 +27,6 @@ import static middle_point_search.backend.domains.TimeVoteRoom.dto.TimeVoteRoomD
 @Transactional(readOnly = true)
 public class TimeVoteRoomService {
 
- //   private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
     private final TimeVoteRoomRepository timeVoteRoomRepository;
     private final TimeVoteRepository timeVoteRepository;
     private final MeetingDateRepository meetingDateRepository;

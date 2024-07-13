@@ -1,12 +1,10 @@
 package middle_point_search.backend.domains.TimeVoteRoom.domain;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import middle_point_search.backend.domains.member.domain.Member;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 
