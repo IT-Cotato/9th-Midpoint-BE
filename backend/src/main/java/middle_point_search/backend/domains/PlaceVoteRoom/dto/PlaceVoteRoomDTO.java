@@ -9,8 +9,7 @@ import java.util.List;
 
 public class PlaceVoteRoomDTO {
     @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor(access = AccessLevel.PRIVATE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class PlaceVoteRoomCreateRequest {
         private List<String> placeCandidates;
     }
@@ -28,7 +27,6 @@ public class PlaceVoteRoomDTO {
 
     @Getter
     @AllArgsConstructor
-    @NoArgsConstructor
     public static class PlaceVoteInfoResponse {
         private List<PlaceVoteCandidateInfo> placeCandidates;
 
@@ -43,8 +41,7 @@ public class PlaceVoteRoomDTO {
         }
     }
     @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class PlaceVoteRequest{
         private List<Long> choicePlaces;
     }
