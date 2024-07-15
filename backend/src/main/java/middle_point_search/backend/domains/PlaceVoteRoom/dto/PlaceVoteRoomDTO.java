@@ -41,8 +41,7 @@ public class PlaceVoteRoomDTO {
     @Getter
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class PlaceVoteRequest{
-        private List<Long> choicePlaces;
+       private  Long choicePlace;
     }
-
 }
 

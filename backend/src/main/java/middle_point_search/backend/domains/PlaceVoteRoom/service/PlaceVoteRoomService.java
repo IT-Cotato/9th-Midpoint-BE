@@ -13,7 +13,6 @@ import middle_point_search.backend.domains.PlaceVoteRoom.repository.PlaceVoteCan
 import middle_point_search.backend.domains.PlaceVoteRoom.repository.PlaceVoteRoomRepository;
 import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.room.domain.Room;
-import middle_point_search.backend.domains.room.repository.RoomRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,7 +28,6 @@ public class PlaceVoteRoomService {
 
     private final PlaceVoteRoomRepository placeVoteRoomRepository;
     private final PlaceVoteCandidateMemberRepository placeVoteCandidateMemberRepository;
-    private final RoomRepository roomRepository;
     private final MemberLoader memberLoader;
 
     // 장소투표방 생성
@@ -48,6 +46,7 @@ public class PlaceVoteRoomService {
 
         return PlaceVoteRoomCreateResponse.from(savedPlaceVoteRoom.getId());
     }
+
 
     // 장소투표방 조회
     public PlaceVoteInfoResponse getPlaceVoteRoom() {
@@ -69,12 +68,15 @@ public class PlaceVoteRoomService {
         if (alreadyVoted) {
             throw new AlreadyVotedException();
         }
-        placeVoteRoom.getPlaceVoteCandidates().forEach(candidate -> candidate.removeVoter(member));
-        voteRequest.getChoicePlaces().forEach(candidateId -> {
-            PlaceVoteCandidate candidate = placeVoteRoom.getPlaceVoteCandidates().stream().filter(c -> c.getId().equals(candidateId)).findFirst().orElseThrow(() -> new CustomException(UserErrorCode.VOTE_ROOM_NOT_FOUND));
-            candidate.addVoter(member);
-        });
-        placeVoteRoomRepository.save(placeVoteRoom);
+        long candidateId = voteRequest.getChoicePlace();
+        PlaceVoteCandidate candidate = placeVoteRoom.getPlaceVoteCandidates().stream()
+                .filter(c -> c.getId() == candidateId)
+                .findFirst()
+                .orElseThrow(() -> new CustomException(UserErrorCode.CANDIDATE_NOT_FOUND));
+
+        PlaceVoteCandidateMember placeVoteCandidateMember = new PlaceVoteCandidateMember(candidate, member);
+        placeVoteCandidateMemberRepository.save(placeVoteCandidateMember);
+
     }
 
     // 재투표
@@ -95,11 +97,14 @@ public class PlaceVoteRoomService {
         placeVoteCandidateMemberRepository.deleteAll(existingVotes);
 
         // 새로 받은 항목으로 업데이트
-        voteRequest.getChoicePlaces().forEach(candidateId -> {
-            PlaceVoteCandidate candidate = placeVoteRoom.getPlaceVoteCandidates().stream().filter(c -> c.getId().equals(candidateId)).findFirst().orElseThrow(() -> new CustomException(UserErrorCode.VOTE_ROOM_NOT_FOUND));
-            candidate.addUpdateVoter(member);
-        });
-        placeVoteRoomRepository.save(placeVoteRoom);
+        long candidateId = voteRequest.getChoicePlace();
+        PlaceVoteCandidate candidate = placeVoteRoom.getPlaceVoteCandidates().stream()
+                .filter(c -> c.getId() == candidateId)
+                .findFirst()
+                .orElseThrow(() -> new CustomException(UserErrorCode.CANDIDATE_NOT_FOUND));
+
+        PlaceVoteCandidateMember placeVoteCandidateMember = new PlaceVoteCandidateMember(candidate, member);
+        placeVoteCandidateMemberRepository.save(placeVoteCandidateMember);
     }
 
     //투표방생성여부
