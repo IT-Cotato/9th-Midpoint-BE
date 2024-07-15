@@ -47,6 +47,27 @@ public class PlaceVoteRoomService {
         return PlaceVoteRoomCreateResponse.from(savedPlaceVoteRoom.getId());
     }
 
+    //장소투표방 재생성
+    @Transactional
+    public PlaceVoteRoomCreateResponse recreatePlaceVoteRoom(PlaceVoteRoomCreateRequest request) {
+
+        Room room = memberLoader.getRoom();
+
+        // 기존 투표방 삭제
+        PlaceVoteRoom existingPlaceVoteRoom = placeVoteRoomRepository.findByRoom(room).orElseThrow(() -> new CustomException(UserErrorCode.VOTE_ROOM_NOT_FOUND));
+
+        // 먼저 투표와 관련된 모든 데이터 삭제
+        placeVoteRoomRepository.delete(existingPlaceVoteRoom);
+        placeVoteRoomRepository.flush();
+
+        //투표방 생성
+        PlaceVoteRoom placeVoteRoom = new PlaceVoteRoom(room,request.getPlaceCandidates());
+        PlaceVoteRoom savedPlaceVoteRoom = placeVoteRoomRepository.save(placeVoteRoom);
+
+        return PlaceVoteRoomCreateResponse.from(savedPlaceVoteRoom.getId());
+    }
+
+
 
     // 장소투표방 조회
     public PlaceVoteInfoResponse getPlaceVoteRoom() {
@@ -76,7 +97,6 @@ public class PlaceVoteRoomService {
 
         PlaceVoteCandidateMember placeVoteCandidateMember = new PlaceVoteCandidateMember(candidate, member);
         placeVoteCandidateMemberRepository.save(placeVoteCandidateMember);
-
     }
 
     // 재투표

@@ -23,6 +23,12 @@ public class PlaceVoteRoomController {
         return ResponseEntity.ok(DataResponse.from(response));
     }
 
+    @PutMapping
+    public ResponseEntity<DataResponse<PlaceVoteRoomCreateResponse>> placeVoteRoomRecreate(@RequestBody PlaceVoteRoomCreateRequest request) {
+        PlaceVoteRoomCreateResponse response = placeVoteRoomService.recreatePlaceVoteRoom(request);
+        return ResponseEntity.ok(DataResponse.from(response));
+    }
+
     //투표 결과
     @GetMapping("/result")
     public ResponseEntity<DataResponse<PlaceVoteInfoResponse>> placeVoteRoomGet() {
