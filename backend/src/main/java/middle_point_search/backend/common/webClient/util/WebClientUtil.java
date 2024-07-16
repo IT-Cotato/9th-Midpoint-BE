@@ -36,25 +36,8 @@ public class WebClientUtil {
 			.method(HttpMethod.GET)
 			.uri(uriBuilder -> uriBuilder
 				.path(url)
-				.queryParam(marketProperties.getParamKey(), marketProperties)
+				.queryParam(marketProperties.getParamKey(), marketProperties.getKey())
 				.queryParams(params)
-				.build())
-			.retrieve()
-			.onStatus(HttpStatusCode::is4xxClientError,
-				clientResponse -> Mono.error(new CustomException(BAD_REQUEST)))
-			.onStatus(HttpStatusCode::is5xxServerError,
-				clientResponse -> Mono.error(new CustomException(API_INTERNAL_SERVER_ERROR)))
-			.bodyToMono(response)
-			.block();
-	}
-
-	// WebClient Conf 세팅을 이용하며, url과 응답 클래스를 제공하여 요청을 해 Mono로 응답받는 메서드
-	public <T> T getMarket(String url, Class<T> response) {
-		return webClientForMarket
-			.method(HttpMethod.GET)
-			.uri(uriBuilder -> uriBuilder
-				.path(url)
-				.queryParam(marketProperties.getParamKey(), marketProperties)
 				.build())
 			.retrieve()
 			.onStatus(HttpStatusCode::is4xxClientError,

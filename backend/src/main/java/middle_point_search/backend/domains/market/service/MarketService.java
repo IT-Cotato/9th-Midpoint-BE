@@ -64,7 +64,6 @@ public class MarketService {
 		String url = marketProperties.getMarketApiUrl();
 
 		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-		params.add(marketProperties.getParamKey(), marketProperties.getKey());
 		params.add(marketProperties.getParamPage(), "1");
 		params.add(marketProperties.getParamPerPage(), "1");
 
@@ -83,7 +82,6 @@ public class MarketService {
 			String url = marketProperties.getMarketApiUrl();
 
 			MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-			params.add(marketProperties.getParamKey(), marketProperties.getKey());
 			params.add(marketProperties.getParamPage(), String.valueOf(i));
 			params.add(marketProperties.getParamPerPage(), marketProperties.getMarketApiRequestUnit().toString());
 
