@@ -33,7 +33,7 @@ public class Member {
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "ROOM_ID")
+	@JoinColumn(name = "ROOM_ID", nullable = false)
 	private Room room;
 
 	@Column(nullable = false)
