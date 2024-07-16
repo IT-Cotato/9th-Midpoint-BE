@@ -49,13 +49,20 @@ public class Room {
 	private List<Place> places
 		= new ArrayList<>();
 
+	private RoomType roomType;
+
 	public Room(String identityNumber) {
 		this.identityNumber = identityNumber;
 		this.createDate = LocalDateTime.now();
+		this.roomType = RoomType.DISABLED;
 	}
 
 	public static Room from(String identityNumber) {
 
 		return new Room(identityNumber);
+	}
+
+	public void updateRoomType(RoomType roomType) {
+		this.roomType = roomType;
 	}
 }
