@@ -105,11 +105,11 @@ public class TimeVoteRoomService {
         timeVoteRepository.saveAll(timeVotes);
     }
 
-    private List<TimeVote> createNewTimeVotes(List<List<LocalDateTime>> dateTimeRanges, TimeVoteRoom timeVoteRoom, Member member) {
+    private List<TimeVote> createNewTimeVotes(List<List<VoteDateTime>> dateTimeRanges, TimeVoteRoom timeVoteRoom, Member member) {
         List<TimeVote> timeVotes = new ArrayList<>();
-        for (List<LocalDateTime> timeRange : dateTimeRanges) {
-            LocalDateTime memberAvailableStartTime = timeRange.get(0);
-            LocalDateTime memberAvailableEndTime = timeRange.get(1);
+        for (List<VoteDateTime> timeRange : dateTimeRanges) {
+            LocalDateTime memberAvailableStartTime = timeRange.get(0).getDateTime();
+            LocalDateTime memberAvailableEndTime = timeRange.get(1).getDateTime();
 
             Optional<MeetingDate> meetingDateOpt = meetingDateRepository.findByTimeVoteRoomAndDate(timeVoteRoom, memberAvailableStartTime.toLocalDate());
             MeetingDate meetingDate = meetingDateOpt.orElseThrow(() -> new CustomException(UserErrorCode.VOTE_ROOM_NOT_FOUND));
@@ -154,7 +154,10 @@ public class TimeVoteRoomService {
             // 해당 날짜의 모든 투표 정보 가져오기
             List<TimeVote> timeVotes = timeVoteRepository.findByTimeVoteRoomAndMeetingDate(timeVoteRoom, meetingDate);
             for (TimeVote vote : timeVotes) {
-                TimeVoteDetail detail = TimeVoteDetail.from(vote.getMember().getName(), Arrays.asList(vote.getMemberAvailableStartTime(), vote.getMemberAvailableEndTime()));
+                TimeVoteDetail detail = TimeVoteDetail.from(vote.getMember().getName(), Arrays.asList(
+                        new VoteDateTime(vote.getMemberAvailableStartTime()),
+                        new VoteDateTime(vote.getMemberAvailableEndTime())
+                ));
                 details.add(detail);
             }
             result.put(date, details);
