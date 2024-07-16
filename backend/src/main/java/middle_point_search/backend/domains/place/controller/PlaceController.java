@@ -25,6 +25,8 @@ import middle_point_search.backend.domains.place.dto.PlaceDTO.PlacesFindResponse
 import middle_point_search.backend.domains.place.dto.PlaceDTO.PlacesSaveBySelfRequest;
 import middle_point_search.backend.domains.place.service.PlaceService;
 import middle_point_search.backend.domains.room.domain.Room;
+import middle_point_search.backend.domains.room.domain.RoomType;
+import middle_point_search.backend.domains.room.service.RoomService;
 
 @RestController
 @RequiredArgsConstructor
@@ -34,6 +36,7 @@ public class PlaceController {
 	private final PlaceService placeService;
 	private final MemberService memberService;
 	private final MemberLoader memberLoader;
+	private final RoomService roomService;
 
 	@PostMapping
 	public ResponseEntity<BaseResponse> placeSave(@RequestBody PlaceSaveRequest request) {
@@ -42,8 +45,10 @@ public class PlaceController {
 		Member member = memberLoader.getMember();
 		String roomId = memberLoader.getRoomId();
 
+		roomService.updateRoomType(room, RoomType.TOGETHER);
 		placeService.savePlace(room, member, request);
 		memberService.updateRomeMembersRole(roomId, Role.USER);
+
 
 		return ResponseEntity.ok(BaseResponse.ok());
 	}
@@ -54,6 +59,7 @@ public class PlaceController {
 		Room room = memberLoader.getRoom();
 		Member member = memberLoader.getMember();
 
+		roomService.updateRoomType(room, RoomType.SELF);
 		placeService.savePlacesBySelf(room,request);
 		memberService.updateMemberRole(member, Role.USER);
 
