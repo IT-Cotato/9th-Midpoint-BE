@@ -1,13 +1,12 @@
 package middle_point_search.backend.common.security.login.provider;
 
-import java.util.List;
+import java.util.Collection;
 
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
@@ -41,7 +40,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 			throw new BadCredentialsException("비밀번호가 틀렸습니다.");
 		}
 
-		List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("USER"));
+		Collection<GrantedAuthority> authorities = (Collection<GrantedAuthority>)user.getAuthorities();
 
 		return MemberAuthenticationToken.authenticated(roomId, name, password, authorities);
 	}
