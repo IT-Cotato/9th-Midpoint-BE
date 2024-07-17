@@ -41,12 +41,8 @@ public class TimeVoteRoomDTO {
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
         @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
         private LocalDateTime dateTime;
-
-        public VoteDateTime(String dateTime) {
-            this.dateTime = LocalDateTime.parse(dateTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
-        }
-        public VoteDateTime(LocalDateTime dateTime) {
-            this.dateTime = dateTime;
+        public String getFormattedDateTime() {
+            return this.dateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
         }
     }
 
@@ -54,8 +50,9 @@ public class TimeVoteRoomDTO {
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
     public static class TimeVoteRoomResultResponse {
         private Map<String, List<TimeVoteDetail>> result;
-        public static TimeVoteRoomResultResponse from(Map<String, List<TimeVoteDetail>> result) {
-            return new TimeVoteRoomResultResponse(result);
+        private int totalMemberNum;
+        public static TimeVoteRoomResultResponse from(Map<String, List<TimeVoteDetail>> result, int totalMemberNum) {
+            return new TimeVoteRoomResultResponse(result, totalMemberNum);
         }
     }
 
@@ -63,9 +60,8 @@ public class TimeVoteRoomDTO {
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
     public static class TimeVoteDetail {
         private String memberName;
-
-        private List<VoteDateTime> dateTime;
-        public static TimeVoteDetail from(String memberName, List<VoteDateTime> dateTime) {
+        private List<String> dateTime;
+        public static TimeVoteDetail from(String memberName, List<String> dateTime) {
             return new TimeVoteDetail(memberName, dateTime);
         }
     }
