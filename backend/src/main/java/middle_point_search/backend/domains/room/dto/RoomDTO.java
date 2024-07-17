@@ -19,10 +19,10 @@ public class RoomDTO {
 	@Getter
 	@AllArgsConstructor(access = AccessLevel.PRIVATE)
 	public static class RoomExistenceCheckResponse {
-		private Boolean duplication;
+		private Boolean existence;
 
-		public static RoomExistenceCheckResponse from(Boolean duplication) {
-			return new RoomExistenceCheckResponse(duplication);
+		public static RoomExistenceCheckResponse from(Boolean existence) {
+			return new RoomExistenceCheckResponse(existence);
 		}
 	}
 }
