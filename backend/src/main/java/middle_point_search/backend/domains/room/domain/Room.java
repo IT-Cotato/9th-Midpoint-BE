@@ -11,6 +11,8 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -49,13 +51,21 @@ public class Room {
 	private List<Place> places
 		= new ArrayList<>();
 
+	@Enumerated(EnumType.STRING)
+	private RoomType roomType;
+
 	public Room(String identityNumber) {
 		this.identityNumber = identityNumber;
 		this.createDate = LocalDateTime.now();
+		this.roomType = RoomType.DISABLED;
 	}
 
 	public static Room from(String identityNumber) {
 
 		return new Room(identityNumber);
+	}
+
+	public void updateRoomType(RoomType roomType) {
+		this.roomType = roomType;
 	}
 }

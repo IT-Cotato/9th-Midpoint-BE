@@ -3,6 +3,8 @@ package middle_point_search.backend.domains.member.domain;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -31,7 +33,7 @@ public class Member {
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "ROOM_ID")
+	@JoinColumn(name = "ROOM_ID", nullable = false)
 	private Room room;
 
 	@Column(nullable = false)
@@ -48,17 +50,22 @@ public class Member {
 	@Column(length = 3000)
 	private String refreshToken;
 
-	private Member(Room room, String name, String pw) {
+	@Enumerated(EnumType.STRING)
+	@Column(nullable = false)
+	private Role role;
+
+	private Member(Room room, String name, String pw, Role role) {
 		addRoom(room);
 		this.room = room;
 		this.name = name;
 		this.pw = pw;
+		this.role = role;
 	}
 
-	public static Member from(Room room, String name, String pw) {
+	public static Member from(Room room, String name, String pw, Role role) {
 
 
-		return new Member(room, name, pw);
+		return new Member(room, name, pw, role);
 	}
 
 	private void addRoom(Room room) {
@@ -76,5 +83,9 @@ public class Member {
 
 	public void deletePlace() {
 		this.place = null;
+	}
+
+	public void updateRole(Role role) {
+		this.role = role;
 	}
 }

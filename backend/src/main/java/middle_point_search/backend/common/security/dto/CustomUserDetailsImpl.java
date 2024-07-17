@@ -27,7 +27,7 @@ public class CustomUserDetailsImpl implements CustomUserDetails {
 		String roomId = member.getRoom().getIdentityNumber();
 		String name = member.getName();
 		String pw = member.getPw();
-		String authority = "USER";
+		String authority = member.getRole().getValue();
 		boolean enabled = true;
 
 		return new CustomUserDetailsImpl(roomId, name, pw, authority, enabled);

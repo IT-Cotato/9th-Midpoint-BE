@@ -58,7 +58,7 @@ public class JwtTokenProviderImpl implements JwtTokenProvider {
 
         String pw = member.getPw();
 
-        List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("USER"));
+        List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(member.getRole().getValue()));
 
         return MemberAuthenticationToken.authenticated(roomId, name, pw, authorities);
     }
