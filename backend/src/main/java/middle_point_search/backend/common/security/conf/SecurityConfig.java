@@ -57,6 +57,7 @@ public class SecurityConfig {
 			.authorizeHttpRequests((authorize) -> authorize // PERMIT_URLS만 바로 접근 가능, 나머지 URL은 인증 필요
 				.requestMatchers(securityProperties.getPermitUrls()).permitAll()
 				.requestMatchers(securityProperties.getAuthorizationRequiredUrls()).hasRole("USER")
+				.requestMatchers(securityProperties.getAdminUrls()).hasRole("ADMIN")
 				.anyRequest().authenticated()
 			)
 			.logout(LogoutConfigurer::permitAll)
