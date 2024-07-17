@@ -67,8 +67,6 @@ public class PlaceVoteRoomService {
         return PlaceVoteRoomCreateResponse.from(savedPlaceVoteRoom.getId());
     }
 
-
-
     // 장소투표방 조회
     public PlaceVoteInfoResponse getPlaceVoteRoom() {
         Room room = memberLoader.getRoom();
