@@ -29,11 +29,11 @@ public class TimeVote {
     @JoinColumn(name = "meeting_date_id")
     private MeetingDate meetingDate;
 
-    private LocalDateTime memberAvailableStartTime;
+    private String memberAvailableStartTime;
 
-    private LocalDateTime memberAvailableEndTime;
+    private String memberAvailableEndTime;
 
-    public TimeVote(TimeVoteRoom timeVoteRoom, MeetingDate meetingDate, Member member, LocalDateTime memberAvailableStartTime, LocalDateTime memberAvailableEndTime) {
+    public TimeVote(TimeVoteRoom timeVoteRoom, MeetingDate meetingDate, Member member, String memberAvailableStartTime, String memberAvailableEndTime) {
         this.timeVoteRoom = timeVoteRoom;
         this.meetingDate =meetingDate;
         this.member =member;
