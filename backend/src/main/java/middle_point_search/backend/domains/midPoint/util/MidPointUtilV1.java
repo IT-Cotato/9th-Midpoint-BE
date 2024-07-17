@@ -34,9 +34,7 @@ public class MidPointUtilV1 implements MidPointUtil {
 		}
 
 		List<CoordinateDTO> coordinates = addresses.stream()
-			.map(address -> {
-				return new CoordinateDTO(address.getAddressLong(), address.getAddressLat());
-			})
+			.map(address -> new CoordinateDTO(address.getAddressLong(), address.getAddressLat()))
 			.collect(Collectors.toList());
 
 		CoordinateDTO coordinate = calcMidPointCoordinate(coordinates);

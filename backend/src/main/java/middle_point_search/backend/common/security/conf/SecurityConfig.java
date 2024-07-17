@@ -56,6 +56,7 @@ public class SecurityConfig {
 			.formLogin(AbstractHttpConfigurer::disable) //json을 이용하여 로그인을 하므로 기본 Login 비활성화
 			.authorizeHttpRequests((authorize) -> authorize // PERMIT_URLS만 바로 접근 가능, 나머지 URL은 인증 필요
 				.requestMatchers(securityProperties.getPermitUrls()).permitAll()
+				.requestMatchers(securityProperties.getAuthorizationRequiredUrls()).hasRole("USER")
 				.anyRequest().authenticated()
 			)
 			.logout(LogoutConfigurer::permitAll)
