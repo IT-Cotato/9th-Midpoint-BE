@@ -20,6 +20,8 @@ public enum UserErrorCode implements ErrorCode {
 	PLACE_NOT_FOUND(HttpStatus.NOT_FOUND, "방에 입력된 장소가 없습니다."),
 	PLACE_CONFLICT(HttpStatus.CONFLICT, "이미 장소를 저장하였습니다."),
 
+	VOTE_NOT_FOUND(HttpStatus.BAD_REQUEST, "투표를 한 적이 없습니다."),
+	VOTE_ROOM_NOT_FOUND(HttpStatus.BAD_REQUEST, "생성된 투표방이 없습니다."),
 	ALREADY_VOTED(HttpStatus.BAD_REQUEST, "이미 투표를 하였습니다."),
 	DUPLICATE_VOTE_ROOM(HttpStatus.BAD_REQUEST, "이미 장소투표방이 존재합니다."),
 	//5xx
