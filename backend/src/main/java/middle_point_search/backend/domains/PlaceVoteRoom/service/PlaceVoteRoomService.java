@@ -5,11 +5,11 @@ import middle_point_search.backend.common.exception.AlreadyVotedException;
 import middle_point_search.backend.common.exception.CustomException;
 import middle_point_search.backend.common.exception.DuplicateVoteRoomException;
 import middle_point_search.backend.common.exception.errorCode.UserErrorCode;
-import middle_point_search.backend.common.util.MemberLoader;
 import middle_point_search.backend.domains.PlaceVoteRoom.domain.PlaceVoteCandidate;
 import middle_point_search.backend.domains.PlaceVoteRoom.domain.PlaceVoteCandidateMember;
 import middle_point_search.backend.domains.PlaceVoteRoom.domain.PlaceVoteRoom;
 import middle_point_search.backend.domains.PlaceVoteRoom.repository.PlaceVoteCandidateMemberRepository;
+import middle_point_search.backend.domains.PlaceVoteRoom.repository.PlaceVoteCandidateRepository;
 import middle_point_search.backend.domains.PlaceVoteRoom.repository.PlaceVoteRoomRepository;
 import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.room.domain.Room;
@@ -28,7 +28,7 @@ public class PlaceVoteRoomService {
 
     private final PlaceVoteRoomRepository placeVoteRoomRepository;
     private final PlaceVoteCandidateMemberRepository placeVoteCandidateMemberRepository;
-    private final MemberLoader memberLoader;
+    private final PlaceVoteCandidateRepository placeVoteCandidateRepository;
 
     // 장소투표방 생성
     @Transactional
@@ -83,9 +83,7 @@ public class PlaceVoteRoomService {
             throw new AlreadyVotedException();
         }
         long candidateId = voteRequest.getChoicePlace();
-        PlaceVoteCandidate candidate = placeVoteRoom.getPlaceVoteCandidates().stream()
-                .filter(c -> c.getId() == candidateId)
-                .findFirst()
+        PlaceVoteCandidate candidate = placeVoteCandidateRepository.findById(candidateId)
                 .orElseThrow(() -> new CustomException(UserErrorCode.CANDIDATE_NOT_FOUND));
 
         PlaceVoteCandidateMember placeVoteCandidateMember = new PlaceVoteCandidateMember(candidate, member);
@@ -109,9 +107,7 @@ public class PlaceVoteRoomService {
 
         // 새로 받은 항목으로 업데이트
         long candidateId = voteRequest.getChoicePlace();
-        PlaceVoteCandidate candidate = placeVoteRoom.getPlaceVoteCandidates().stream()
-                .filter(c -> c.getId() == candidateId)
-                .findFirst()
+        PlaceVoteCandidate candidate = placeVoteCandidateRepository.findById(candidateId)
                 .orElseThrow(() -> new CustomException(UserErrorCode.CANDIDATE_NOT_FOUND));
 
         PlaceVoteCandidateMember placeVoteCandidateMember = new PlaceVoteCandidateMember(candidate, member);
