@@ -4,7 +4,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.dto.BaseResponse;
 import middle_point_search.backend.common.dto.DataResponse;
+import middle_point_search.backend.common.util.MemberLoader;
 import middle_point_search.backend.domains.TimeVoteRoom.service.TimeVoteRoomService;
+import middle_point_search.backend.domains.member.domain.Member;
+import middle_point_search.backend.domains.room.domain.Room;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,7 +17,9 @@ import static middle_point_search.backend.domains.TimeVoteRoom.dto.TimeVoteRoomD
 @RequiredArgsConstructor
 @RequestMapping("/api/time-vote-rooms")
 public class TimeVoteRoomController {
+
     private final TimeVoteRoomService timeVoteRoomService;
+    private final MemberLoader memberLoader;
 
     //투표방 생성
     @PostMapping
@@ -23,7 +28,11 @@ public class TimeVoteRoomController {
             description = "날짜(yyyy-mm-dd)를 리스트로 입력을 받아서 시간투표방을 생성한다."
     )
     public ResponseEntity<DataResponse<TimeVoteRoomCreateResponse>> timeVoteRoomCreate(@RequestBody TimeVoteRoomCreateRequest request) {
-        TimeVoteRoomCreateResponse response = timeVoteRoomService.createTimeVoteRoom(request);
+
+        Room room = memberLoader.getRoom();
+
+        TimeVoteRoomCreateResponse response = timeVoteRoomService.createTimeVoteRoom(room, request);
+
         return ResponseEntity.ok(DataResponse.from(response));
     }
 
@@ -34,7 +43,11 @@ public class TimeVoteRoomController {
             description = "날짜(yyyy-mm-dd)를 리스트로 입력을 받아서 시간투표방을 재생성한다."
     )
     public ResponseEntity<DataResponse<TimeVoteRoomCreateResponse>> timeVoteRoomRecreate(@RequestBody TimeVoteRoomCreateRequest request) {
-        TimeVoteRoomCreateResponse response = timeVoteRoomService.recreateTimeVoteRoom(request);
+
+        Room room = memberLoader.getRoom();
+
+        TimeVoteRoomCreateResponse response = timeVoteRoomService.recreateTimeVoteRoom(room, request);
+
         return ResponseEntity.ok(DataResponse.from(response));
     }
 
@@ -45,7 +58,12 @@ public class TimeVoteRoomController {
             description = "가능한 투표후보날짜의 가능한 시작일시(yyyy-mm-dd hh:mm), 가능한 마지막일시(yyyy-mm-dd hh:mm)를 입력을 받아서 투표한다."
     )
     public ResponseEntity<?> vote(@RequestBody TimeVoteRoomVoteRequest request) {
-        timeVoteRoomService.vote(request);
+
+        Member member = memberLoader.getMember();
+        Room room = memberLoader.getRoom();
+
+        timeVoteRoomService.vote(member, room, request);
+
         return ResponseEntity.ok(BaseResponse.ok());
     }
 
@@ -56,7 +74,12 @@ public class TimeVoteRoomController {
             description = "가능한 투표후보날짜의 가능한 시작일시(yyyy-mm-dd hh:mm), 가능한 마지막일시(yyyy-mm-dd hh:mm)를 입력을 받아서 재투표한다."
     )
     public ResponseEntity<?> voteUpdate(@RequestBody TimeVoteRoomVoteRequest request) {
-        timeVoteRoomService.updateVote(request);
+
+        Member member = memberLoader.getMember();
+        Room room = memberLoader.getRoom();
+
+        timeVoteRoomService.updateVote(member, room, request);
+
         return ResponseEntity.ok(BaseResponse.ok());
     }
 
@@ -67,7 +90,11 @@ public class TimeVoteRoomController {
             description = "시간투표방 존재여부를 나타내고 존재하면 true, 존재하지않으면 false를 반환한다."
     )
     public ResponseEntity<DataResponse<Boolean>> timeVoteRoomHas() {
-        boolean exists = timeVoteRoomService.hasTimeVoteRoom();
+
+        String roomId = memberLoader.getRoomId();
+
+        boolean exists = timeVoteRoomService.hasTimeVoteRoom(roomId);
+
         return ResponseEntity.ok(DataResponse.from(exists));
     }
 
@@ -78,7 +105,12 @@ public class TimeVoteRoomController {
             description = "시간투표여부를 나타내고 투표를 했으면 true, 투표를 하지않았으면 false를 반환한다."
     )
     public ResponseEntity<DataResponse<Boolean>> votedHas() {
-        boolean hasVoted = timeVoteRoomService.hasVoted();
+
+        Member member = memberLoader.getMember();
+        Room room = memberLoader.getRoom();
+
+        boolean hasVoted = timeVoteRoomService.hasVoted(member, room);
+
         return ResponseEntity.ok(DataResponse.from(hasVoted));
     }
 
@@ -89,7 +121,11 @@ public class TimeVoteRoomController {
             description = "시간투표후보날짜들에 대한 결과를 보여준다. 각 날짜에 대한 멤버들의 투표 현황과 총 투표한 인원의 정보를 반환한다."
     )
     public ResponseEntity<DataResponse<TimeVoteRoomResultResponse>> timeVoteResultsGet() {
-        TimeVoteRoomResultResponse result = timeVoteRoomService.getTimeVoteResult();
+
+        Room room = memberLoader.getRoom();
+
+        TimeVoteRoomResultResponse result = timeVoteRoomService.getTimeVoteResult(room);
+
         return ResponseEntity.ok(DataResponse.from(result));
     }
 
