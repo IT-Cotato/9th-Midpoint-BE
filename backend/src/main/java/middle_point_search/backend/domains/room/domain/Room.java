@@ -35,7 +35,7 @@ public class Room {
 	private LocalDateTime createdAt;
 
 	@Id
-	@Column(name = "ROOM_ID")
+	@Column(name = "room_id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
