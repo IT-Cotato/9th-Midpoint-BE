@@ -24,16 +24,16 @@ import middle_point_search.backend.domains.room.domain.Room;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(uniqueConstraints = {@UniqueConstraint(name = "NAME_ROOM_UNIQUE", columnNames = {"NAME", "ROOM"})})
+@Table(uniqueConstraints = {@UniqueConstraint(name = "NAME_ROOM_UNIQUE", columnNames = {"name", "room"})})
 public class Member {
 
 	@Id
-	@Column(name = "MEMBER_ID")
+	@Column(name = "member_id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "ROOM_ID", nullable = false)
+	@JoinColumn(name = "room_id", nullable = false)
 	private Room room;
 
 	@Column(nullable = false)
@@ -44,7 +44,7 @@ public class Member {
 
 	@Setter
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "PLACE_ID")
+	@JoinColumn(name = "place_id")
 	private Place place;
 
 	@Column(length = 3000)
