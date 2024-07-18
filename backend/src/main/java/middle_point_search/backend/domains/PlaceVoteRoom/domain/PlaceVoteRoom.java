@@ -8,7 +8,6 @@ import middle_point_search.backend.domains.room.domain.Room;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Entity
 @Getter
