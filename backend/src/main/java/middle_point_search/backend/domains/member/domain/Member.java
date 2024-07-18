@@ -24,7 +24,7 @@ import middle_point_search.backend.domains.room.domain.Room;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(uniqueConstraints = {@UniqueConstraint(name = "NAME_ROOM_UNIQUE", columnNames = {"name", "room"})})
+@Table(uniqueConstraints = {@UniqueConstraint(name = "NAME_ROOM_UNIQUE", columnNames = {"name", "room_id"})})
 public class Member {
 
 	@Id
