@@ -27,11 +27,13 @@ public class PlaceVoteRoom {
     @OneToMany(mappedBy = "placeVoteRoom", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<PlaceVoteCandidate> placeVoteCandidates = new ArrayList<>();
 
-    public PlaceVoteRoom(Room room, List<String> names){
-        this.room =room;
-        this.placeVoteCandidates=names.stream()
-                .map(candidateName -> new PlaceVoteCandidate(candidateName, this))
-                .collect(Collectors.toList());;
+    public PlaceVoteRoom(Room room, List<String> names) {
+        this.room = room;
+        this.placeVoteCandidates.clear();
+        List<String> newNames = new ArrayList<>(names);  // 원래 names 리스트를 새 리스트로 복사
+        for (String name : newNames) {
+            this.placeVoteCandidates.add(new PlaceVoteCandidate(name, this));
+        }
     }
 }
 
