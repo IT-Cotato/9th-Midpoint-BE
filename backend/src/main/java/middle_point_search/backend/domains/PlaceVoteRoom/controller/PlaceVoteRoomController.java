@@ -100,9 +100,9 @@ public class PlaceVoteRoomController {
     )
     public ResponseEntity<DataResponse<Boolean>> placeVoteRoomHas() {
 
-        Room room = memberLoader.getRoom();
+        String roomId = memberLoader.getRoomId();
 
-        boolean exists = placeVoteRoomService.hasPlaceVoteRoom(room);
+        boolean exists = placeVoteRoomService.hasPlaceVoteRoom(roomId);
         return ResponseEntity.ok(DataResponse.from(exists));
     }
 

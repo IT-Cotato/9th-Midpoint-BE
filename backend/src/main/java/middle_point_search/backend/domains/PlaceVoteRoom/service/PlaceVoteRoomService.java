@@ -115,9 +115,9 @@ public class PlaceVoteRoomService {
     }
 
     //투표방생성여부
-    public boolean hasPlaceVoteRoom(Room room) {
+    public boolean hasPlaceVoteRoom(String roomId) {
 
-        return placeVoteRoomRepository.existsByRoom(room);
+        return placeVoteRoomRepository.existsByRoomIdentityNumber(roomId);
     }
 
     //투표여부
