@@ -28,7 +28,4 @@ public class PlaceVoteCandidateMember {
         this.member = member;
     }
 
-    public void setPlaceVoteCandidate(PlaceVoteCandidate placeVoteCandidate) {
-        this.placeVoteCandidate = placeVoteCandidate;
-    }
 }

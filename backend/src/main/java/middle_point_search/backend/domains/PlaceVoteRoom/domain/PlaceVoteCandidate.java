@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import middle_point_search.backend.domains.member.domain.Member;
 import java.util.ArrayList;
 import java.util.List;
 @Entity
@@ -30,33 +29,7 @@ public class PlaceVoteCandidate {
         this.name = name;
         this.placeVoteRoom = placeVoteRoom;
     }
-    public void setPlaceVoteRoom(PlaceVoteRoom placeVoteRoom) {
-        this.placeVoteRoom = placeVoteRoom;
-    }
 
-    //투표는 한번만 할 수 있도록
-    public void addVoter(Member member) {
-        if (!hasVoter(member)) {
-            PlaceVoteCandidateMember voteCandidateMember = new PlaceVoteCandidateMember(this, member);
-            voters.add(voteCandidateMember);
-        }
-    }
-    public void addUpdateVoter(Member member) {
-        PlaceVoteCandidateMember voteCandidateMember = new PlaceVoteCandidateMember(this, member);
-        voters.add(voteCandidateMember);
-    }
-    public void removeVoter(Member member) {
-        PlaceVoteCandidateMember toRemove = voters.stream()
-                .filter(voter -> voter.getMember().equals(member))
-                .findFirst()
-                .orElse(null);
-        if (toRemove != null) {
-            voters.remove(toRemove);
-        }
-    }
-    public boolean hasVoter(Member member) {
-        return voters.stream().anyMatch(voter -> voter.getMember().equals(member));
-    }
     public int getCount() {
         return voters.size();
     }

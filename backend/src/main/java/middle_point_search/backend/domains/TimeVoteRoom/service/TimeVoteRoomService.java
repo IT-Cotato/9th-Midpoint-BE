@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import static middle_point_search.backend.domains.TimeVoteRoom.dto.TimeVoteRoomDTO.*;
@@ -108,10 +109,11 @@ public class TimeVoteRoomService {
     private List<TimeVote> createNewTimeVotes(List<List<VoteDateTime>> dateTimeRanges, TimeVoteRoom timeVoteRoom, Member member) {
         List<TimeVote> timeVotes = new ArrayList<>();
         for (List<VoteDateTime> timeRange : dateTimeRanges) {
-            LocalDateTime memberAvailableStartTime = timeRange.get(0).getDateTime();
-            LocalDateTime memberAvailableEndTime = timeRange.get(1).getDateTime();
+            String memberAvailableStartTime = timeRange.get(0).getFormattedDateTime();
+            String memberAvailableEndTime = timeRange.get(1).getFormattedDateTime();
 
-            Optional<MeetingDate> meetingDateOpt = meetingDateRepository.findByTimeVoteRoomAndDate(timeVoteRoom, memberAvailableStartTime.toLocalDate());
+            LocalDateTime startDateTime = LocalDateTime.parse(memberAvailableStartTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+            Optional<MeetingDate> meetingDateOpt = meetingDateRepository.findByTimeVoteRoomAndDate(timeVoteRoom, startDateTime.toLocalDate());
             MeetingDate meetingDate = meetingDateOpt.orElseThrow(() -> new CustomException(UserErrorCode.VOTE_ROOM_NOT_FOUND));
             TimeVote timeVote = new TimeVote(timeVoteRoom, meetingDate, member, memberAvailableStartTime, memberAvailableEndTime);
             timeVotes.add(timeVote);
@@ -154,14 +156,14 @@ public class TimeVoteRoomService {
             // 해당 날짜의 모든 투표 정보 가져오기
             List<TimeVote> timeVotes = timeVoteRepository.findByTimeVoteRoomAndMeetingDate(timeVoteRoom, meetingDate);
             for (TimeVote vote : timeVotes) {
-                TimeVoteDetail detail = TimeVoteDetail.from(vote.getMember().getName(), Arrays.asList(
-                        new VoteDateTime(vote.getMemberAvailableStartTime()),
-                        new VoteDateTime(vote.getMemberAvailableEndTime())
-                ));
+                List<String> dateTimeList = Arrays.asList(vote.getMemberAvailableStartTime(), vote.getMemberAvailableEndTime());
+                TimeVoteDetail detail = TimeVoteDetail.from(vote.getMember().getName(), dateTimeList);
                 details.add(detail);
             }
             result.put(date, details);
         }
-        return TimeVoteRoomResultResponse.from(result);
+        List<TimeVote> distinctVotes = timeVoteRepository.findDistinctByTimeVoteRoom(timeVoteRoom);
+        int totalMemberNum = (int) distinctVotes.stream().map(TimeVote::getMember).distinct().count();
+        return TimeVoteRoomResultResponse.from(result,totalMemberNum);
     }
 }
