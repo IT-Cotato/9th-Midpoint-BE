@@ -25,7 +25,7 @@ import middle_point_search.backend.domains.room.domain.Room;
 public class Place {
 
 	@Id
-	@Column(name = "PLACE_ID")
+	@Column(name = "place_id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
@@ -45,7 +45,7 @@ public class Place {
 	private Double addressLongitude;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "ROOM_ID")
+	@JoinColumn(name = "room_id")
 	private Room room;
 
 	@OneToOne(mappedBy = "place", fetch = FetchType.LAZY)
