@@ -1,12 +1,12 @@
 package middle_point_search.backend.common.redis;
 
+import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.redis.core.index.Indexed;
-import org.springframework.transaction.annotation.Transactional;
 
-import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @AllArgsConstructor
@@ -14,15 +14,11 @@ import lombok.Getter;
 public class RefreshToken {
 
 	@Id
+	@Setter
 	private String refreshToken;
 
 	@Indexed
-	private String accessToken;
-
 	private Long memberId;
 
-	@Transactional
-	public void updateAccessToken(String accessToken) {
-		this.accessToken = accessToken;
-	}
+
 }
