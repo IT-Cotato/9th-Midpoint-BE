@@ -54,8 +54,7 @@ public class MemberService {
 	}
 
 	@Transactional(readOnly = false)
-	public void logoutMember() {
-		Member member = memberLoader.getMember();
+	public void logoutMember(Member member) {
 
 		member.destroyRefreshToken();
 	}

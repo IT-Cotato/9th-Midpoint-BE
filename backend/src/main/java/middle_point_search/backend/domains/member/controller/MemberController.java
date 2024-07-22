@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RestController;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.dto.BaseResponse;
+import middle_point_search.backend.common.util.MemberLoader;
+import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.member.service.MemberService;
 
 @RestController
@@ -16,6 +18,7 @@ import middle_point_search.backend.domains.member.service.MemberService;
 public class MemberController {
 
 	private final MemberService memberService;
+	private final MemberLoader memberLoader;
 
 	@PostMapping("/logout")
 	@Operation(
@@ -23,7 +26,9 @@ public class MemberController {
 		description = "로그아웃한다. AccessToken 필요"
 	)
 	public ResponseEntity<BaseResponse> memberLogout() {
-		memberService.logoutMember();
+		Member member = memberLoader.getMember();
+
+		memberService.logoutMember(member);
 
 		return ResponseEntity.ok(BaseResponse.ok());
 	}
