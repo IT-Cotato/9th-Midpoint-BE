@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import middle_point_search.backend.common.properties.JwtProperties;
 import middle_point_search.backend.common.properties.KakaoProperties;
 import middle_point_search.backend.common.properties.MarketProperties;
+import middle_point_search.backend.common.properties.RedisProperties;
 import middle_point_search.backend.common.properties.SecurityProperties;
 import middle_point_search.backend.common.properties.CorsProperties;
 
@@ -16,7 +17,8 @@ import middle_point_search.backend.common.properties.CorsProperties;
 	CorsProperties.class,
 	SecurityProperties.class,
 	MarketProperties.class,
-	KakaoProperties.class
+	KakaoProperties.class,
+	RedisProperties.class
 })
 public class PropertyConfig {
 }
