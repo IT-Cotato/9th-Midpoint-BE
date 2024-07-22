@@ -11,7 +11,5 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
 	Optional<Member> findByRoom_IdentityNumberAndName(String identityNumber, String name);
 
-	Optional<Member> findByRefreshToken(String refreshToken);
-
 	List<Member> findAllByRoom_IdentityNumber(String roomId);
 }

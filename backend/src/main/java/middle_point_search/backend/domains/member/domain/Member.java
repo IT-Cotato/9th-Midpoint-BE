@@ -47,9 +47,6 @@ public class Member {
 	@JoinColumn(name = "place_id")
 	private Place place;
 
-	@Column(length = 3000)
-	private String refreshToken;
-
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
 	private Role role;
@@ -71,14 +68,6 @@ public class Member {
 	private void addRoom(Room room) {
 		this.room = room;
 		room.getMembers().add(this);
-	}
-
-	public void updateRefreshToken(String refreshToken) {
-		this.refreshToken = refreshToken;
-	}
-
-	public void destroyRefreshToken() {
-		this.refreshToken = null;
 	}
 
 	public void deletePlace() {
