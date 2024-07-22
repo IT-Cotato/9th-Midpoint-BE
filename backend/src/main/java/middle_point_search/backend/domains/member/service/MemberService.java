@@ -1,18 +1,21 @@
 package middle_point_search.backend.domains.member.service;
 
-import static middle_point_search.backend.common.exception.errorCode.UserErrorCode.*;
-
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import middle_point_search.backend.common.exception.CustomException;
 import middle_point_search.backend.common.exception.errorCode.UserErrorCode;
+import middle_point_search.backend.common.redis.LogoutRepository;
+import middle_point_search.backend.common.redis.LogoutToken;
+import middle_point_search.backend.common.redis.RefreshToken;
+import middle_point_search.backend.common.redis.RefreshTokenRepository;
 import middle_point_search.backend.common.security.exception.RoomNotFoundException;
-import middle_point_search.backend.common.util.MemberLoader;
 import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.member.domain.Role;
 import middle_point_search.backend.domains.member.repository.MemberRepository;
@@ -20,6 +23,7 @@ import middle_point_search.backend.domains.room.domain.Room;
 import middle_point_search.backend.domains.room.domain.RoomType;
 import middle_point_search.backend.domains.room.repository.RoomRepository;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -27,10 +31,11 @@ public class MemberService {
 
 	private final RoomRepository roomRepository;
 	private final MemberRepository memberRepository;
-	private final MemberLoader memberLoader;
 	private final PasswordEncoder passwordEncoder;
+	private final RefreshTokenRepository refreshTokenRepository;
+	private final LogoutRepository logoutRepository;
 
-	@Transactional(readOnly = false)
+	@Transactional
 	public Member createMember(String roomId, String name, String pw) throws RoomNotFoundException {
 
 		pw = encodePassword(pw);
@@ -53,11 +58,20 @@ public class MemberService {
 		return Role.GUEST; // 회원 가입시 권한은 GUEST
 	}
 
-	@Transactional(readOnly = false)
-	public void logoutMember() {
-		Member member = memberLoader.getMember();
+	// 회원 로그아웃 하기
+	@Transactional
+	public void logoutMember(String roomId, String name, String accessToken) {
+		Member member = memberRepository.findByRoom_IdentityNumberAndName(roomId, name)
+			.orElseThrow(() -> new CustomException(UserErrorCode.MEMBER_NOT_FOUND));
+		Long memberId= member.getId();
 
-		member.destroyRefreshToken();
+		// 회원의 refreshToken 삭제
+		RefreshToken refreshToken = refreshTokenRepository.findByMemberId(memberId).orElse(null);
+		log.info(refreshToken.getRefreshToken());
+		refreshTokenRepository.deleteById(refreshToken.getRefreshToken());
+
+		// 같은 accessToken으로 다시 로그인하지 못하도록 블랙리스트에 저장
+		logoutRepository.save(new LogoutToken(UUID.randomUUID().toString(), accessToken));
 	}
 
 	// 패스워드 인코딩
@@ -70,12 +84,12 @@ public class MemberService {
 		return passwordEncoder.matches(rawPw, pw);
 	}
 
-	@Transactional(readOnly = false)
+	@Transactional
 	public void updateMemberRole(Member member, Role role) {
 		member.updateRole(role);
 	}
 
-	@Transactional(readOnly = false)
+	@Transactional
 	public void updateRomeMembersRole(String roomId, Role role) {
 		List<Member> members = memberRepository.findAllByRoom_IdentityNumber(roomId);
 

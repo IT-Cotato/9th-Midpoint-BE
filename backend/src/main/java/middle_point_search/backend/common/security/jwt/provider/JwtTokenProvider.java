@@ -18,7 +18,7 @@ public interface JwtTokenProvider {
 
 	void updateRefreshToken(String roomId, String name, String refreshToken);
 
-	void destroyRefreshToken(String roomId, String name);
+	void destroyRefreshToken(Long memberId);
 
 	void sendAccessAndRefreshToken(HttpServletResponse response, String accessToken, String refreshToken);
 
@@ -41,4 +41,6 @@ public interface JwtTokenProvider {
 	boolean isTokenValid(String token);
 
 	void checkRefreshTokenAndReIssueAccessAndRefreshToken(HttpServletResponse response, String refreshToken);
+
+	boolean isLogout(String accessToken);
 }
