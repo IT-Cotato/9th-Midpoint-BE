@@ -58,6 +58,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		//5. 그 외 모든 경우는 에러 리턴
 		if (accessToken != null && jwtTokenProvider.isTokenValid(accessToken)) {
 			log.info("access토큰 인증 성공");
+
+			//토큰이 logout된 토큰인지 검사
+			if (jwtTokenProvider.isLogout(accessToken)) {
+				throw new CustomException(INVALID_ACCESS_TOKEN);
+			}
+
 			Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
 			saveAuthentication(authentication);
 			filterChain.doFilter(request, response);
