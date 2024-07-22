@@ -29,10 +29,15 @@ public class PlaceVoteRoom {
     public PlaceVoteRoom(Room room, List<String> names) {
         this.room = room;
         this.placeVoteCandidates.clear();
-        List<String> newNames = new ArrayList<>(names);  // 원래 names 리스트를 새 리스트로 복사
-        for (String name : newNames) {
-            this.placeVoteCandidates.add(new PlaceVoteCandidate(name, this));
+        for (String name : names) {
+            addPlaceVoteCandidate(name);
         }
     }
+
+    public void addPlaceVoteCandidate(String name) {
+        this.placeVoteCandidates.add(new PlaceVoteCandidate(name, this));
+    }
+
+
 }
 
