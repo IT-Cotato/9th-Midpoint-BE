@@ -221,8 +221,12 @@ public class JwtTokenProviderImpl implements JwtTokenProvider {
 	}
 
 	public void checkRefreshTokenAndReIssueAccessAndRefreshToken(HttpServletResponse response, String refreshToken) {
-		Member member = memberRepository.findByRefreshToken(refreshToken)
+		RefreshToken refreshTokenObj = refreshTokenRepository.findById(refreshToken)
 			.orElseThrow(() -> new CustomException(INVALID_REFRESH_TOKEN));
+		Long memberId = refreshTokenObj.getMemberId();
+		Member member = memberRepository.findById(memberId)
+			.orElseThrow(() -> new CustomException(INVALID_REFRESH_TOKEN));
+
 		String roomId = member.getRoom().getIdentityNumber();
 		String name = member.getName();
 
