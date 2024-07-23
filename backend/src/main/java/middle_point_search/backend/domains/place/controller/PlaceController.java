@@ -46,7 +46,9 @@ public class PlaceController {
 		description = """
 			주소와 좌표를 사용하여 장소 저장하기.
 						
-			장소를 저장한 사람은 다른 기능을 사용할 권한이 생긴다.""",
+			장소를 저장한 사람은 다른 기능을 사용할 권한이 생긴다.
+			
+			AccessToken 필요.""",
 		responses = {
 			@ApiResponse(
 				responseCode = "200",
@@ -81,7 +83,9 @@ public class PlaceController {
 		description = """
 			주소와 좌표를 사용하여 장소 저장하기.
 			
-			추후 가입하는 모든 사람은 다른 기능을 사용할 권한이 생긴다.""",
+			추후 가입하는 모든 사람은 다른 기능을 사용할 권한이 생긴다.
+			
+			AccessToken 필요.""",
 		responses = {
 			@ApiResponse(
 				responseCode = "200",
@@ -112,7 +116,10 @@ public class PlaceController {
 	@PutMapping("/{placeId}")
 	@Operation(
 		summary = "장소 변경하기",
-		description = "주소와 좌표를 사용하여 장소 변경하기",
+		description = """
+			저장된 장소 변경하기.
+			
+			AccessToken 필요.""",
 		responses = {
 			@ApiResponse(
 				responseCode = "200",
@@ -139,7 +146,10 @@ public class PlaceController {
 	@GetMapping
 	@Operation(
 		summary = "장소 조회하기",
-		description = "저장된 장소 리스트를 조회하기.",
+		description = """
+			저장된 장소 리스트 조회하기.
+			
+			AccessToken 필요.""",
 		responses = {
 			@ApiResponse(
 				responseCode = "200",
@@ -166,7 +176,10 @@ public class PlaceController {
 	@DeleteMapping("/{placeId}")
 	@Operation(
 		summary = "장소 삭제하기",
-		description = "저장된 장소 삭제하기. AccessToken 필요",
+		description = """
+			저장된 장소 삭제하기.
+			
+			AccessToken 필요.""",
 		responses = {
 			@ApiResponse(
 				responseCode = "200",
