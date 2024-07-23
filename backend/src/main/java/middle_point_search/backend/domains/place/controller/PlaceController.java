@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.dto.BaseResponse;
 import middle_point_search.backend.common.dto.DataResponse;
@@ -42,7 +43,24 @@ public class PlaceController {
 	@PostMapping
 	@Operation(
 		summary = "각자 장소 저장하기",
-		description = "주소와 좌표를 사용하여 장소 저장하기. 장소를 저장한 사람은 다른 기능을 사용할 권한이 생긴다."
+		description = """
+			주소와 좌표를 사용하여 장소 저장하기.
+						
+			장소를 저장한 사람은 다른 기능을 사용할 권한이 생긴다.""",
+		responses = {
+			@ApiResponse(
+				responseCode = "200",
+				description = "성공"
+			),
+			@ApiResponse(
+				responseCode = "400",
+				description = "요청 파라미터가 잘 못 되었습니다."
+			),
+			@ApiResponse(
+				responseCode = "401",
+				description = "인증에 실패하였습니다."
+			)
+		}
 	)
 	public ResponseEntity<BaseResponse> placeSave(@RequestBody PlaceSaveRequest request) {
 
@@ -60,7 +78,24 @@ public class PlaceController {
 	@PostMapping("/self")
 	@Operation(
 		summary = "개인이 모든 장소 저장하기",
-		description = "주소와 좌표를 사용하여 장소 저장하기. 추후 가입하는 모든 사람은 다른 기능을 사용할 권한이 생긴다."
+		description = """
+			주소와 좌표를 사용하여 장소 저장하기.
+			
+			추후 가입하는 모든 사람은 다른 기능을 사용할 권한이 생긴다.""",
+		responses = {
+			@ApiResponse(
+				responseCode = "200",
+				description = "성공"
+			),
+			@ApiResponse(
+				responseCode = "400",
+				description = "요청 파라미터가 잘 못 되었습니다."
+			),
+			@ApiResponse(
+				responseCode = "401",
+				description = "인증에 실패하였습니다."
+			)
+		}
 	)
 	public ResponseEntity<BaseResponse> placesSaveBySelf(@RequestBody PlacesSaveBySelfRequest request) {
 
@@ -77,7 +112,21 @@ public class PlaceController {
 	@PutMapping("/{placeId}")
 	@Operation(
 		summary = "장소 변경하기",
-		description = "주소와 좌표를 사용하여 장소 변경하기"
+		description = "주소와 좌표를 사용하여 장소 변경하기",
+		responses = {
+			@ApiResponse(
+				responseCode = "200",
+				description = "성공"
+			),
+			@ApiResponse(
+				responseCode = "400",
+				description = "요청 파라미터가 잘 못 되었습니다."
+			),
+			@ApiResponse(
+				responseCode = "401",
+				description = "인증에 실패하였습니다."
+			)
+		}
 	)
 	public ResponseEntity<BaseResponse> placeUpdate(@PathVariable("placeId") Long placeId,
 		@RequestBody PlaceUpdateRequest request) {
@@ -90,7 +139,21 @@ public class PlaceController {
 	@GetMapping
 	@Operation(
 		summary = "장소 조회하기",
-		description = "저장된 장소 리스트를 조회하기. AccessToken 필요"
+		description = "저장된 장소 리스트를 조회하기.",
+		responses = {
+			@ApiResponse(
+				responseCode = "200",
+				description = "성공"
+			),
+			@ApiResponse(
+				responseCode = "400",
+				description = "요청 파라미터가 잘 못 되었습니다."
+			),
+			@ApiResponse(
+				responseCode = "401",
+				description = "인증에 실패하였습니다."
+			)
+		}
 	)
 	public ResponseEntity<DataResponse<List<PlacesFindResponse>>> placesFind() {
 		String roomId = memberLoader.getRoomId();
@@ -103,7 +166,21 @@ public class PlaceController {
 	@DeleteMapping("/{placeId}")
 	@Operation(
 		summary = "장소 삭제하기",
-		description = "저장된 장소 삭제하기. AccessToken 필요"
+		description = "저장된 장소 삭제하기. AccessToken 필요",
+		responses = {
+			@ApiResponse(
+				responseCode = "200",
+				description = "성공"
+			),
+			@ApiResponse(
+				responseCode = "400",
+				description = "요청 파라미터가 잘 못 되었습니다."
+			),
+			@ApiResponse(
+				responseCode = "401",
+				description = "인증에 실패하였습니다."
+			)
+		}
 	)
 	public ResponseEntity<BaseResponse> placeDelete(@PathVariable Long placeId) {
 
