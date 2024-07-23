@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.dto.BaseResponse;
@@ -25,7 +26,16 @@ public class MemberController {
 	@PostMapping("/logout")
 	@Operation(
 		summary = "로그아웃",
-		description = "로그아웃한다. AccessToken 필요"
+		description = """
+			로그아웃한다.
+			
+			AccessToken 필요.""",
+		responses = {
+			@ApiResponse(
+				responseCode = "200",
+				description = "성공"
+			),
+		}
 	)
 	public ResponseEntity<BaseResponse> memberLogout(HttpServletRequest request) {
 		String accessToken = jwtTokenProvider.extractAccessToken(request).orElse(null);
