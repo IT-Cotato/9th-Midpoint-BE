@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.dto.DataResponse;
 import middle_point_search.backend.common.util.MemberLoader;
@@ -25,7 +26,32 @@ public class MidPointController {
 	@GetMapping
 	@Operation(
 		summary = "중간 지점 추천 장소 조회",
-		description = "중간 지점 추천 장소 조회하기. AccessToken 필요"
+		description = """
+			중간 지점 추천 장소 조회하기.
+			
+			AccessToken 필요.""",
+		responses = {
+			@ApiResponse(
+				responseCode = "200",
+				description = "성공"
+			),
+			@ApiResponse(
+				responseCode = "400",
+				description = "요청 파라미터가 잘 못 되었습니다."
+			),
+			@ApiResponse(
+				responseCode = "401",
+				description = "인증에 실패하였습니다."
+			),
+			@ApiResponse(
+				responseCode = "403",
+				description = "접근이 거부되었습니다."
+			),
+			@ApiResponse(
+				responseCode = "404",
+				description = "방에 입력된 장소가 없습니다."
+			)
+		}
 	)
 	public ResponseEntity<DataResponse<List<MidPointsFindResponse>>> MidPointsFind() {
 		String roomId = memberLoader.getRoomId();
