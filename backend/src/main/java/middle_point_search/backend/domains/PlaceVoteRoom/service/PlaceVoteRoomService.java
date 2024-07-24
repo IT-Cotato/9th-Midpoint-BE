@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static middle_point_search.backend.domains.PlaceVoteRoom.dto.PlaceVoteRoomDTO.*;
+import static middle_point_search.backend.domains.PlaceVoteRoom.dto.PlaceVoteRoomDTO.PlaceVoteInfoResponse.*;
 
 @Service
 @RequiredArgsConstructor
@@ -50,7 +51,8 @@ public class PlaceVoteRoomService {
     public PlaceVoteRoomCreateResponse recreatePlaceVoteRoom(Room room,PlaceVoteRoomCreateRequest request) {
 
         // 기존 투표방 삭제
-        PlaceVoteRoom existingPlaceVoteRoom = placeVoteRoomRepository.findByRoom(room).orElseThrow(() -> new CustomException(UserErrorCode.VOTE_ROOM_NOT_FOUND));
+        PlaceVoteRoom existingPlaceVoteRoom = placeVoteRoomRepository.findByRoom(room)
+                .orElseThrow(() -> new CustomException(UserErrorCode.VOTE_ROOM_NOT_FOUND));
 
         // 먼저 투표와 관련된 모든 데이터 삭제
         placeVoteRoomRepository.delete(existingPlaceVoteRoom);
@@ -66,8 +68,10 @@ public class PlaceVoteRoomService {
     // 장소투표방 조회
     public PlaceVoteInfoResponse getPlaceVoteRoom(Room room) {
 
-        PlaceVoteRoom placeVoteRoom = placeVoteRoomRepository.findByRoom(room).orElseThrow(() -> new CustomException(UserErrorCode.VOTE_ROOM_NOT_FOUND));
-        List<PlaceVoteInfoResponse.PlaceVoteCandidateInfo> candidates = placeVoteRoom.getPlaceVoteCandidates().stream().map(candidate -> new PlaceVoteInfoResponse.PlaceVoteCandidateInfo(candidate.getId(), candidate.getName(), candidate.getSiDo(), candidate.getSiGunGu(), candidate.getRoadNameAddress(), candidate.getAddressLatitude(), candidate.getAddressLatitude(), candidate.getCount(), candidate.getVoters().stream().map(v -> v.getMember().getName()).collect(Collectors.toList()))).collect(Collectors.toList());
+        PlaceVoteRoom placeVoteRoom = placeVoteRoomRepository.findByRoom(room)
+                .orElseThrow(() -> new CustomException(UserErrorCode.VOTE_ROOM_NOT_FOUND));
+        List<PlaceVoteCandidateInfo> candidates = placeVoteRoom.getPlaceVoteCandidates().stream()
+                .map(candidate -> new PlaceVoteCandidateInfo(candidate.getId(), candidate.getName(), candidate.getSiDo(), candidate.getSiGunGu(), candidate.getRoadNameAddress(), candidate.getAddressLatitude(), candidate.getAddressLatitude(), candidate.getCount(), candidate.getVoters().stream().map(v -> v.getMember().getName()).collect(Collectors.toList()))).collect(Collectors.toList());
 
         return new PlaceVoteInfoResponse(candidates);
     }
