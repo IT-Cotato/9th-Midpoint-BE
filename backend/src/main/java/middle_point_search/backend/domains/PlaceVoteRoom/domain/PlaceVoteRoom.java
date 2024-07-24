@@ -9,6 +9,8 @@ import middle_point_search.backend.domains.room.domain.Room;
 import java.util.ArrayList;
 import java.util.List;
 
+import static middle_point_search.backend.domains.PlaceVoteRoom.dto.PlaceVoteRoomDTO.PlaceVoteRoomCreateRequest.PlaceCandidateInfo;
+
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -26,18 +28,16 @@ public class PlaceVoteRoom {
     @OneToMany(mappedBy = "placeVoteRoom", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<PlaceVoteCandidate> placeVoteCandidates = new ArrayList<>();
 
-    public PlaceVoteRoom(Room room, List<String> names) {
+    public PlaceVoteRoom(Room room, List<PlaceCandidateInfo> candidates) {
         this.room = room;
         this.placeVoteCandidates.clear();
-        for (String name : names) {
-            addPlaceVoteCandidate(name);
+        for (PlaceCandidateInfo candidate : candidates) {
+            addPlaceVoteCandidate(candidate);
         }
     }
 
-    public void addPlaceVoteCandidate(String name) {
-        this.placeVoteCandidates.add(new PlaceVoteCandidate(name, this));
+    public void addPlaceVoteCandidate(PlaceCandidateInfo candidate) {
+        this.placeVoteCandidates.add(new PlaceVoteCandidate(candidate, this));
     }
-
-
 }
 
