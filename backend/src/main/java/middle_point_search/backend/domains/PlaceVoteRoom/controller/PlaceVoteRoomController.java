@@ -98,6 +98,11 @@ public class PlaceVoteRoomController {
                             responseCode = "403",
                             description = "접근이 거부되었습니다.",
                             content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "생성된 투표방이 없습니다.",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
                     )
             }
     )
