@@ -1,5 +1,7 @@
 package middle_point_search.backend.domains.room.domain;
 
+import java.util.Random;
+
 public enum Animal {
 	CAT("고양이"),
 	DOG("강아지"),
@@ -108,5 +110,12 @@ public enum Animal {
 
 	public String getKoreanName() {
 		return koreanName;
+	}
+
+	private static final Random RANDOM = new Random();
+
+	public static Animal getRandomAnimal() {
+		Animal[] animals = values();
+		return animals[RANDOM.nextInt(animals.length)];
 	}
 }

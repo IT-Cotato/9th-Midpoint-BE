@@ -52,13 +52,16 @@ public class Room {
 	@Enumerated(EnumType.STRING)
 	private RoomType roomType;
 
+	@Enumerated(EnumType.STRING)
+	private Animal roomName;
+
 	public Room(String identityNumber) {
 		this.identityNumber = identityNumber;
 		this.roomType = RoomType.DISABLED;
+		this.roomName = Animal.getRandomAnimal();
 	}
 
 	public static Room from(String identityNumber) {
-
 		return new Room(identityNumber);
 	}
 
