@@ -10,8 +10,10 @@ import middle_point_search.backend.common.exception.CustomException;
 import middle_point_search.backend.common.exception.errorCode.CommonErrorCode;
 import middle_point_search.backend.domains.room.domain.Room;
 import middle_point_search.backend.domains.room.domain.RoomType;
+import middle_point_search.backend.domains.room.dto.RoomDTO;
 import middle_point_search.backend.domains.room.dto.RoomDTO.RoomCreateResponse;
 import middle_point_search.backend.domains.room.dto.RoomDTO.RoomExistenceCheckResponse;
+import middle_point_search.backend.domains.room.dto.RoomDTO.RoomNameResponse;
 import middle_point_search.backend.domains.room.repository.RoomRepository;
 
 @Service
@@ -48,5 +50,11 @@ public class RoomService {
 		} else if (roomType != room.getRoomType()) {
 			throw new CustomException(CommonErrorCode.BAD_REQUEST);
 		}
+	}
+
+	public RoomNameResponse findRoomName(Room room) {
+		String name = room.getRoomName().getKoreanName();
+
+		return RoomNameResponse.from(name);
 	}
 }

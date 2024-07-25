@@ -8,9 +8,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.dto.DataResponse;
+import middle_point_search.backend.common.dto.ErrorResponse;
+import middle_point_search.backend.common.util.MemberLoader;
+import middle_point_search.backend.domains.room.domain.Room;
+import middle_point_search.backend.domains.room.dto.RoomDTO;
 import middle_point_search.backend.domains.room.dto.RoomDTO.RoomCreateResponse;
 import middle_point_search.backend.domains.room.dto.RoomDTO.RoomExistenceCheckResponse;
 import middle_point_search.backend.domains.room.service.RoomService;
@@ -19,18 +25,20 @@ import middle_point_search.backend.domains.room.service.RoomService;
 @RequestMapping("/api/rooms")
 @RequiredArgsConstructor
 public class RoomController {
+
 	private final RoomService roomService;
+	private final MemberLoader memberLoader;
 
 	@PostMapping
 	@Operation(
 		summary = "방 생성하기",
 		description = "방을 생성한다.",
 		responses = {
-		@ApiResponse(
-			responseCode = "200",
-			description = "성공"
-		)
-	}
+			@ApiResponse(
+				responseCode = "200",
+				description = "성공"
+			)
+		}
 	)
 	public ResponseEntity<DataResponse<RoomCreateResponse>> roomCreate() {
 		RoomCreateResponse response = roomService.createRoom();
@@ -52,6 +60,33 @@ public class RoomController {
 	public ResponseEntity<DataResponse<RoomExistenceCheckResponse>> roomExistenceCheck(
 		@PathVariable("roomId") String identityNumber) {
 		RoomExistenceCheckResponse response = roomService.checkRoomExistence(identityNumber);
+
+		return ResponseEntity.ok(DataResponse.from(response));
+	}
+
+	@GetMapping("/room-name")
+	@Operation(
+		summary = "방 이름 조회",
+		description = """
+			accessToken을 통해 자신의 방이름을 확인한다.
+						
+			accessToken 필요.""",
+		responses = {
+			@ApiResponse(
+				responseCode = "200",
+				description = "성공"
+			),
+			@ApiResponse(
+				responseCode = "401",
+				description = "인증에 실패하였습니다.",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			)
+		}
+	)
+	public ResponseEntity<DataResponse<RoomDTO.RoomNameResponse>> roomNameFind() {
+		Room room = memberLoader.getRoom();
+
+		RoomDTO.RoomNameResponse response = roomService.findRoomName(room);
 
 		return ResponseEntity.ok(DataResponse.from(response));
 	}
