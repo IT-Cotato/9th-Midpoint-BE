@@ -42,8 +42,6 @@ public class Room {
 	@Column(unique = true, nullable = false)
 	private String identityNumber;
 
-	private LocalDateTime createDate;
-
 	@OneToMany(mappedBy = "room", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<Member> members = new ArrayList<>();
 
@@ -56,7 +54,6 @@ public class Room {
 
 	public Room(String identityNumber) {
 		this.identityNumber = identityNumber;
-		this.createDate = LocalDateTime.now();
 		this.roomType = RoomType.DISABLED;
 	}
 
