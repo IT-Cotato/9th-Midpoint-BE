@@ -60,7 +60,7 @@ public class SecurityConfig {
 				.requestMatchers(securityProperties.getAdminUrls()).hasRole("ADMIN")
 				.anyRequest().authenticated()
 			)
-			.logout(LogoutConfigurer::permitAll)
+			.logout(LogoutConfigurer::disable) // 로그아웃 비활성화
 			.sessionManagement(session -> session
 				.sessionCreationPolicy(SessionCreationPolicy.STATELESS))  // 토큰을 사용하기 때문에 Session 사용 x
 		;
