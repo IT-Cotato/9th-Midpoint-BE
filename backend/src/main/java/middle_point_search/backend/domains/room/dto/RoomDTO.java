@@ -25,4 +25,14 @@ public class RoomDTO {
 			return new RoomExistenceCheckResponse(existence);
 		}
 	}
+
+	@Getter
+	@AllArgsConstructor(access = AccessLevel.PRIVATE)
+	public static class RoomNameResponse {
+		private String name;
+
+		public static RoomNameResponse from(String name) {
+			return new RoomNameResponse(name);
+		}
+	}
 }

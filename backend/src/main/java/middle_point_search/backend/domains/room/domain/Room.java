@@ -42,8 +42,6 @@ public class Room {
 	@Column(unique = true, nullable = false)
 	private String identityNumber;
 
-	private LocalDateTime createDate;
-
 	@OneToMany(mappedBy = "room", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<Member> members = new ArrayList<>();
 
@@ -54,14 +52,16 @@ public class Room {
 	@Enumerated(EnumType.STRING)
 	private RoomType roomType;
 
+	@Enumerated(EnumType.STRING)
+	private Animal roomName;
+
 	public Room(String identityNumber) {
 		this.identityNumber = identityNumber;
-		this.createDate = LocalDateTime.now();
 		this.roomType = RoomType.DISABLED;
+		this.roomName = Animal.getRandomAnimal();
 	}
 
 	public static Room from(String identityNumber) {
-
 		return new Room(identityNumber);
 	}
 
