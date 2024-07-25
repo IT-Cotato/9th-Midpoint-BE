@@ -1,9 +1,13 @@
 package middle_point_search.backend.domains.TimeVoteRoom.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.dto.BaseResponse;
 import middle_point_search.backend.common.dto.DataResponse;
+import middle_point_search.backend.common.dto.ErrorResponse;
 import middle_point_search.backend.common.util.MemberLoader;
 import middle_point_search.backend.domains.TimeVoteRoom.service.TimeVoteRoomService;
 import middle_point_search.backend.domains.member.domain.Member;
@@ -25,7 +29,38 @@ public class TimeVoteRoomController {
     @PostMapping
     @Operation(
             summary = "시간투표방 생성하기",
-            description = "날짜(yyyy-mm-dd)를 리스트로 입력을 받아서 시간투표방을 생성한다."
+            description = """
+            날짜(yyyy-mm-dd)를 리스트로 입력을 받아서 시간투표방을 생성한다.
+            
+            시간투표방을 생성시 현재 방에 해당하는 사람들은 투표를 할 수 있는 권한이 생긴다.
+
+            AccessToken 필요.""",
+            responses = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "성공"
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "잘못된 요청입니다.",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "인증에 실패하였습니다.",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    description = "접근이 거부되었습니다.",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            ),
+            @ApiResponse(
+                    responseCode = "409",
+                    description = "이미 투표방이 존재합니다.",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            )
+    }
     )
     public ResponseEntity<DataResponse<TimeVoteRoomCreateResponse>> timeVoteRoomCreate(@RequestBody TimeVoteRoomCreateRequest request) {
 
@@ -40,7 +75,38 @@ public class TimeVoteRoomController {
     @PutMapping
     @Operation(
             summary = "시간투표방 재생성하기",
-            description = "날짜(yyyy-mm-dd)를 리스트로 입력을 받아서 시간투표방을 재생성한다."
+            description = """
+            날짜(yyyy-mm-dd)를 리스트로 입력을 받아서 시간투표방을 재생성한다."
+            
+            시간투표방을 재생성시 현재 방에 해당하는 사람들은 재생성된 투표를 할 수 있는 권한이 생긴다.
+            
+            AccessToken 필요.""",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "성공"
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "잘못된 요청입니다.",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "401",
+                            description = "인증에 실패하였습니다.",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "접근이 거부되었습니다.",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "생성된 투표방이 없습니다.",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+                    )
+            }
     )
     public ResponseEntity<DataResponse<TimeVoteRoomCreateResponse>> timeVoteRoomRecreate(@RequestBody TimeVoteRoomCreateRequest request) {
 
@@ -55,7 +121,37 @@ public class TimeVoteRoomController {
     @PostMapping("/vote")
     @Operation(
             summary = "시간투표하기",
-            description = "가능한 투표후보날짜의 가능한 시작일시(yyyy-mm-dd hh:mm), 가능한 마지막일시(yyyy-mm-dd hh:mm)를 입력을 받아서 투표한다."
+            description = """
+            가능한 투표후보날짜의 가능한 시작일시(yyyy-mm-dd hh:mm), 가능한 마지막일시(yyyy-mm-dd hh:mm)를 입력을 받아서 투표한다.
+            
+            AccessToken 필요.""",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "성공"
+                    ),
+                    @ApiResponse(
+                            responseCode = "401",
+                            description = "인증에 실패하였습니다.",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "접근이 거부되었습니다.",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "생성된 투표방이 없습니다.",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+                    ),
+
+                    @ApiResponse(
+                            responseCode = "409",
+                            description = "이미 투표를 하였습니다.",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+                    )
+            }
     )
     public ResponseEntity<?> vote(@RequestBody TimeVoteRoomVoteRequest request) {
 
@@ -71,7 +167,36 @@ public class TimeVoteRoomController {
     @PutMapping("/vote")
     @Operation(
             summary = "시간 재투표하기",
-            description = "가능한 투표후보날짜의 가능한 시작일시(yyyy-mm-dd hh:mm), 가능한 마지막일시(yyyy-mm-dd hh:mm)를 입력을 받아서 재투표한다."
+            description = """
+            가능한 투표후보날짜의 가능한 시작일시(yyyy-mm-dd hh:mm), 가능한 마지막일시(yyyy-mm-dd hh:mm)를 입력을 받아서 재투표한다.
+            
+            AccessToken 필요.""",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "성공"
+                    ),
+                    @ApiResponse(
+                            responseCode = "401",
+                            description = "인증에 실패하였습니다.",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "접근이 거부되었습니다.",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "생성된 투표방이 없습니다.",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "투표를 한 적이 없습니다.",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+                    )
+            }
     )
     public ResponseEntity<?> voteUpdate(@RequestBody TimeVoteRoomVoteRequest request) {
 
@@ -87,7 +212,26 @@ public class TimeVoteRoomController {
     @GetMapping("/existence")
     @Operation(
             summary = "시간투표방 존재여부 확인하기",
-            description = "시간투표방 존재여부를 나타내고 존재하면 true, 존재하지않으면 false를 반환한다."
+            description = """
+            시간투표방 존재여부를 나타내고 존재하면 true, 존재하지않으면 false를 반환한다.
+            
+			AccessToken 필요.""",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "성공"
+                    ),
+                    @ApiResponse(
+                            responseCode = "401",
+                            description = "인증에 실패하였습니다.",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "접근이 거부되었습니다.",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+                    )
+            }
     )
     public ResponseEntity<DataResponse<Boolean>> timeVoteRoomHas() {
 
@@ -102,7 +246,31 @@ public class TimeVoteRoomController {
     @GetMapping("/voted")
     @Operation(
             summary = "시간투표여부 확인하기",
-            description = "시간투표여부를 나타내고 투표를 했으면 true, 투표를 하지않았으면 false를 반환한다."
+            description = """
+            시간투표여부를 나타내고 투표를 했으면 true, 투표를 하지않았으면 false를 반환한다.
+			
+			AccessToken 필요.""",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "성공"
+                    ),
+                    @ApiResponse(
+                            responseCode = "401",
+                            description = "인증에 실패하였습니다.",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "접근이 거부되었습니다.",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "생성된 투표방이 없습니다.",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+                    )
+            }
     )
     public ResponseEntity<DataResponse<Boolean>> votedHas() {
 
@@ -118,7 +286,32 @@ public class TimeVoteRoomController {
     @GetMapping("/result")
     @Operation(
             summary = "시간투표결과 확인하기",
-            description = "시간투표후보날짜들에 대한 결과를 보여준다. 각 날짜에 대한 멤버들의 투표 현황과 총 투표한 인원의 정보를 반환한다."
+            description = """
+            시간투표후보날짜들에 대한 결과를 보여준다. 각 날짜에 대한 멤버들의 투표 현황과 총 투표한 인원의 정보를 반환한다.
+ 
+ 			AccessToken 필요.""",
+             responses = {
+                     @ApiResponse(
+                             responseCode = "200",
+                             description = "성공"
+                     ),
+                     @ApiResponse(
+                             responseCode = "401",
+                             description = "인증에 실패하였습니다.",
+                             content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+                     ),
+                     @ApiResponse(
+                             responseCode = "403",
+                             description = "접근이 거부되었습니다.",
+                             content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+                     ),
+                     @ApiResponse(
+                             responseCode = "404",
+                             description = "생성된 투표방이 없습니다.",
+                             content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+                     )
+             }
+
     )
     public ResponseEntity<DataResponse<TimeVoteRoomResultResponse>> timeVoteResultsGet() {
 
