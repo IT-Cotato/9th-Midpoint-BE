@@ -32,7 +32,8 @@ public class PlaceService {
 	private final RoomService roomService;
 	private final MemberService memberService;
 
-	@Transactional
+	//장소 저장 및 업데이트 하고, Member 및 Room 역할 변경
+	@Transactional(rollbackFor = {CustomException.class})
 	public void saveOrUpdatePlaceAndRoleUpdate(Room room, Member member, PlaceSaveOrUpdateRequest request) {
 
 		roomService.updateRoomType(room, RoomType.TOGETHER);
@@ -40,10 +41,12 @@ public class PlaceService {
 		memberService.updateMemberRole(member, Role.USER);
 	}
 
+	//장소 저장 및 업데이트
 	private void saveOrUpdatePlace(Room room, Member member, PlaceSaveOrUpdateRequest request) {
+		String roomId = room.getIdentityNumber();
+		String name = member.getName();
 
-		Boolean existence = placeRepository.existsByRoom_IdentityNumberAndMember_Name(room.getIdentityNumber(),
-			member.getName());
+		Boolean existence = placeRepository.existsByRoom_IdentityNumberAndMember_Name(roomId, name);
 
 		//1. 기존에 존재하는 데이터가 없으면 저장
 		//2. 기존에 존재하는 데이터가 있으면 변경
@@ -57,7 +60,8 @@ public class PlaceService {
 		}
 	}
 
-	@Transactional
+	//개인이 모든 장소 저장 및 업데이트 하고, Member 및 Room 역할 변경
+	@Transactional(rollbackFor = {CustomException.class})
 	public void saveOrUpdatePlacesBySelfAndRoleUpdate(Room room, PlacesSaveOrUpdateBySelfRequest request) {
 
 		String roomId = room.getIdentityNumber();
@@ -66,6 +70,7 @@ public class PlaceService {
 		memberService.updateRomeMembersRole(roomId, Role.USER);
 	}
 
+	//개인이 모든 장소 저장 및 업데이트
 	private void saveOrUpdatePlacesBySelf(Room room, PlacesSaveOrUpdateBySelfRequest request) {
 
 		String roomId = room.getIdentityNumber();
@@ -86,6 +91,7 @@ public class PlaceService {
 		placeRepository.saveAll(places);
 	}
 
+	//장소 조회
 	public List<PlacesFindResponse> findPlaces(String roomId) {
 
 		List<Place> places = placeRepository.findAllByRoom_IdentityNumber(roomId);

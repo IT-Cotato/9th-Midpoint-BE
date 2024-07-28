@@ -23,6 +23,7 @@ public class RoomService {
 
 	private final RoomRepository roomRepository;
 
+	//Room 저장하기
 	@Transactional
 	public RoomCreateResponse createRoom() {
 		String identityNumber = UUID.randomUUID().toString();
@@ -40,6 +41,7 @@ public class RoomService {
 		return RoomExistenceCheckResponse.from(existence);
 	}
 
+	//RoomType 변경하기
 	@Transactional
 	public void updateRoomType(Room room, RoomType roomType) {
 		//1.방 type이 disable로 지정이 안되어 있을 경우에만 변경
@@ -52,6 +54,7 @@ public class RoomService {
 		}
 	}
 
+	//Room 이름 조회
 	public RoomNameResponse findRoomName(Room room) {
 		String name = room.getRoomName().getKoreanName();
 
