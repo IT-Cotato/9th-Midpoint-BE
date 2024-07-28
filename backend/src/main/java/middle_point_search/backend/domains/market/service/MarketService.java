@@ -46,7 +46,7 @@ public class MarketService {
 
 	private final WebClientUtil webClientUtil;
 
-	@Transactional
+	@Transactional(rollbackFor = {CustomException.class})
 	public void updateMarket() {
 
 		log.info("{}", marketProperties.getBaseUrl());
