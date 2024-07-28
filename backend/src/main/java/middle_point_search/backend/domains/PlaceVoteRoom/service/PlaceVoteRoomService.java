@@ -115,13 +115,13 @@ public class PlaceVoteRoomService {
         placeVoteCandidateMemberRepository.save(placeVoteCandidateMember);
     }
 
-    //투표방생성여부
+    //장소투표방 존재 여부 확인, 존재시 true, 존재하지 않을시 false 반환
     public boolean hasPlaceVoteRoom(String roomId) {
 
         return placeVoteRoomRepository.existsByRoomIdentityNumber(roomId);
     }
 
-    //투표여부
+    //먼저 장소투표방이 없다면 시간투표방없다고 에러메세지, 그 다음 장소투표방이 있을때 투표했으면 true, 투표안했으면 false 반환
     public boolean hasVoted(Member member, Room room) {
 
         PlaceVoteRoom placeVoteRoom = placeVoteRoomRepository.findByRoom(room).orElseThrow(() -> new CustomException(VOTE_ROOM_NOT_FOUND));

@@ -106,13 +106,14 @@ public class TimeVoteRoomService {
         }
         return timeVotes;
     }
-    //투표나 수정 로직에서 투표방, 투표현황체크하지만 쓰일 경우 대비
+
+    //시간투표방 존재 여부 확인, 존재시 true, 존재하지 않을시 false 반환
     public boolean hasTimeVoteRoom(String roomId) {
 
         return timeVoteRoomRepository.existsByRoomIdentityNumber(roomId);
     }
 
-    //투표방이 없다면 투표방없다고 메세지, 있을때 투표 true, 투표안했을때 false
+    //먼저 시간투표방이 없다면 시간투표방없다고 에러메세지, 그 다음 시간 투표방이 있을때 투표했으면 true, 투표안했으면 false 반환
     public boolean hasVoted(Member member, Room room) {
 
         TimeVoteRoom timeVoteRoom = timeVoteRoomRepository.findByRoom(room).orElseThrow(() -> new CustomException(VOTE_ROOM_NOT_FOUND));
