@@ -16,11 +16,11 @@ public class BaseResponse {
 	@JsonFormat(pattern = "yyyy-MM-dd kk:mm:ss")
 	private final LocalDateTime timestamp = LocalDateTime.now();
 	private final Boolean isSuccess;
-	private final HttpStatusCode status;
+	private final Integer status;
 
 	protected BaseResponse(Boolean isSuccess, HttpStatusCode status) {
 		this.isSuccess = isSuccess;
-		this.status = status;
+		this.status = status.value();
 	}
 
 	public static BaseResponse ok() {
