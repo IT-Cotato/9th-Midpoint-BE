@@ -34,9 +34,17 @@ public class TimeVoteRoomService {
 
         boolean exists = timeVoteRoomRepository.existsByRoom(room);
 
+        //방존재여부 확인
         if (exists) {
             throw new CustomException(DUPLICATE_VOTE_ROOM);
         }
+
+        // 투표 후보가 있는지 확인
+        boolean hasNoVoteCandidates = request.getDates() == null || request.getDates().isEmpty();
+        if (hasNoVoteCandidates) {
+            throw new CustomException(NO_VOTE_CANDIDATES_PROVIDED);
+        }
+
         TimeVoteRoom timeVoteRoom = new TimeVoteRoom(room, request.getDates());
         TimeVoteRoom savedTimeVoteRoom = timeVoteRoomRepository.save(timeVoteRoom);
 
@@ -53,6 +61,13 @@ public class TimeVoteRoomService {
         // 먼저 투표와 관련된 모든 데이터 삭제
         timeVoteRoomRepository.delete(existingTimeVoteRoom);
         timeVoteRoomRepository.flush();
+
+        // 투표 후보가 있는지 확인
+        boolean hasNoVoteCandidates = request.getDates() == null || request.getDates().isEmpty();
+        if (hasNoVoteCandidates) {
+            throw new CustomException(NO_VOTE_CANDIDATES_PROVIDED);
+        }
+
 
         // 새로운 투표방 생성
         TimeVoteRoom timeVoteRoom = new TimeVoteRoom(room, request.getDates());

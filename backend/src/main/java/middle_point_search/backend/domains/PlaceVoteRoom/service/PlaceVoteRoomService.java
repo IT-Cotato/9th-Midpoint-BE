@@ -2,6 +2,7 @@ package middle_point_search.backend.domains.PlaceVoteRoom.service;
 
 import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.exception.CustomException;
+import middle_point_search.backend.common.exception.errorCode.UserErrorCode;
 import middle_point_search.backend.domains.PlaceVoteRoom.domain.PlaceVoteCandidate;
 import middle_point_search.backend.domains.PlaceVoteRoom.domain.PlaceVoteCandidateMember;
 import middle_point_search.backend.domains.PlaceVoteRoom.domain.PlaceVoteRoom;
@@ -38,6 +39,12 @@ public class PlaceVoteRoomService {
             throw new CustomException(DUPLICATE_VOTE_ROOM);
         }
 
+        // 투표 후보가 있는지 확인
+        boolean hasNoVoteCandidates = request.getPlaceCandidates() == null || request.getPlaceCandidates().isEmpty();
+        if (hasNoVoteCandidates) {
+            throw new CustomException(NO_VOTE_CANDIDATES_PROVIDED);
+        }
+
         PlaceVoteRoom placeVoteRoom = new PlaceVoteRoom(room,request.getPlaceCandidates());
         PlaceVoteRoom savedPlaceVoteRoom = placeVoteRoomRepository.save(placeVoteRoom);
 
@@ -54,6 +61,12 @@ public class PlaceVoteRoomService {
         // 먼저 투표와 관련된 모든 데이터 삭제
         placeVoteRoomRepository.delete(existingPlaceVoteRoom);
         placeVoteRoomRepository.flush();
+
+        // 투표 후보가 있는지 확인
+        boolean hasNoVoteCandidates = request.getPlaceCandidates() == null || request.getPlaceCandidates().isEmpty();
+        if (hasNoVoteCandidates) {
+            throw new CustomException(NO_VOTE_CANDIDATES_PROVIDED);
+        }
 
         //투표방 생성
         PlaceVoteRoom placeVoteRoom = new PlaceVoteRoom(room,request.getPlaceCandidates());
