@@ -1,5 +1,8 @@
 package middle_point_search.backend.common.exception.handler;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.core.io.buffer.DataBufferLimitException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
@@ -8,7 +11,6 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
@@ -25,7 +27,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
 	@ExceptionHandler(CustomException.class)
 	public ResponseEntity<Object> handleCustomException(CustomException e) {
-		log.warn("handleCustomException", e);
+		log.warn("handleCustomException", e.getMessage());
 
 		return makeErrorResponseEntity(e.getErrorCode());
 	}
@@ -43,12 +45,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		HttpStatusCode status, WebRequest request) {
 		log.warn("handleNoResourceFoundException", ex);
 
-		ServletWebRequest servletWebRequest = (ServletWebRequest)request;
-		String path = servletWebRequest.getRequest().getRequestURI();
-
 		ErrorCode errorCode = CommonErrorCode.RESOURCE_NOT_FOUND;
 
-		return makeErrorResponseEntity(errorCode, path);
+		return makeErrorResponseEntity(errorCode);
 	}
 
 	@Override
@@ -59,8 +58,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		WebRequest request) {
 		log.warn("handleIllegalArgument", e);
 
+		List<String> messages = e.getBindingResult().getFieldErrors()
+			.stream()
+			.map(ex -> ex.getDefaultMessage())
+			.collect(Collectors.toList());
+
 		ErrorCode errorCode = CommonErrorCode.INVALID_PARAMETER;
-		return makeErrorResponseEntity(errorCode);
+		return makeErrorResponseEntity(errorCode, messages);
 	}
 
 	@ExceptionHandler(DataBufferLimitException.class)
@@ -88,8 +92,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		return makeErrorResponseEntity(errorCode);
 	}
 
-
-
 	// ErrorCode를 받아서 Response를 만드는 메서드
 	private ResponseEntity<Object> makeErrorResponseEntity(ErrorCode errorCode) {
 		return ResponseEntity
@@ -97,9 +99,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 			.body(ErrorResponse.from(errorCode));
 	}
 
-	private ResponseEntity<Object> makeErrorResponseEntity(ErrorCode errorCode, String path) {
+	private ResponseEntity<Object> makeErrorResponseEntity(ErrorCode errorCode, List<String> message) {
 		return ResponseEntity
 			.status(errorCode.getHttpStatus())
-			.body(ErrorResponse.of(errorCode, path));
+			.body(ErrorResponse.of(errorCode, message));
 	}
 }
