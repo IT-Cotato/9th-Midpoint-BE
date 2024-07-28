@@ -35,12 +35,14 @@ public class PlaceVoteRoomService {
     public PlaceVoteRoomCreateResponse createPlaceVoteRoom(Room room,PlaceVoteRoomCreateRequest request) {
 
         boolean exists = placeVoteRoomRepository.existsByRoom(room);
+
         if (exists) {
             throw new CustomException(DUPLICATE_VOTE_ROOM);
         }
 
         // 투표 후보가 있는지 확인
         boolean hasNoVoteCandidates = request.getPlaceCandidates() == null || request.getPlaceCandidates().isEmpty();
+
         if (hasNoVoteCandidates) {
             throw new CustomException(NO_VOTE_CANDIDATES_PROVIDED);
         }
@@ -64,6 +66,7 @@ public class PlaceVoteRoomService {
 
         // 투표 후보가 있는지 확인
         boolean hasNoVoteCandidates = request.getPlaceCandidates() == null || request.getPlaceCandidates().isEmpty();
+
         if (hasNoVoteCandidates) {
             throw new CustomException(NO_VOTE_CANDIDATES_PROVIDED);
         }

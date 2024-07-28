@@ -41,6 +41,7 @@ public class TimeVoteRoomService {
 
         // 투표 후보가 있는지 확인
         boolean hasNoVoteCandidates = request.getDates() == null || request.getDates().isEmpty();
+
         if (hasNoVoteCandidates) {
             throw new CustomException(NO_VOTE_CANDIDATES_PROVIDED);
         }
@@ -64,6 +65,7 @@ public class TimeVoteRoomService {
 
         // 투표 후보가 있는지 확인
         boolean hasNoVoteCandidates = request.getDates() == null || request.getDates().isEmpty();
+
         if (hasNoVoteCandidates) {
             throw new CustomException(NO_VOTE_CANDIDATES_PROVIDED);
         }
