@@ -12,7 +12,7 @@ public class PlaceDTO {
 
 	@Getter
 	@NoArgsConstructor(access = AccessLevel.PRIVATE)
-	public static class PlaceSaveRequest {
+	public static class PlaceSaveOrUpdateRequest {
 
 		private String siDo;
 		private String siGunGu;
@@ -23,20 +23,9 @@ public class PlaceDTO {
 
 	@Getter
 	@NoArgsConstructor(access = AccessLevel.PRIVATE)
-	public static class PlacesSaveBySelfRequest {
+	public static class PlacesSaveOrUpdateBySelfRequest {
 
-		List<PlaceSaveRequest> addresses;
-	}
-
-	@Getter
-	@NoArgsConstructor(access = AccessLevel.PRIVATE)
-	public static class PlaceUpdateRequest {
-
-		private String siDo;
-		private String siGunGu;
-		private String roadNameAddress;
-		private Double addressLat;
-		private Double addressLong;
+		List<PlaceSaveOrUpdateRequest> addresses;
 	}
 
 	@Getter

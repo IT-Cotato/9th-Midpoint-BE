@@ -3,7 +3,6 @@ package middle_point_search.backend.domains.place.service;
 import static middle_point_search.backend.common.exception.errorCode.UserErrorCode.*;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,10 +12,9 @@ import lombok.extern.slf4j.Slf4j;
 import middle_point_search.backend.common.exception.CustomException;
 import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.place.domain.Place;
-import middle_point_search.backend.domains.place.dto.PlaceDTO.PlaceSaveRequest;
-import middle_point_search.backend.domains.place.dto.PlaceDTO.PlaceUpdateRequest;
+import middle_point_search.backend.domains.place.dto.PlaceDTO.PlaceSaveOrUpdateRequest;
 import middle_point_search.backend.domains.place.dto.PlaceDTO.PlacesFindResponse;
-import middle_point_search.backend.domains.place.dto.PlaceDTO.PlacesSaveBySelfRequest;
+import middle_point_search.backend.domains.place.dto.PlaceDTO.PlacesSaveOrUpdateBySelfRequest;
 import middle_point_search.backend.domains.place.repository.PlaceRepository;
 import middle_point_search.backend.domains.room.domain.Room;
 
@@ -28,73 +26,49 @@ public class PlaceService {
 
 	private final PlaceRepository placeRepository;
 
-	@Transactional(readOnly = false)
-	public void savePlace(Room room, Member member, PlaceSaveRequest placeSaveRequest) {
+	@Transactional
+	public void saveOrUpdatePlace(Room room, Member member, PlaceSaveOrUpdateRequest placeSaveOrUpdateRequest) {
 
 		Boolean existence = placeRepository.existsByRoom_IdentityNumberAndMember_Name(room.getIdentityNumber(),
 			member.getName());
 
 		//1. 기존에 존재하는 데이터가 없으면 저장
-		//2. 기존에 존재하는 데이터가 있으면 에러
+		//2. 기존에 존재하는 데이터가 있으면 변경
 		if (!existence) {
-			placeRepository.save(Place.from(placeSaveRequest, room, member));
+			placeRepository.save(Place.from(placeSaveOrUpdateRequest, room, member));
 		} else {
-			throw new CustomException(PLACE_CONFLICT);
+			Place place = placeRepository.findByRoomAndMember(room, member)
+				.orElseThrow(() -> new CustomException(PLACE_NOT_FOUND));
+
+			place.update(placeSaveOrUpdateRequest);
 		}
 	}
 
-	@Transactional(readOnly = false)
-	public void savePlacesBySelf(Room room, PlacesSaveBySelfRequest request) {
+	@Transactional
+	public void saveOrUpdatePlacesBySelf(Room room, PlacesSaveOrUpdateBySelfRequest request) {
 
 		String roomId = room.getIdentityNumber();
 
 		Boolean existence = placeRepository.existsByRoom_IdentityNumber(roomId);
 
-		//1. 장소가 존재하지 않으면 저장
-		//2. 장소가 저장하면 중복 에러
-		if (!existence) {
-			List<PlaceSaveRequest> placesSaveBySelfRequests = request.getAddresses();
-			List<Place> places = placesSaveBySelfRequests.stream()
-				.map(placeSaveRequest -> Place.from(placeSaveRequest, room))
-				.toList();
-
-			placeRepository.saveAll(places);
-		} else {
-			throw new CustomException(PLACE_CONFLICT);
+		// 이미 장소가 존재하면 삭제
+		if (existence) {
+			placeRepository.deleteAllByRoom_IdentityNumber(roomId);
 		}
+
+		// 새로운 장소들 저장
+		List<PlaceSaveOrUpdateRequest> placesSaveBySelfRequests = request.getAddresses();
+		List<Place> places = placesSaveBySelfRequests.stream()
+			.map(placeSaveOrUpdateRequest -> Place.from(placeSaveOrUpdateRequest, room))
+			.toList();
+
+		placeRepository.saveAll(places);
 	}
 
 	public List<PlacesFindResponse> findPlaces(String roomId) {
 
 		List<Place> places = placeRepository.findAllByRoom_IdentityNumber(roomId);
 
-		return places.stream()
-			.map(PlacesFindResponse::from)
-			.toList();
-	}
-
-	// Place 업데이트 하기
-	@Transactional(readOnly = false)
-	public void updatePlaces(Long placeId, PlaceUpdateRequest request) {
-
-		Place place = placeRepository.findById(placeId)
-			.orElseThrow(() -> new CustomException(PLACE_NOT_FOUND));
-
-		place.update(request);
-	}
-
-	// Place 삭제하기
-	@Transactional(readOnly = false)
-	public void deletePlace(Long placeId) {
-
-		Place place = placeRepository.findById(placeId).orElseThrow(() -> new CustomException(PLACE_NOT_FOUND));
-
-		Member member = place.getMember();
-
-		if (member != null) {
-			member.deletePlace();
-		}
-
-		placeRepository.delete(place);
+		return places.stream().map(PlacesFindResponse::from).toList();
 	}
 }

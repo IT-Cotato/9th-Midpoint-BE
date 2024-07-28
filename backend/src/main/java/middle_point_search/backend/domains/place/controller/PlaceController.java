@@ -3,31 +3,24 @@ package middle_point_search.backend.domains.place.controller;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.dto.BaseResponse;
 import middle_point_search.backend.common.dto.DataResponse;
-import middle_point_search.backend.common.dto.ErrorResponse;
 import middle_point_search.backend.common.util.MemberLoader;
 import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.member.domain.Role;
 import middle_point_search.backend.domains.member.service.MemberService;
-import middle_point_search.backend.domains.place.dto.PlaceDTO.PlaceSaveRequest;
-import middle_point_search.backend.domains.place.dto.PlaceDTO.PlaceUpdateRequest;
+import middle_point_search.backend.domains.place.dto.PlaceDTO.PlaceSaveOrUpdateRequest;
 import middle_point_search.backend.domains.place.dto.PlaceDTO.PlacesFindResponse;
-import middle_point_search.backend.domains.place.dto.PlaceDTO.PlacesSaveBySelfRequest;
+import middle_point_search.backend.domains.place.dto.PlaceDTO.PlacesSaveOrUpdateBySelfRequest;
 import middle_point_search.backend.domains.place.service.PlaceService;
 import middle_point_search.backend.domains.room.domain.Room;
 import middle_point_search.backend.domains.room.domain.RoomType;
@@ -45,12 +38,14 @@ public class PlaceController {
 
 	@PostMapping
 	@Operation(
-		summary = "각자 장소 저장하기",
+		summary = "각자 장소 저장 및 업데이트하기",
 		description = """
-			주소와 좌표를 사용하여 장소 저장하기.
+			주소와 좌표를 사용하여 장소 저장 및 업데이트하기.
+			
+			저장된 장소가 없으면 저장, 있으면 업데이트 한다.
 						
 			장소를 저장한 사람은 다른 기능을 사용할 권한이 생긴다.
-			
+						
 			AccessToken 필요.""",
 		responses = {
 			@ApiResponse(
@@ -67,14 +62,15 @@ public class PlaceController {
 			)
 		}
 	)
-	public ResponseEntity<BaseResponse> placeSave(@RequestBody PlaceSaveRequest request) {
+	public ResponseEntity<BaseResponse> placeSaveOrUpdate(@RequestBody PlaceSaveOrUpdateRequest request) {
 
 		Room room = memberLoader.getRoom();
 		Member member = memberLoader.getMember();
 		String roomId = memberLoader.getRoomId();
 
+		// 이 부분 한 트랜잭션으로 통합하기
 		roomService.updateRoomType(room, RoomType.TOGETHER);
-		placeService.savePlace(room, member, request);
+		placeService.saveOrUpdatePlace(room, member, request);
 		memberService.updateRomeMembersRole(roomId, Role.USER);
 
 		return ResponseEntity.ok(BaseResponse.ok());
@@ -82,12 +78,14 @@ public class PlaceController {
 
 	@PostMapping("/self")
 	@Operation(
-		summary = "개인이 모든 장소 저장하기",
+		summary = "개인이 모든 장소 저장 및 업데이트하기",
 		description = """
-			주소와 좌표를 사용하여 장소 저장하기.
+			주소와 좌표를 사용하여 장소 저장 및 업데이트하기.
 			
+			저장된 장소가 없으면 저장, 있으면 업데이트 한다.
+						
 			추후 가입하는 모든 사람은 다른 기능을 사용할 권한이 생긴다.
-			
+						
 			AccessToken 필요.""",
 		responses = {
 			@ApiResponse(
@@ -104,44 +102,14 @@ public class PlaceController {
 			)
 		}
 	)
-	public ResponseEntity<BaseResponse> placesSaveBySelf(@RequestBody PlacesSaveBySelfRequest request) {
+	public ResponseEntity<BaseResponse> placesSaveOrUpdateBySelf(@RequestBody PlacesSaveOrUpdateBySelfRequest request) {
 
 		Room room = memberLoader.getRoom();
 		Member member = memberLoader.getMember();
 
 		roomService.updateRoomType(room, RoomType.SELF);
-		placeService.savePlacesBySelf(room, request);
+		placeService.saveOrUpdatePlacesBySelf(room, request);
 		memberService.updateMemberRole(member, Role.USER);
-
-		return ResponseEntity.ok(BaseResponse.ok());
-	}
-
-	@PutMapping("/{placeId}")
-	@Operation(
-		summary = "장소 변경하기",
-		description = """
-			저장된 장소 변경하기.
-			
-			AccessToken 필요.""",
-		responses = {
-			@ApiResponse(
-				responseCode = "200",
-				description = "성공"
-			),
-			@ApiResponse(
-				responseCode = "400",
-				description = "요청 파라미터가 잘 못 되었습니다."
-			),
-			@ApiResponse(
-				responseCode = "401",
-				description = "인증에 실패하였습니다."
-			)
-		}
-	)
-	public ResponseEntity<BaseResponse> placeUpdate(@PathVariable("placeId") Long placeId,
-		@RequestBody PlaceUpdateRequest request) {
-
-		placeService.updatePlaces(placeId, request);
 
 		return ResponseEntity.ok(BaseResponse.ok());
 	}
@@ -151,7 +119,7 @@ public class PlaceController {
 		summary = "장소 조회하기",
 		description = """
 			저장된 장소 리스트 조회하기.
-			
+						
 			AccessToken 필요.""",
 		responses = {
 			@ApiResponse(
@@ -176,35 +144,4 @@ public class PlaceController {
 		return ResponseEntity.ok(DataResponse.from(places));
 	}
 
-	@DeleteMapping("/{placeId}")
-	@Operation(
-		summary = "장소 삭제하기",
-		description = """
-			저장된 장소 삭제하기.
-			
-			AccessToken 필요.""",
-		responses = {
-			@ApiResponse(
-				responseCode = "200",
-				description = "성공",
-				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
-			),
-			@ApiResponse(
-				responseCode = "400",
-				description = "요청 파라미터가 잘 못 되었습니다.",
-				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
-			),
-			@ApiResponse(
-				responseCode = "401",
-				description = "인증에 실패하였습니다.",
-				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
-			)
-		}
-	)
-	public ResponseEntity<BaseResponse> placeDelete(@PathVariable Long placeId) {
-
-		placeService.deletePlace(placeId);
-
-		return ResponseEntity.ok(BaseResponse.ok());
-	}
 }
