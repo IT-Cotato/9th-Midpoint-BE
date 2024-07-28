@@ -55,6 +55,8 @@ public class MarketController {
 			
 			placeStandard에는 [ALL,CAFE,STUDY,RESTAURANT]중 하나가 올 수 있다.
 			
+			page는 1이상이다.
+			
 			요청당 5개의 정보를 반환.
 			
 			AccessToken 필요.""",
