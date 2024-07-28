@@ -35,6 +35,7 @@ public class MemberService {
 	private final RefreshTokenRepository refreshTokenRepository;
 	private final LogoutRepository logoutRepository;
 
+	// 회원가입하기
 	@Transactional
 	public Member createMember(String roomId, String name, String pw) throws RoomNotFoundException {
 
@@ -51,6 +52,7 @@ public class MemberService {
 		return member;
 	}
 
+	// 회원의 ROLE을 Room의 RoomType을 기준으로 결정하는 메서드
 	private Role decideRole(RoomType roomType) {
 		if (roomType == RoomType.SELF) {
 			return Role.USER; // SELF인 경우 이미 다 장소가 입력됐으므로 바로 승인
@@ -67,7 +69,6 @@ public class MemberService {
 
 		// 회원의 refreshToken 삭제
 		RefreshToken refreshToken = refreshTokenRepository.findByMemberId(memberId).orElse(null);
-		log.info(refreshToken.getRefreshToken());
 		refreshTokenRepository.deleteById(refreshToken.getRefreshToken());
 
 		// 같은 accessToken으로 다시 로그인하지 못하도록 블랙리스트에 저장
@@ -84,11 +85,13 @@ public class MemberService {
 		return passwordEncoder.matches(rawPw, pw);
 	}
 
+	// 단일 회원 Role 변경하기
 	@Transactional
 	public void updateMemberRole(Member member, Role role) {
 		member.updateRole(role);
 	}
 
+	// 여러 회원 Role 변경하기
 	@Transactional
 	public void updateRomeMembersRole(String roomId, Role role) {
 		List<Member> members = memberRepository.findAllByRoom_IdentityNumber(roomId);
