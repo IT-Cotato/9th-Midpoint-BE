@@ -11,12 +11,16 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import middle_point_search.backend.common.exception.CustomException;
 import middle_point_search.backend.domains.member.domain.Member;
+import middle_point_search.backend.domains.member.domain.Role;
+import middle_point_search.backend.domains.member.service.MemberService;
 import middle_point_search.backend.domains.place.domain.Place;
 import middle_point_search.backend.domains.place.dto.PlaceDTO.PlaceSaveOrUpdateRequest;
 import middle_point_search.backend.domains.place.dto.PlaceDTO.PlacesFindResponse;
 import middle_point_search.backend.domains.place.dto.PlaceDTO.PlacesSaveOrUpdateBySelfRequest;
 import middle_point_search.backend.domains.place.repository.PlaceRepository;
 import middle_point_search.backend.domains.room.domain.Room;
+import middle_point_search.backend.domains.room.domain.RoomType;
+import middle_point_search.backend.domains.room.service.RoomService;
 
 @Slf4j
 @Service
@@ -25,9 +29,18 @@ import middle_point_search.backend.domains.room.domain.Room;
 public class PlaceService {
 
 	private final PlaceRepository placeRepository;
+	private final RoomService roomService;
+	private final MemberService memberService;
 
 	@Transactional
-	public void saveOrUpdatePlace(Room room, Member member, PlaceSaveOrUpdateRequest placeSaveOrUpdateRequest) {
+	public void saveOrUpdatePlaceAndRoleUpdate(Room room, Member member, PlaceSaveOrUpdateRequest request) {
+
+		roomService.updateRoomType(room, RoomType.TOGETHER);
+		saveOrUpdatePlace(room, member, request);
+		memberService.updateMemberRole(member, Role.USER);
+	}
+
+	private void saveOrUpdatePlace(Room room, Member member, PlaceSaveOrUpdateRequest request) {
 
 		Boolean existence = placeRepository.existsByRoom_IdentityNumberAndMember_Name(room.getIdentityNumber(),
 			member.getName());
@@ -35,17 +48,25 @@ public class PlaceService {
 		//1. 기존에 존재하는 데이터가 없으면 저장
 		//2. 기존에 존재하는 데이터가 있으면 변경
 		if (!existence) {
-			placeRepository.save(Place.from(placeSaveOrUpdateRequest, room, member));
+			placeRepository.save(Place.from(request, room, member));
 		} else {
 			Place place = placeRepository.findByRoomAndMember(room, member)
 				.orElseThrow(() -> new CustomException(PLACE_NOT_FOUND));
 
-			place.update(placeSaveOrUpdateRequest);
+			place.update(request);
 		}
 	}
 
 	@Transactional
-	public void saveOrUpdatePlacesBySelf(Room room, PlacesSaveOrUpdateBySelfRequest request) {
+	public void saveOrUpdatePlacesBySelfAndRoleUpdate(Room room, PlacesSaveOrUpdateBySelfRequest request) {
+
+		String roomId = room.getIdentityNumber();
+		roomService.updateRoomType(room, RoomType.SELF);
+		saveOrUpdatePlacesBySelf(room, request);
+		memberService.updateRomeMembersRole(roomId, Role.USER);
+	}
+
+	private void saveOrUpdatePlacesBySelf(Room room, PlacesSaveOrUpdateBySelfRequest request) {
 
 		String roomId = room.getIdentityNumber();
 

@@ -16,15 +16,11 @@ import middle_point_search.backend.common.dto.BaseResponse;
 import middle_point_search.backend.common.dto.DataResponse;
 import middle_point_search.backend.common.util.MemberLoader;
 import middle_point_search.backend.domains.member.domain.Member;
-import middle_point_search.backend.domains.member.domain.Role;
-import middle_point_search.backend.domains.member.service.MemberService;
 import middle_point_search.backend.domains.place.dto.PlaceDTO.PlaceSaveOrUpdateRequest;
 import middle_point_search.backend.domains.place.dto.PlaceDTO.PlacesFindResponse;
 import middle_point_search.backend.domains.place.dto.PlaceDTO.PlacesSaveOrUpdateBySelfRequest;
 import middle_point_search.backend.domains.place.service.PlaceService;
 import middle_point_search.backend.domains.room.domain.Room;
-import middle_point_search.backend.domains.room.domain.RoomType;
-import middle_point_search.backend.domains.room.service.RoomService;
 
 @RestController
 @RequiredArgsConstructor
@@ -32,19 +28,19 @@ import middle_point_search.backend.domains.room.service.RoomService;
 public class PlaceController {
 
 	private final PlaceService placeService;
-	private final MemberService memberService;
 	private final MemberLoader memberLoader;
-	private final RoomService roomService;
 
 	@PostMapping
 	@Operation(
 		summary = "각자 장소 저장 및 업데이트하기",
 		description = """
 			주소와 좌표를 사용하여 장소 저장 및 업데이트하기.
-			
+						
 			저장된 장소가 없으면 저장, 있으면 업데이트 한다.
 						
 			장소를 저장한 사람은 다른 기능을 사용할 권한이 생긴다.
+						
+						
 						
 			AccessToken 필요.""",
 		responses = {
@@ -54,7 +50,10 @@ public class PlaceController {
 			),
 			@ApiResponse(
 				responseCode = "400",
-				description = "요청 파라미터가 잘 못 되었습니다."
+				description = """
+					요청 파라미터가 잘 못 되었습니다.
+										
+					이미 개개인 입력으로 저장한 상태에서 이 api 요청시 400에러 반환"""
 			),
 			@ApiResponse(
 				responseCode = "401",
@@ -66,12 +65,8 @@ public class PlaceController {
 
 		Room room = memberLoader.getRoom();
 		Member member = memberLoader.getMember();
-		String roomId = memberLoader.getRoomId();
 
-		// 이 부분 한 트랜잭션으로 통합하기
-		roomService.updateRoomType(room, RoomType.TOGETHER);
-		placeService.saveOrUpdatePlace(room, member, request);
-		memberService.updateRomeMembersRole(roomId, Role.USER);
+		placeService.saveOrUpdatePlaceAndRoleUpdate(room, member, request);
 
 		return ResponseEntity.ok(BaseResponse.ok());
 	}
@@ -81,7 +76,7 @@ public class PlaceController {
 		summary = "개인이 모든 장소 저장 및 업데이트하기",
 		description = """
 			주소와 좌표를 사용하여 장소 저장 및 업데이트하기.
-			
+						
 			저장된 장소가 없으면 저장, 있으면 업데이트 한다.
 						
 			추후 가입하는 모든 사람은 다른 기능을 사용할 권한이 생긴다.
@@ -94,7 +89,10 @@ public class PlaceController {
 			),
 			@ApiResponse(
 				responseCode = "400",
-				description = "요청 파라미터가 잘 못 되었습니다."
+				description = """
+					요청 파라미터가 잘 못 되었습니다.
+										
+					이미 개인 입력으로 저장한 상태에서 이 api 요청시 400에러 반환"""
 			),
 			@ApiResponse(
 				responseCode = "401",
@@ -105,11 +103,8 @@ public class PlaceController {
 	public ResponseEntity<BaseResponse> placesSaveOrUpdateBySelf(@RequestBody PlacesSaveOrUpdateBySelfRequest request) {
 
 		Room room = memberLoader.getRoom();
-		Member member = memberLoader.getMember();
 
-		roomService.updateRoomType(room, RoomType.SELF);
-		placeService.saveOrUpdatePlacesBySelf(room, request);
-		memberService.updateMemberRole(member, Role.USER);
+		placeService.saveOrUpdatePlacesBySelfAndRoleUpdate(room, request);
 
 		return ResponseEntity.ok(BaseResponse.ok());
 	}
