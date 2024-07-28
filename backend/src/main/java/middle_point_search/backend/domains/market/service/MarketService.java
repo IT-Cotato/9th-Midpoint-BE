@@ -46,6 +46,7 @@ public class MarketService {
 
 	private final WebClientUtil webClientUtil;
 
+	// Market 정보 업데이트하기
 	@Transactional(rollbackFor = {CustomException.class})
 	public void updateMarket() {
 
@@ -60,6 +61,7 @@ public class MarketService {
 		requestAndSaveMarkets(totalPage);
 	}
 
+	// Market 총 데이터 수 가져오기
 	private int getMarketCount() {
 		String url = marketProperties.getMarketApiUrl();
 
