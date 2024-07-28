@@ -27,7 +27,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
 	@ExceptionHandler(CustomException.class)
 	public ResponseEntity<Object> handleCustomException(CustomException e) {
-		log.warn("handleCustomException", e.getMessage());
+		log.warn("handleCustomException", e);
 
 		return makeErrorResponseEntity(e.getErrorCode());
 	}
