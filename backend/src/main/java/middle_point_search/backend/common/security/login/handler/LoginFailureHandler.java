@@ -26,7 +26,7 @@ public class LoginFailureHandler extends SimpleUrlAuthenticationFailureHandler {
 			ErrorResponse errorResponse = ErrorResponse.from(ROOM_NOT_FOUND);
 			ResponseWriter.writeResponse(response, errorResponse, ROOM_NOT_FOUND.getHttpStatus());
 		} else {
-			ResponseWriter.writeResponse(response, DataResponse.ok(), HttpStatus.OK); //보안을 위해 로그인 오류지만 200 반환
+			ResponseWriter.writeResponse(response, DataResponse.ok(), HttpStatus.UNAUTHORIZED);
 		}
 	}
 }
