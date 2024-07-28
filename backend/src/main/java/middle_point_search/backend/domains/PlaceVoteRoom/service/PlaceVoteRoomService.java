@@ -30,7 +30,7 @@ public class PlaceVoteRoomService {
     private final PlaceVoteCandidateRepository placeVoteCandidateRepository;
 
     // 장소투표방 생성
-    @Transactional
+    @Transactional(rollbackFor = {CustomException.class})
     public PlaceVoteRoomCreateResponse createPlaceVoteRoom(Room room,PlaceVoteRoomCreateRequest request) {
 
         boolean exists = placeVoteRoomRepository.existsByRoom(room);
@@ -45,7 +45,7 @@ public class PlaceVoteRoomService {
     }
 
     //장소투표방 재생성
-    @Transactional
+    @Transactional(rollbackFor = {CustomException.class})
     public PlaceVoteRoomCreateResponse recreatePlaceVoteRoom(Room room,PlaceVoteRoomCreateRequest request) {
 
         // 기존 투표방 삭제
@@ -74,7 +74,7 @@ public class PlaceVoteRoomService {
     }
 
     // 투표 처리
-    @Transactional
+    @Transactional(rollbackFor = {CustomException.class})
     public void vote(Member member, Room room, PlaceVoteRequest voteRequest) {
 
         PlaceVoteRoom placeVoteRoom = placeVoteRoomRepository.findByRoom(room).orElseThrow(() -> new CustomException(VOTE_ROOM_NOT_FOUND));
@@ -92,7 +92,7 @@ public class PlaceVoteRoomService {
     }
 
     // 재투표
-    @Transactional
+    @Transactional(rollbackFor = {CustomException.class})
     public void updateVote(Member member, Room room,PlaceVoteRequest voteRequest) {
 
         PlaceVoteRoom placeVoteRoom = placeVoteRoomRepository.findByRoom(room).orElseThrow(() -> new CustomException(VOTE_ROOM_NOT_FOUND));

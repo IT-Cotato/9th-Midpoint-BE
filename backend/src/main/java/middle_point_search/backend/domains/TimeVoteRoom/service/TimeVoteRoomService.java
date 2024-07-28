@@ -29,7 +29,7 @@ public class TimeVoteRoomService {
     private final MeetingDateRepository meetingDateRepository;
 
     //시간 투표방 생성
-    @Transactional
+    @Transactional(rollbackFor = {CustomException.class})
     public TimeVoteRoomCreateResponse createTimeVoteRoom(Room room, TimeVoteRoomCreateRequest request) {
 
         boolean exists = timeVoteRoomRepository.existsByRoom(room);
@@ -44,7 +44,7 @@ public class TimeVoteRoomService {
     }
 
     //시간투표방 재생성하기
-    @Transactional
+    @Transactional(rollbackFor = {CustomException.class})
     public TimeVoteRoomCreateResponse recreateTimeVoteRoom(Room room, TimeVoteRoomCreateRequest request) {
 
         // 기존 투표방 삭제
@@ -62,7 +62,7 @@ public class TimeVoteRoomService {
     }
 
     //시간투표하기
-    @Transactional
+    @Transactional(rollbackFor = {CustomException.class})
     public void vote(Member member, Room room, TimeVoteRoomVoteRequest request) {
 
         TimeVoteRoom timeVoteRoom = timeVoteRoomRepository.findByRoom(room).orElseThrow(() -> new CustomException(VOTE_ROOM_NOT_FOUND));
@@ -77,7 +77,7 @@ public class TimeVoteRoomService {
     }
 
     // 시간 투표 수정
-    @Transactional
+    @Transactional(rollbackFor = {CustomException.class})
     public void updateVote(Member member, Room room, TimeVoteRoomVoteRequest request) {
 
         TimeVoteRoom timeVoteRoom = timeVoteRoomRepository.findByRoom(room).orElseThrow(() -> new CustomException(VOTE_ROOM_NOT_FOUND));
