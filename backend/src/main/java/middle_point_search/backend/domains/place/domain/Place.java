@@ -13,7 +13,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import middle_point_search.backend.domains.member.domain.Member;
-import middle_point_search.backend.domains.place.dto.PlaceDTO.PlaceSaveRequest;
+import middle_point_search.backend.domains.place.dto.PlaceDTO.PlaceSaveOrUpdateRequest;
 import middle_point_search.backend.domains.room.domain.Room;
 
 @Entity
@@ -79,22 +79,22 @@ public class Place {
 		return new Place(siDo, siGunGu, roadNameAddress, addressLatitude, addressLongitude, room, member);
 	}
 
-	public static Place from(PlaceSaveRequest placeSaveRequest, Room room, Member member) {
-		String siDo = placeSaveRequest.getSiDo();
-		String siGunGu = placeSaveRequest.getSiGunGu();
-		String roadNameAddress = placeSaveRequest.getRoadNameAddress();
-		Double addressLatitude = placeSaveRequest.getAddressLat();
-		Double addressLongitude = placeSaveRequest.getAddressLong();
+	public static Place from(PlaceSaveOrUpdateRequest placeSaveOrUpdateRequest, Room room, Member member) {
+		String siDo = placeSaveOrUpdateRequest.getSiDo();
+		String siGunGu = placeSaveOrUpdateRequest.getSiGunGu();
+		String roadNameAddress = placeSaveOrUpdateRequest.getRoadNameAddress();
+		Double addressLatitude = placeSaveOrUpdateRequest.getAddressLat();
+		Double addressLongitude = placeSaveOrUpdateRequest.getAddressLong();
 
 		return new Place(siDo, siGunGu, roadNameAddress, addressLatitude, addressLongitude, room, member);
 	}
 
-	public static Place from(PlaceSaveRequest placeSaveRequest, Room room) {
-		String siDo = placeSaveRequest.getSiDo();
-		String siGunGu = placeSaveRequest.getSiGunGu();
-		String roadNameAddress = placeSaveRequest.getRoadNameAddress();
-		Double addressLatitude = placeSaveRequest.getAddressLat();
-		Double addressLongitude = placeSaveRequest.getAddressLong();
+	public static Place from(PlaceSaveOrUpdateRequest placeSaveOrUpdateRequest, Room room) {
+		String siDo = placeSaveOrUpdateRequest.getSiDo();
+		String siGunGu = placeSaveOrUpdateRequest.getSiGunGu();
+		String roadNameAddress = placeSaveOrUpdateRequest.getRoadNameAddress();
+		Double addressLatitude = placeSaveOrUpdateRequest.getAddressLat();
+		Double addressLongitude = placeSaveOrUpdateRequest.getAddressLong();
 
 		return new Place(siDo, siGunGu, roadNameAddress, addressLatitude, addressLongitude, room);
 	}
@@ -109,7 +109,7 @@ public class Place {
 		member.setPlace(this);
 	}
 
-	public void update(PlaceSaveRequest request) {
+	public void update(PlaceSaveOrUpdateRequest request) {
 		this.siDo = request.getSiDo();
 		this.siGunGu = request.getSiGunGu();
 		this.roadNameAddress = request.getRoadNameAddress();
