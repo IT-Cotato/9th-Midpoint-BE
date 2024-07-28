@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import static middle_point_search.backend.common.exception.errorCode.UserErrorCode.*;
@@ -94,11 +93,11 @@ public class TimeVoteRoomService {
         timeVoteRepository.saveAll(timeVotes);
     }
 
-    private List<TimeVote> createNewTimeVotes(List<List<VoteDateTime>> dateTimeRanges, TimeVoteRoom timeVoteRoom, Member member) {
+    private List<TimeVote> createNewTimeVotes(List<TimeRange> dateTimeRanges, TimeVoteRoom timeVoteRoom, Member member) {
         List<TimeVote> timeVotes = new ArrayList<>();
-        for (List<VoteDateTime> timeRange : dateTimeRanges) {
-            LocalDateTime memberAvailableStartTime = timeRange.get(0).getDateTime();
-            LocalDateTime memberAvailableEndTime = timeRange.get(1).getDateTime();
+        for (TimeRange timeRange : dateTimeRanges) {
+            LocalDateTime memberAvailableStartTime = timeRange.getMemberAvailableStartTime();
+            LocalDateTime memberAvailableEndTime = timeRange.getMemberAvailableEndTime();
             LocalDateTime startDateTime = memberAvailableStartTime.toLocalDate().atStartOfDay();
             Optional<MeetingDate> meetingDateOpt = meetingDateRepository.findByTimeVoteRoomAndDate(timeVoteRoom, startDateTime.toLocalDate());
             MeetingDate meetingDate = meetingDateOpt.orElseThrow(() -> new CustomException(VOTE_ROOM_NOT_FOUND));
@@ -107,7 +106,6 @@ public class TimeVoteRoomService {
         }
         return timeVotes;
     }
-
     //투표나 수정 로직에서 투표방, 투표현황체크하지만 쓰일 경우 대비
     public boolean hasTimeVoteRoom(String roomId) {
 
@@ -124,7 +122,6 @@ public class TimeVoteRoomService {
 
     // 시간 투표 현황 정보 조회
     public TimeVoteRoomResultResponse getTimeVoteResult(Room room) {
-
         TimeVoteRoom timeVoteRoom = timeVoteRoomRepository.findByRoom(room).orElseThrow(() -> new CustomException(VOTE_ROOM_NOT_FOUND));
         List<MeetingDate> meetingDates = meetingDateRepository.findByTimeVoteRoom(timeVoteRoom);
 
@@ -138,9 +135,11 @@ public class TimeVoteRoomService {
             // 해당 날짜의 모든 투표 정보 가져오기
             List<TimeVote> timeVotes = timeVoteRepository.findByTimeVoteRoomAndMeetingDate(timeVoteRoom, meetingDate);
             for (TimeVote vote : timeVotes) {
-                List<VoteDateTime> dateTimeList = Arrays.asList(
-                        new VoteDateTime(vote.getMemberAvailableStartTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))),
-                        new VoteDateTime(vote.getMemberAvailableEndTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
+                List<TimeRange> dateTimeList = Arrays.asList(
+                        new TimeRange(
+                                vote.getMemberAvailableStartTime(),
+                                vote.getMemberAvailableEndTime()
+                        )
                 );
                 TimeVoteDetail detail = TimeVoteDetail.from(vote.getMember().getName(), dateTimeList);
                 details.add(detail);
@@ -150,6 +149,6 @@ public class TimeVoteRoomService {
 
         List<TimeVote> distinctVotes = timeVoteRepository.findDistinctByTimeVoteRoom(timeVoteRoom);
         int totalMemberNum = (int) distinctVotes.stream().map(TimeVote::getMember).distinct().count();
-        return TimeVoteRoomResultResponse.from(result,totalMemberNum);
+        return TimeVoteRoomResultResponse.from(result, totalMemberNum);
     }
 }
