@@ -32,7 +32,8 @@ public class PlaceService {
 	private final RoomService roomService;
 	private final MemberService memberService;
 
-	@Transactional
+	//장소 저장 및 업데이트 하고, Member 및 Room 역할 변경
+	@Transactional(rollbackFor = {CustomException.class})
 	public void saveOrUpdatePlaceAndRoleUpdate(Room room, Member member, PlaceSaveOrUpdateRequest request) {
 
 		roomService.updateRoomType(room, RoomType.TOGETHER);
@@ -57,7 +58,8 @@ public class PlaceService {
 		}
 	}
 
-	@Transactional
+	//개인이 모든 장소 저장 및 업데이트 하고, Member 및 Room 역할 변경
+	@Transactional(rollbackFor = {CustomException.class})
 	public void saveOrUpdatePlacesBySelfAndRoleUpdate(Room room, PlacesSaveOrUpdateBySelfRequest request) {
 
 		String roomId = room.getIdentityNumber();
