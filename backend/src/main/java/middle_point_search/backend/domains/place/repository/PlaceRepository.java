@@ -18,6 +18,4 @@ public interface PlaceRepository extends JpaRepository<Place, Long> {
 	Boolean existsByRoom_IdentityNumber(String roomId);
 
 	Boolean existsByRoom_IdentityNumberAndMember_Name(String roomId, String name);
-
-	void deleteAllByRoom_IdentityNumber(String roomId);
 }

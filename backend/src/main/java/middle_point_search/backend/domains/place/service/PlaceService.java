@@ -3,7 +3,6 @@ package middle_point_search.backend.domains.place.service;
 import static middle_point_search.backend.common.exception.errorCode.UserErrorCode.*;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -81,20 +80,5 @@ public class PlaceService {
 			.orElseThrow(() -> new CustomException(PLACE_NOT_FOUND));
 
 		place.update(request);
-	}
-
-	// Place 삭제하기
-	@Transactional(readOnly = false)
-	public void deletePlace(Long placeId) {
-
-		Place place = placeRepository.findById(placeId).orElseThrow(() -> new CustomException(PLACE_NOT_FOUND));
-
-		Member member = place.getMember();
-
-		if (member != null) {
-			member.deletePlace();
-		}
-
-		placeRepository.delete(place);
 	}
 }
