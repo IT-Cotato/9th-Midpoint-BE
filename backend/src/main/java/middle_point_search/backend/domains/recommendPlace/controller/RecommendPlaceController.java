@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import middle_point_search.backend.common.dto.DataResponse;
@@ -20,6 +21,7 @@ import middle_point_search.backend.domains.market.dto.request.RecommendPlacesFin
 import middle_point_search.backend.domains.market.dto.response.RecommendPlacesFindResponse;
 import middle_point_search.backend.domains.recommendPlace.service.RecommendPlaceService;
 
+@Tag(name = "RECOMMEND PLACE API",  description = "추천 장소에 대한 API입니다.")
 @Slf4j
 @RestController
 @RequiredArgsConstructor

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.dto.BaseResponse;
@@ -23,6 +24,7 @@ import middle_point_search.backend.domains.place.dto.PlaceDTO.PlacesSaveOrUpdate
 import middle_point_search.backend.domains.place.service.PlaceService;
 import middle_point_search.backend.domains.room.domain.Room;
 
+@Tag(name = "PLACE API", description = "회원 장소에 대한 API입니다.")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/place-rooms")

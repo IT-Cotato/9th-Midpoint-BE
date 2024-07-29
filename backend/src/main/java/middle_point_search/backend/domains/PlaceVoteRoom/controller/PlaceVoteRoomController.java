@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.dto.BaseResponse;
 import middle_point_search.backend.common.dto.DataResponse;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import static middle_point_search.backend.domains.PlaceVoteRoom.dto.PlaceVoteRoomDTO.*;
 
+@Tag(name = "PLACE VOTE ROOM API",  description = "장소 투표에 대한 API입니다.")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/place-vote-rooms")

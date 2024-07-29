@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.dto.BaseResponse;
@@ -18,6 +19,7 @@ import middle_point_search.backend.common.security.jwt.provider.JwtTokenProvider
 import middle_point_search.backend.common.util.MemberLoader;
 import middle_point_search.backend.domains.member.service.MemberService;
 
+@Tag(name = "MEMBER API", description = "회원에 대한 API입니다.")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/members")
