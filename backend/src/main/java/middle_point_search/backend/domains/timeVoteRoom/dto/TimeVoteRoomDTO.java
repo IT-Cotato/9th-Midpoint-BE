@@ -1,7 +1,8 @@
-package middle_point_search.backend.domains.TimeVoteRoom.dto;
+package middle_point_search.backend.domains.timeVoteRoom.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,6 +18,8 @@ public class TimeVoteRoomDTO {
     @Getter
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class TimeVoteRoomCreateRequest {
+
+        @NotEmpty(message = "투표 후보가 제공되지 않았습니다.")
         private  List<LocalDate> dates;
     }
 

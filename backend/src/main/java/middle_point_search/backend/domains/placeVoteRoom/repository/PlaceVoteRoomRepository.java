@@ -1,6 +1,6 @@
-package middle_point_search.backend.domains.PlaceVoteRoom.repository;
+package middle_point_search.backend.domains.placeVoteRoom.repository;
 
-import middle_point_search.backend.domains.PlaceVoteRoom.domain.PlaceVoteRoom;
+import middle_point_search.backend.domains.placeVoteRoom.domain.PlaceVoteRoom;
 import middle_point_search.backend.domains.room.domain.Room;
 import org.springframework.data.jpa.repository.JpaRepository;
 

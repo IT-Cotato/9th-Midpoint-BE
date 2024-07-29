@@ -1,13 +1,13 @@
-package middle_point_search.backend.domains.PlaceVoteRoom.service;
+package middle_point_search.backend.domains.placeVoteRoom.service;
 
 import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.exception.CustomException;
-import middle_point_search.backend.domains.PlaceVoteRoom.domain.PlaceVoteCandidate;
-import middle_point_search.backend.domains.PlaceVoteRoom.domain.PlaceVoteCandidateMember;
-import middle_point_search.backend.domains.PlaceVoteRoom.domain.PlaceVoteRoom;
-import middle_point_search.backend.domains.PlaceVoteRoom.repository.PlaceVoteCandidateMemberRepository;
-import middle_point_search.backend.domains.PlaceVoteRoom.repository.PlaceVoteCandidateRepository;
-import middle_point_search.backend.domains.PlaceVoteRoom.repository.PlaceVoteRoomRepository;
+import middle_point_search.backend.domains.placeVoteRoom.domain.PlaceVoteCandidate;
+import middle_point_search.backend.domains.placeVoteRoom.domain.PlaceVoteCandidateMember;
+import middle_point_search.backend.domains.placeVoteRoom.domain.PlaceVoteRoom;
+import middle_point_search.backend.domains.placeVoteRoom.repository.PlaceVoteCandidateMemberRepository;
+import middle_point_search.backend.domains.placeVoteRoom.repository.PlaceVoteCandidateRepository;
+import middle_point_search.backend.domains.placeVoteRoom.repository.PlaceVoteRoomRepository;
 import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.room.domain.Room;
 import org.springframework.stereotype.Service;
@@ -17,8 +17,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static middle_point_search.backend.common.exception.errorCode.UserErrorCode.*;
-import static middle_point_search.backend.domains.PlaceVoteRoom.dto.PlaceVoteRoomDTO.*;
-import static middle_point_search.backend.domains.PlaceVoteRoom.dto.PlaceVoteRoomDTO.PlaceVoteInfoResponse.*;
+import static middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteRoomDTO.*;
+import static middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteRoomDTO.PlaceVoteInfoResponse.*;
 
 @Service
 @RequiredArgsConstructor
@@ -34,6 +34,7 @@ public class PlaceVoteRoomService {
     public PlaceVoteRoomCreateResponse createPlaceVoteRoom(Room room,PlaceVoteRoomCreateRequest request) {
 
         boolean exists = placeVoteRoomRepository.existsByRoom(room);
+
         if (exists) {
             throw new CustomException(DUPLICATE_VOTE_ROOM);
         }

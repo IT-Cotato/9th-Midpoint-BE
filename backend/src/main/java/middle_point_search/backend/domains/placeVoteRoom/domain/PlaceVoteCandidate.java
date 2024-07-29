@@ -1,4 +1,4 @@
-package middle_point_search.backend.domains.PlaceVoteRoom.domain;
+package middle_point_search.backend.domains.placeVoteRoom.domain;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import java.util.ArrayList;
 import java.util.List;
 
-import static middle_point_search.backend.domains.PlaceVoteRoom.dto.PlaceVoteRoomDTO.PlaceVoteRoomCreateRequest.PlaceCandidateInfo;
+import static middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteRoomDTO.PlaceVoteRoomCreateRequest.PlaceCandidateInfo;
 
 @Entity
 @Getter

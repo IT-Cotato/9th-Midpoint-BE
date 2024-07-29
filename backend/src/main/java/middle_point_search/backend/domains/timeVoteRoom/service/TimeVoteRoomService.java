@@ -1,13 +1,13 @@
-package middle_point_search.backend.domains.TimeVoteRoom.service;
+package middle_point_search.backend.domains.timeVoteRoom.service;
 
 import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.exception.CustomException;
-import middle_point_search.backend.domains.TimeVoteRoom.domain.MeetingDate;
-import middle_point_search.backend.domains.TimeVoteRoom.domain.TimeVote;
-import middle_point_search.backend.domains.TimeVoteRoom.domain.TimeVoteRoom;
-import middle_point_search.backend.domains.TimeVoteRoom.repository.MeetingDateRepository;
-import middle_point_search.backend.domains.TimeVoteRoom.repository.TimeVoteRepository;
-import middle_point_search.backend.domains.TimeVoteRoom.repository.TimeVoteRoomRepository;
+import middle_point_search.backend.domains.timeVoteRoom.domain.MeetingDate;
+import middle_point_search.backend.domains.timeVoteRoom.domain.TimeVote;
+import middle_point_search.backend.domains.timeVoteRoom.domain.TimeVoteRoom;
+import middle_point_search.backend.domains.timeVoteRoom.repository.MeetingDateRepository;
+import middle_point_search.backend.domains.timeVoteRoom.repository.TimeVoteRepository;
+import middle_point_search.backend.domains.timeVoteRoom.repository.TimeVoteRoomRepository;
 import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.room.domain.Room;
 import org.springframework.stereotype.Service;
@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 import static middle_point_search.backend.common.exception.errorCode.UserErrorCode.*;
-import static middle_point_search.backend.domains.TimeVoteRoom.dto.TimeVoteRoomDTO.*;
+import static middle_point_search.backend.domains.timeVoteRoom.dto.TimeVoteRoomDTO.*;
 
 @Service
 @RequiredArgsConstructor
@@ -34,9 +34,11 @@ public class TimeVoteRoomService {
 
         boolean exists = timeVoteRoomRepository.existsByRoom(room);
 
+        //방존재여부 확인
         if (exists) {
             throw new CustomException(DUPLICATE_VOTE_ROOM);
         }
+
         TimeVoteRoom timeVoteRoom = new TimeVoteRoom(room, request.getDates());
         TimeVoteRoom savedTimeVoteRoom = timeVoteRoomRepository.save(timeVoteRoom);
 
