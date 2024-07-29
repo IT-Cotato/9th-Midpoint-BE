@@ -1,4 +1,4 @@
-package middle_point_search.backend.domains.PlaceVoteRoom.controller;
+package middle_point_search.backend.domains.placeVoteRoom.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -9,13 +9,13 @@ import middle_point_search.backend.common.dto.BaseResponse;
 import middle_point_search.backend.common.dto.DataResponse;
 import middle_point_search.backend.common.dto.ErrorResponse;
 import middle_point_search.backend.common.util.MemberLoader;
-import middle_point_search.backend.domains.PlaceVoteRoom.service.PlaceVoteRoomService;
+import middle_point_search.backend.domains.placeVoteRoom.service.PlaceVoteRoomService;
 import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.room.domain.Room;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import static middle_point_search.backend.domains.PlaceVoteRoom.dto.PlaceVoteRoomDTO.*;
+import static middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteRoomDTO.*;
 
 @RestController
 @RequiredArgsConstructor

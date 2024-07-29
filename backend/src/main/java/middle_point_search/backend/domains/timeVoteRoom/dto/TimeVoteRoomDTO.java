@@ -1,4 +1,4 @@
-package middle_point_search.backend.domains.TimeVoteRoom.dto;
+package middle_point_search.backend.domains.timeVoteRoom.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;

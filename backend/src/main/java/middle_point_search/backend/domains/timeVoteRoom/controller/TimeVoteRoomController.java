@@ -1,4 +1,4 @@
-package middle_point_search.backend.domains.TimeVoteRoom.controller;
+package middle_point_search.backend.domains.timeVoteRoom.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -9,13 +9,13 @@ import middle_point_search.backend.common.dto.BaseResponse;
 import middle_point_search.backend.common.dto.DataResponse;
 import middle_point_search.backend.common.dto.ErrorResponse;
 import middle_point_search.backend.common.util.MemberLoader;
-import middle_point_search.backend.domains.TimeVoteRoom.service.TimeVoteRoomService;
+import middle_point_search.backend.domains.timeVoteRoom.service.TimeVoteRoomService;
 import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.room.domain.Room;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import static middle_point_search.backend.domains.TimeVoteRoom.dto.TimeVoteRoomDTO.*;
+import static middle_point_search.backend.domains.timeVoteRoom.dto.TimeVoteRoomDTO.*;
 
 @RestController
 @RequiredArgsConstructor

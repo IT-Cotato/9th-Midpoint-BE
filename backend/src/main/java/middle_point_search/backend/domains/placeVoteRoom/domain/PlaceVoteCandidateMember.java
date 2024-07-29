@@ -1,4 +1,4 @@
-package middle_point_search.backend.domains.PlaceVoteRoom.domain;
+package middle_point_search.backend.domains.placeVoteRoom.domain;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;

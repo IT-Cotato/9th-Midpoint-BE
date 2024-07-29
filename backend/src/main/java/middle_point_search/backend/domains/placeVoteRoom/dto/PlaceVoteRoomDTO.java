@@ -1,4 +1,4 @@
-package middle_point_search.backend.domains.PlaceVoteRoom.dto;
+package middle_point_search.backend.domains.placeVoteRoom.dto;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

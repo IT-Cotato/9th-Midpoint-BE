@@ -1,7 +1,7 @@
-package middle_point_search.backend.domains.TimeVoteRoom.repository;
+package middle_point_search.backend.domains.timeVoteRoom.repository;
 
-import middle_point_search.backend.domains.TimeVoteRoom.domain.MeetingDate;
-import middle_point_search.backend.domains.TimeVoteRoom.domain.TimeVoteRoom;
+import middle_point_search.backend.domains.timeVoteRoom.domain.MeetingDate;
+import middle_point_search.backend.domains.timeVoteRoom.domain.TimeVoteRoom;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.time.LocalDate;
 import java.util.List;
