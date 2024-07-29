@@ -30,7 +30,7 @@ public class PlaceVoteRoomService {
     private final PlaceVoteCandidateRepository placeVoteCandidateRepository;
 
     // 장소투표방 생성
-    @Transactional
+    @Transactional(rollbackFor = {CustomException.class})
     public PlaceVoteRoomCreateResponse createPlaceVoteRoom(Room room,PlaceVoteRoomCreateRequest request) {
 
         boolean exists = placeVoteRoomRepository.existsByRoom(room);
@@ -46,7 +46,7 @@ public class PlaceVoteRoomService {
     }
 
     //장소투표방 재생성
-    @Transactional
+    @Transactional(rollbackFor = {CustomException.class})
     public PlaceVoteRoomCreateResponse recreatePlaceVoteRoom(Room room,PlaceVoteRoomCreateRequest request) {
 
         // 기존 투표방 삭제
@@ -75,7 +75,7 @@ public class PlaceVoteRoomService {
     }
 
     // 투표 처리
-    @Transactional
+    @Transactional(rollbackFor = {CustomException.class})
     public void vote(Member member, Room room, PlaceVoteRequest voteRequest) {
 
         PlaceVoteRoom placeVoteRoom = placeVoteRoomRepository.findByRoom(room).orElseThrow(() -> new CustomException(VOTE_ROOM_NOT_FOUND));
@@ -93,7 +93,7 @@ public class PlaceVoteRoomService {
     }
 
     // 재투표
-    @Transactional
+    @Transactional(rollbackFor = {CustomException.class})
     public void updateVote(Member member, Room room,PlaceVoteRequest voteRequest) {
 
         PlaceVoteRoom placeVoteRoom = placeVoteRoomRepository.findByRoom(room).orElseThrow(() -> new CustomException(VOTE_ROOM_NOT_FOUND));
@@ -116,13 +116,13 @@ public class PlaceVoteRoomService {
         placeVoteCandidateMemberRepository.save(placeVoteCandidateMember);
     }
 
-    //투표방생성여부
+    //장소투표방 존재 여부 확인, 존재시 true, 존재하지 않을시 false 반환
     public boolean hasPlaceVoteRoom(String roomId) {
 
         return placeVoteRoomRepository.existsByRoomIdentityNumber(roomId);
     }
 
-    //투표여부
+    //먼저 장소투표방이 없다면 시간투표방없다고 에러메세지, 그 다음 장소투표방이 있을때 투표했으면 true, 투표안했으면 false 반환
     public boolean hasVoted(Member member, Room room) {
 
         PlaceVoteRoom placeVoteRoom = placeVoteRoomRepository.findByRoom(room).orElseThrow(() -> new CustomException(VOTE_ROOM_NOT_FOUND));

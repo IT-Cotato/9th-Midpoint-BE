@@ -1,5 +1,7 @@
 package middle_point_search.backend.common.dto;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 
@@ -12,18 +14,18 @@ import middle_point_search.backend.common.exception.errorCode.ErrorCode;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ErrorResponse extends BaseResponse {
 	private final String error;
-	private final String path;
+	private final List<String> reason;
 
 	private ErrorResponse(Boolean isSuccess, HttpStatusCode status, String error) {
 		super(isSuccess, status);
 		this.error = error;
-		this.path = null;
+		this.reason = null;
 	}
 
-	public ErrorResponse(Boolean isSuccess, HttpStatusCode status, String error, String path) {
+	public ErrorResponse(Boolean isSuccess, HttpStatusCode status, String error, List<String> reason) {
 		super(isSuccess, status);
 		this.error = error;
-		this.path = path;
+		this.reason = reason;
 	}
 
 	public static ErrorResponse of(HttpStatusCode status, String error) {
@@ -32,12 +34,12 @@ public class ErrorResponse extends BaseResponse {
 		return new ErrorResponse(isSuccess, status, error);
 	}
 
-	public static ErrorResponse of(ErrorCode errorCode, String path) {
+	public static ErrorResponse of(ErrorCode errorCode, List<String> reason) {
 		Boolean isSuccess = false;
 		HttpStatus status = errorCode.getHttpStatus();
 		String error = errorCode.getMessage();
 
-		return new ErrorResponse(isSuccess, status, error, path);
+		return new ErrorResponse(isSuccess, status, error, reason);
 	}
 
 	public static ErrorResponse from(ErrorCode errorCode) {

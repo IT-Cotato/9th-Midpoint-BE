@@ -29,7 +29,7 @@ public class TimeVoteRoomService {
     private final MeetingDateRepository meetingDateRepository;
 
     //시간 투표방 생성
-    @Transactional
+    @Transactional(rollbackFor = {CustomException.class})
     public TimeVoteRoomCreateResponse createTimeVoteRoom(Room room, TimeVoteRoomCreateRequest request) {
 
         boolean exists = timeVoteRoomRepository.existsByRoom(room);
@@ -46,7 +46,7 @@ public class TimeVoteRoomService {
     }
 
     //시간투표방 재생성하기
-    @Transactional
+    @Transactional(rollbackFor = {CustomException.class})
     public TimeVoteRoomCreateResponse recreateTimeVoteRoom(Room room, TimeVoteRoomCreateRequest request) {
 
         // 기존 투표방 삭제
@@ -64,7 +64,7 @@ public class TimeVoteRoomService {
     }
 
     //시간투표하기
-    @Transactional
+    @Transactional(rollbackFor = {CustomException.class})
     public void vote(Member member, Room room, TimeVoteRoomVoteRequest request) {
 
         TimeVoteRoom timeVoteRoom = timeVoteRoomRepository.findByRoom(room).orElseThrow(() -> new CustomException(VOTE_ROOM_NOT_FOUND));
@@ -79,7 +79,7 @@ public class TimeVoteRoomService {
     }
 
     // 시간 투표 수정
-    @Transactional
+    @Transactional(rollbackFor = {CustomException.class})
     public void updateVote(Member member, Room room, TimeVoteRoomVoteRequest request) {
 
         TimeVoteRoom timeVoteRoom = timeVoteRoomRepository.findByRoom(room).orElseThrow(() -> new CustomException(VOTE_ROOM_NOT_FOUND));
@@ -107,19 +107,6 @@ public class TimeVoteRoomService {
             timeVotes.add(timeVote);
         }
         return timeVotes;
-    }
-    //투표나 수정 로직에서 투표방, 투표현황체크하지만 쓰일 경우 대비
-    public boolean hasTimeVoteRoom(String roomId) {
-
-        return timeVoteRoomRepository.existsByRoomIdentityNumber(roomId);
-    }
-
-    //투표방이 없다면 투표방없다고 메세지, 있을때 투표 true, 투표안했을때 false
-    public boolean hasVoted(Member member, Room room) {
-
-        TimeVoteRoom timeVoteRoom = timeVoteRoomRepository.findByRoom(room).orElseThrow(() -> new CustomException(VOTE_ROOM_NOT_FOUND));
-
-        return timeVoteRepository.existsByTimeVoteRoomAndMember(timeVoteRoom, member);
     }
 
     // 시간 투표 현황 정보 조회
@@ -152,5 +139,19 @@ public class TimeVoteRoomService {
         List<TimeVote> distinctVotes = timeVoteRepository.findDistinctByTimeVoteRoom(timeVoteRoom);
         int totalMemberNum = (int) distinctVotes.stream().map(TimeVote::getMember).distinct().count();
         return TimeVoteRoomResultResponse.from(result, totalMemberNum);
+    }
+
+    //시간투표방 존재 여부 확인, 존재시 true, 존재하지 않을시 false 반환
+    public boolean hasTimeVoteRoom(String roomId) {
+
+        return timeVoteRoomRepository.existsByRoomIdentityNumber(roomId);
+    }
+
+    //먼저 시간투표방이 없다면 시간투표방없다고 에러메세지, 그 다음 시간 투표방이 있을때 투표했으면 true, 투표안했으면 false 반환
+    public boolean hasVoted(Member member, Room room) {
+
+        TimeVoteRoom timeVoteRoom = timeVoteRoomRepository.findByRoom(room).orElseThrow(() -> new CustomException(VOTE_ROOM_NOT_FOUND));
+
+        return timeVoteRepository.existsByTimeVoteRoomAndMember(timeVoteRoom, member);
     }
 }
