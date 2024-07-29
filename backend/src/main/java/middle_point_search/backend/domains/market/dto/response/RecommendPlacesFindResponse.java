@@ -37,7 +37,7 @@ public class RecommendPlacesFindResponse implements Comparable<RecommendPlacesFi
 			siGunGu,
 			roadNameAddress,
 			Double.parseDouble(document.getY()),
-			Double.parseDouble(document.getY()),
+			Double.parseDouble(document.getX()),
 			document.getPhone(),
 			document.getPlace_url(),
 			placeStandard,

@@ -13,12 +13,6 @@ public class MidPointDTO {
 
 	@Getter
 	@NoArgsConstructor(access = AccessLevel.PRIVATE)
-	public static class MidPointsBySelfFindRequest {
-		List<AddressDTO> addresses;
-	}
-
-	@Getter
-	@NoArgsConstructor(access = AccessLevel.PRIVATE)
 	@AllArgsConstructor(access = AccessLevel.PRIVATE)
 	public static class AddressDTO {
 

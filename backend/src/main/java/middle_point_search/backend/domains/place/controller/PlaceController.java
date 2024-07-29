@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.dto.BaseResponse;
 import middle_point_search.backend.common.dto.DataResponse;
@@ -61,7 +62,7 @@ public class PlaceController {
 			)
 		}
 	)
-	public ResponseEntity<BaseResponse> placeSaveOrUpdate(@RequestBody PlaceSaveOrUpdateRequest request) {
+	public ResponseEntity<BaseResponse> placeSaveOrUpdate(@RequestBody @Valid PlaceSaveOrUpdateRequest request) {
 
 		Room room = memberLoader.getRoom();
 		Member member = memberLoader.getMember();
