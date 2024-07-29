@@ -7,11 +7,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import middle_point_search.backend.common.dto.BaseResponse;
 import middle_point_search.backend.domains.market.service.MarketService;
 
+@Tag(name = "MARKET API", description = "상권에 대한 API입니다.")
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -23,6 +27,9 @@ public class MarketController {
 	@PostMapping("/market")
 	@Operation(
 		summary = "중간 장소 리스트 업데이트",
+		parameters = {
+			@Parameter(name = "RoomId", description = "roomId 필요", required = true, in = ParameterIn.HEADER)
+		},
 		description = """
 			중간 지점으로 선정될 장소를 업데이트 한다.
 						

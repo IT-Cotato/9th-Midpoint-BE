@@ -10,7 +10,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.dto.BaseResponse;
@@ -23,6 +26,7 @@ import middle_point_search.backend.domains.place.dto.PlaceDTO.PlacesSaveOrUpdate
 import middle_point_search.backend.domains.place.service.PlaceService;
 import middle_point_search.backend.domains.room.domain.Room;
 
+@Tag(name = "PLACE API", description = "회원 장소에 대한 API입니다.")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/place-rooms")
@@ -44,6 +48,9 @@ public class PlaceController {
 						
 						
 			AccessToken 필요.""",
+		parameters = {
+			@Parameter(name = "RoomId", description = "roomId 필요", required = true, in = ParameterIn.HEADER)
+		},
 		responses = {
 			@ApiResponse(
 				responseCode = "200",
@@ -83,6 +90,9 @@ public class PlaceController {
 			추후 가입하는 모든 사람은 다른 기능을 사용할 권한이 생긴다.
 						
 			AccessToken 필요.""",
+		parameters = {
+			@Parameter(name = "RoomId", description = "roomId 필요", required = true, in = ParameterIn.HEADER)
+		},
 		responses = {
 			@ApiResponse(
 				responseCode = "200",
@@ -117,6 +127,9 @@ public class PlaceController {
 			저장된 장소 리스트 조회하기.
 						
 			AccessToken 필요.""",
+		parameters = {
+			@Parameter(name = "RoomId", description = "roomId 필요", required = true, in = ParameterIn.HEADER)
+		},
 		responses = {
 			@ApiResponse(
 				responseCode = "200",
