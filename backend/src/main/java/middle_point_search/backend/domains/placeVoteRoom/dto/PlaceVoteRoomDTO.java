@@ -1,5 +1,6 @@
 package middle_point_search.backend.domains.placeVoteRoom.dto;
 
+import jakarta.validation.constraints.NotEmpty;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,6 +12,8 @@ public class PlaceVoteRoomDTO {
     @Getter
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class PlaceVoteRoomCreateRequest {
+
+        @NotEmpty(message = "투표 후보가 제공되지 않았습니다.")
         private List<PlaceCandidateInfo> placeCandidates;
 
         @Getter

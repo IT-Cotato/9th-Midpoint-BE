@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.dto.BaseResponse;
 import middle_point_search.backend.common.dto.DataResponse;
@@ -62,7 +63,7 @@ public class TimeVoteRoomController {
             )
     }
     )
-    public ResponseEntity<DataResponse<TimeVoteRoomCreateResponse>> timeVoteRoomCreate(@RequestBody TimeVoteRoomCreateRequest request) {
+    public ResponseEntity<DataResponse<TimeVoteRoomCreateResponse>> timeVoteRoomCreate(@RequestBody @Valid TimeVoteRoomCreateRequest request) {
 
         Room room = memberLoader.getRoom();
 
@@ -108,7 +109,7 @@ public class TimeVoteRoomController {
                     )
             }
     )
-    public ResponseEntity<DataResponse<TimeVoteRoomCreateResponse>> timeVoteRoomRecreate(@RequestBody TimeVoteRoomCreateRequest request) {
+    public ResponseEntity<DataResponse<TimeVoteRoomCreateResponse>> timeVoteRoomRecreate(@RequestBody @Valid TimeVoteRoomCreateRequest request) {
 
         Room room = memberLoader.getRoom();
 
