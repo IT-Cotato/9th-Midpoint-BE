@@ -28,6 +28,8 @@ public interface JwtTokenProvider {
 
 	Optional<String> extractRefreshToken(HttpServletRequest request);
 
+	Optional<String> extractRoomId(HttpServletRequest request);
+
 	Claims parseClaims(String accessToken);
 
 	Optional<String> extractName(String accessToken);

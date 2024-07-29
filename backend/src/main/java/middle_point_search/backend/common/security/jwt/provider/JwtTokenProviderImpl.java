@@ -157,6 +157,11 @@ public class JwtTokenProviderImpl implements JwtTokenProvider {
 	}
 
 	@Override
+	public Optional<String> extractRoomId(HttpServletRequest request) {
+		return Optional.ofNullable(request.getHeader(jwtProperties.getRoomId().getHeader()));
+	}
+
+	@Override
 	public Claims parseClaims(String accessToken) {
 		try {
 			return Jwts.parserBuilder()

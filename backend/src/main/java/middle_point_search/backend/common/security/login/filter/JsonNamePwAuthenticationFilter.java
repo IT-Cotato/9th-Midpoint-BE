@@ -21,7 +21,7 @@ import middle_point_search.backend.common.security.dto.MemberAuthenticationToken
 @Slf4j
 public class JsonNamePwAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 
-	private static final String DEFAULT_LOGIN_REQUEST_URL = "/api/member/login";
+	private static final String DEFAULT_LOGIN_REQUEST_URL = "/api/members/login";
 	private static final String HTTP_METHOD = "POST";    //HTTP 메서드의 방식은 POST 이다.
 	private static final String CONTENT_TYPE = "application/json";//json 타입의 데이터로만 로그인을 진행한다.
 	private final ObjectMapper objectMapper;
