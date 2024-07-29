@@ -220,7 +220,7 @@ public class PlaceVoteRoomController {
 			)
 		}
 	)
-	public ResponseEntity<?> vote(@RequestBody PlaceVoteRequest request) {
+	public ResponseEntity<?> vote(@RequestBody @Valid PlaceVoteRequest request) {
 
 		Member member = memberLoader.getMember();
 		Room room = memberLoader.getRoom();
@@ -272,7 +272,7 @@ public class PlaceVoteRoomController {
 			)
 		}
 	)
-	public ResponseEntity<?> voteUpdate(@RequestBody PlaceVoteRequest request) {
+	public ResponseEntity<?> voteUpdate(@RequestBody @Valid PlaceVoteRequest request) {
 
 		Member member = memberLoader.getMember();
 		Room room = memberLoader.getRoom();
