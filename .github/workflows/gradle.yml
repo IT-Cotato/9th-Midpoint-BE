@@ -1,3 +1,4 @@
+
 name: Java CI with Gradle
 
 on:
@@ -8,6 +9,7 @@ on:
 
 jobs:
   build:
+
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -20,32 +22,36 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
-    - run: mkdir -p ./src/main/resources
-      working-directory: ./backend
-
-    - run: touch ./src/main/resources/application-api.properties
-      working-directory: ./backend
-    - run: echo "${{ secrets.API_PROPERTIES }}" > ./src/main/resources/application-api.properties
-      working-directory: ./backend
+    - uses: actions/checkout@v4
+    - run: touch ./backend/src/main/resources/application-api.properties
+    - run: echo "${{ secrets.API_PROPERTIES }}" > ./backend/src/main/resources/application-api.properties
     - run: cat ./src/main/resources/application-api.properties
-      working-directory: ./backend
 
-    - run: touch ./src/main/resources/application-security.properties
-      working-directory: ./backend
-    - run: echo "${{ secrets.SECURITY_PROPERTIES }}" > ./src/main/resources/application-security.properties
-      working-directory: ./backend
-    - run: cat ./src/main/resources/application-security.properties
-      working-directory: ./backend
+    - uses: actions/checkout@v4
+    - run: touch ./backend/src/main/resources/application-security.properties
+    - run: echo "${{ secrets.SECURITY_PROPERTIES }}" > ./backend/src/main/resources/application-security.properties
+    - run: cat ./backend/src/main/resources/application-security.properties
 
+    # Configure Gradle for optimal use in GitHub Actions, including caching of downloaded dependencies.
+    # See: https://github.com/gradle/actions/blob/main/setup-gradle/README.md
     - name: Setup Gradle
-      uses: gradle/gradle-build-action@v2
-      with:
-        gradle-version: '8.7'
+      uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
 
     - name: Set Gradle Wrapper executable permission
       run: chmod +x ./backend/gradlew
 
     - name: Build with Gradle Wrapper
-      run: ./backend/gradlew build
-      working-directory: ./backend
+      run: cd backend/ && ./gradlew build
 
+    # NOTE: The Gradle Wrapper is the default and recommended way to run Gradle (https://docs.gradle.org/current/userguide/gradle_wrapper.html).
+    # If your project does not have the Gradle Wrapper configured, you can use the following configuration to run Gradle with a specified version.
+    #
+    # - name: Setup Gradle
+    #   uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
+    #   with:
+    #     gradle-version: '8.5'
+    #
+    # - name: Build with Gradle 8.5
+    #   run: gradle build
+
+  
