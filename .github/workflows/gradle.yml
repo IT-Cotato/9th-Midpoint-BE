@@ -72,7 +72,7 @@ jobs:
         echo "${{ secrets.EC2_SSH_KEY }}" > middle-point-search.pem
         chmod 600 middle-point-search.pem
         scp -i middle-point-search.pem -o StrictHostKeyChecking=no ./backend/build/libs/backend-0.0.1-SNAPSHOT.jar ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USERNAME }}/backend-0.0.1-SNAPSHOT.jar
-        ssh -i middle-point-search.pem -o StrictHostKeyChecking=no ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} "pgrep java | xargs kill -9; nohup java -jar /home/${{ secrets.EC2_USERNAME }}/backend-0.0.1-SNAPSHOT &"
+        ssh -i middle-point-search.pem -o StrictHostKeyChecking=no ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} "pgrep java | xargs kill -9; nohup java -jar /home/${{ secrets.EC2_USERNAME }}/backend-0.0.1-SNAPSHOT.jar &"
         rm -f middle_point.pem
 
   
