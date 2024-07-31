@@ -27,7 +27,6 @@ jobs:
     - run: echo "${{ secrets.API_PROPERTIES }}" > ./backend/src/main/resources/application-api.properties
     - run: cat ./backend/src/main/resources/application-api.properties
 
-    - uses: actions/checkout@v4
     - run: touch ./backend/src/main/resources/application-security.properties
     - run: echo "${{ secrets.SECURITY_PROPERTIES }}" > ./backend/src/main/resources/application-security.properties
     - run: cat ./backend/src/main/resources/application-security.properties
