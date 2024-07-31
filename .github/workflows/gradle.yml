@@ -46,18 +46,33 @@ jobs:
     - name: Upload build artifact
       uses: actions/upload-artifact@v2
       with:
-        name: trelloServer
+        name: backend
         path: ./backend/build/libs/backend-0.0.1-SNAPSHOT.jar
 
-    # NOTE: The Gradle Wrapper is the default and recommended way to run Gradle (https://docs.gradle.org/current/userguide/gradle_wrapper.html).
-    # If your project does not have the Gradle Wrapper configured, you can use the following configuration to run Gradle with a specified version.
-    #
-    # - name: Setup Gradle
-    #   uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
-    #   with:
-    #     gradle-version: '8.5'
-    #
-    # - name: Build with Gradle 8.5
-    #   run: gradle build
+  # 배포 **
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    # 위의 빌드작업한 JAR 파일 = 아티팩트를 다운로드
+    steps:
+    - name: Download build artifact
+      uses: actions/download-artifact@v2
+      with:
+        name: backend
+        path: ./backend/build/libs/
+
+    # EC2에 배포
+    # EC2 SSH 키를 private_key.pem 파일로 저장 ( 위치는 GitHub 서버 )
+    # SCP를 사용하여 JAR 파일을 EC2 서버로 복사
+    # SSH를 사용하여 EC2 서버에 연결하고 현재 실행 중인 Java 프로세스를 종료한 다음 새로운 Java 프로세스 생성 및 실행!!
+    ## NLP 적용하면 IP -> 도메인으로 수정 + EC2 늘리면 run 추가
+    - name: Deploy to EC2
+      run: |
+        echo "${{ secrets.EC2_SSH_KEY }}" > middle_point.pem
+        chmod 600 middle_point.pem
+        scp -i middle_point.pem -o StrictHostKeyChecking=no ./backend/build/libs/backend-0.0.1-SNAPSHOT.jar ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USERNAME }}/backend-0.0.1-SNAPSHOT.jar
+        ssh -i middle_point.pem -o StrictHostKeyChecking=no ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} "pgrep java | xargs kill -9; nohup java -jar /home/${{ secrets.EC2_USERNAME }}/backend-0.0.1-SNAPSHOT &"
+        rm -f middle_point.pem
 
   
