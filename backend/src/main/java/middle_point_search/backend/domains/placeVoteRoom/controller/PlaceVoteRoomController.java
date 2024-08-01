@@ -68,11 +68,6 @@ public class PlaceVoteRoomController {
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
-				responseCode = "403",
-				description = "접근이 거부되었습니다.",
-				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
-			),
-			@ApiResponse(
 				responseCode = "409",
 				description = "이미 투표방이 존재합니다.",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
@@ -116,11 +111,6 @@ public class PlaceVoteRoomController {
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
-				responseCode = "403",
-				description = "접근이 거부되었습니다.",
-				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
-			),
-			@ApiResponse(
 				responseCode = "404",
 				description = "생성된 투표방이 없습니다.",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
@@ -158,11 +148,6 @@ public class PlaceVoteRoomController {
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
-				responseCode = "403",
-				description = "접근이 거부되었습니다.",
-				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
-			),
-			@ApiResponse(
 				responseCode = "404",
 				description = "생성된 투표방이 없습니다.",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
@@ -196,11 +181,6 @@ public class PlaceVoteRoomController {
 			@ApiResponse(
 				responseCode = "401",
 				description = "인증에 실패하였습니다.",
-				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
-			),
-			@ApiResponse(
-				responseCode = "403",
-				description = "접근이 거부되었습니다.",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
@@ -251,11 +231,6 @@ public class PlaceVoteRoomController {
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
-				responseCode = "403",
-				description = "접근이 거부되었습니다.",
-				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
-			),
-			@ApiResponse(
 				responseCode = "404",
 				description = "생성된 투표방이 없습니다.",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
@@ -301,11 +276,6 @@ public class PlaceVoteRoomController {
 				responseCode = "401",
 				description = "인증에 실패하였습니다.",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
-			),
-			@ApiResponse(
-				responseCode = "403",
-				description = "접근이 거부되었습니다.",
-				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			)
 		}
 	)
@@ -336,11 +306,6 @@ public class PlaceVoteRoomController {
 			@ApiResponse(
 				responseCode = "401",
 				description = "인증에 실패하였습니다.",
-				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
-			),
-			@ApiResponse(
-				responseCode = "403",
-				description = "접근이 거부되었습니다.",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(

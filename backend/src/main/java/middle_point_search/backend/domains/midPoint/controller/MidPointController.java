@@ -56,11 +56,6 @@ public class MidPointController {
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
-				responseCode = "403",
-				description = "접근이 거부되었습니다.",
-				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
-			),
-			@ApiResponse(
 				responseCode = "404",
 				description = "방에 입력된 장소가 없습니다.",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))

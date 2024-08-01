@@ -60,11 +60,6 @@ public class RecommendPlaceController {
 				responseCode = "401",
 				description = "인증에 실패하였습니다.",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
-			),
-			@ApiResponse(
-				responseCode = "403",
-				description = "접근이 거부되었습니다.",
-				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			)
 		}
 	)
