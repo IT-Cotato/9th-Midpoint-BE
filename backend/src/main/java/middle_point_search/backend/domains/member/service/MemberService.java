@@ -43,21 +43,12 @@ public class MemberService {
 		Room room = roomRepository.findRoomByIdentityNumber(roomId)
 			.orElseThrow(() -> new RoomNotFoundException("해당하는 방이 존재하지 않습니다"));
 
-		//회원 권한 정하기
-		Role role = decideRole(room.getRoomType());
+		Role role = Role.USER;
 
 		Member member = Member.from(room, name, pw, role);
 		memberRepository.save(member);
 
 		return member;
-	}
-
-	// 회원의 ROLE을 Room의 RoomType을 기준으로 결정하는 메서드
-	private Role decideRole(RoomType roomType) {
-		if (roomType == RoomType.SELF) {
-			return Role.USER; // SELF인 경우 이미 다 장소가 입력됐으므로 바로 승인
-		}
-		return Role.GUEST; // 회원 가입시 권한은 GUEST
 	}
 
 	// 회원 로그아웃 하기
@@ -83,19 +74,5 @@ public class MemberService {
 	// 요청된 pw와 Member의 pw가 일치하는 지 확인
 	public boolean matchPassword(String rawPw, String pw) {
 		return passwordEncoder.matches(rawPw, pw);
-	}
-
-	// 단일 회원 Role 변경하기
-	@Transactional
-	public void updateMemberRole(Member member, Role role) {
-		member.updateRole(role);
-	}
-
-	// 여러 회원 Role 변경하기
-	@Transactional
-	public void updateRomeMembersRole(String roomId, Role role) {
-		List<Member> members = memberRepository.findAllByRoom_IdentityNumber(roomId);
-
-		members.forEach(member -> member.updateRole(role));
 	}
 }

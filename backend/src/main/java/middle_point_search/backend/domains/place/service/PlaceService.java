@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import middle_point_search.backend.common.exception.CustomException;
 import middle_point_search.backend.domains.member.domain.Member;
-import middle_point_search.backend.domains.member.domain.Role;
 import middle_point_search.backend.domains.member.service.MemberService;
 import middle_point_search.backend.domains.place.domain.Place;
 import middle_point_search.backend.domains.place.dto.PlaceDTO.PlaceSaveOrUpdateRequest;
@@ -34,11 +33,10 @@ public class PlaceService {
 
 	//장소 저장 및 업데이트 하고, Member 및 Room 역할 변경
 	@Transactional(rollbackFor = {CustomException.class})
-	public void saveOrUpdatePlaceAndRoleUpdate(Room room, Member member, PlaceSaveOrUpdateRequest request) {
+	public void saveOrUpdatePlaceAndUpdateRoomType(Room room, Member member, PlaceSaveOrUpdateRequest request) {
 
 		roomService.updateRoomType(room, RoomType.TOGETHER);
 		saveOrUpdatePlace(room, member, request);
-		memberService.updateMemberRole(member, Role.USER);
 	}
 
 	//장소 저장 및 업데이트
@@ -62,12 +60,10 @@ public class PlaceService {
 
 	//개인이 모든 장소 저장 및 업데이트 하고, Member 및 Room 역할 변경
 	@Transactional(rollbackFor = {CustomException.class})
-	public void saveOrUpdatePlacesBySelfAndRoleUpdate(Room room, PlacesSaveOrUpdateBySelfRequest request) {
+	public void saveOrUpdatePlacesBySelfAndUpdateRoomType(Room room, PlacesSaveOrUpdateBySelfRequest request) {
 
-		String roomId = room.getIdentityNumber();
 		roomService.updateRoomType(room, RoomType.SELF);
 		saveOrUpdatePlacesBySelf(room, request);
-		memberService.updateRomeMembersRole(roomId, Role.USER);
 	}
 
 	//개인이 모든 장소 저장 및 업데이트

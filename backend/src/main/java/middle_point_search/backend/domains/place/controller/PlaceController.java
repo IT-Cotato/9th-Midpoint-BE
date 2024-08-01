@@ -74,7 +74,7 @@ public class PlaceController {
 		Room room = memberLoader.getRoom();
 		Member member = memberLoader.getMember();
 
-		placeService.saveOrUpdatePlaceAndRoleUpdate(room, member, request);
+		placeService.saveOrUpdatePlaceAndUpdateRoomType(room, member, request);
 
 		return ResponseEntity.ok(BaseResponse.ok());
 	}
@@ -115,7 +115,7 @@ public class PlaceController {
 
 		Room room = memberLoader.getRoom();
 
-		placeService.saveOrUpdatePlacesBySelfAndRoleUpdate(room, request);
+		placeService.saveOrUpdatePlacesBySelfAndUpdateRoomType(room, request);
 
 		return ResponseEntity.ok(BaseResponse.ok());
 	}
