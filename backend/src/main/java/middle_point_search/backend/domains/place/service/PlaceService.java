@@ -3,6 +3,7 @@ package middle_point_search.backend.domains.place.service;
 import static middle_point_search.backend.common.exception.errorCode.UserErrorCode.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,7 +15,9 @@ import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.member.domain.Role;
 import middle_point_search.backend.domains.member.service.MemberService;
 import middle_point_search.backend.domains.place.domain.Place;
+import middle_point_search.backend.domains.place.dto.PlaceDTO.PlaceFindResponse;
 import middle_point_search.backend.domains.place.dto.PlaceDTO.PlaceSaveOrUpdateRequest;
+import middle_point_search.backend.domains.place.dto.PlaceDTO.PlaceVO;
 import middle_point_search.backend.domains.place.dto.PlaceDTO.PlacesFindResponse;
 import middle_point_search.backend.domains.place.dto.PlaceDTO.PlacesSaveOrUpdateBySelfRequest;
 import middle_point_search.backend.domains.place.repository.PlaceRepository;
@@ -91,11 +94,25 @@ public class PlaceService {
 		placeRepository.saveAll(places);
 	}
 
-	//장소 조회
-	public List<PlacesFindResponse> findPlaces(String roomId) {
+	//개개인 장소 조회
+	public PlaceFindResponse findPlace(String roomId, String memberName) {
+
+		return placeRepository.findByRoom_IdentityNumberAndMember_Name(roomId, memberName)
+			.map(place -> new PlaceFindResponse(true, place.toVO()))
+			.orElseGet(() -> new PlaceFindResponse(false, null));
+	}
+
+	//개인 장소 조회
+	public PlacesFindResponse findPlaces(String roomId) {
 
 		List<Place> places = placeRepository.findAllByRoom_IdentityNumber(roomId);
 
-		return places.stream().map(PlacesFindResponse::from).toList();
+		List<PlaceVO> placeVOs = places.stream()
+			.map(Place::toVO)
+			.collect(Collectors.toList());
+
+		boolean existence = !placeVOs.isEmpty();
+		return new PlacesFindResponse(existence, placeVOs);
 	}
+
 }

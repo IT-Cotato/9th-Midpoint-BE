@@ -1,7 +1,5 @@
 package middle_point_search.backend.domains.place.controller;
 
-import java.util.List;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,6 +18,7 @@ import middle_point_search.backend.common.dto.BaseResponse;
 import middle_point_search.backend.common.dto.DataResponse;
 import middle_point_search.backend.common.util.MemberLoader;
 import middle_point_search.backend.domains.member.domain.Member;
+import middle_point_search.backend.domains.place.dto.PlaceDTO.PlaceFindResponse;
 import middle_point_search.backend.domains.place.dto.PlaceDTO.PlaceSaveOrUpdateRequest;
 import middle_point_search.backend.domains.place.dto.PlaceDTO.PlacesFindResponse;
 import middle_point_search.backend.domains.place.dto.PlaceDTO.PlacesSaveOrUpdateBySelfRequest;
@@ -120,9 +119,43 @@ public class PlaceController {
 		return ResponseEntity.ok(BaseResponse.ok());
 	}
 
+	@GetMapping("/self")
+	@Operation(
+		summary = "개개인 장소 조회하기",
+		description = """
+			개개인이 저장한 장소 조회하기.
+						
+			AccessToken 필요.""",
+		parameters = {
+			@Parameter(name = "RoomId", description = "roomId 필요", required = true, in = ParameterIn.HEADER)
+		},
+		responses = {
+			@ApiResponse(
+				responseCode = "200",
+				description = "성공"
+			),
+			@ApiResponse(
+				responseCode = "400",
+				description = "요청 파라미터가 잘 못 되었습니다."
+			),
+			@ApiResponse(
+				responseCode = "401",
+				description = "인증에 실패하였습니다."
+			)
+		}
+	)
+	public ResponseEntity<DataResponse<PlaceFindResponse>> placeFind() {
+		String roomId = memberLoader.getRoomId();
+		String memberName = memberLoader.getName();
+
+		PlaceFindResponse response = placeService.findPlace(roomId, memberName);
+
+		return ResponseEntity.ok(DataResponse.from(response));
+	}
+
 	@GetMapping
 	@Operation(
-		summary = "장소 조회하기",
+		summary = "개인 장소 조회하기",
 		description = """
 			저장된 장소 리스트 조회하기.
 						
@@ -145,12 +178,12 @@ public class PlaceController {
 			)
 		}
 	)
-	public ResponseEntity<DataResponse<List<PlacesFindResponse>>> placesFind() {
+	public ResponseEntity<DataResponse<PlacesFindResponse>> placesFind() {
 		String roomId = memberLoader.getRoomId();
 
-		List<PlacesFindResponse> places = placeService.findPlaces(roomId);
+		PlacesFindResponse response = placeService.findPlaces(roomId);
 
-		return ResponseEntity.ok(DataResponse.from(places));
+		return ResponseEntity.ok(DataResponse.from(response));
 	}
 
 }

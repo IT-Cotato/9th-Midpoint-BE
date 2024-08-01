@@ -14,6 +14,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.place.dto.PlaceDTO.PlaceSaveOrUpdateRequest;
+import middle_point_search.backend.domains.place.dto.PlaceDTO.PlaceVO;
 import middle_point_search.backend.domains.room.domain.Room;
 
 @Entity
@@ -97,6 +98,17 @@ public class Place {
 		Double addressLongitude = placeSaveOrUpdateRequest.getAddressLong();
 
 		return new Place(siDo, siGunGu, roadNameAddress, addressLatitude, addressLongitude, room);
+	}
+
+	public PlaceVO toVO() {
+		return new PlaceVO(
+			this.id,
+			this.siDo,
+			this.siGunGu,
+			this.roadNameAddress,
+			this.addressLatitude,
+			this.addressLongitude
+		);
 	}
 
 	private void addRoom(Room room) {
