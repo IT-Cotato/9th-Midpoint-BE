@@ -42,3 +42,6 @@ src/main/resources/application-security.properties
 ### applcation-api ###
 src/main/resources/application-api.properties
 src/main/resources/application.properties
+
+### log file
+**/*.log
