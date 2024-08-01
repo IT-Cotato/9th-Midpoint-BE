@@ -1,7 +1,5 @@
 package middle_point_search.backend.domains.place.controller;
 
-import java.util.List;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,7 +18,6 @@ import middle_point_search.backend.common.dto.BaseResponse;
 import middle_point_search.backend.common.dto.DataResponse;
 import middle_point_search.backend.common.util.MemberLoader;
 import middle_point_search.backend.domains.member.domain.Member;
-import middle_point_search.backend.domains.place.dto.PlaceDTO;
 import middle_point_search.backend.domains.place.dto.PlaceDTO.PlaceFindResponse;
 import middle_point_search.backend.domains.place.dto.PlaceDTO.PlaceSaveOrUpdateRequest;
 import middle_point_search.backend.domains.place.dto.PlaceDTO.PlacesFindResponse;
@@ -122,7 +119,7 @@ public class PlaceController {
 		return ResponseEntity.ok(BaseResponse.ok());
 	}
 
-	@GetMapping
+	@GetMapping("/self")
 	@Operation(
 		summary = "개개인 장소 조회하기",
 		description = """
@@ -155,7 +152,6 @@ public class PlaceController {
 
 		return ResponseEntity.ok(DataResponse.from(response));
 	}
-
 
 	@GetMapping
 	@Operation(
