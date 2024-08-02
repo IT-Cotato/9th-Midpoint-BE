@@ -16,6 +16,7 @@ public enum CommonErrorCode implements ErrorCode {
 	INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부에서 에러가 발생하였습니다."),
 	DATA_BUFFER_LIMIT_ERROR(HttpStatus.PAYLOAD_TOO_LARGE, "요청의 페이로드가 너무 큽니다."),
 	AUTHENTICATION_SERVICE_ERROR(HttpStatus.BAD_REQUEST, "요청한 content-type은 허락되지 않습니다."),
+	TOO_MANY_REQUESTS(HttpStatus.TOO_MANY_REQUESTS, "요청을 너무 많이 했습니다."),
 	;
 
 	private final HttpStatus httpStatus;

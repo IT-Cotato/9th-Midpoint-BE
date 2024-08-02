@@ -41,6 +41,11 @@ public class RoomController {
 			@ApiResponse(
 				responseCode = "200",
 				description = "성공"
+			),
+			@ApiResponse(
+				responseCode = "429",
+				description = "요청을 너무 많이 했습니다.",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			)
 		}
 	)

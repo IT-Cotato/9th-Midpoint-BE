@@ -4,11 +4,14 @@ import java.util.TimeZone;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.servers.Server;
 import jakarta.annotation.PostConstruct;
+import middle_point_search.backend.common.filter.RateLimitFilter;
 
 @SpringBootApplication
 @EnableJpaAuditing
@@ -23,5 +26,13 @@ public class BackendApplication {
 	public void init() {
 		// timezone 설정
 		TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));
+	}
+
+	@Bean
+	public FilterRegistrationBean<RateLimitFilter> rateLimitFilter() {
+		FilterRegistrationBean<RateLimitFilter> registrationBean = new FilterRegistrationBean<>();
+		registrationBean.setFilter(new RateLimitFilter());
+		registrationBean.addUrlPatterns("/api/*");
+		return registrationBean;
 	}
 }
