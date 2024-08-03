@@ -6,32 +6,14 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
-import org.springframework.boot.configurationprocessor.json.JSONException;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-
-import java.net.URLDecoder;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
 
 @Aspect
 @Slf4j
 @Component
 public class LogAspect {
-
-    private static JSONObject getParams(HttpServletRequest request) throws JSONException {
-        JSONObject jsonObject = new JSONObject();
-        Enumeration<String> params = request.getParameterNames();
-        while (params.hasMoreElements()) {
-            String param = params.nextElement();
-            String replaceParam = param.replaceAll("\\.", "-");
-            jsonObject.put(replaceParam, request.getParameter(param));
-        }
-        return jsonObject;
-    }
 
     @Pointcut("execution(* middle_point_search.backend..*.*(..)) && !execution(* middle_point_search.backend.common..*(..))")
     public void all() {
@@ -56,32 +38,21 @@ public class LogAspect {
 
     @Around("controller()")
     public Object loggingBefore(ProceedingJoinPoint joinPoint) throws Throwable {
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        final HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        final String ipAddr = request.getRemoteAddr();
+        final String method = request.getMethod();
+        final String requestURI = request.getRequestURI();
+        final Object[] args = joinPoint.getArgs();
 
-        String controllerName = joinPoint.getSignature().getDeclaringType().getName();
-        String methodName = joinPoint.getSignature().getName();
-        Map<String, Object> params = new HashMap<>();
-
+        log.info("[REQUEST] {} {} {} args={}", ipAddr, method, requestURI, args);
         try {
-            String decodedURI = URLDecoder.decode(request.getRequestURI(), "UTF-8");
-
-            params.put("controller", controllerName);
-            params.put("method", methodName);
-            params.put("params", getParams(request));
-            params.put("log_time", System.currentTimeMillis());
-            params.put("request_uri", decodedURI);
-            params.put("http_method", request.getMethod());
+            Object result = joinPoint.proceed();
+            log.info("[RESPONSE] {}", result);
+            return result;
         } catch (Exception e) {
-            log.error("LoggerAspect error", e);
+            log.error("[RESPONSE] exception message = {} {}", e.getMessage(), e.getStackTrace()[0]);
+            throw e;
         }
-
-        log.info("[{}] {}", params.get("http_method"), params.get("request_uri"));
-        log.info("method: {}.{}", params.get("controller"), params.get("method"));
-        log.info("params: {}", params.get("params"));
-
-        Object result = joinPoint.proceed();
-
-        return result;
     }
 
 }

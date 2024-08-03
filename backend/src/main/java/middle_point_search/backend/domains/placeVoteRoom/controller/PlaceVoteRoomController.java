@@ -48,7 +48,7 @@ public class PlaceVoteRoomController {
 						
 			AccessToken 필요.""",
 		parameters = {
-			@Parameter(name = "RoomId", description = "roomId 필요", required = true, in = ParameterIn.HEADER)
+			@Parameter(name = "RoomId", description = "roomId 필요", in = ParameterIn.HEADER)
 		},
 		responses = {
 			@ApiResponse(
@@ -96,7 +96,7 @@ public class PlaceVoteRoomController {
 						
 			AccessToken 필요.""",
 		parameters = {
-			@Parameter(name = "RoomId", description = "roomId 필요", required = true, in = ParameterIn.HEADER)
+			@Parameter(name = "RoomId", description = "roomId 필요", in = ParameterIn.HEADER)
 		},
 		responses = {
 			@ApiResponse(
@@ -143,7 +143,7 @@ public class PlaceVoteRoomController {
 						
 			AccessToken 필요.""",
 		parameters = {
-			@Parameter(name = "RoomId", description = "roomId 필요", required = true, in = ParameterIn.HEADER)
+			@Parameter(name = "RoomId", description = "roomId 필요", in = ParameterIn.HEADER)
 		},
 		responses = {
 			@ApiResponse(
@@ -184,7 +184,7 @@ public class PlaceVoteRoomController {
 						
 			AccessToken 필요.""",
 		parameters = {
-			@Parameter(name = "RoomId", description = "roomId 필요", required = true, in = ParameterIn.HEADER)
+			@Parameter(name = "RoomId", description = "roomId 필요", in = ParameterIn.HEADER)
 		},
 		responses = {
 			@ApiResponse(
@@ -236,7 +236,7 @@ public class PlaceVoteRoomController {
 						
 			AccessToken 필요.""",
 		parameters = {
-			@Parameter(name = "RoomId", description = "roomId 필요", required = true, in = ParameterIn.HEADER)
+			@Parameter(name = "RoomId", description = "roomId 필요", in = ParameterIn.HEADER)
 		},
 		responses = {
 			@ApiResponse(
@@ -288,7 +288,7 @@ public class PlaceVoteRoomController {
 						
 			AccessToken 필요.""",
 		parameters = {
-			@Parameter(name = "RoomId", description = "roomId 필요", required = true, in = ParameterIn.HEADER)
+			@Parameter(name = "RoomId", description = "roomId 필요", in = ParameterIn.HEADER)
 		},
 		responses = {
 			@ApiResponse(
@@ -324,7 +324,7 @@ public class PlaceVoteRoomController {
 						
 			AccessToken 필요.""",
 		parameters = {
-			@Parameter(name = "RoomId", description = "roomId 필요", required = true, in = ParameterIn.HEADER)
+			@Parameter(name = "RoomId", description = "roomId 필요", in = ParameterIn.HEADER)
 		},
 		responses = {
 			@ApiResponse(

@@ -48,10 +48,18 @@ dependencies {
     //swagger
     implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.5.0'
     testImplementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-api', version: '2.5.0'
+    //bucket4j
+    implementation group: 'com.github.vladimir-bukhtoyarov', name: 'bucket4j-core', version: '8.0.1'
     //aop
     implementation 'org.springframework.boot:spring-boot-starter-aop'
 }
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+//profile별로 실행시
+bootRun {
+    String activeProfile = System.properties['spring.profiles.active']
+    systemProperty "spring.profiles.active", activeProfile
 }

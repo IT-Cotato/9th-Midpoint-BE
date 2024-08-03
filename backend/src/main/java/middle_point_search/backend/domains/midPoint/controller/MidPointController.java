@@ -35,10 +35,10 @@ public class MidPointController {
 		summary = "중간 지점 추천 장소 조회",
 		description = """
 			중간 지점 추천 장소 조회하기.
-			
+						
 			AccessToken 필요.""",
 		parameters = {
-			@Parameter(name = "RoomId", description = "roomId 필요", required = true, in = ParameterIn.HEADER)
+			@Parameter(name = "RoomId", description = "roomId 필요", in = ParameterIn.HEADER)
 		},
 		responses = {
 			@ApiResponse(

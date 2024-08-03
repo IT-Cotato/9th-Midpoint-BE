@@ -48,7 +48,7 @@ public class PlaceController {
 						
 			AccessToken 필요.""",
 		parameters = {
-			@Parameter(name = "RoomId", description = "roomId 필요", required = true, in = ParameterIn.HEADER)
+			@Parameter(name = "RoomId", description = "roomId 필요", in = ParameterIn.HEADER)
 		},
 		responses = {
 			@ApiResponse(
@@ -90,7 +90,7 @@ public class PlaceController {
 						
 			AccessToken 필요.""",
 		parameters = {
-			@Parameter(name = "RoomId", description = "roomId 필요", required = true, in = ParameterIn.HEADER)
+			@Parameter(name = "RoomId", description = "roomId 필요", in = ParameterIn.HEADER)
 		},
 		responses = {
 			@ApiResponse(
@@ -127,7 +127,7 @@ public class PlaceController {
 						
 			AccessToken 필요.""",
 		parameters = {
-			@Parameter(name = "RoomId", description = "roomId 필요", required = true, in = ParameterIn.HEADER)
+			@Parameter(name = "RoomId", description = "roomId 필요", in = ParameterIn.HEADER)
 		},
 		responses = {
 			@ApiResponse(
@@ -161,7 +161,7 @@ public class PlaceController {
 						
 			AccessToken 필요.""",
 		parameters = {
-			@Parameter(name = "RoomId", description = "roomId 필요", required = true, in = ParameterIn.HEADER)
+			@Parameter(name = "RoomId", description = "roomId 필요", in = ParameterIn.HEADER)
 		},
 		responses = {
 			@ApiResponse(

@@ -41,6 +41,11 @@ public class RoomController {
 			@ApiResponse(
 				responseCode = "200",
 				description = "성공"
+			),
+			@ApiResponse(
+				responseCode = "429",
+				description = "요청을 너무 많이 했습니다.",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			)
 		}
 	)
@@ -76,7 +81,7 @@ public class RoomController {
 						
 			accessToken 필요.""",
 		parameters = {
-			@Parameter(name = "RoomId", description = "roomId 필요", required = true, in = ParameterIn.HEADER)
+			@Parameter(name = "RoomId", description = "roomId 필요", in = ParameterIn.HEADER)
 		},
 		responses = {
 			@ApiResponse(

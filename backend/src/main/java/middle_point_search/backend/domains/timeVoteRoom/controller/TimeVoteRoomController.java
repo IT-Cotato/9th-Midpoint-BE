@@ -37,6 +37,8 @@ public class TimeVoteRoomController {
 	private final MemberLoader memberLoader;
 
 	//투표방 생성
+	//투표방 재생성
+
 	@PostMapping
 	@Operation(
 		summary = "시간투표방 생성하기",
@@ -47,7 +49,7 @@ public class TimeVoteRoomController {
 
 			AccessToken 필요.""",
 		parameters = {
-			@Parameter(name = "RoomId", description = "roomId 필요", required = true, in = ParameterIn.HEADER)
+			@Parameter(name = "RoomId", description = "roomId 필요", in = ParameterIn.HEADER)
 		},
 		responses = {
 			@ApiResponse(
@@ -85,8 +87,6 @@ public class TimeVoteRoomController {
 
 		return ResponseEntity.ok(DataResponse.from(response));
 	}
-
-	//투표방 재생성
 	@PutMapping
 	@Operation(
 		summary = "시간투표방 재생성하기",
@@ -97,7 +97,7 @@ public class TimeVoteRoomController {
 			            
 			AccessToken 필요.""",
 		parameters = {
-			@Parameter(name = "RoomId", description = "roomId 필요", required = true, in = ParameterIn.HEADER)
+			@Parameter(name = "RoomId", description = "roomId 필요", in = ParameterIn.HEADER)
 		},
 		responses = {
 			@ApiResponse(
@@ -145,7 +145,7 @@ public class TimeVoteRoomController {
 			            
 			AccessToken 필요.""",
 		parameters = {
-			@Parameter(name = "RoomId", description = "roomId 필요", required = true, in = ParameterIn.HEADER)
+			@Parameter(name = "RoomId", description = "roomId 필요", in = ParameterIn.HEADER)
 		},
 		responses = {
 			@ApiResponse(
@@ -194,7 +194,7 @@ public class TimeVoteRoomController {
 			            
 			AccessToken 필요.""",
 		parameters = {
-			@Parameter(name = "RoomId", description = "roomId 필요", required = true, in = ParameterIn.HEADER)
+			@Parameter(name = "RoomId", description = "roomId 필요", in = ParameterIn.HEADER)
 		},
 		responses = {
 			@ApiResponse(
@@ -242,7 +242,7 @@ public class TimeVoteRoomController {
 			         
 			AccessToken 필요.""",
 		parameters = {
-			@Parameter(name = "RoomId", description = "roomId 필요", required = true, in = ParameterIn.HEADER)
+			@Parameter(name = "RoomId", description = "roomId 필요", in = ParameterIn.HEADER)
 		},
 		responses = {
 			@ApiResponse(
@@ -279,7 +279,7 @@ public class TimeVoteRoomController {
 						
 			AccessToken 필요.""",
 		parameters = {
-			@Parameter(name = "RoomId", description = "roomId 필요", required = true, in = ParameterIn.HEADER)
+			@Parameter(name = "RoomId", description = "roomId 필요", in = ParameterIn.HEADER)
 		},
 		responses = {
 			@ApiResponse(
@@ -322,7 +322,7 @@ public class TimeVoteRoomController {
 			 
 			AccessToken 필요.""",
 		parameters = {
-			@Parameter(name = "RoomId", description = "roomId 필요", required = true, in = ParameterIn.HEADER)
+			@Parameter(name = "RoomId", description = "roomId 필요", in = ParameterIn.HEADER)
 		},
 		responses = {
 			@ApiResponse(
