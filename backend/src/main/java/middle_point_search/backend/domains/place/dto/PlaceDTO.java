@@ -44,8 +44,10 @@ public class PlaceDTO {
 	@AllArgsConstructor
 	public static class PlaceFindResponse {
 
-		private final Boolean existence;
-		private final PlaceVO place;
+		private final Boolean myPlaceExistence;
+		private final PlaceVO myPlace;
+		private final Boolean otherPlacesExistence;
+		private final List<PlaceVO> otherPlaces;
 	}
 
 	@Getter
