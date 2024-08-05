@@ -15,6 +15,7 @@ import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.member.domain.Role;
 import middle_point_search.backend.domains.member.service.MemberService;
 import middle_point_search.backend.domains.place.domain.Place;
+import middle_point_search.backend.domains.place.dto.PlaceDTO;
 import middle_point_search.backend.domains.place.dto.PlaceDTO.PlaceFindResponse;
 import middle_point_search.backend.domains.place.dto.PlaceDTO.PlaceSaveOrUpdateRequest;
 import middle_point_search.backend.domains.place.dto.PlaceDTO.PlaceVO;
@@ -97,9 +98,23 @@ public class PlaceService {
 	//개개인 장소 조회
 	public PlaceFindResponse findPlace(String roomId, String memberName) {
 
-		return placeRepository.findByRoom_IdentityNumberAndMember_Name(roomId, memberName)
-			.map(place -> new PlaceFindResponse(true, place.toVO()))
-			.orElseGet(() -> new PlaceFindResponse(false, null));
+		//내 장소 조회
+		PlaceVO myPlace = placeRepository.findByRoom_IdentityNumberAndMember_Name(roomId, memberName)
+			.map(Place:: toVO)
+			.orElse(null);
+
+		//내 장소 존재 유무
+		Boolean myPlaceExistence = myPlace != null;
+
+		//다른 사람들 장소 조회
+		List<PlaceVO> otherPlaces = placeRepository.findAllByRoom_IdentityNumberAndMember_Name(roomId, memberName)
+			.stream().map(Place::toVO)
+			.toList();
+
+		//다른 사람들 장소 유무
+		boolean otherPlacesExistence = !otherPlaces.isEmpty();
+
+		return new PlaceDTO.PlaceFindResponse(myPlaceExistence, myPlace, otherPlacesExistence, otherPlaces);
 	}
 
 	//개인 장소 조회
