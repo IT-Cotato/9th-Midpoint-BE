@@ -1,8 +1,11 @@
 package middle_point_search.backend.domains.room.dto;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import middle_point_search.backend.domains.room.domain.RoomType;
 
 public class RoomDTO {
 
@@ -34,5 +37,13 @@ public class RoomDTO {
 		public static RoomNameResponse from(String name) {
 			return new RoomNameResponse(name);
 		}
+	}
+
+	@Getter
+	@NoArgsConstructor(access = AccessLevel.PRIVATE)
+	public static class RoomCreateRequest {
+
+		@NotNull
+		private RoomType roomType;
 	}
 }

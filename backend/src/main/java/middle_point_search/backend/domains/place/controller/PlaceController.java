@@ -106,7 +106,7 @@ public class PlaceController {
 			)
 		}
 	)
-	public ResponseEntity<BaseResponse> placesSaveOrUpdateBySelf(@RequestBody PlacesSaveOrUpdateBySelfRequest request) {
+	public ResponseEntity<BaseResponse> placesSaveOrUpdateBySelf(@RequestBody @Valid PlacesSaveOrUpdateBySelfRequest request) {
 
 		Room room = memberLoader.getRoom();
 

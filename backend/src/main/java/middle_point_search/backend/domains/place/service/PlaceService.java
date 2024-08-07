@@ -40,7 +40,6 @@ public class PlaceService {
 	@Transactional(rollbackFor = {CustomException.class})
 	public void saveOrUpdatePlaceAndRoleUpdate(Room room, Member member, PlaceSaveOrUpdateRequest request) {
 
-		roomService.updateRoomType(room, RoomType.TOGETHER);
 		saveOrUpdatePlace(room, member, request);
 		memberService.updateMemberRole(member, Role.USER);
 	}
@@ -69,7 +68,6 @@ public class PlaceService {
 	public void saveOrUpdatePlacesBySelfAndRoleUpdate(Room room, PlacesSaveOrUpdateBySelfRequest request) {
 
 		String roomId = room.getIdentityNumber();
-		roomService.updateRoomType(room, RoomType.SELF);
 		saveOrUpdatePlacesBySelf(room, request);
 		memberService.updateRomeMembersRole(roomId, Role.USER);
 	}

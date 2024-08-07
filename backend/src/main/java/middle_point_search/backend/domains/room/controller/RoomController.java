@@ -4,6 +4,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,6 +21,7 @@ import middle_point_search.backend.common.dto.ErrorResponse;
 import middle_point_search.backend.common.util.MemberLoader;
 import middle_point_search.backend.domains.room.domain.Room;
 import middle_point_search.backend.domains.room.dto.RoomDTO;
+import middle_point_search.backend.domains.room.dto.RoomDTO.RoomCreateRequest;
 import middle_point_search.backend.domains.room.dto.RoomDTO.RoomCreateResponse;
 import middle_point_search.backend.domains.room.dto.RoomDTO.RoomExistenceCheckResponse;
 import middle_point_search.backend.domains.room.service.RoomService;
@@ -49,8 +51,8 @@ public class RoomController {
 			)
 		}
 	)
-	public ResponseEntity<DataResponse<RoomCreateResponse>> roomCreate() {
-		RoomCreateResponse response = roomService.createRoom();
+	public ResponseEntity<DataResponse<RoomCreateResponse>> roomCreate(@RequestBody RoomCreateRequest request) {
+		RoomCreateResponse response = roomService.createRoom(request);
 
 		return ResponseEntity.ok(DataResponse.from(response));
 	}
