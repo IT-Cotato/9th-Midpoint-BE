@@ -46,8 +46,7 @@ public class Room {
 	private List<Member> members = new ArrayList<>();
 
 	@OneToMany(mappedBy = "room", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	private List<Place> places
-		= new ArrayList<>();
+	private List<Place> places = new ArrayList<>();
 
 	@Enumerated(EnumType.STRING)
 	private RoomType roomType;
@@ -55,17 +54,14 @@ public class Room {
 	@Enumerated(EnumType.STRING)
 	private Animal roomName;
 
-	public Room(String identityNumber) {
+	public Room(String identityNumber, RoomType roomType) {
 		this.identityNumber = identityNumber;
-		this.roomType = RoomType.DISABLED;
+		this.roomType = roomType;
 		this.roomName = Animal.getRandomAnimal();
 	}
 
-	public static Room from(String identityNumber) {
-		return new Room(identityNumber);
+	public static Room from(String identityNumber, RoomType roomType) {
+		return new Room(identityNumber, roomType);
 	}
 
-	public void updateRoomType(RoomType roomType) {
-		this.roomType = roomType;
-	}
 }

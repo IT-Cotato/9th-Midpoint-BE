@@ -23,6 +23,9 @@ import middle_point_search.backend.common.exception.CustomException;
 import middle_point_search.backend.common.properties.SecurityProperties;
 import middle_point_search.backend.common.security.jwt.provider.JwtTokenProvider;
 import middle_point_search.backend.domains.member.repository.MemberRepository;
+import middle_point_search.backend.domains.room.domain.Room;
+import middle_point_search.backend.domains.room.domain.RoomType;
+import middle_point_search.backend.domains.room.repository.RoomRepository;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -32,6 +35,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	private final MemberRepository memberRepository;
 	private final SecurityProperties securityProperties;
 	private final AntPathMatcher pathMatcher;
+	private final RoomRepository roomRepository;
 
 	@Override
 	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
@@ -51,8 +55,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 		final String refreshToken = jwtTokenProvider.extractRefreshToken(request).orElse(null);
 		final String accessToken = jwtTokenProvider.extractAccessToken(request).orElse(null);
+		final String tokenRoomId = jwtTokenProvider.extractRoomId(accessToken).orElse(null);
+
 		final String nowRoomId = jwtTokenProvider.extractRoomId(request).orElse(null);
-		final  String tokenRoomId =  jwtTokenProvider.extractRoomId(accessToken).orElse(null);
+		final RoomType nowRoomType = jwtTokenProvider.extractRoomType(request).orElse(null);
+		final Room room = roomRepository.findByIdentityNumber(nowRoomId)
+			.orElseThrow(() -> new CustomException(ROOM_NOT_FOUND));
 
 		//1. access토큰이 존재하며, accessToken이 유효하면 인증
 		//2. access토큰이 존재하며, accesToken이 유효하지 않으면 에러 리턴
@@ -70,6 +78,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			if (!Objects.equals(nowRoomId, tokenRoomId)) {
 				log.info("다른 방의 accessToken으로 인증 실패");
 				throw new CustomException(UNAUTHORIZED);
+			}
+
+			//토큰의 있는 방의 Type과 헤더릐 RoomType이 같은지 검사
+			if (nowRoomType != room.getRoomType()) {
+				throw new CustomException(ROOM_TYPE_UNPROCESSABLE);
 			}
 
 			log.info("access토큰 인증 성공");

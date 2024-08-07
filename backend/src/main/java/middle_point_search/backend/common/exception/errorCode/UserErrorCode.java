@@ -19,6 +19,7 @@ public enum UserErrorCode implements ErrorCode {
 	ROOM_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 방입니다."),
 	PLACE_NOT_FOUND(HttpStatus.NOT_FOUND, "방에 입력된 장소가 없습니다."),
 	PLACE_CONFLICT(HttpStatus.CONFLICT, "이미 장소를 저장하였습니다."),
+	ROOM_TYPE_UNPROCESSABLE(HttpStatus.UNPROCESSABLE_ENTITY, "방의 타입이 일치하지 않습니다."),
 
 	VOTE_NOT_FOUND(HttpStatus.NOT_FOUND, "투표를 한 적이 없습니다."),
 	VOTE_ROOM_NOT_FOUND(HttpStatus.NOT_FOUND, "생성된 투표방이 없습니다."),
@@ -27,9 +28,7 @@ public enum UserErrorCode implements ErrorCode {
 	DUPLICATE_VOTE_ROOM(HttpStatus.CONFLICT, "이미 투표방이 존재합니다."),
 
 	//5xx
-	API_INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "API 서버에 문제가 발생하였습니다.")
-
-	;
+	API_INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "API 서버에 문제가 발생하였습니다.");
 
 	private final HttpStatus httpStatus;
 	private final String message;

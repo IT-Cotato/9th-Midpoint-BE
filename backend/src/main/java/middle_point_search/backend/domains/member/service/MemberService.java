@@ -40,7 +40,7 @@ public class MemberService {
 	public Member createMember(String roomId, String name, String pw) throws RoomNotFoundException {
 
 		pw = encodePassword(pw);
-		Room room = roomRepository.findRoomByIdentityNumber(roomId)
+		Room room = roomRepository.findByIdentityNumber(roomId)
 			.orElseThrow(() -> new RoomNotFoundException("해당하는 방이 존재하지 않습니다"));
 
 		//회원 권한 정하기

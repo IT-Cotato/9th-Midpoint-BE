@@ -35,7 +35,7 @@ public class MemberLoader {
 	public Room getRoom() {
 		String roomId = getRoomId();
 
-		return roomRepository.findRoomByIdentityNumber(roomId)
+		return roomRepository.findByIdentityNumber(roomId)
 			.orElseThrow(() -> new CustomException(ROOM_NOT_FOUND));
 	}
 

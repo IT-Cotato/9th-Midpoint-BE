@@ -31,7 +31,7 @@ public class CustomUserDetailsServiceImpl implements CustomUserDetailsService {
 	@Transactional
 	public UserDetails loadUserByUsernameAndRoomId(String roomId, String name, String pw) throws UsernameNotFoundException, RoomNotFoundException {
 
-		roomRepository.findRoomByIdentityNumber(roomId);
+		roomRepository.findByIdentityNumber(roomId);
 		if (!roomRepository.existsByIdentityNumber(roomId)) {
 			throw new RoomNotFoundException("해당하는 방이 존재하지 않습니다");
 		}

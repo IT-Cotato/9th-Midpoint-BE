@@ -48,7 +48,8 @@ public class PlaceController {
 						
 			AccessToken 필요.""",
 		parameters = {
-			@Parameter(name = "RoomId", description = "roomId 필요", in = ParameterIn.HEADER)
+			@Parameter(name = "RoomId", description = "roomId 필요", in = ParameterIn.HEADER),
+			@Parameter(name = "RoomType", description = "roomType 필요. [TOGETHER, SELF] 중 하나", in = ParameterIn.HEADER)
 		},
 		responses = {
 			@ApiResponse(
@@ -56,12 +57,12 @@ public class PlaceController {
 				description = "성공"
 			),
 			@ApiResponse(
-				responseCode = "400",
-				description = "방 타입이 일치하지 않습니다."
-			),
-			@ApiResponse(
 				responseCode = "401",
 				description = "인증에 실패하였습니다."
+			),
+			@ApiResponse(
+				responseCode = "422",
+				description = "방의 타입이 일치하지 않습니다"
 			)
 		}
 	)
@@ -87,7 +88,8 @@ public class PlaceController {
 						
 			AccessToken 필요.""",
 		parameters = {
-			@Parameter(name = "RoomId", description = "roomId 필요", in = ParameterIn.HEADER)
+			@Parameter(name = "RoomId", description = "roomId 필요", in = ParameterIn.HEADER),
+			@Parameter(name = "RoomType", description = "roomType 필요. [TOGETHER, SELF] 중 하나", in = ParameterIn.HEADER)
 		},
 		responses = {
 			@ApiResponse(
@@ -95,16 +97,16 @@ public class PlaceController {
 				description = "성공"
 			),
 			@ApiResponse(
-				responseCode = "400",
-				description = "방 타입이 일치하지 않습니다."
-			),
-			@ApiResponse(
 				responseCode = "401",
 				description = "인증에 실패하였습니다."
+			),
+			@ApiResponse(
+				responseCode = "422",
+				description = "방의 타입이 일치하지 않습니다"
 			)
 		}
 	)
-	public ResponseEntity<BaseResponse> placesSaveOrUpdateBySelf(@RequestBody PlacesSaveOrUpdateBySelfRequest request) {
+	public ResponseEntity<BaseResponse> placesSaveOrUpdateBySelf(@RequestBody @Valid PlacesSaveOrUpdateBySelfRequest request) {
 
 		Room room = memberLoader.getRoom();
 
@@ -123,7 +125,8 @@ public class PlaceController {
 						
 			AccessToken 필요.""",
 		parameters = {
-			@Parameter(name = "RoomId", description = "roomId 필요", in = ParameterIn.HEADER)
+			@Parameter(name = "RoomId", description = "roomId 필요", in = ParameterIn.HEADER),
+			@Parameter(name = "RoomType", description = "roomType 필요. [TOGETHER, SELF] 중 하나", in = ParameterIn.HEADER)
 		},
 		responses = {
 			@ApiResponse(
@@ -137,6 +140,10 @@ public class PlaceController {
 			@ApiResponse(
 				responseCode = "401",
 				description = "인증에 실패하였습니다."
+			),
+			@ApiResponse(
+				responseCode = "422",
+				description = "방의 타입이 일치하지 않습니다"
 			)
 		}
 	)
@@ -157,7 +164,8 @@ public class PlaceController {
 						
 			AccessToken 필요.""",
 		parameters = {
-			@Parameter(name = "RoomId", description = "roomId 필요", in = ParameterIn.HEADER)
+			@Parameter(name = "RoomId", description = "roomId 필요", in = ParameterIn.HEADER),
+			@Parameter(name = "RoomType", description = "roomType 필요. [TOGETHER, SELF] 중 하나", in = ParameterIn.HEADER)
 		},
 		responses = {
 			@ApiResponse(
@@ -171,6 +179,10 @@ public class PlaceController {
 			@ApiResponse(
 				responseCode = "401",
 				description = "인증에 실패하였습니다."
+			),
+			@ApiResponse(
+				responseCode = "422",
+				description = "방의 타입이 일치하지 않습니다"
 			)
 		}
 	)

@@ -4,6 +4,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,6 +21,7 @@ import middle_point_search.backend.common.dto.ErrorResponse;
 import middle_point_search.backend.common.util.MemberLoader;
 import middle_point_search.backend.domains.room.domain.Room;
 import middle_point_search.backend.domains.room.dto.RoomDTO;
+import middle_point_search.backend.domains.room.dto.RoomDTO.RoomCreateRequest;
 import middle_point_search.backend.domains.room.dto.RoomDTO.RoomCreateResponse;
 import middle_point_search.backend.domains.room.dto.RoomDTO.RoomExistenceCheckResponse;
 import middle_point_search.backend.domains.room.service.RoomService;
@@ -49,8 +51,8 @@ public class RoomController {
 			)
 		}
 	)
-	public ResponseEntity<DataResponse<RoomCreateResponse>> roomCreate() {
-		RoomCreateResponse response = roomService.createRoom();
+	public ResponseEntity<DataResponse<RoomCreateResponse>> roomCreate(@RequestBody RoomCreateRequest request) {
+		RoomCreateResponse response = roomService.createRoom(request);
 
 		return ResponseEntity.ok(DataResponse.from(response));
 	}
@@ -81,7 +83,8 @@ public class RoomController {
 						
 			accessToken 필요.""",
 		parameters = {
-			@Parameter(name = "RoomId", description = "roomId 필요", in = ParameterIn.HEADER)
+			@Parameter(name = "RoomId", description = "roomId 필요", in = ParameterIn.HEADER),
+			@Parameter(name = "RoomType", description = "roomType 필요. [TOGETHER, SELF] 중 하나", in = ParameterIn.HEADER)
 		},
 		responses = {
 			@ApiResponse(
@@ -92,6 +95,15 @@ public class RoomController {
 				responseCode = "401",
 				description = "인증에 실패하였습니다.",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
+				responseCode = "403",
+				description = "접근이 거부되었습니다.",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
+				responseCode = "422",
+				description = "방의 타입이 일치하지 않습니다"
 			)
 		}
 	)

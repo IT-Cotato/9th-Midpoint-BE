@@ -37,8 +37,6 @@ public class TimeVoteRoomController {
 	private final MemberLoader memberLoader;
 
 	//투표방 생성
-	//투표방 재생성
-
 	@PostMapping
 	@Operation(
 		summary = "시간투표방 생성하기",
@@ -49,7 +47,8 @@ public class TimeVoteRoomController {
 
 			AccessToken 필요.""",
 		parameters = {
-			@Parameter(name = "RoomId", description = "roomId 필요", in = ParameterIn.HEADER)
+			@Parameter(name = "RoomId", description = "roomId 필요", in = ParameterIn.HEADER),
+			@Parameter(name = "RoomType", description = "roomType 필요. [TOGETHER, SELF] 중 하나", in = ParameterIn.HEADER)
 		},
 		responses = {
 			@ApiResponse(
@@ -87,6 +86,8 @@ public class TimeVoteRoomController {
 
 		return ResponseEntity.ok(DataResponse.from(response));
 	}
+
+	//투표방 재생성
 	@PutMapping
 	@Operation(
 		summary = "시간투표방 재생성하기",
@@ -97,7 +98,8 @@ public class TimeVoteRoomController {
 			            
 			AccessToken 필요.""",
 		parameters = {
-			@Parameter(name = "RoomId", description = "roomId 필요", in = ParameterIn.HEADER)
+			@Parameter(name = "RoomId", description = "roomId 필요", in = ParameterIn.HEADER),
+			@Parameter(name = "RoomType", description = "roomType 필요. [TOGETHER, SELF] 중 하나", in = ParameterIn.HEADER)
 		},
 		responses = {
 			@ApiResponse(
@@ -123,6 +125,10 @@ public class TimeVoteRoomController {
 				responseCode = "404",
 				description = "생성된 투표방이 없습니다.",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
+				responseCode = "422",
+				description = "방의 타입이 일치하지 않습니다"
 			)
 		}
 	)
@@ -145,7 +151,8 @@ public class TimeVoteRoomController {
 			            
 			AccessToken 필요.""",
 		parameters = {
-			@Parameter(name = "RoomId", description = "roomId 필요", in = ParameterIn.HEADER)
+			@Parameter(name = "RoomId", description = "roomId 필요", in = ParameterIn.HEADER),
+			@Parameter(name = "RoomType", description = "roomType 필요. [TOGETHER, SELF] 중 하나", in = ParameterIn.HEADER)
 		},
 		responses = {
 			@ApiResponse(
@@ -172,6 +179,10 @@ public class TimeVoteRoomController {
 				responseCode = "409",
 				description = "이미 투표를 하였습니다.",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
+				responseCode = "422",
+				description = "방의 타입이 일치하지 않습니다"
 			)
 		}
 	)
@@ -194,7 +205,8 @@ public class TimeVoteRoomController {
 			            
 			AccessToken 필요.""",
 		parameters = {
-			@Parameter(name = "RoomId", description = "roomId 필요", in = ParameterIn.HEADER)
+			@Parameter(name = "RoomId", description = "roomId 필요", in = ParameterIn.HEADER),
+			@Parameter(name = "RoomType", description = "roomType 필요. [TOGETHER, SELF] 중 하나", in = ParameterIn.HEADER)
 		},
 		responses = {
 			@ApiResponse(
@@ -220,6 +232,10 @@ public class TimeVoteRoomController {
 				responseCode = "404",
 				description = "투표를 한 적이 없습니다.",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
+				responseCode = "422",
+				description = "방의 타입이 일치하지 않습니다"
 			)
 		}
 	)
@@ -242,7 +258,8 @@ public class TimeVoteRoomController {
 			         
 			AccessToken 필요.""",
 		parameters = {
-			@Parameter(name = "RoomId", description = "roomId 필요", in = ParameterIn.HEADER)
+			@Parameter(name = "RoomId", description = "roomId 필요", in = ParameterIn.HEADER),
+			@Parameter(name = "RoomType", description = "roomType 필요. [TOGETHER, SELF] 중 하나", in = ParameterIn.HEADER)
 		},
 		responses = {
 			@ApiResponse(
@@ -258,6 +275,10 @@ public class TimeVoteRoomController {
 				responseCode = "403",
 				description = "접근이 거부되었습니다.",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
+				responseCode = "422",
+				description = "방의 타입이 일치하지 않습니다"
 			)
 		}
 	)
@@ -279,7 +300,8 @@ public class TimeVoteRoomController {
 						
 			AccessToken 필요.""",
 		parameters = {
-			@Parameter(name = "RoomId", description = "roomId 필요", in = ParameterIn.HEADER)
+			@Parameter(name = "RoomId", description = "roomId 필요", in = ParameterIn.HEADER),
+			@Parameter(name = "RoomType", description = "roomType 필요. [TOGETHER, SELF] 중 하나", in = ParameterIn.HEADER)
 		},
 		responses = {
 			@ApiResponse(
@@ -300,6 +322,10 @@ public class TimeVoteRoomController {
 				responseCode = "404",
 				description = "생성된 투표방이 없습니다.",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
+				responseCode = "422",
+				description = "방의 타입이 일치하지 않습니다"
 			)
 		}
 	)
@@ -322,7 +348,8 @@ public class TimeVoteRoomController {
 			 
 			AccessToken 필요.""",
 		parameters = {
-			@Parameter(name = "RoomId", description = "roomId 필요", in = ParameterIn.HEADER)
+			@Parameter(name = "RoomId", description = "roomId 필요", in = ParameterIn.HEADER),
+			@Parameter(name = "RoomType", description = "roomType 필요. [TOGETHER, SELF] 중 하나", in = ParameterIn.HEADER)
 		},
 		responses = {
 			@ApiResponse(
@@ -343,6 +370,10 @@ public class TimeVoteRoomController {
 				responseCode = "404",
 				description = "생성된 투표방이 없습니다.",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
+				responseCode = "422",
+				description = "방의 타입이 일치하지 않습니다"
 			)
 		}
 

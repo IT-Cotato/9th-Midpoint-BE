@@ -11,6 +11,7 @@ import middle_point_search.backend.common.exception.errorCode.CommonErrorCode;
 import middle_point_search.backend.domains.room.domain.Room;
 import middle_point_search.backend.domains.room.domain.RoomType;
 import middle_point_search.backend.domains.room.dto.RoomDTO;
+import middle_point_search.backend.domains.room.dto.RoomDTO.RoomCreateRequest;
 import middle_point_search.backend.domains.room.dto.RoomDTO.RoomCreateResponse;
 import middle_point_search.backend.domains.room.dto.RoomDTO.RoomExistenceCheckResponse;
 import middle_point_search.backend.domains.room.dto.RoomDTO.RoomNameResponse;
@@ -25,10 +26,11 @@ public class RoomService {
 
 	//Room 저장하기
 	@Transactional
-	public RoomCreateResponse createRoom() {
+	public RoomCreateResponse createRoom(RoomCreateRequest request) {
 		String identityNumber = UUID.randomUUID().toString();
+		RoomType roomType = request.getRoomType();
 
-		Room room = Room.from(identityNumber);
+		Room room = Room.from(identityNumber, roomType);
 
 		roomRepository.save(room);
 
@@ -39,19 +41,6 @@ public class RoomService {
 		boolean existence = roomRepository.existsByIdentityNumber(identityNumber);
 
 		return RoomExistenceCheckResponse.from(existence);
-	}
-
-	//RoomType 변경하기
-	@Transactional
-	public void updateRoomType(Room room, RoomType roomType) {
-		//1.방 type이 disable로 지정이 안되어 있을 경우에만 변경
-		//2.방 type과 다른 방타입으로 요청이 왔으면 에러 리턴
-		//3.그 외는 패스
-		if (room.getRoomType() == RoomType.DISABLED) {
-			room.updateRoomType(roomType);
-		} else if (roomType != room.getRoomType()) {
-			throw new CustomException(CommonErrorCode.BAD_REQUEST);
-		}
 	}
 
 	//Room 이름 조회

@@ -7,6 +7,7 @@ import org.springframework.security.core.Authentication;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import middle_point_search.backend.domains.room.domain.RoomType;
 
 public interface JwtTokenProvider {
 
@@ -29,6 +30,8 @@ public interface JwtTokenProvider {
 	Optional<String> extractRefreshToken(HttpServletRequest request);
 
 	Optional<String> extractRoomId(HttpServletRequest request);
+
+	Optional<RoomType> extractRoomType(HttpServletRequest request);
 
 	Claims parseClaims(String accessToken);
 

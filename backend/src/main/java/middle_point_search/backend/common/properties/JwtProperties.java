@@ -15,6 +15,7 @@ public class JwtProperties {
 	private Access access;
 	private Refresh refresh;
 	private RoomId roomId;
+	private RoomType roomType;
 
 	private String ACCESS_TOKEN_SUBJECT = "AccessToken";
 	private String REFRESH_TOKEN_SUBJECT = "RefreshToken";
@@ -39,6 +40,12 @@ public class JwtProperties {
 	@Getter
 	@Setter
 	public static class RoomId {
+		private String header;
+	}
+
+	@Getter
+	@Setter
+	public static class RoomType {
 		private String header;
 	}
 }
