@@ -28,6 +28,7 @@ import middle_point_search.backend.common.security.login.handler.LoginFailureHan
 import middle_point_search.backend.common.security.login.handler.LoginSuccessHandler;
 import middle_point_search.backend.common.security.login.provider.CustomAuthenticationProvider;
 import middle_point_search.backend.domains.member.repository.MemberRepository;
+import middle_point_search.backend.domains.room.repository.RoomRepository;
 
 @Configuration
 @EnableWebSecurity
@@ -38,6 +39,7 @@ public class SecurityConfig {
 	private final CustomAuthenticationProvider authenticationProvider;
 	private final JwtTokenProvider jwtTokenProvider;
 	private final MemberRepository memberRepository;
+	private final RoomRepository roomRepository;
 
 	private final SecurityProperties securityProperties;
 	private final UrlBasedCorsConfigurationSource ConfigurationSource;
@@ -107,7 +109,7 @@ public class SecurityConfig {
 	//JWT 필터 등록
 	@Bean
 	public JwtAuthenticationFilter jwtAuthenticationFilter() {
-		return new JwtAuthenticationFilter(jwtTokenProvider, memberRepository, securityProperties, pathMatcher);
+		return new JwtAuthenticationFilter(jwtTokenProvider, memberRepository, securityProperties, pathMatcher, roomRepository);
 	}
 
 	//예외 핸들링 필터 등록

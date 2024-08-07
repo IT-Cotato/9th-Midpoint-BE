@@ -36,6 +36,7 @@ import middle_point_search.backend.common.security.jwt.dto.JwtDTO.AccessTokenRes
 import middle_point_search.backend.common.util.ResponseWriter;
 import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.member.repository.MemberRepository;
+import middle_point_search.backend.domains.room.domain.RoomType;
 
 @Transactional(readOnly = true)
 @Service
@@ -159,6 +160,12 @@ public class JwtTokenProviderImpl implements JwtTokenProvider {
 	@Override
 	public Optional<String> extractRoomId(HttpServletRequest request) {
 		return Optional.ofNullable(request.getHeader(jwtProperties.getRoomId().getHeader()));
+	}
+
+	@Override
+	public Optional<RoomType> extractRoomType(HttpServletRequest request) {
+		String roomType = request.getHeader(jwtProperties.getRoomType().getHeader());
+		return Optional.ofNullable(RoomType.getRoomTypeByName(roomType));
 	}
 
 	@Override
