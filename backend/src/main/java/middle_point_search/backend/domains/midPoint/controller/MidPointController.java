@@ -38,7 +38,8 @@ public class MidPointController {
 						
 			AccessToken 필요.""",
 		parameters = {
-			@Parameter(name = "RoomId", description = "roomId 필요", in = ParameterIn.HEADER)
+			@Parameter(name = "RoomId", description = "roomId 필요", in = ParameterIn.HEADER),
+			@Parameter(name = "RoomType", description = "roomType 필요. [TOGETHER, SELF] 중 하나", in = ParameterIn.HEADER)
 		},
 		responses = {
 			@ApiResponse(
