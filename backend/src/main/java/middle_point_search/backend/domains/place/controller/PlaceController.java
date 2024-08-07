@@ -56,6 +56,10 @@ public class PlaceController {
 				description = "성공"
 			),
 			@ApiResponse(
+				responseCode = "400",
+				description = "방 타입이 일치하지 않습니다."
+			),
+			@ApiResponse(
 				responseCode = "401",
 				description = "인증에 실패하였습니다."
 			)
@@ -89,6 +93,10 @@ public class PlaceController {
 			@ApiResponse(
 				responseCode = "200",
 				description = "성공"
+			),
+			@ApiResponse(
+				responseCode = "400",
+				description = "방 타입이 일치하지 않습니다."
 			),
 			@ApiResponse(
 				responseCode = "401",
