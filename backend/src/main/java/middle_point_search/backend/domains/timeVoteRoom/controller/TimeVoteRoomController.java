@@ -128,7 +128,8 @@ public class TimeVoteRoomController {
 			),
 			@ApiResponse(
 				responseCode = "422",
-				description = "방의 타입이 일치하지 않습니다"
+				description = "방의 타입이 일치하지 않습니다",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			)
 		}
 	)
@@ -182,7 +183,8 @@ public class TimeVoteRoomController {
 			),
 			@ApiResponse(
 				responseCode = "422",
-				description = "방의 타입이 일치하지 않습니다"
+				description = "방의 타입이 일치하지 않습니다",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			)
 		}
 	)
@@ -235,7 +237,8 @@ public class TimeVoteRoomController {
 			),
 			@ApiResponse(
 				responseCode = "422",
-				description = "방의 타입이 일치하지 않습니다"
+				description = "방의 타입이 일치하지 않습니다",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			)
 		}
 	)
@@ -278,7 +281,8 @@ public class TimeVoteRoomController {
 			),
 			@ApiResponse(
 				responseCode = "422",
-				description = "방의 타입이 일치하지 않습니다"
+				description = "방의 타입이 일치하지 않습니다",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			)
 		}
 	)
@@ -325,7 +329,8 @@ public class TimeVoteRoomController {
 			),
 			@ApiResponse(
 				responseCode = "422",
-				description = "방의 타입이 일치하지 않습니다"
+				description = "방의 타입이 일치하지 않습니다",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			)
 		}
 	)
@@ -373,7 +378,8 @@ public class TimeVoteRoomController {
 			),
 			@ApiResponse(
 				responseCode = "422",
-				description = "방의 타입이 일치하지 않습니다"
+				description = "방의 타입이 일치하지 않습니다",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			)
 		}
 

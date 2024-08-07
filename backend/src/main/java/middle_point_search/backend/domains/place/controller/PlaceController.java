@@ -10,12 +10,15 @@ import org.springframework.web.bind.annotation.RestController;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.dto.BaseResponse;
 import middle_point_search.backend.common.dto.DataResponse;
+import middle_point_search.backend.common.dto.ErrorResponse;
 import middle_point_search.backend.common.util.MemberLoader;
 import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.place.dto.PlaceDTO.PlaceFindResponse;
@@ -62,7 +65,8 @@ public class PlaceController {
 			),
 			@ApiResponse(
 				responseCode = "422",
-				description = "방의 타입이 일치하지 않습니다"
+				description = "방의 타입이 일치하지 않습니다",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			)
 		}
 	)
@@ -102,7 +106,8 @@ public class PlaceController {
 			),
 			@ApiResponse(
 				responseCode = "422",
-				description = "방의 타입이 일치하지 않습니다"
+				description = "방의 타입이 일치하지 않습니다",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			)
 		}
 	)
@@ -143,7 +148,8 @@ public class PlaceController {
 			),
 			@ApiResponse(
 				responseCode = "422",
-				description = "방의 타입이 일치하지 않습니다"
+				description = "방의 타입이 일치하지 않습니다",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			)
 		}
 	)
@@ -182,7 +188,8 @@ public class PlaceController {
 			),
 			@ApiResponse(
 				responseCode = "422",
-				description = "방의 타입이 일치하지 않습니다"
+				description = "방의 타입이 일치하지 않습니다",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			)
 		}
 	)
