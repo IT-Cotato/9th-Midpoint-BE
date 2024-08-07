@@ -56,11 +56,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		final String refreshToken = jwtTokenProvider.extractRefreshToken(request).orElse(null);
 		final String accessToken = jwtTokenProvider.extractAccessToken(request).orElse(null);
 		final String tokenRoomId = jwtTokenProvider.extractRoomId(accessToken).orElse(null);
+		final Room room = roomRepository.findByIdentityNumber(tokenRoomId)
+			.orElseThrow(() -> new CustomException(ROOM_NOT_FOUND));
 
 		final String nowRoomId = jwtTokenProvider.extractRoomId(request).orElse(null);
 		final RoomType nowRoomType = jwtTokenProvider.extractRoomType(request).orElse(null);
-		final Room room = roomRepository.findByIdentityNumber(nowRoomId)
-			.orElseThrow(() -> new CustomException(ROOM_NOT_FOUND));
 
 		//1. access토큰이 존재하며, accessToken이 유효하면 인증
 		//2. access토큰이 존재하며, accesToken이 유효하지 않으면 에러 리턴
