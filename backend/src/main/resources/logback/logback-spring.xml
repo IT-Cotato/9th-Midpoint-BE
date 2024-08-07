@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration scan="true" scanPeriod="60 seconds">
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter"/>
+
+    <!--CONSOLE에 찍히는 로그와 FILE에 찍히는 로그 다르게(색상 유무)-->
+    <property name="CONSOLE_LOG_PATTERN"
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %clr(%5level) %cyan(%logger) - %msg%n"/>
+    <property name="FILE_LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %5level %logger - %msg%n"/>
+
+    <!-- 기본 설정 (dev 프로필 처럼 동작하도록 설정) -->
+    <include resource="file-info-appender.xml"/>
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+
+    <logger level="DEBUG" name="org.hibernate.SQL">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+
+    <logger level="TRACE" name="org.hibernate.type.descriptor.sql.BasicBinder">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+
+    <!--프로필별로 로그 설정-->
+    <!--local: 콘솔에 출력-->
+    <springProfile name="local">
+        <!--middle_point_search.backend에 포함된 클래스는 DEBUG 나타내도록-->
+        <logger level="DEBUG" name="middle_point_search.backend"/>
+        <include resource="console-appender.xml"/>
+        <!-- 전체적인 로그는 INFO 레벨 부터 출력 -->
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+        </root>
+    </springProfile>
+
+    <!--dev:콘솔, 파일 둘다 출력-->
+    <springProfile name="dev">
+        <include resource="file-info-appender.xml"/>
+
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="FILE-INFO"/>
+        </root>
+
+        <logger level="DEBUG" name="org.hibernate.SQL">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="FILE-INFO"/>
+        </logger>
+
+        <logger level="TRACE" name="org.hibernate.type.descriptor.sql.BasicBinder">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="FILE-INFO"/>
+        </logger>
+    </springProfile>
+
+    <!--prod:파일에 출력-->
+    <springProfile name="prod">
+        <include resource="file-error-appender.xml"/>
+
+        <root level="ERROR">
+            <appender-ref ref="FILE-ERROR"/>
+        </root>
+    </springProfile>
+</configuration>
+
+
+
+

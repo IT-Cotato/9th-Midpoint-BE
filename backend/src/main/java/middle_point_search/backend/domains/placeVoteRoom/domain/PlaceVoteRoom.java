@@ -16,28 +16,28 @@ import static middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteRoo
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PlaceVoteRoom {
 
-    @Id
-    @Column(name = "place_vote_room_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@Id
+	@Column(name = "place_vote_room_id")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    @OneToOne
-    @JoinColumn(name = "room_id")
-    private Room room;
+	@OneToOne
+	@JoinColumn(name = "room_id")
+	private Room room;
 
-    @OneToMany(mappedBy = "placeVoteRoom", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<PlaceVoteCandidate> placeVoteCandidates = new ArrayList<>();
+	@OneToMany(mappedBy = "placeVoteRoom", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private List<PlaceVoteCandidate> placeVoteCandidates = new ArrayList<>();
 
-    public PlaceVoteRoom(Room room, List<PlaceCandidateInfo> candidates) {
-        this.room = room;
-        this.placeVoteCandidates.clear();
-        for (PlaceCandidateInfo candidate : candidates) {
-            addPlaceVoteCandidate(candidate);
-        }
-    }
+	public PlaceVoteRoom(Room room, List<PlaceCandidateInfo> candidates) {
+		this.room = room;
+		this.placeVoteCandidates.clear();
+		for (PlaceCandidateInfo candidate : candidates) {
+			addPlaceVoteCandidate(candidate);
+		}
+	}
 
-    public void addPlaceVoteCandidate(PlaceCandidateInfo candidate) {
-        this.placeVoteCandidates.add(new PlaceVoteCandidate(candidate, this));
-    }
+	public void addPlaceVoteCandidate(PlaceCandidateInfo candidate) {
+		this.placeVoteCandidates.add(new PlaceVoteCandidate(candidate, this));
+	}
 }
 

@@ -1,5 +1,6 @@
 package middle_point_search.backend.domains.placeVoteRoom.controller;
 
+import static middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteRoomDTO.*;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,19 +16,16 @@ import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import jakarta.validation.Valid;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.dto.BaseResponse;
 import middle_point_search.backend.common.dto.DataResponse;
 import middle_point_search.backend.common.dto.ErrorResponse;
 import middle_point_search.backend.common.util.MemberLoader;
-import middle_point_search.backend.domains.placeVoteRoom.service.PlaceVoteRoomService;
 import middle_point_search.backend.domains.member.domain.Member;
+import middle_point_search.backend.domains.placeVoteRoom.service.PlaceVoteRoomService;
 import middle_point_search.backend.domains.room.domain.Room;
-import static middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteRoomDTO.*;
-
-
 
 @Tag(name = "PLACE VOTE ROOM API", description = "장소 투표에 대한 API입니다.")
 

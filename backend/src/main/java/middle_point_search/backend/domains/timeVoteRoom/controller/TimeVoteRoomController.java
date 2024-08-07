@@ -175,7 +175,7 @@ public class TimeVoteRoomController {
 			)
 		}
 	)
-	public ResponseEntity<?> vote(@RequestBody TimeVoteRoomVoteRequest request) {
+	public ResponseEntity<?> vote(@RequestBody @Valid TimeVoteRoomVoteRequest request) {
 
 		Member member = memberLoader.getMember();
 		Room room = memberLoader.getRoom();
@@ -223,7 +223,7 @@ public class TimeVoteRoomController {
 			)
 		}
 	)
-	public ResponseEntity<?> voteUpdate(@RequestBody TimeVoteRoomVoteRequest request) {
+	public ResponseEntity<?> voteUpdate(@RequestBody @Valid TimeVoteRoomVoteRequest request) {
 
 		Member member = memberLoader.getMember();
 		Room room = memberLoader.getRoom();
