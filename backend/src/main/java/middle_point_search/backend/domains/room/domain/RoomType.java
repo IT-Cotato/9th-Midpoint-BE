@@ -1,6 +1,6 @@
 package middle_point_search.backend.domains.room.domain;
 
-import static middle_point_search.backend.common.exception.errorCode.CommonErrorCode.*;
+import static middle_point_search.backend.common.exception.errorCode.UserErrorCode.*;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -22,6 +22,6 @@ public enum RoomType {
 		return Arrays.stream(RoomType.values())
 			.filter(roomType -> Objects.equals(roomType.roomName, name))
 			.findFirst()
-			.orElseThrow(() -> new CustomException(BAD_REQUEST));
+			.orElseThrow(() -> new CustomException(ROOM_TYPE_UNPROCESSABLE));
 	}
 }
