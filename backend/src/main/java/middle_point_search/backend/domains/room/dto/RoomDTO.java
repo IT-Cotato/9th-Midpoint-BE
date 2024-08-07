@@ -1,5 +1,6 @@
 package middle_point_search.backend.domains.room.dto;
 
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -43,7 +44,8 @@ public class RoomDTO {
 	@NoArgsConstructor(access = AccessLevel.PRIVATE)
 	public static class RoomCreateRequest {
 
-		@NotNull
+		@Parameter(required = true)
+		@NotNull(message = "값이 비어있으면 안 됩니다.")
 		private RoomType roomType;
 	}
 }

@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.dto.DataResponse;
 import middle_point_search.backend.common.dto.ErrorResponse;
@@ -51,13 +52,18 @@ public class RoomController {
 				description = "성공"
 			),
 			@ApiResponse(
+				responseCode = "400",
+				description = "요청이 잘 못 되었습니다.",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
 				responseCode = "429",
 				description = "요청을 너무 많이 했습니다.",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			)
 		}
 	)
-	public ResponseEntity<DataResponse<RoomCreateResponse>> roomCreate(@RequestBody RoomCreateRequest request) {
+	public ResponseEntity<DataResponse<RoomCreateResponse>> roomCreate(@RequestBody @Valid RoomCreateRequest request) {
 		RoomCreateResponse response = roomService.createRoom(request);
 
 		return ResponseEntity.ok(DataResponse.from(response));
