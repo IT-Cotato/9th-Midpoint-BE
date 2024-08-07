@@ -26,7 +26,7 @@ import middle_point_search.backend.domains.room.dto.RoomDTO.RoomCreateResponse;
 import middle_point_search.backend.domains.room.dto.RoomDTO.RoomExistenceCheckResponse;
 import middle_point_search.backend.domains.room.service.RoomService;
 
-@Tag(name = "ROOM API",  description = "방에 대한 API입니다.")
+@Tag(name = "ROOM API", description = "방에 대한 API입니다.")
 @RestController
 @RequestMapping("/api/rooms")
 @RequiredArgsConstructor
@@ -38,7 +38,13 @@ public class RoomController {
 	@PostMapping
 	@Operation(
 		summary = "방 생성하기",
-		description = "방을 생성한다.",
+		description = """
+			방을 생성한다.
+			
+			RoomType에는 [TOGETHER, SELF] 중 하나가 올 수 있다.
+			
+			TOGETHER는 개개인 장소 입력, SELF는 한 사람이 모든 장소 입력을 의미한다.
+			""",
 		responses = {
 			@ApiResponse(
 				responseCode = "200",
