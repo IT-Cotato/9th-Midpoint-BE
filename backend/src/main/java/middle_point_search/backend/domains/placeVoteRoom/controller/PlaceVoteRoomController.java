@@ -75,6 +75,10 @@ public class PlaceVoteRoomController {
 				responseCode = "409",
 				description = "이미 투표방이 존재합니다.",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
+				responseCode = "422",
+				description = "방의 타입이 일치하지 않습니다"
 			)
 		}
 	)
@@ -124,6 +128,10 @@ public class PlaceVoteRoomController {
 				responseCode = "404",
 				description = "생성된 투표방이 없습니다.",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
+				responseCode = "422",
+				description = "방의 타입이 일치하지 않습니다"
 			)
 		}
 	)
@@ -167,6 +175,10 @@ public class PlaceVoteRoomController {
 				responseCode = "404",
 				description = "생성된 투표방이 없습니다.",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
+				responseCode = "422",
+				description = "방의 타입이 일치하지 않습니다"
 			)
 		}
 	)
@@ -219,6 +231,10 @@ public class PlaceVoteRoomController {
 				responseCode = "409",
 				description = "이미 투표를 하였습니다.",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
+				responseCode = "422",
+				description = "방의 타입이 일치하지 않습니다"
 			)
 		}
 	)
@@ -272,6 +288,10 @@ public class PlaceVoteRoomController {
 				responseCode = "404",
 				description = "투표를 한 적이 없습니다.",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
+				responseCode = "422",
+				description = "방의 타입이 일치하지 않습니다"
 			)
 		}
 	)
@@ -310,6 +330,10 @@ public class PlaceVoteRoomController {
 				responseCode = "403",
 				description = "접근이 거부되었습니다.",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
+				responseCode = "422",
+				description = "방의 타입이 일치하지 않습니다"
 			)
 		}
 	)
@@ -352,6 +376,10 @@ public class PlaceVoteRoomController {
 				responseCode = "404",
 				description = "생성된 투표방이 없습니다.",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
+				responseCode = "422",
+				description = "방의 타입이 일치하지 않습니다"
 			)
 		}
 	)

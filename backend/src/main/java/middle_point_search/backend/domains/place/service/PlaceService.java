@@ -23,8 +23,6 @@ import middle_point_search.backend.domains.place.dto.PlaceDTO.PlacesFindResponse
 import middle_point_search.backend.domains.place.dto.PlaceDTO.PlacesSaveOrUpdateBySelfRequest;
 import middle_point_search.backend.domains.place.repository.PlaceRepository;
 import middle_point_search.backend.domains.room.domain.Room;
-import middle_point_search.backend.domains.room.domain.RoomType;
-import middle_point_search.backend.domains.room.service.RoomService;
 
 @Slf4j
 @Service
@@ -33,7 +31,6 @@ import middle_point_search.backend.domains.room.service.RoomService;
 public class PlaceService {
 
 	private final PlaceRepository placeRepository;
-	private final RoomService roomService;
 	private final MemberService memberService;
 
 	//장소 저장 및 업데이트 하고, Member 및 Room 역할 변경
@@ -98,7 +95,7 @@ public class PlaceService {
 
 		//내 장소 조회
 		PlaceVO myPlace = placeRepository.findByRoom_IdentityNumberAndMember_Name(roomId, memberName)
-			.map(Place:: toVO)
+			.map(Place::toVO)
 			.orElse(null);
 
 		//내 장소 존재 유무

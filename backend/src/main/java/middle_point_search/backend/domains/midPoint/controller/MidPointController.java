@@ -65,6 +65,10 @@ public class MidPointController {
 				responseCode = "404",
 				description = "방에 입력된 장소가 없습니다.",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
+				responseCode = "422",
+				description = "방의 타입이 일치하지 않습니다"
 			)
 		}
 	)

@@ -59,6 +59,10 @@ public class PlaceController {
 			@ApiResponse(
 				responseCode = "401",
 				description = "인증에 실패하였습니다."
+			),
+			@ApiResponse(
+				responseCode = "422",
+				description = "방의 타입이 일치하지 않습니다"
 			)
 		}
 	)
@@ -95,6 +99,10 @@ public class PlaceController {
 			@ApiResponse(
 				responseCode = "401",
 				description = "인증에 실패하였습니다."
+			),
+			@ApiResponse(
+				responseCode = "422",
+				description = "방의 타입이 일치하지 않습니다"
 			)
 		}
 	)
@@ -132,6 +140,10 @@ public class PlaceController {
 			@ApiResponse(
 				responseCode = "401",
 				description = "인증에 실패하였습니다."
+			),
+			@ApiResponse(
+				responseCode = "422",
+				description = "방의 타입이 일치하지 않습니다"
 			)
 		}
 	)
@@ -167,6 +179,10 @@ public class PlaceController {
 			@ApiResponse(
 				responseCode = "401",
 				description = "인증에 실패하였습니다."
+			),
+			@ApiResponse(
+				responseCode = "422",
+				description = "방의 타입이 일치하지 않습니다"
 			)
 		}
 	)
