@@ -23,6 +23,7 @@ import middle_point_search.backend.domains.place.dto.PlaceDTO.PlacesFindResponse
 import middle_point_search.backend.domains.place.dto.PlaceDTO.PlacesSaveOrUpdateBySelfRequest;
 import middle_point_search.backend.domains.place.repository.PlaceRepository;
 import middle_point_search.backend.domains.room.domain.Room;
+import middle_point_search.backend.domains.room.domain.RoomType;
 
 @Slf4j
 @Service
@@ -37,12 +38,15 @@ public class PlaceService {
 	@Transactional(rollbackFor = {CustomException.class})
 	public void saveOrUpdatePlaceAndRoleUpdate(Room room, Member member, PlaceSaveOrUpdateRequest request) {
 
+		checkRoomType(room.getRoomType(), RoomType.TOGETHER);
+
 		saveOrUpdatePlace(room, member, request);
 		memberService.updateMemberRole(member, Role.USER);
 	}
 
 	//장소 저장 및 업데이트
 	private void saveOrUpdatePlace(Room room, Member member, PlaceSaveOrUpdateRequest request) {
+
 		String roomId = room.getIdentityNumber();
 		String name = member.getName();
 
@@ -65,6 +69,9 @@ public class PlaceService {
 	public void saveOrUpdatePlacesBySelfAndRoleUpdate(Room room, PlacesSaveOrUpdateBySelfRequest request) {
 
 		String roomId = room.getIdentityNumber();
+
+		checkRoomType(room.getRoomType(), RoomType.SELF);
+
 		saveOrUpdatePlacesBySelf(room, request);
 		memberService.updateRomeMembersRole(roomId, Role.USER);
 	}
@@ -125,4 +132,10 @@ public class PlaceService {
 		return new PlacesFindResponse(existence, placeVOs);
 	}
 
+	private void checkRoomType(RoomType requestRoomType, RoomType expectationRoomType) {
+
+		if (requestRoomType != expectationRoomType) {
+			throw new CustomException(ROOM_TYPE_UNPROCESSABLE);
+		}
+	}
 }

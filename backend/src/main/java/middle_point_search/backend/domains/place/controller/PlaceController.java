@@ -111,7 +111,8 @@ public class PlaceController {
 			)
 		}
 	)
-	public ResponseEntity<BaseResponse> placesSaveOrUpdateBySelf(@RequestBody @Valid PlacesSaveOrUpdateBySelfRequest request) {
+	public ResponseEntity<BaseResponse> placesSaveOrUpdateBySelf(
+		@RequestBody @Valid PlacesSaveOrUpdateBySelfRequest request) {
 
 		Room room = memberLoader.getRoom();
 
@@ -120,12 +121,12 @@ public class PlaceController {
 		return ResponseEntity.ok(BaseResponse.ok());
 	}
 
-	@GetMapping("/self")
+	@GetMapping
 	@Operation(
 		summary = "개개인 장소 조회하기",
 		description = """
 			개개인이 저장한 장소 및 다른 사람들이 저장한 장소들 조회하기.
-			
+						
 			다른 사람들이 저장한 장소(otherPlaces)에는 당사자가 저장한 장소는 포함되지 않는다.
 						
 			AccessToken 필요.""",
@@ -162,12 +163,12 @@ public class PlaceController {
 		return ResponseEntity.ok(DataResponse.from(response));
 	}
 
-	@GetMapping
+	@GetMapping("/self")
 	@Operation(
 		summary = "개인 장소 조회하기",
 		description = """
-			저장된 장소 리스트 조회하기.
-						
+			개인이 저장한 장소들 조회하기.
+							
 			AccessToken 필요.""",
 		parameters = {
 			@Parameter(name = "RoomId", description = "roomId 필요", in = ParameterIn.HEADER),
