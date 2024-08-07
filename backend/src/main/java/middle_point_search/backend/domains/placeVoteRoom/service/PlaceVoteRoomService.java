@@ -10,6 +10,7 @@ import middle_point_search.backend.domains.placeVoteRoom.repository.PlaceVoteCan
 import middle_point_search.backend.domains.placeVoteRoom.repository.PlaceVoteRoomRepository;
 import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.room.domain.Room;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,108 +26,121 @@ import static middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteRoo
 @Transactional(readOnly = true)
 public class PlaceVoteRoomService {
 
-    private final PlaceVoteRoomRepository placeVoteRoomRepository;
-    private final PlaceVoteCandidateMemberRepository placeVoteCandidateMemberRepository;
-    private final PlaceVoteCandidateRepository placeVoteCandidateRepository;
+	private final PlaceVoteRoomRepository placeVoteRoomRepository;
+	private final PlaceVoteCandidateMemberRepository placeVoteCandidateMemberRepository;
+	private final PlaceVoteCandidateRepository placeVoteCandidateRepository;
 
-    // 장소투표방 생성
-    @Transactional(rollbackFor = {CustomException.class})
-    public PlaceVoteRoomCreateResponse createPlaceVoteRoom(Room room,PlaceVoteRoomCreateRequest request) {
+	// 장소투표방 생성
+	@Transactional(rollbackFor = {CustomException.class})
+	public PlaceVoteRoomCreateResponse createPlaceVoteRoom(Room room, PlaceVoteRoomCreateRequest request) {
 
-        boolean exists = placeVoteRoomRepository.existsByRoom(room);
+		boolean exists = placeVoteRoomRepository.existsByRoom(room);
 
-        if (exists) {
-            throw new CustomException(DUPLICATE_VOTE_ROOM);
-        }
+		if (exists) {
+			throw new CustomException(DUPLICATE_VOTE_ROOM);
+		}
 
-        PlaceVoteRoom placeVoteRoom = new PlaceVoteRoom(room,request.getPlaceCandidates());
-        PlaceVoteRoom savedPlaceVoteRoom = placeVoteRoomRepository.save(placeVoteRoom);
+		PlaceVoteRoom placeVoteRoom = new PlaceVoteRoom(room, request.getPlaceCandidates());
+		PlaceVoteRoom savedPlaceVoteRoom = placeVoteRoomRepository.save(placeVoteRoom);
 
-        return PlaceVoteRoomCreateResponse.from(savedPlaceVoteRoom.getId());
-    }
+		return PlaceVoteRoomCreateResponse.from(savedPlaceVoteRoom.getId());
+	}
 
-    //장소투표방 재생성
-    @Transactional(rollbackFor = {CustomException.class})
-    public PlaceVoteRoomCreateResponse recreatePlaceVoteRoom(Room room,PlaceVoteRoomCreateRequest request) {
+	//장소투표방 재생성
+	@Transactional(rollbackFor = {CustomException.class})
+	public PlaceVoteRoomCreateResponse recreatePlaceVoteRoom(Room room, PlaceVoteRoomCreateRequest request) {
 
-        // 기존 투표방 삭제
-        PlaceVoteRoom existingPlaceVoteRoom = placeVoteRoomRepository.findByRoom(room).orElseThrow(() -> new CustomException(VOTE_ROOM_NOT_FOUND));
+		// 기존 투표방 삭제
+		PlaceVoteRoom existingPlaceVoteRoom = placeVoteRoomRepository.findByRoom(room)
+			.orElseThrow(() -> new CustomException(VOTE_ROOM_NOT_FOUND));
 
-        // 먼저 투표와 관련된 모든 데이터 삭제
-        placeVoteRoomRepository.delete(existingPlaceVoteRoom);
-        placeVoteRoomRepository.flush();
+		// 먼저 투표와 관련된 모든 데이터 삭제
+		placeVoteRoomRepository.delete(existingPlaceVoteRoom);
+		placeVoteRoomRepository.flush();
 
-        //투표방 생성
-        PlaceVoteRoom placeVoteRoom = new PlaceVoteRoom(room,request.getPlaceCandidates());
-        PlaceVoteRoom savedPlaceVoteRoom = placeVoteRoomRepository.save(placeVoteRoom);
+		//투표방 생성
+		PlaceVoteRoom placeVoteRoom = new PlaceVoteRoom(room, request.getPlaceCandidates());
+		PlaceVoteRoom savedPlaceVoteRoom = placeVoteRoomRepository.save(placeVoteRoom);
 
-        return PlaceVoteRoomCreateResponse.from(savedPlaceVoteRoom.getId());
-    }
+		return PlaceVoteRoomCreateResponse.from(savedPlaceVoteRoom.getId());
+	}
 
-    // 장소투표방 조회
-    public PlaceVoteInfoResponse getPlaceVoteRoom(Room room) {
+	// 장소투표방 조회
+	public PlaceVoteInfoResponse getPlaceVoteRoom(Room room) {
 
-        PlaceVoteRoom placeVoteRoom = placeVoteRoomRepository.findByRoom(room)
-                .orElseThrow(() -> new CustomException(VOTE_ROOM_NOT_FOUND));
-        List<PlaceVoteCandidateInfo> candidates = placeVoteRoom.getPlaceVoteCandidates().stream()
-                .map(candidate -> new PlaceVoteCandidateInfo(candidate.getId(), candidate.getName(), candidate.getSiDo(), candidate.getSiGunGu(), candidate.getRoadNameAddress(), candidate.getAddressLatitude(), candidate.getAddressLatitude(), candidate.getCount(), candidate.getVoters().stream().map(v -> v.getMember().getName()).collect(Collectors.toList()))).collect(Collectors.toList());
+		PlaceVoteRoom placeVoteRoom = placeVoteRoomRepository.findByRoom(room)
+			.orElseThrow(() -> new CustomException(VOTE_ROOM_NOT_FOUND));
+		List<PlaceVoteCandidateInfo> candidates = placeVoteRoom.getPlaceVoteCandidates()
+			.stream()
+			.map(candidate -> new PlaceVoteCandidateInfo(candidate.getId(), candidate.getName(), candidate.getSiDo(),
+				candidate.getSiGunGu(), candidate.getRoadNameAddress(), candidate.getAddressLatitude(),
+				candidate.getAddressLatitude(), candidate.getCount(),
+				candidate.getVoters().stream().map(v -> v.getMember().getName()).collect(Collectors.toList())))
+			.collect(Collectors.toList());
 
-        return new PlaceVoteInfoResponse(candidates);
-    }
+		return new PlaceVoteInfoResponse(candidates);
+	}
 
-    // 투표 처리
-    @Transactional(rollbackFor = {CustomException.class})
-    public void vote(Member member, Room room, PlaceVoteRequest voteRequest) {
+	// 투표 처리
+	@Transactional(rollbackFor = {CustomException.class})
+	public void vote(Member member, Room room, PlaceVoteRequest voteRequest) {
 
-        PlaceVoteRoom placeVoteRoom = placeVoteRoomRepository.findByRoom(room).orElseThrow(() -> new CustomException(VOTE_ROOM_NOT_FOUND));
+		PlaceVoteRoom placeVoteRoom = placeVoteRoomRepository.findByRoom(room)
+			.orElseThrow(() -> new CustomException(VOTE_ROOM_NOT_FOUND));
 
-        boolean alreadyVoted = placeVoteCandidateMemberRepository.existsByPlaceVoteCandidate_PlaceVoteRoomAndMember(placeVoteRoom, member);
-        if (alreadyVoted) {
-            throw new CustomException(ALREADY_VOTED);
-        }
-        long candidateId = voteRequest.getChoicePlace();
-        PlaceVoteCandidate candidate = placeVoteCandidateRepository.findById(candidateId)
-                .orElseThrow(() -> new CustomException(CANDIDATE_NOT_FOUND));
+		boolean alreadyVoted = placeVoteCandidateMemberRepository.existsByPlaceVoteCandidate_PlaceVoteRoomAndMember(
+			placeVoteRoom, member);
+		if (alreadyVoted) {
+			throw new CustomException(ALREADY_VOTED);
+		}
+		long candidateId = voteRequest.getChoicePlace();
+		PlaceVoteCandidate candidate = placeVoteCandidateRepository.findById(candidateId)
+			.orElseThrow(() -> new CustomException(CANDIDATE_NOT_FOUND));
 
-        PlaceVoteCandidateMember placeVoteCandidateMember = new PlaceVoteCandidateMember(candidate, member);
-        placeVoteCandidateMemberRepository.save(placeVoteCandidateMember);
-    }
+		PlaceVoteCandidateMember placeVoteCandidateMember = new PlaceVoteCandidateMember(candidate, member);
+		placeVoteCandidateMemberRepository.save(placeVoteCandidateMember);
+	}
 
-    // 재투표
-    @Transactional(rollbackFor = {CustomException.class})
-    public void updateVote(Member member, Room room,PlaceVoteRequest voteRequest) {
+	// 재투표
+	@Transactional(rollbackFor = {CustomException.class})
+	public void updateVote(Member member, Room room, PlaceVoteRequest voteRequest) {
 
-        PlaceVoteRoom placeVoteRoom = placeVoteRoomRepository.findByRoom(room).orElseThrow(() -> new CustomException(VOTE_ROOM_NOT_FOUND));
+		PlaceVoteRoom placeVoteRoom = placeVoteRoomRepository.findByRoom(room)
+			.orElseThrow(() -> new CustomException(VOTE_ROOM_NOT_FOUND));
 
-        //기존투표제거
-        boolean alreadyVoted = placeVoteCandidateMemberRepository.existsByPlaceVoteCandidate_PlaceVoteRoomAndMember(placeVoteRoom, member);
-        if (!alreadyVoted) {
-            throw new CustomException(VOTE_NOT_FOUND);
-        }
+		//기존투표제거
+		boolean alreadyVoted = placeVoteCandidateMemberRepository.existsByPlaceVoteCandidate_PlaceVoteRoomAndMember(
+			placeVoteRoom, member);
+		if (!alreadyVoted) {
+			throw new CustomException(VOTE_NOT_FOUND);
+		}
 
-        List<PlaceVoteCandidateMember> existingVotes = placeVoteCandidateMemberRepository.findAllByPlaceVoteCandidate_PlaceVoteRoomAndMember(placeVoteRoom, member);
-        placeVoteCandidateMemberRepository.deleteAll(existingVotes);
+		List<PlaceVoteCandidateMember> existingVotes = placeVoteCandidateMemberRepository.findAllByPlaceVoteCandidate_PlaceVoteRoomAndMember(
+			placeVoteRoom, member);
+		placeVoteCandidateMemberRepository.deleteAll(existingVotes);
 
-        // 새로 받은 항목으로 업데이트
-        long candidateId = voteRequest.getChoicePlace();
-        PlaceVoteCandidate candidate = placeVoteCandidateRepository.findById(candidateId)
-                .orElseThrow(() -> new CustomException(CANDIDATE_NOT_FOUND));
+		// 새로 받은 항목으로 업데이트
+		long candidateId = voteRequest.getChoicePlace();
+		PlaceVoteCandidate candidate = placeVoteCandidateRepository.findById(candidateId)
+			.orElseThrow(() -> new CustomException(CANDIDATE_NOT_FOUND));
 
-        PlaceVoteCandidateMember placeVoteCandidateMember = new PlaceVoteCandidateMember(candidate, member);
-        placeVoteCandidateMemberRepository.save(placeVoteCandidateMember);
-    }
+		PlaceVoteCandidateMember placeVoteCandidateMember = new PlaceVoteCandidateMember(candidate, member);
+		placeVoteCandidateMemberRepository.save(placeVoteCandidateMember);
+	}
 
-    //장소투표방 존재 여부 확인, 존재시 true, 존재하지 않을시 false 반환
-    public boolean hasPlaceVoteRoom(String roomId) {
+	//장소투표방 존재 여부 확인, 존재시 true, 존재하지 않을시 false 반환
+	public boolean hasPlaceVoteRoom(String roomId) {
 
-        return placeVoteRoomRepository.existsByRoomIdentityNumber(roomId);
-    }
+		return placeVoteRoomRepository.existsByRoomIdentityNumber(roomId);
+	}
 
-    //먼저 장소투표방이 없다면 시간투표방없다고 에러메세지, 그 다음 장소투표방이 있을때 투표했으면 true, 투표안했으면 false 반환
-    public boolean hasVoted(Member member, Room room) {
+	//먼저 장소투표방이 없다면 시간투표방없다고 에러메세지, 그 다음 장소투표방이 있을때 투표했으면 true, 투표안했으면 false 반환
+	public boolean hasVoted(Member member, Room room) {
 
-        PlaceVoteRoom placeVoteRoom = placeVoteRoomRepository.findByRoom(room).orElseThrow(() -> new CustomException(VOTE_ROOM_NOT_FOUND));
+		PlaceVoteRoom placeVoteRoom = placeVoteRoomRepository.findByRoom(room)
+			.orElseThrow(() -> new CustomException(VOTE_ROOM_NOT_FOUND));
 
-        return placeVoteCandidateMemberRepository.existsByPlaceVoteCandidate_PlaceVoteRoomAndMember(placeVoteRoom, member);
-    }
+		return placeVoteCandidateMemberRepository.existsByPlaceVoteCandidate_PlaceVoteRoomAndMember(placeVoteRoom,
+			member);
+	}
 }

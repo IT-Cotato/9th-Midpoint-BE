@@ -117,7 +117,9 @@ public class PlaceController {
 	@Operation(
 		summary = "개개인 장소 조회하기",
 		description = """
-			개개인이 저장한 장소 조회하기.
+			개개인이 저장한 장소 및 다른 사람들이 저장한 장소들 조회하기.
+			
+			다른 사람들이 저장한 장소(otherPlaces)에는 당사자가 저장한 장소는 포함되지 않는다.
 						
 			AccessToken 필요.""",
 		parameters = {

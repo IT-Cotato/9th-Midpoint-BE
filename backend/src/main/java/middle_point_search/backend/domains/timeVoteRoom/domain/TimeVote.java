@@ -12,33 +12,34 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class TimeVote {
-    @Id
-    @Column(name = "time_vote_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@Id
+	@Column(name = "time_vote_id")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "time_vote_room_id")
-    private TimeVoteRoom timeVoteRoom;
+	@ManyToOne
+	@JoinColumn(name = "time_vote_room_id")
+	private TimeVoteRoom timeVoteRoom;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "member_id")
+	private Member member;
 
-    @ManyToOne
-    @JoinColumn(name = "meeting_date_id")
-    private MeetingDate meetingDate;
+	@ManyToOne
+	@JoinColumn(name = "meeting_date_id")
+	private MeetingDate meetingDate;
 
-    private LocalDateTime memberAvailableStartTime;
+	private LocalDateTime memberAvailableStartTime;
 
-    private LocalDateTime memberAvailableEndTime;
+	private LocalDateTime memberAvailableEndTime;
 
-    public TimeVote(TimeVoteRoom timeVoteRoom, MeetingDate meetingDate, Member member, LocalDateTime memberAvailableStartTime, LocalDateTime memberAvailableEndTime) {
-        this.timeVoteRoom = timeVoteRoom;
-        this.meetingDate =meetingDate;
-        this.member =member;
-        this.memberAvailableStartTime = memberAvailableStartTime;
-        this.memberAvailableEndTime = memberAvailableEndTime;
-    }
+	public TimeVote(TimeVoteRoom timeVoteRoom, MeetingDate meetingDate, Member member,
+		LocalDateTime memberAvailableStartTime, LocalDateTime memberAvailableEndTime) {
+		this.timeVoteRoom = timeVoteRoom;
+		this.meetingDate = meetingDate;
+		this.member = member;
+		this.memberAvailableStartTime = memberAvailableStartTime;
+		this.memberAvailableEndTime = memberAvailableEndTime;
+	}
 
 }
