@@ -64,11 +64,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		//5. 그 외 모든 경우는 에러 리턴
 		if (accessToken != null && jwtTokenProvider.isTokenValid(accessToken)) {
 
-
 			//토큰이 logout된 토큰인지 검사
 			if (jwtTokenProvider.isLogout(accessToken)) {
 				log.info("logout된 accessToken으로 인증 실패");
 				throw new CustomException(INVALID_ACCESS_TOKEN);
+			}
+
+			//토큰의 있는 방의 Type과 헤더와 RoomType이 같은지 검사(room검사보다 먼저 되어야 함)
+			final RoomType nowRoomType = jwtTokenProvider.extractRoomType(request).orElse(null);
+			final Room room = roomRepository.findByIdentityNumber(tokenRoomId)
+				.orElseThrow(() -> new CustomException(ROOM_NOT_FOUND));
+			if (nowRoomType != room.getRoomType()) {
+				throw new CustomException(ROOM_TYPE_UNPROCESSABLE);
 			}
 
 			//토큰이 다른 room의 토큰인지 검사
@@ -76,14 +83,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			if (!Objects.equals(nowRoomId, tokenRoomId)) {
 				log.info("다른 방의 accessToken으로 인증 실패");
 				throw new CustomException(UNAUTHORIZED);
-			}
-
-			//토큰의 있는 방의 Type과 헤더와 RoomType이 같은지 검사
-			final RoomType nowRoomType = jwtTokenProvider.extractRoomType(request).orElse(null);
-			final Room room = roomRepository.findByIdentityNumber(tokenRoomId)
-				.orElseThrow(() -> new CustomException(ROOM_NOT_FOUND));
-			if (nowRoomType != room.getRoomType()) {
-				throw new CustomException(ROOM_TYPE_UNPROCESSABLE);
 			}
 
 			log.info("access토큰 인증 성공");
