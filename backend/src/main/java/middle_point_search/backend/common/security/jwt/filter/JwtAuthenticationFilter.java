@@ -6,6 +6,7 @@ import static middle_point_search.backend.common.exception.errorCode.UserErrorCo
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -20,6 +21,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import middle_point_search.backend.common.exception.CustomException;
+import middle_point_search.backend.common.exception.errorCode.UserErrorCode;
 import middle_point_search.backend.common.properties.SecurityProperties;
 import middle_point_search.backend.common.security.jwt.provider.JwtTokenProvider;
 import middle_point_search.backend.domains.member.repository.MemberRepository;
@@ -55,7 +57,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 		final String refreshToken = jwtTokenProvider.extractRefreshToken(request).orElse(null);
 		final String accessToken = jwtTokenProvider.extractAccessToken(request).orElse(null);
+		final String headerRoomId = jwtTokenProvider.extractRoomId(request).orElse(null);
+
 		final String tokenRoomId = jwtTokenProvider.extractRoomId(accessToken).orElse(null);
+
+		Room headerRoom = roomRepository.findByIdentityNumber(headerRoomId)
+			.orElseThrow(() -> new CustomException(ROOM_NOT_FOUND));
 
 		//1. access토큰이 존재하며, accessToken이 유효하면 인증
 		//2. access토큰이 존재하며, accesToken이 유효하지 않으면 에러 리턴
@@ -70,17 +77,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 				throw new CustomException(INVALID_ACCESS_TOKEN);
 			}
 
-			//토큰의 있는 방의 Type과 헤더와 RoomType이 같은지 검사(room검사보다 먼저 되어야 함)
-			final RoomType nowRoomType = jwtTokenProvider.extractRoomType(request).orElse(null);
+			//헤더 ROOM의 있는 방의 Type과 헤더의 RoomType이 같은지 검사(room검사보다 먼저 되어야 함)
+			final RoomType headerRoomType = jwtTokenProvider.extractRoomType(request).orElse(null);
+			if (headerRoomType != headerRoom.getRoomType()) {
+				throw new CustomException(ROOM_TYPE_UNPROCESSABLE);
+			}
+
+			//토큰의 있는 방의 Type과 헤더의 RoomType이 같은지 검사(room검사보다 먼저 되어야 함)
 			final Room room = roomRepository.findByIdentityNumber(tokenRoomId)
 				.orElseThrow(() -> new CustomException(ROOM_NOT_FOUND));
-			if (nowRoomType != room.getRoomType()) {
+			if (headerRoomType != room.getRoomType()) {
 				throw new CustomException(ROOM_TYPE_UNPROCESSABLE);
 			}
 
 			//토큰이 다른 room의 토큰인지 검사
-			final String nowRoomId = jwtTokenProvider.extractRoomId(request).orElse(null);
-			if (!Objects.equals(nowRoomId, tokenRoomId)) {
+			if (!Objects.equals(headerRoomId, tokenRoomId)) {
 				log.info("다른 방의 accessToken으로 인증 실패");
 				throw new CustomException(UNAUTHORIZED);
 			}
