@@ -19,6 +19,7 @@ import middle_point_search.backend.common.security.exception.RoomNotFoundExcepti
 import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.member.domain.Role;
 import middle_point_search.backend.domains.member.repository.MemberRepository;
+import middle_point_search.backend.domains.place.repository.PlaceRepository;
 import middle_point_search.backend.domains.room.domain.Room;
 import middle_point_search.backend.domains.room.domain.RoomType;
 import middle_point_search.backend.domains.room.repository.RoomRepository;
@@ -31,6 +32,7 @@ public class MemberService {
 
 	private final RoomRepository roomRepository;
 	private final MemberRepository memberRepository;
+	private final PlaceRepository placeRepository;
 	private final PasswordEncoder passwordEncoder;
 	private final RefreshTokenRepository refreshTokenRepository;
 	private final LogoutRepository logoutRepository;
@@ -44,7 +46,7 @@ public class MemberService {
 			.orElseThrow(() -> new RoomNotFoundException("해당하는 방이 존재하지 않습니다"));
 
 		//회원 권한 정하기
-		Role role = decideRole(room.getRoomType());
+		Role role = decideRole(room);
 
 		Member member = Member.from(room, name, pw, role);
 		memberRepository.save(member);
@@ -52,9 +54,13 @@ public class MemberService {
 		return member;
 	}
 
-	// 회원의 ROLE을 Room의 RoomType을 기준으로 결정하는 메서드
-	private Role decideRole(RoomType roomType) {
-		if (roomType == RoomType.SELF) {
+	// 회원의 ROLE을 Room의 RoomType과 장소 저장 유무를 기준으로 결정하는 메서드
+	private Role decideRole(Room room) {
+		RoomType roomType = room.getRoomType();
+		String identityNumber = room.getIdentityNumber();
+
+		//방 타입이 개인이 모두 저장이고, 이미 장소를 저장했다면 그 이후에 회원가입하는 모든 회원은 권한승인
+		if (roomType == RoomType.SELF && placeRepository.existsByRoom_IdentityNumber(identityNumber)) {
 			return Role.USER; // SELF인 경우 이미 다 장소가 입력됐으므로 바로 승인
 		}
 		return Role.GUEST; // 회원 가입시 권한은 GUEST
