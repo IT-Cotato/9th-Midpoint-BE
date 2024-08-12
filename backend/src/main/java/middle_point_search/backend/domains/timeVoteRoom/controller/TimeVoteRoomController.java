@@ -66,6 +66,11 @@ public class TimeVoteRoomController {
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
+				responseCode = "402",
+				description = "인증 토큰이 유효하지 않습니다.",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
 				responseCode = "403",
 				description = "접근이 거부되었습니다.",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
@@ -117,6 +122,11 @@ public class TimeVoteRoomController {
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
+				responseCode = "402",
+				description = "인증 토큰이 유효하지 않습니다.",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
 				responseCode = "403",
 				description = "접근이 거부되었습니다.",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
@@ -163,6 +173,11 @@ public class TimeVoteRoomController {
 			@ApiResponse(
 				responseCode = "401",
 				description = "인증에 실패하였습니다.",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
+				responseCode = "402",
+				description = "인증 토큰이 유효하지 않습니다.",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
@@ -221,6 +236,11 @@ public class TimeVoteRoomController {
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
+				responseCode = "402",
+				description = "인증 토큰이 유효하지 않습니다.",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
 				responseCode = "403",
 				description = "접근이 거부되었습니다.",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
@@ -275,6 +295,11 @@ public class TimeVoteRoomController {
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
+				responseCode = "402",
+				description = "인증 토큰이 유효하지 않습니다.",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
 				responseCode = "403",
 				description = "접근이 거부되었습니다.",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
@@ -315,6 +340,11 @@ public class TimeVoteRoomController {
 			@ApiResponse(
 				responseCode = "401",
 				description = "인증에 실패하였습니다.",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
+				responseCode = "402",
+				description = "인증 토큰이 유효하지 않습니다.",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
@@ -364,6 +394,11 @@ public class TimeVoteRoomController {
 			@ApiResponse(
 				responseCode = "401",
 				description = "인증에 실패하였습니다.",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
+				responseCode = "402",
+				description = "인증 토큰이 유효하지 않습니다.",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(

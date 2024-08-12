@@ -64,6 +64,11 @@ public class PlaceController {
 				description = "인증에 실패하였습니다."
 			),
 			@ApiResponse(
+				responseCode = "402",
+				description = "인증 토큰이 유효하지 않습니다.",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
 				responseCode = "422",
 				description = "방의 타입이 일치하지 않습니다",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
@@ -103,6 +108,11 @@ public class PlaceController {
 			@ApiResponse(
 				responseCode = "401",
 				description = "인증에 실패하였습니다."
+			),
+			@ApiResponse(
+				responseCode = "402",
+				description = "인증 토큰이 유효하지 않습니다.",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
 				responseCode = "422",
@@ -148,6 +158,11 @@ public class PlaceController {
 				description = "인증에 실패하였습니다."
 			),
 			@ApiResponse(
+				responseCode = "402",
+				description = "인증 토큰이 유효하지 않습니다.",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
 				responseCode = "422",
 				description = "방의 타입이 일치하지 않습니다",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
@@ -186,6 +201,11 @@ public class PlaceController {
 			@ApiResponse(
 				responseCode = "401",
 				description = "인증에 실패하였습니다."
+			),
+			@ApiResponse(
+				responseCode = "402",
+				description = "인증 토큰이 유효하지 않습니다.",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
 				responseCode = "422",
