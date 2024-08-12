@@ -27,6 +27,7 @@ import middle_point_search.backend.common.security.login.filter.JsonNamePwAuthen
 import middle_point_search.backend.common.security.login.handler.LoginFailureHandler;
 import middle_point_search.backend.common.security.login.handler.LoginSuccessHandler;
 import middle_point_search.backend.common.security.login.provider.CustomAuthenticationProvider;
+import middle_point_search.backend.common.security.roomFilter.filter.RoomFilter;
 import middle_point_search.backend.domains.member.repository.MemberRepository;
 import middle_point_search.backend.domains.room.repository.RoomRepository;
 
@@ -71,6 +72,7 @@ public class SecurityConfig {
 		http
 			.addFilterAfter(jsonUsernamePasswordLoginFilter(), LogoutFilter.class)
 			.addFilterBefore(jwtAuthenticationFilter(), JsonNamePwAuthenticationFilter.class)
+			.addFilterAfter(roomFilter(), JwtAuthenticationFilter.class)
 			.addFilterBefore(exceptionHandlingFilter(), JwtAuthenticationFilter.class);
 
 		//예외 처리 추가
@@ -109,7 +111,8 @@ public class SecurityConfig {
 	//JWT 필터 등록
 	@Bean
 	public JwtAuthenticationFilter jwtAuthenticationFilter() {
-		return new JwtAuthenticationFilter(jwtTokenProvider, memberRepository, securityProperties, pathMatcher, roomRepository);
+		return new JwtAuthenticationFilter(jwtTokenProvider, memberRepository, securityProperties, pathMatcher,
+			roomRepository);
 	}
 
 	//예외 핸들링 필터 등록
@@ -118,4 +121,9 @@ public class SecurityConfig {
 		return new ExceptionHandlingFilter();
 	}
 
+	//방id,type 검사를 위한 RoomFilter 등록
+	@Bean
+	public RoomFilter roomFilter() {
+		return new RoomFilter(jwtTokenProvider, securityProperties, pathMatcher, roomRepository);
+	}
 }
