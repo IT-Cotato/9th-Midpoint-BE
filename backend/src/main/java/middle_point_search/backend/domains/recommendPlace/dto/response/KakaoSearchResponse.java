@@ -1,4 +1,4 @@
-package middle_point_search.backend.domains.market.dto.response;
+package middle_point_search.backend.domains.recommendPlace.dto.response;
 
 import java.util.List;
 

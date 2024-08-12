@@ -1,13 +1,11 @@
-package middle_point_search.backend.domains.market.dto.response;
+package middle_point_search.backend.domains.recommendPlace.dto.response;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 import middle_point_search.backend.domains.market.domain.PlaceStandard;
-import middle_point_search.backend.domains.market.dto.response.KakaoSearchResponse.Document;
+import middle_point_search.backend.domains.recommendPlace.dto.response.KakaoSearchResponse.Document;
 
-@Slf4j
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class RecommendPlacesFindResponse implements Comparable<RecommendPlacesFindResponse> {

@@ -4,9 +4,6 @@ import static java.nio.charset.StandardCharsets.*;
 
 import java.net.URLEncoder;
 import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -24,10 +21,10 @@ import middle_point_search.backend.common.exception.errorCode.CommonErrorCode;
 import middle_point_search.backend.common.properties.KakaoProperties;
 import middle_point_search.backend.common.webClient.util.WebClientUtil;
 import middle_point_search.backend.domains.market.domain.PlaceStandard;
-import middle_point_search.backend.domains.market.dto.request.RecommendPlacesFindRequest;
-import middle_point_search.backend.domains.market.dto.response.KakaoSearchResponse;
-import middle_point_search.backend.domains.market.dto.response.RecommendPlacesDto;
-import middle_point_search.backend.domains.market.dto.response.RecommendPlacesFindResponse;
+import middle_point_search.backend.domains.recommendPlace.dto.request.RecommendPlacesFindRequest;
+import middle_point_search.backend.domains.recommendPlace.dto.response.KakaoSearchResponse;
+import middle_point_search.backend.domains.recommendPlace.dto.response.RecommendPlacesDto;
+import middle_point_search.backend.domains.recommendPlace.dto.response.RecommendPlacesFindResponse;
 
 @Slf4j
 @Service
@@ -89,11 +86,11 @@ public class RecommendPlaceService {
 		RecommendPlacesDto response3 = getKaKaoForRestaurant(x, y, PageRequest.of(page, restaurantSize));
 
 		//위 셋의 응답을 response1로 합치기
-		int count1 = response1.getPageableCount();
-		int count2 = response2.getPageableCount();
-		int count3 = response3.getPageableCount();
+		int count = response1.getPageableCount();
+		count += response2.getPageableCount();
+		count += response3.getPageableCount();
 
-		response1.setPageableCount(count1 + count2 + count3);
+		response1.setPageableCount(count);
 
 		response1.getRecommendPlaces().addAll(response2.getRecommendPlaces());
 		response1.getRecommendPlaces().addAll(response3.getRecommendPlaces());
@@ -119,15 +116,8 @@ public class RecommendPlaceService {
 		String url = kakaoProperties.getCategorySearchUrl();
 
 		KakaoSearchResponse kakaoSearchResponse = webClientUtil.getKakao(url, params, KakaoSearchResponse.class);
-		int pageableCount = kakaoSearchResponse.getMeta().getPageable_count();
 
-		List<RecommendPlacesFindResponse> recommendPlacesFindResponses = kakaoSearchResponse
-			.getDocuments()
-			.stream()
-			.map(document -> RecommendPlacesFindResponse.from(document, PlaceStandard.CAFE))
-			.collect(Collectors.toList());
-
-		return RecommendPlacesDto.from(pageableCount, recommendPlacesFindResponses);
+		return RecommendPlacesDto.of(kakaoSearchResponse, PlaceStandard.CAFE);
 	}
 
 	//Study 가져오기
@@ -147,16 +137,8 @@ public class RecommendPlaceService {
 		String url = kakaoProperties.getKeywordSearchUrl();
 
 		KakaoSearchResponse kakaoSearchResponse = webClientUtil.getKakao(url, params, KakaoSearchResponse.class);
-		int pageableCount = kakaoSearchResponse.getMeta().getPageable_count();
 
-		List<RecommendPlacesFindResponse> recommendPlacesFindResponses = kakaoSearchResponse
-			.getDocuments()
-			.stream()
-			.filter(document -> Objects.equals(document.getCategory_group_name(), "")) //학원 제외, 스터디는 그룹이 따로 없다.
-			.map(document -> RecommendPlacesFindResponse.from(document, PlaceStandard.STUDY))
-			.collect(Collectors.toList());
-
-		return RecommendPlacesDto.from(pageableCount, recommendPlacesFindResponses);
+		return RecommendPlacesDto.of(kakaoSearchResponse, PlaceStandard.STUDY);
 	}
 
 	//Restaurant 가져오기
@@ -175,14 +157,7 @@ public class RecommendPlaceService {
 		String url = kakaoProperties.getCategorySearchUrl();
 
 		KakaoSearchResponse kakaoSearchResponse = webClientUtil.getKakao(url, params, KakaoSearchResponse.class);
-		int pageableCount = kakaoSearchResponse.getMeta().getPageable_count();
 
-		List<RecommendPlacesFindResponse> recommendPlacesFindResponses = kakaoSearchResponse
-			.getDocuments()
-			.stream()
-			.map(document -> RecommendPlacesFindResponse.from(document, PlaceStandard.RESTAURANT))
-			.collect(Collectors.toList());
-
-		return RecommendPlacesDto.from(pageableCount, recommendPlacesFindResponses);
+		return RecommendPlacesDto.of(kakaoSearchResponse, PlaceStandard.RESTAURANT);
 	}
 }
