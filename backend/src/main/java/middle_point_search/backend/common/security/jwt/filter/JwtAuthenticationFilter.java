@@ -6,7 +6,6 @@ import static middle_point_search.backend.common.exception.errorCode.UserErrorCo
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Objects;
-import java.util.Optional;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -21,7 +20,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import middle_point_search.backend.common.exception.CustomException;
-import middle_point_search.backend.common.exception.errorCode.UserErrorCode;
 import middle_point_search.backend.common.properties.SecurityProperties;
 import middle_point_search.backend.common.security.jwt.provider.JwtTokenProvider;
 import middle_point_search.backend.domains.member.repository.MemberRepository;
@@ -102,7 +100,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			filterChain.doFilter(request, response);
 		} else if (accessToken != null && !jwtTokenProvider.isTokenValid(accessToken)) {
 			log.info("access토큰 인증 실패");
-			throw new CustomException(INVALID_ACCESS_TOKEN);
+			throw new CustomException(REISSUE_ACCESS_TOKEN);
 		} else if (refreshToken != null && jwtTokenProvider.isTokenValid(refreshToken)) {
 			log.info("refresh토큰 인증 성공");
 			jwtTokenProvider.checkRefreshTokenAndReIssueAccessAndRefreshToken(response, refreshToken);
