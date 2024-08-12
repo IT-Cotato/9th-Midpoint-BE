@@ -6,6 +6,7 @@ import static middle_point_search.backend.common.exception.errorCode.UserErrorCo
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -20,6 +21,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import middle_point_search.backend.common.exception.CustomException;
+import middle_point_search.backend.common.exception.errorCode.UserErrorCode;
 import middle_point_search.backend.common.properties.SecurityProperties;
 import middle_point_search.backend.common.security.jwt.provider.JwtTokenProvider;
 import middle_point_search.backend.domains.member.repository.MemberRepository;
@@ -59,9 +61,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 		final String tokenRoomId = jwtTokenProvider.extractRoomId(accessToken).orElse(null);
 
-		Room headerRoom = roomRepository.findByIdentityNumber(headerRoomId)
-			.orElseThrow(() -> new CustomException(ROOM_NOT_FOUND));
-
 		//1. access토큰이 존재하며, accessToken이 유효하면 인증
 		//2. access토큰이 존재하며, accesToken이 유효하지 않으면 에러 리턴
 		//3. refresh토큰이 존재하며, refreshToken이 유효하면 access 토큰 재발급
@@ -76,6 +75,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			}
 
 			//헤더 ROOM의 있는 방의 Type과 헤더의 RoomType이 같은지 검사(room검사보다 먼저 되어야 함)
+			Room headerRoom = roomRepository.findByIdentityNumber(headerRoomId)
+				.orElseThrow(() -> new CustomException(ROOM_NOT_FOUND));
 			final RoomType headerRoomType = jwtTokenProvider.extractRoomType(request).orElse(null);
 			if (headerRoomType != headerRoom.getRoomType()) {
 				throw new CustomException(ROOM_TYPE_UNPROCESSABLE);
