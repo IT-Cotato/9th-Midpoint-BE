@@ -19,6 +19,4 @@ public class RefreshToken {
 
 	@Indexed
 	private Long memberId;
-
-
 }
