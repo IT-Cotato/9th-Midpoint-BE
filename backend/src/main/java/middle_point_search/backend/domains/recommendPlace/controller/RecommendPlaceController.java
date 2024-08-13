@@ -39,7 +39,7 @@ public class RecommendPlaceController {
 		description = """
 			주소, 카테고리, 페이지 정보를 이용해 장소를 추천한다.
 						
-			page는 1이상이다.
+			page는 0이상이다.
 						
 			요청당 5개의 정보를 반환.
 						
