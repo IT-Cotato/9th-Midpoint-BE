@@ -11,7 +11,7 @@ public interface PlaceVoteRoomRepository extends JpaRepository<PlaceVoteRoom, Lo
 
 	boolean existsByRoom(Room room);
 
-	boolean existsByRoomIdentityNumber(String identityNumber);
+	Optional<PlaceVoteRoom> findByRoom_IdentityNumber(String identityNumber);
 
 	Optional<PlaceVoteRoom> findByRoom(Room room);
 }

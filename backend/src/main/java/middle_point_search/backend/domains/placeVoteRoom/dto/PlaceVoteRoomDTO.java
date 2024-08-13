@@ -12,6 +12,8 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 public class PlaceVoteRoomDTO {
 	@Getter
 	@NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -38,6 +40,33 @@ public class PlaceVoteRoomDTO {
 			private Double addressLat;
 			@NotNull
 			@Positive(message = "addreesLong은 양수이어야 합니다.")
+			private Double addressLong;
+		}
+	}
+
+
+
+	@Getter
+	@AllArgsConstructor(access = AccessLevel.PRIVATE)
+	public static class PlaceVoteRoomGetResponse {
+		private Boolean existence;
+		@JsonInclude(JsonInclude.Include.NON_NULL)
+		private List<PlaceCandidates> placeCandidates;
+
+		public static PlaceVoteRoomGetResponse from(Boolean existence, List<PlaceCandidates> placeCandidates) {
+			return new PlaceVoteRoomGetResponse(existence, placeCandidates);
+		}
+
+		@Getter
+		@AllArgsConstructor(access = AccessLevel.PUBLIC)
+		public static class PlaceCandidates {
+
+			private Long id;
+			private String name;
+			private String siDo;
+			private String siGunGu;
+			private String roadNameAddress;
+			private Double addressLat;
 			private Double addressLong;
 		}
 	}

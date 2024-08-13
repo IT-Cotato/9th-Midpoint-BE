@@ -5,6 +5,7 @@ import middle_point_search.backend.common.exception.CustomException;
 import middle_point_search.backend.domains.placeVoteRoom.domain.PlaceVoteCandidate;
 import middle_point_search.backend.domains.placeVoteRoom.domain.PlaceVoteCandidateMember;
 import middle_point_search.backend.domains.placeVoteRoom.domain.PlaceVoteRoom;
+import middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteRoomDTO.PlaceVoteRoomGetResponse.PlaceCandidates;
 import middle_point_search.backend.domains.placeVoteRoom.repository.PlaceVoteCandidateMemberRepository;
 import middle_point_search.backend.domains.placeVoteRoom.repository.PlaceVoteCandidateRepository;
 import middle_point_search.backend.domains.placeVoteRoom.repository.PlaceVoteRoomRepository;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static middle_point_search.backend.common.exception.errorCode.UserErrorCode.*;
@@ -65,8 +67,8 @@ public class PlaceVoteRoomService {
 		return PlaceVoteRoomCreateResponse.from(savedPlaceVoteRoom.getId());
 	}
 
-	// 장소투표방 조회
-	public PlaceVoteInfoResponse getPlaceVoteRoom(Room room) {
+	// 장소투표방 결과 조회
+	public PlaceVoteInfoResponse getPlaceVoteRoomResult(Room room) {
 
 		PlaceVoteRoom placeVoteRoom = placeVoteRoomRepository.findByRoom(room)
 			.orElseThrow(() -> new CustomException(VOTE_ROOM_NOT_FOUND));
@@ -129,9 +131,22 @@ public class PlaceVoteRoomService {
 	}
 
 	//장소투표방 존재 여부 확인, 존재시 true, 존재하지 않을시 false 반환
-	public boolean hasPlaceVoteRoom(String roomId) {
+	public PlaceVoteRoomGetResponse getPlaceVoteRoomResult(String roomId) {
 
-		return placeVoteRoomRepository.existsByRoomIdentityNumber(roomId);
+		Optional<PlaceVoteRoom> placeVoteRoomOptional = placeVoteRoomRepository.findByRoom_IdentityNumber(roomId);
+
+		return placeVoteRoomOptional
+			.map(placeVoteRoom -> {
+				List<PlaceCandidates> placeCandidates = placeVoteRoom.getPlaceVoteCandidates()
+					.stream()
+					.map(candidate -> new PlaceCandidates(candidate.getId(), candidate.getName(), candidate.getSiDo(),
+						candidate.getSiGunGu(), candidate.getRoadNameAddress(), candidate.getAddressLatitude(),
+						candidate.getAddressLongitude()))
+					.collect(Collectors.toList());
+
+				return PlaceVoteRoomGetResponse.from(true, placeCandidates);
+			})
+			.orElseGet(() -> PlaceVoteRoomGetResponse.from(false, null));
 	}
 
 	//먼저 장소투표방이 없다면 시간투표방없다고 에러메세지, 그 다음 장소투표방이 있을때 투표했으면 true, 투표안했으면 false 반환

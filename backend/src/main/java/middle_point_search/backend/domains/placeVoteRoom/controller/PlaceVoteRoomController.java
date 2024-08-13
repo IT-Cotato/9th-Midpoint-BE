@@ -200,11 +200,11 @@ public class PlaceVoteRoomController {
 			)
 		}
 	)
-	public ResponseEntity<DataResponse<PlaceVoteInfoResponse>> placeVoteRoomGet() {
+	public ResponseEntity<DataResponse<PlaceVoteInfoResponse>> placeVoteRoomResultGet() {
 
 		Room room = memberLoader.getRoom();
 
-		PlaceVoteInfoResponse response = placeVoteRoomService.getPlaceVoteRoom(room);
+		PlaceVoteInfoResponse response = placeVoteRoomService.getPlaceVoteRoomResult(room);
 		return ResponseEntity.ok(DataResponse.from(response));
 	}
 
@@ -335,9 +335,9 @@ public class PlaceVoteRoomController {
 	}
 
 	//투표방 존재 확인
-	@GetMapping("/existence")
+	@GetMapping
 	@Operation(
-		summary = "장소투표방 존재여부 확인하기",
+		summary = "장소투표방 조회하기",
 		description = """
 			장소투표방 존재여부를 나타내고 존재하면 true, 존재하지않으면 false를 반환한다.
 						
@@ -373,12 +373,13 @@ public class PlaceVoteRoomController {
 			)
 		}
 	)
-	public ResponseEntity<DataResponse<Boolean>> placeVoteRoomHas() {
+	public ResponseEntity<DataResponse<PlaceVoteRoomGetResponse>> placeVoteRoomGet() {
 
 		String roomId = memberLoader.getRoomId();
 
-		boolean exists = placeVoteRoomService.hasPlaceVoteRoom(roomId);
-		return ResponseEntity.ok(DataResponse.from(exists));
+		PlaceVoteRoomGetResponse response = placeVoteRoomService.getPlaceVoteRoomResult(roomId);
+
+		return ResponseEntity.ok(DataResponse.from(response));
 	}
 
 	//투표여부
