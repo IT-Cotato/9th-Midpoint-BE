@@ -1,4 +1,4 @@
-package middle_point_search.backend.domains.market.dto.request;
+package middle_point_search.backend.domains.recommendPlace.dto.request;
 
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.constraints.Max;
@@ -30,7 +30,7 @@ public class RecommendPlacesFindRequest {
 	private PlaceStandard placeStandard;
 
 	@NotNull(message = "값이 비어있으면 안 됩니다.")
-	@Min(value = 1, message = "page는 1이상이어야 합니다.")
-	@Max(value = 5, message = "page는 5이하이어야 합니다.")
+	@Min(value = 0, message = "page는 0이상이어야 합니다.")
+	@Max(value = 26, message = "page는 26이하이어야 합니다.")
 	private Integer page;
 }

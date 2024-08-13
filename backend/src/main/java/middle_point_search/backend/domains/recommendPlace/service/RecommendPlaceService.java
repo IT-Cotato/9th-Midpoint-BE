@@ -4,9 +4,6 @@ import static java.nio.charset.StandardCharsets.*;
 
 import java.net.URLEncoder;
 import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -24,10 +21,11 @@ import middle_point_search.backend.common.exception.errorCode.CommonErrorCode;
 import middle_point_search.backend.common.properties.KakaoProperties;
 import middle_point_search.backend.common.webClient.util.WebClientUtil;
 import middle_point_search.backend.domains.market.domain.PlaceStandard;
-import middle_point_search.backend.domains.market.dto.request.RecommendPlacesFindRequest;
-import middle_point_search.backend.domains.market.dto.response.KakaoSearchResponse;
-import middle_point_search.backend.domains.market.dto.response.RecommendPlacesDto;
-import middle_point_search.backend.domains.market.dto.response.RecommendPlacesFindResponse;
+import middle_point_search.backend.domains.recommendPlace.dto.KakaoRequestDTO;
+import middle_point_search.backend.domains.recommendPlace.dto.request.RecommendPlacesFindRequest;
+import middle_point_search.backend.domains.recommendPlace.dto.response.KakaoSearchResponse;
+import middle_point_search.backend.domains.recommendPlace.dto.response.RecommendPlacesDto;
+import middle_point_search.backend.domains.recommendPlace.dto.response.RecommendPlacesFindResponse;
 
 @Slf4j
 @Service
@@ -43,57 +41,69 @@ public class RecommendPlaceService {
 	public Page<RecommendPlacesFindResponse> findRecommendPlaces(RecommendPlacesFindRequest request) {
 		String x = request.getAddressLong().toString();
 		String y = request.getAddressLat().toString();
-		Integer page = request.getPage();
-		Integer size = kakaoProperties.getSize();
+		int page = request.getPage();
+		int size = kakaoProperties.getSize();
 
-		Pageable pageable = PageRequest.of(page, size);
+		KakaoRequestDTO kakaoRequestDTO = new KakaoRequestDTO(x, y, page + 1, size); //kakao의 page는 1부터 시작
+		Pageable pageable = PageRequest.of(page, size); //java의 page는 0부터 시작
 
-		RecommendPlacesDto response = checkPlaceStandardAndGetResponse(request, x, y, pageable);
+		RecommendPlacesDto response = checkPlaceStandardAndGetResponse(request, kakaoRequestDTO);
+
+		log.info("data count : {}", response.getRecommendPlaces().size());
 
 		int totalCount = response.getPageableCount();
 
-		return new PageImpl<>(response.getRecommendPlaces(), pageable, totalCount);
+		log.info("totalCount : {}", totalCount);
+
+		PageImpl<RecommendPlacesFindResponse> responses = new PageImpl<>(
+			response.getRecommendPlaces(), pageable, totalCount);
+
+		log.info("offset : {}", responses.getPageable().getOffset());
+		log.info("totalCount : {}", responses.getTotalElements());
+		log.info("totalPage : {}", responses.getTotalPages());
+
+		return responses;
 	}
 
 	//PlaceStandard에 따라 KakaoSearchResponse를 가져오는 메서드
 	private RecommendPlacesDto checkPlaceStandardAndGetResponse(
 		RecommendPlacesFindRequest request,
-		String x,
-		String y,
-		Pageable pageable) {
+		KakaoRequestDTO kakaoRequestDTO) {
 
 		if (request.getPlaceStandard() == PlaceStandard.ALL) {
-			return getKaKaoForAll(x, y, pageable);
+			return getKaKaoForAll(kakaoRequestDTO);
 		} else if (request.getPlaceStandard() == PlaceStandard.STUDY) {
-			return getKaKaoForStudy(x, y, pageable);
+			return getKaKaoForStudy(kakaoRequestDTO);
 		} else if (request.getPlaceStandard() == PlaceStandard.CAFE) {
-			return getKaKaoForCafe(x, y, pageable);
+			return getKaKaoForCafe(kakaoRequestDTO);
 		} else if (request.getPlaceStandard() == PlaceStandard.RESTAURANT) {
-			return getKaKaoForRestaurant(x, y, pageable);
+			return getKaKaoForRestaurant(kakaoRequestDTO);
 		}
 
 		throw new CustomException(CommonErrorCode.INVALID_PARAMETER);
 	}
 
 	//Cafe, Study, Restaurant 한번에 가져오기
-	private RecommendPlacesDto getKaKaoForAll(String x, String y, Pageable pageable) {
-		int size = pageable.getPageSize();
-		int page = pageable.getPageNumber();
+	private RecommendPlacesDto getKaKaoForAll(KakaoRequestDTO kakaoRequestDTO) {
+		String x = kakaoRequestDTO.x();
+		String y = kakaoRequestDTO.y();
+		int size = kakaoRequestDTO.size();
+		int page = kakaoRequestDTO.page();
 
 		int cafeSize = size / 3;
 		int restaurantSize = size - size / 3 * 2;
 		int studySize = cafeSize;
 
-		RecommendPlacesDto response1 = getKaKaoForStudy(x, y, PageRequest.of(page, studySize));
-		RecommendPlacesDto response2 = getKaKaoForCafe(x, y, PageRequest.of(page, cafeSize));
-		RecommendPlacesDto response3 = getKaKaoForRestaurant(x, y, PageRequest.of(page, restaurantSize));
+		RecommendPlacesDto response1 = getKaKaoForStudy(new KakaoRequestDTO(x, y, page, studySize));
+		RecommendPlacesDto response2 = getKaKaoForCafe(new KakaoRequestDTO(x, y, page, cafeSize));
+		RecommendPlacesDto response3 = getKaKaoForRestaurant(new KakaoRequestDTO(x, y, page, restaurantSize));
 
 		//위 셋의 응답을 response1로 합치기
-		int count1 = response1.getPageableCount();
-		int count2 = response2.getPageableCount();
-		int count3 = response3.getPageableCount();
+		int count = response1.getPageableCount();
+		count += response2.getPageableCount();
+		count += response3.getPageableCount();
 
-		response1.setPageableCount(count1 + count2 + count3);
+		response1.setPageableCount(count);
 
 		response1.getRecommendPlaces().addAll(response2.getRecommendPlaces());
 		response1.getRecommendPlaces().addAll(response3.getRecommendPlaces());
@@ -104,65 +114,58 @@ public class RecommendPlaceService {
 	}
 
 	//Cafe 가져오기
-	private RecommendPlacesDto getKaKaoForCafe(String x, String y, Pageable pageable) {
-		int size = pageable.getPageSize();
-		int page = pageable.getPageNumber();
+	private RecommendPlacesDto getKaKaoForCafe(KakaoRequestDTO kakaoRequestDTO) {
+		String x = kakaoRequestDTO.x();
+		String y = kakaoRequestDTO.y();
+		int size = kakaoRequestDTO.size();
+		int page = kakaoRequestDTO.page();
 
-		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-		params.add(kakaoProperties.getParamX(), x);
-		params.add(kakaoProperties.getParamY(), y);
-		params.add(kakaoProperties.getParamRadius(), kakaoProperties.getRadius());
-		params.add(kakaoProperties.getParamSize(), String.valueOf(size));
-		params.add(kakaoProperties.getParamPage(), String.valueOf(page));
+		MultiValueMap<String, String> params = makeBaseParams(x, y, size, page);
 		params.add(kakaoProperties.getParamGroup(), PlaceStandard.CAFE.getCode());
 
 		String url = kakaoProperties.getCategorySearchUrl();
 
 		KakaoSearchResponse kakaoSearchResponse = webClientUtil.getKakao(url, params, KakaoSearchResponse.class);
-		int pageableCount = kakaoSearchResponse.getMeta().getPageable_count();
 
-		List<RecommendPlacesFindResponse> recommendPlacesFindResponses = kakaoSearchResponse
-			.getDocuments()
-			.stream()
-			.map(document -> RecommendPlacesFindResponse.from(document, PlaceStandard.CAFE))
-			.collect(Collectors.toList());
-
-		return RecommendPlacesDto.from(pageableCount, recommendPlacesFindResponses);
+		return RecommendPlacesDto.of(kakaoSearchResponse, PlaceStandard.CAFE);
 	}
 
 	//Study 가져오기
-	private RecommendPlacesDto getKaKaoForStudy(String x, String y, Pageable pageable) {
-		int size = pageable.getPageSize();
-		int page = pageable.getPageNumber();
+	private RecommendPlacesDto getKaKaoForStudy(KakaoRequestDTO kakaoRequestDTO) {
+		String x = kakaoRequestDTO.x();
+		String y = kakaoRequestDTO.y();
+		int size = kakaoRequestDTO.size();
+		int page = kakaoRequestDTO.page();
 
-		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-		params.add(kakaoProperties.getParamX(), x);
-		params.add(kakaoProperties.getParamY(), y);
-		params.add(kakaoProperties.getParamRadius(), kakaoProperties.getRadius());
-		params.add(kakaoProperties.getParamSize(), String.valueOf(size));
-		params.add(kakaoProperties.getParamPage(), String.valueOf(page));
-
+		MultiValueMap<String, String> params = makeBaseParams(x, y, size, page);
 		params.add(kakaoProperties.getParamQuery(), URLEncoder.encode("스터디", UTF_8));
 
 		String url = kakaoProperties.getKeywordSearchUrl();
 
 		KakaoSearchResponse kakaoSearchResponse = webClientUtil.getKakao(url, params, KakaoSearchResponse.class);
-		int pageableCount = kakaoSearchResponse.getMeta().getPageable_count();
 
-		List<RecommendPlacesFindResponse> recommendPlacesFindResponses = kakaoSearchResponse
-			.getDocuments()
-			.stream()
-			.filter(document -> Objects.equals(document.getCategory_group_name(), "")) //학원 제외, 스터디는 그룹이 따로 없다.
-			.map(document -> RecommendPlacesFindResponse.from(document, PlaceStandard.STUDY))
-			.collect(Collectors.toList());
-
-		return RecommendPlacesDto.from(pageableCount, recommendPlacesFindResponses);
+		return RecommendPlacesDto.of(kakaoSearchResponse, PlaceStandard.STUDY);
 	}
 
 	//Restaurant 가져오기
-	private RecommendPlacesDto getKaKaoForRestaurant(String x, String y, Pageable pageable) {
-		int size = pageable.getPageSize();
-		int page = pageable.getPageNumber();
+	private RecommendPlacesDto getKaKaoForRestaurant(KakaoRequestDTO kakaoRequestDTO) {
+		String x = kakaoRequestDTO.x();
+		String y = kakaoRequestDTO.y();
+		int size = kakaoRequestDTO.size();
+		int page = kakaoRequestDTO.page();
+
+		MultiValueMap<String, String> params = makeBaseParams(x, y, size, page);
+		params.add(kakaoProperties.getParamGroup(), PlaceStandard.RESTAURANT.getCode());
+
+		String url = kakaoProperties.getCategorySearchUrl();
+
+		KakaoSearchResponse kakaoSearchResponse = webClientUtil.getKakao(url, params, KakaoSearchResponse.class);
+
+		return RecommendPlacesDto.of(kakaoSearchResponse, PlaceStandard.RESTAURANT);
+	}
+
+	//기본적인 param을 만들어주는 메서드
+	private MultiValueMap<String, String> makeBaseParams(String x, String y, int size, int page) {
 
 		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
 		params.add(kakaoProperties.getParamX(), x);
@@ -170,19 +173,6 @@ public class RecommendPlaceService {
 		params.add(kakaoProperties.getParamRadius(), kakaoProperties.getRadius());
 		params.add(kakaoProperties.getParamSize(), String.valueOf(size));
 		params.add(kakaoProperties.getParamPage(), String.valueOf(page));
-		params.add(kakaoProperties.getParamGroup(), PlaceStandard.RESTAURANT.getCode());
-
-		String url = kakaoProperties.getCategorySearchUrl();
-
-		KakaoSearchResponse kakaoSearchResponse = webClientUtil.getKakao(url, params, KakaoSearchResponse.class);
-		int pageableCount = kakaoSearchResponse.getMeta().getPageable_count();
-
-		List<RecommendPlacesFindResponse> recommendPlacesFindResponses = kakaoSearchResponse
-			.getDocuments()
-			.stream()
-			.map(document -> RecommendPlacesFindResponse.from(document, PlaceStandard.RESTAURANT))
-			.collect(Collectors.toList());
-
-		return RecommendPlacesDto.from(pageableCount, recommendPlacesFindResponses);
+		return params;
 	}
 }
