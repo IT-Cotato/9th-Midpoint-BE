@@ -5,6 +5,7 @@ import middle_point_search.backend.common.exception.CustomException;
 import middle_point_search.backend.domains.timeVoteRoom.domain.MeetingDate;
 import middle_point_search.backend.domains.timeVoteRoom.domain.TimeVote;
 import middle_point_search.backend.domains.timeVoteRoom.domain.TimeVoteRoom;
+import middle_point_search.backend.domains.timeVoteRoom.dto.TimeVoteRoomDTO;
 import middle_point_search.backend.domains.timeVoteRoom.repository.MeetingDateRepository;
 import middle_point_search.backend.domains.timeVoteRoom.repository.TimeVoteRepository;
 import middle_point_search.backend.domains.timeVoteRoom.repository.TimeVoteRoomRepository;
@@ -14,6 +15,7 @@ import middle_point_search.backend.domains.room.domain.Room;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -150,9 +152,19 @@ public class TimeVoteRoomService {
 	}
 
 	//시간투표방 존재 여부 확인, 존재시 true, 존재하지 않을시 false 반환
-	public boolean hasTimeVoteRoom(String roomId) {
+	public TimeVoteRoomGetResponse getTimeVoteRoom(String roomId) {
 
-		return timeVoteRoomRepository.existsByRoomIdentityNumber(roomId);
+		Optional<TimeVoteRoom> timeVoteRoomOptional = timeVoteRoomRepository.findByRoom_IdentityNumber(roomId);
+
+		return timeVoteRoomOptional
+			.map(timeVoteRoom -> {
+				List<LocalDate> dates = timeVoteRoom.getMeetingDates()
+					.stream()
+					.map(MeetingDate::getDate)
+					.toList();
+				return TimeVoteRoomGetResponse.from(true, dates);
+			})
+			.orElseGet(() -> TimeVoteRoomGetResponse.from(false, null));
 	}
 
 	//먼저 시간투표방이 없다면 시간투표방없다고 에러메세지, 그 다음 시간 투표방이 있을때 투표했으면 true, 투표안했으면 false 반환

@@ -1,5 +1,7 @@
 package middle_point_search.backend.domains.timeVoteRoom.controller;
 
+import static middle_point_search.backend.domains.timeVoteRoom.dto.TimeVoteRoomDTO.*;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,18 +16,16 @@ import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import jakarta.validation.Valid;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.dto.BaseResponse;
 import middle_point_search.backend.common.dto.DataResponse;
 import middle_point_search.backend.common.dto.ErrorResponse;
 import middle_point_search.backend.common.util.MemberLoader;
-import middle_point_search.backend.domains.timeVoteRoom.service.TimeVoteRoomService;
 import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.room.domain.Room;
-
-import static middle_point_search.backend.domains.timeVoteRoom.dto.TimeVoteRoomDTO.*;
+import middle_point_search.backend.domains.timeVoteRoom.service.TimeVoteRoomService;
 
 @Tag(name = "TIME VOTE ROOM API", description = "시간투표에 대한 API입니다.")
 @RestController
@@ -272,12 +272,12 @@ public class TimeVoteRoomController {
 		return ResponseEntity.ok(BaseResponse.ok());
 	}
 
-	//투표방존재확인
-	@GetMapping("/existence")
+	//투표방 조회
+	@GetMapping
 	@Operation(
-		summary = "시간투표방 존재여부 확인하기",
+		summary = "시간투표방 조회하기",
 		description = """
-			         시간투표방 존재여부를 나타내고 존재하면 true, 존재하지않으면 false를 반환한다.
+					시간투표방 존재여부를 나타내고 존재하면 true, 존재하지않으면 false를 반환한다.
 			         
 			AccessToken 필요.""",
 		parameters = {
@@ -311,13 +311,13 @@ public class TimeVoteRoomController {
 			)
 		}
 	)
-	public ResponseEntity<DataResponse<Boolean>> timeVoteRoomHas() {
+	public ResponseEntity<DataResponse<TimeVoteRoomGetResponse>> timeVoteRoomGet() {
 
 		String roomId = memberLoader.getRoomId();
 
-		boolean exists = timeVoteRoomService.hasTimeVoteRoom(roomId);
+		TimeVoteRoomGetResponse response = timeVoteRoomService.getTimeVoteRoom(roomId);
 
-		return ResponseEntity.ok(DataResponse.from(exists));
+		return ResponseEntity.ok(DataResponse.from(response));
 	}
 
 	//투표여부

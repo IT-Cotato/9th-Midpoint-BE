@@ -1,6 +1,7 @@
 package middle_point_search.backend.domains.timeVoteRoom.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotEmpty;
@@ -24,6 +25,18 @@ public class TimeVoteRoomDTO {
 
 		@NotEmpty(message = "투표 후보가 제공되지 않았습니다.")
 		private List<@NotNull(message = "날짜는 비어있을 수 없습니다.") LocalDate> dates;
+	}
+
+	@Getter
+	@AllArgsConstructor(access = AccessLevel.PRIVATE)
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	public static class TimeVoteRoomGetResponse {
+		private Boolean existence;
+		private List<LocalDate> dates;
+
+		public static TimeVoteRoomGetResponse from(Boolean existence, List<LocalDate> dates) {
+			return new TimeVoteRoomGetResponse(existence, dates);
+		}
 	}
 
 	@Getter
