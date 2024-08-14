@@ -388,6 +388,7 @@ public class PlaceVoteRoomController {
 		summary = "장소투표여부 확인하기",
 		description = """
 			장소투표여부를 나타내고 투표를 했으면 true, 투표를 하지않았으면 false를 반환한다.
+			투표를 한 경우에는 true와 함께 장소 투표 후보와 자신이 투표한 장소를 반환한다.
 						
 			AccessToken 필요.""",
 		parameters = {
@@ -426,12 +427,13 @@ public class PlaceVoteRoomController {
 			)
 		}
 	)
-	public ResponseEntity<DataResponse<Boolean>> votedHas() {
+	public ResponseEntity<DataResponse<PlaceVoteStatusResponse>> placeVoteStatusGet() {
 
-		Member member = memberLoader.getMember();
 		Room room = memberLoader.getRoom();
+		Member member = memberLoader.getMember();
 
-		boolean hasVoted = placeVoteRoomService.hasVoted(member, room);
-		return ResponseEntity.ok(DataResponse.from(hasVoted));
+		PlaceVoteStatusResponse response = placeVoteRoomService.getPlaceVoteRoomResultWithVotingInfo(member, room);
+
+		return ResponseEntity.ok(DataResponse.from(response));
 	}
 }
