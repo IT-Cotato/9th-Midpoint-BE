@@ -96,5 +96,47 @@ public class TimeVoteRoomDTO {
 		@Schema(type = "string", example = "2024-07-26 19:00")
 		private LocalDateTime memberAvailableEndTime;
 	}
+
+	@Getter
+	@AllArgsConstructor(access = AccessLevel.PRIVATE)
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	public static class VotedAndVoteItemsGetResponse {
+		private Boolean myVotesExistence;
+		private List<TimeRange> myVotes;
+		private Boolean otherVotesExistence;
+		private List<TimeVotePerDate> otherVotes;
+
+		public static VotedAndVoteItemsGetResponse from(
+			Boolean myVotesExistence,
+			List<TimeRange> myVotes,
+			Boolean otherVotesExistence,
+			List<TimeVotePerDate> otherVotes) {
+
+			return new VotedAndVoteItemsGetResponse(myVotesExistence, myVotes, otherVotesExistence, otherVotes);
+		}
+	}
+
+	@Getter
+	@AllArgsConstructor(access = AccessLevel.PRIVATE)
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	public static class TimeVotePerDate {
+		private LocalDate date;
+		private List<TimeVotePerDateDetail> timeVotes;
+
+		@Getter
+		@AllArgsConstructor(access = AccessLevel.PRIVATE)
+		public static class TimeVotePerDateDetail {
+			private String memberName;
+			private TimeRange dateTime;
+
+			public static TimeVotePerDateDetail from(String memberName, TimeRange dateTime) {
+				return new TimeVotePerDateDetail(memberName, dateTime);
+			}
+		}
+
+		public static TimeVotePerDate from(LocalDate date, List<TimeVotePerDateDetail> timeVotePerDateDetails) {
+			return new TimeVotePerDate(date, timeVotePerDateDetails);
+		}
+	}
 }
 

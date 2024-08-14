@@ -323,7 +323,7 @@ public class TimeVoteRoomController {
 	//투표여부
 	@GetMapping("/voted")
 	@Operation(
-		summary = "시간투표여부 확인하기",
+		summary = "시간투표여부 및 투표항목들 조회",
 		description = """
 			         시간투표여부를 나타내고 투표를 했으면 true, 투표를 하지않았으면 false를 반환한다.
 						
@@ -364,14 +364,14 @@ public class TimeVoteRoomController {
 			)
 		}
 	)
-	public ResponseEntity<DataResponse<Boolean>> votedHas() {
+	public ResponseEntity<DataResponse<VotedAndVoteItemsGetResponse>> votedAndVoteItemsGet() {
 
 		Member member = memberLoader.getMember();
 		Room room = memberLoader.getRoom();
 
-		boolean hasVoted = timeVoteRoomService.hasVoted(member, room);
+		VotedAndVoteItemsGetResponse response = timeVoteRoomService.getVotedAndVoteItems(member, room);
 
-		return ResponseEntity.ok(DataResponse.from(hasVoted));
+		return ResponseEntity.ok(DataResponse.from(response));
 	}
 
 	//투표 결과
