@@ -5,7 +5,6 @@ import middle_point_search.backend.common.exception.CustomException;
 import middle_point_search.backend.domains.timeVoteRoom.domain.MeetingDate;
 import middle_point_search.backend.domains.timeVoteRoom.domain.TimeVote;
 import middle_point_search.backend.domains.timeVoteRoom.domain.TimeVoteRoom;
-import middle_point_search.backend.domains.timeVoteRoom.dto.TimeVoteRoomDTO;
 import middle_point_search.backend.domains.timeVoteRoom.repository.MeetingDateRepository;
 import middle_point_search.backend.domains.timeVoteRoom.repository.TimeVoteRepository;
 import middle_point_search.backend.domains.timeVoteRoom.repository.TimeVoteRoomRepository;
@@ -90,7 +89,7 @@ public class TimeVoteRoomService {
 		TimeVoteRoom timeVoteRoom = timeVoteRoomRepository.findByRoom(room)
 			.orElseThrow(() -> new CustomException(VOTE_ROOM_NOT_FOUND));
 
-		List<TimeVote> existingVotes = timeVoteRepository.findByTimeVoteRoomAndMember(timeVoteRoom, member);
+		List<TimeVote> existingVotes = timeVoteRepository.findAllByTimeVoteRoomAndMember(timeVoteRoom, member);
 		if (existingVotes.isEmpty()) {
 			throw new CustomException(VOTE_NOT_FOUND);
 		}
@@ -132,7 +131,7 @@ public class TimeVoteRoomService {
 			List<TimeVoteDetail> details = new ArrayList<>();
 
 			// 해당 날짜의 모든 투표 정보 가져오기
-			List<TimeVote> timeVotes = timeVoteRepository.findByTimeVoteRoomAndMeetingDate(timeVoteRoom, meetingDate);
+			List<TimeVote> timeVotes = timeVoteRepository.findAllByTimeVoteRoomAndMeetingDate(timeVoteRoom, meetingDate);
 			for (TimeVote vote : timeVotes) {
 				List<TimeRange> dateTimeList = Arrays.asList(
 					new TimeRange(
@@ -168,11 +167,55 @@ public class TimeVoteRoomService {
 	}
 
 	//먼저 시간투표방이 없다면 시간투표방없다고 에러메세지, 그 다음 시간 투표방이 있을때 투표했으면 true, 투표안했으면 false 반환
-	public boolean hasVoted(Member member, Room room) {
+	public VotedAndVoteItemsGetResponse getVotedAndVoteItems(Member member, Room room) {
 
 		TimeVoteRoom timeVoteRoom = timeVoteRoomRepository.findByRoom(room)
 			.orElseThrow(() -> new CustomException(VOTE_ROOM_NOT_FOUND));
 
-		return timeVoteRepository.existsByTimeVoteRoomAndMember(timeVoteRoom, member);
+		//내 시간투표 가져오기
+		List<TimeRange> myVotes = getMyVotes(timeVoteRoom, member);
+		boolean myVoteExistence = !myVotes.isEmpty();
+		myVotes = myVoteExistence ? myVotes : null;
+
+		//다른 사람 시간 투표 가져오기
+		List<TimeVotePerDate> otherVotes = getOtherVotes(timeVoteRoom, member);
+		boolean otherVotesExistence = !otherVotes.isEmpty();
+		otherVotes = otherVotesExistence ? otherVotes : null;
+
+		return VotedAndVoteItemsGetResponse.from(myVoteExistence, myVotes, otherVotesExistence, otherVotes);
+	}
+
+	private List<TimeRange> getMyVotes(TimeVoteRoom timeVoteRoom, Member member) {
+		List<TimeVote> myTimeVotes = timeVoteRepository.findAllByTimeVoteRoomAndMember(timeVoteRoom,
+			member);
+
+		return myTimeVotes.stream()
+			.map(myTimeVote -> new TimeRange(myTimeVote.getMemberAvailableStartTime(),
+				myTimeVote.getMemberAvailableEndTime()))
+			.toList();
+	}
+
+	private List<TimeVotePerDate> getOtherVotes(TimeVoteRoom timeVoteRoom, Member member) {
+		List<TimeVotePerDate> otherVotes = new ArrayList<>();
+
+		List<MeetingDate> meetingDates = timeVoteRoom.getMeetingDates();
+
+		for (MeetingDate meetingDate : meetingDates) {
+			List<TimeVotePerDate.TimeVotePerDateDetail> timeVotePerDateDetails = timeVoteRepository.findAllByTimeVoteRoomAndMeetingDateExceptMember(
+					timeVoteRoom, meetingDate, member)
+				.stream()
+				.map(otherTimeVote -> {
+					TimeRange timeRange = new TimeRange(otherTimeVote.getMemberAvailableStartTime(),
+						otherTimeVote.getMemberAvailableEndTime());
+					return TimeVotePerDate.TimeVotePerDateDetail.from(otherTimeVote.getMember().getName(), timeRange);
+				})
+				.toList();
+
+			TimeVotePerDate timeVotePerDate = TimeVotePerDate.from(meetingDate.getDate(), timeVotePerDateDetails);
+
+			otherVotes.add(timeVotePerDate);
+		}
+
+		return otherVotes;
 	}
 }
