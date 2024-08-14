@@ -150,12 +150,19 @@ public class PlaceVoteRoomService {
 	}
 
 	//먼저 장소투표방이 없다면 시간투표방없다고 에러메세지, 그 다음 장소투표방이 있을때 투표했으면 true, 투표안했으면 false 반환
-	public boolean hasVoted(Member member, Room room) {
+	public VotedAndVoteItemResponse getVotedAndVoteItem(Member member, Room room) {
 
 		PlaceVoteRoom placeVoteRoom = placeVoteRoomRepository.findByRoom(room)
 			.orElseThrow(() -> new CustomException(VOTE_ROOM_NOT_FOUND));
 
-		return placeVoteCandidateMemberRepository.existsByPlaceVoteCandidate_PlaceVoteRoomAndMember(placeVoteRoom,
-			member);
+		return placeVoteCandidateMemberRepository.findByPlaceVoteCandidate_PlaceVoteRoomAndMember(
+			placeVoteRoom,
+			member)
+			.map(placeVoteCandidateMember -> {
+				Long id = placeVoteCandidateMember.getPlaceVoteCandidate().getId();
+
+				return VotedAndVoteItemResponse.from(true, id);
+			})
+			.orElseGet(() -> VotedAndVoteItemResponse.from(false, null));
 	}
 }
