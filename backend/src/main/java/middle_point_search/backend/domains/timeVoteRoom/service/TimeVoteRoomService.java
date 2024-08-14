@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static middle_point_search.backend.common.exception.errorCode.UserErrorCode.*;
 import static middle_point_search.backend.domains.timeVoteRoom.dto.TimeVoteRoomDTO.*;
@@ -167,12 +168,36 @@ public class TimeVoteRoomService {
 			.orElseGet(() -> TimeVoteRoomGetResponse.from(false, null));
 	}
 
-	//먼저 시간투표방이 없다면 시간투표방없다고 에러메세지, 그 다음 시간 투표방이 있을때 투표했으면 true, 투표안했으면 false 반환
-	public boolean hasVoted(Member member, Room room) {
+	public TimeVoteStatusResponse getTimeVoteStatus(Member member, Room room) {
+		Optional<TimeVoteRoom> timeVoteRoomOptional = timeVoteRoomRepository.findByRoom(room);
 
-		TimeVoteRoom timeVoteRoom = timeVoteRoomRepository.findByRoom(room)
-			.orElseThrow(() -> new CustomException(VOTE_ROOM_NOT_FOUND));
+		return timeVoteRoomOptional
+			.map(timeVoteRoom -> {
+				// 사용자가 투표했는지 여부 확인
+				List<TimeVote> userVotes = timeVoteRoom.getTimeVotes().stream()
+					.filter(timeVote -> timeVote.getMember().equals(member))
+					.collect(Collectors.toList());
 
-		return timeVoteRepository.existsByTimeVoteRoomAndMember(timeVoteRoom, member);
+				boolean hasVoted = !userVotes.isEmpty();
+
+				// 사용자가 투표한 시간대 목록 생성
+				List<TimeRange> userVotedTimes = hasVoted ?
+					userVotes.stream()
+						.map(timeVote -> new TimeRange(timeVote.getMemberAvailableStartTime(), timeVote.getMemberAvailableEndTime()))
+						.collect(Collectors.toList()) : null;
+
+				// 모든 사용자의 투표 시간대 목록 생성
+				Map<String, List<TimeRange>> allVotedTimes = timeVoteRoom.getTimeVotes().stream()
+					.collect(Collectors.groupingBy(
+						timeVote -> timeVote.getMember().getName(),
+						Collectors.mapping(
+							timeVote -> new TimeRange(timeVote.getMemberAvailableStartTime(), timeVote.getMemberAvailableEndTime()),
+							Collectors.toList()
+						)
+					));
+
+				return TimeVoteStatusResponse.from(hasVoted, userVotedTimes, hasVoted ? allVotedTimes : null);
+			})
+			.orElseGet(() -> TimeVoteStatusResponse.from(false, null, null));
 	}
 }

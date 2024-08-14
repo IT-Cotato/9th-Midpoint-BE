@@ -96,5 +96,19 @@ public class TimeVoteRoomDTO {
 		@Schema(type = "string", example = "2024-07-26 19:00")
 		private LocalDateTime memberAvailableEndTime;
 	}
+
+	@Getter
+	@AllArgsConstructor(access = AccessLevel.PRIVATE)
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	public static class TimeVoteStatusResponse {
+		private Boolean hasVoted;
+		private List<TimeRange> userVotedTimes;
+		private Map<String, List<TimeRange>> allVotedTimes;
+
+		public static TimeVoteStatusResponse from(Boolean hasVoted, List<TimeRange> userVotedTimes, Map<String, List<TimeRange>> allVotedTimes) {
+			return new TimeVoteStatusResponse(hasVoted, userVotedTimes, allVotedTimes);
+		}
+	}
+
 }
 

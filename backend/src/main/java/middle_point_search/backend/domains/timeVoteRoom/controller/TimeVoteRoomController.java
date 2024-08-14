@@ -364,14 +364,14 @@ public class TimeVoteRoomController {
 			)
 		}
 	)
-	public ResponseEntity<DataResponse<Boolean>> votedHas() {
+	public ResponseEntity<DataResponse<TimeVoteStatusResponse>> timeVoteStatusGet() {
 
 		Member member = memberLoader.getMember();
 		Room room = memberLoader.getRoom();
 
-		boolean hasVoted = timeVoteRoomService.hasVoted(member, room);
+		TimeVoteStatusResponse response = timeVoteRoomService.getTimeVoteStatus(member, room);
 
-		return ResponseEntity.ok(DataResponse.from(hasVoted));
+		return ResponseEntity.ok(DataResponse.from(response));
 	}
 
 	//투표 결과
