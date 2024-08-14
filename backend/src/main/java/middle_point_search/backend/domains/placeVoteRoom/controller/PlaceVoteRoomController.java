@@ -385,7 +385,7 @@ public class PlaceVoteRoomController {
 	//투표여부
 	@GetMapping("/voted")
 	@Operation(
-		summary = "장소투표여부 확인하기",
+		summary = "장소투표여부 및 투표항목 조회하기",
 		description = """
 			장소투표여부를 나타내고 투표를 했으면 true, 투표를 하지않았으면 false를 반환한다.
 						
@@ -426,12 +426,12 @@ public class PlaceVoteRoomController {
 			)
 		}
 	)
-	public ResponseEntity<DataResponse<Boolean>> votedHas() {
+	public ResponseEntity<DataResponse<VotedAndVoteItemResponse>> votedAndVoteItemGet() {
 
 		Member member = memberLoader.getMember();
 		Room room = memberLoader.getRoom();
 
-		boolean hasVoted = placeVoteRoomService.hasVoted(member, room);
-		return ResponseEntity.ok(DataResponse.from(hasVoted));
+		VotedAndVoteItemResponse votedAndVoteItemResponse = placeVoteRoomService.getVotedAndVoteItem(member, room);
+		return ResponseEntity.ok(DataResponse.from(votedAndVoteItemResponse));
 	}
 }

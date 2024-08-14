@@ -44,8 +44,6 @@ public class PlaceVoteRoomDTO {
 		}
 	}
 
-
-
 	@Getter
 	@AllArgsConstructor(access = AccessLevel.PRIVATE)
 	public static class PlaceVoteRoomGetResponse {
@@ -107,6 +105,18 @@ public class PlaceVoteRoomDTO {
 
 		@NotNull(message = "choicePlace은 비어 있을 수 없습니다.")
 		private Long choicePlace;
+	}
+
+	@Getter
+	@AllArgsConstructor(access = AccessLevel.PRIVATE)
+	public static class VotedAndVoteItemResponse {
+		private Boolean existence;
+		@JsonInclude(JsonInclude.Include.NON_NULL)
+		private Long voteItem;
+
+		public static VotedAndVoteItemResponse from(Boolean existence, Long voteItem) {
+			return new VotedAndVoteItemResponse(existence, voteItem);
+		}
 	}
 }
 
