@@ -242,11 +242,11 @@ public class JwtTokenProviderImpl implements JwtTokenProvider {
 		String roomId = member.getRoom().getIdentityNumber();
 		String name = member.getName();
 
-		String accessToken = createAccessToken(roomId, name);
+		String newAccessToken = createAccessToken(roomId, name);
 		String newRefreshToken = createRefreshToken();
 
 		updateRefreshToken(roomId, name, newRefreshToken);
-		sendAccessAndRefreshToken(response, accessToken, refreshToken);
+		sendAccessAndRefreshToken(response, newAccessToken, newRefreshToken);
 	}
 
 	@Override

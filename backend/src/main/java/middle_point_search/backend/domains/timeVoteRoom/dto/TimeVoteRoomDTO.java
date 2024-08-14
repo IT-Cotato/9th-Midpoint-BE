@@ -100,15 +100,43 @@ public class TimeVoteRoomDTO {
 	@Getter
 	@AllArgsConstructor(access = AccessLevel.PRIVATE)
 	@JsonInclude(JsonInclude.Include.NON_NULL)
-	public static class TimeVoteStatusResponse {
-		private Boolean hasVoted;
-		private List<TimeRange> userVotedTimes;
-		private Map<String, List<TimeRange>> allVotedTimes;
+	public static class VotedAndVoteItemsGetResponse {
+		private Boolean myVotesExistence;
+		private List<TimeRange> myVotes;
+		private Boolean otherVotesExistence;
+		private List<TimeVotePerDate> otherVotes;
 
-		public static TimeVoteStatusResponse from(Boolean hasVoted, List<TimeRange> userVotedTimes, Map<String, List<TimeRange>> allVotedTimes) {
-			return new TimeVoteStatusResponse(hasVoted, userVotedTimes, allVotedTimes);
+		public static VotedAndVoteItemsGetResponse from(
+			Boolean myVotesExistence,
+			List<TimeRange> myVotes,
+			Boolean otherVotesExistence,
+			List<TimeVotePerDate> otherVotes) {
+
+			return new VotedAndVoteItemsGetResponse(myVotesExistence, myVotes, otherVotesExistence, otherVotes);
 		}
 	}
 
+	@Getter
+	@AllArgsConstructor(access = AccessLevel.PRIVATE)
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	public static class TimeVotePerDate {
+		private LocalDate date;
+		private List<TimeVotePerDateDetail> timeVotes;
+
+		@Getter
+		@AllArgsConstructor(access = AccessLevel.PRIVATE)
+		public static class TimeVotePerDateDetail {
+			private String memberName;
+			private TimeRange dateTime;
+
+			public static TimeVotePerDateDetail from(String memberName, TimeRange dateTime) {
+				return new TimeVotePerDateDetail(memberName, dateTime);
+			}
+		}
+
+		public static TimeVotePerDate from(LocalDate date, List<TimeVotePerDateDetail> timeVotePerDateDetails) {
+			return new TimeVotePerDate(date, timeVotePerDateDetails);
+		}
+	}
 }
 

@@ -149,50 +149,20 @@ public class PlaceVoteRoomService {
 			.orElseGet(() -> PlaceVoteRoomGetResponse.from(false, null));
 	}
 
-	// 사용자가 투표를 했는지 확인하고, 투표한 경우 상세 투표 정보를 반환
-	public PlaceVoteStatusResponse getPlaceVoteRoomResultWithVotingInfo(Member member, Room room) {
-		Optional<PlaceVoteRoom> placeVoteRoomOptional = placeVoteRoomRepository.findByRoom(room);
+	//먼저 장소투표방이 없다면 시간투표방없다고 에러메세지, 그 다음 장소투표방이 있을때 투표했으면 true, 투표안했으면 false 반환
+	public VotedAndVoteItemResponse getVotedAndVoteItem(Member member, Room room) {
 
-		return placeVoteRoomOptional
-			.map(placeVoteRoom -> {
-				// 사용자가 투표했는지 여부 확인
-				boolean hasVoted = placeVoteCandidateMemberRepository.existsByPlaceVoteCandidate_PlaceVoteRoomAndMember(placeVoteRoom, member);
+		PlaceVoteRoom placeVoteRoom = placeVoteRoomRepository.findByRoom(room)
+			.orElseThrow(() -> new CustomException(VOTE_ROOM_NOT_FOUND));
 
-				if (hasVoted) {
-					// 사용자가 투표한 장소 목록 생성
-					List<PlaceVoteStatusResponse.PlaceCandidates> userVotedCandidates = placeVoteRoom.getPlaceVoteCandidates().stream()
-						.filter(candidate -> placeVoteCandidateMemberRepository.existsByPlaceVoteCandidateAndMember(candidate, member))
-						.map(candidate -> new PlaceVoteStatusResponse.PlaceCandidates(
-							candidate.getId(),
-							candidate.getName(),
-							candidate.getSiDo(),
-							candidate.getSiGunGu(),
-							candidate.getRoadNameAddress(),
-							candidate.getAddressLatitude(),
-							candidate.getAddressLongitude()
-						))
-						.collect(Collectors.toList());
+		return placeVoteCandidateMemberRepository.findByPlaceVoteCandidate_PlaceVoteRoomAndMember(
+			placeVoteRoom,
+			member)
+			.map(placeVoteCandidateMember -> {
+				Long id = placeVoteCandidateMember.getPlaceVoteCandidate().getId();
 
-					// 전체 장소 후보 목록 생성
-					List<PlaceVoteStatusResponse.PlaceCandidates> allPlaceCandidates = placeVoteRoom.getPlaceVoteCandidates().stream()
-						.map(candidate -> new PlaceVoteStatusResponse.PlaceCandidates(
-							candidate.getId(),
-							candidate.getName(),
-							candidate.getSiDo(),
-							candidate.getSiGunGu(),
-							candidate.getRoadNameAddress(),
-							candidate.getAddressLatitude(),
-							candidate.getAddressLongitude()
-						))
-						.collect(Collectors.toList());
-
-					// 투표 여부와 함께 정보 반환
-					return PlaceVoteStatusResponse.from(true, allPlaceCandidates, userVotedCandidates);
-				} else {
-					// 투표방이 존재하지만 사용자가 투표하지 않은 경우
-					return PlaceVoteStatusResponse.from(false, null, null);
-				}
+				return VotedAndVoteItemResponse.from(true, id);
 			})
-			.orElseGet(() -> PlaceVoteStatusResponse.from(false, null, null));
+			.orElseGet(() -> VotedAndVoteItemResponse.from(false, null));
 	}
 }
