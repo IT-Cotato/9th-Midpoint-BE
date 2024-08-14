@@ -71,33 +71,6 @@ public class PlaceVoteRoomDTO {
 
 	@Getter
 	@AllArgsConstructor(access = AccessLevel.PRIVATE)
-	@NoArgsConstructor(access = AccessLevel.PRIVATE)
-	public static class PlaceVoteStatusResponse {
-		private Boolean existence;
-		@JsonInclude(JsonInclude.Include.NON_NULL)
-		private List<PlaceCandidates> allPlaceCandidates;
-		@JsonInclude(JsonInclude.Include.NON_NULL)
-		private List<PlaceCandidates> userVotedCandidates;
-
-		public static PlaceVoteStatusResponse from(Boolean existence, List<PlaceCandidates> allPlaceCandidates, List<PlaceCandidates> userVotedCandidates) {
-			return new PlaceVoteStatusResponse(existence, allPlaceCandidates, userVotedCandidates);
-		}
-
-		@Getter
-		@AllArgsConstructor(access = AccessLevel.PUBLIC)
-		public static class PlaceCandidates {
-			private Long id;
-			private String name;
-			private String siDo;
-			private String siGunGu;
-			private String roadNameAddress;
-			private Double addressLat;
-			private Double addressLong;
-		}
-	}
-
-	@Getter
-	@AllArgsConstructor(access = AccessLevel.PRIVATE)
 	public static class PlaceVoteRoomCreateResponse {
 		private final Long id;
 
