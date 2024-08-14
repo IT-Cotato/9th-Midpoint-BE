@@ -326,6 +326,7 @@ public class TimeVoteRoomController {
 		summary = "시간투표여부 확인하기",
 		description = """
 			         시간투표여부를 나타내고 투표를 했으면 true, 투표를 하지않았으면 false를 반환한다.
+			         멤버 자신이 투표한 시간대 반환 및 투표방에 속해있는 멤버들이 투표한 시간대 반환
 						
 			AccessToken 필요.""",
 		parameters = {
