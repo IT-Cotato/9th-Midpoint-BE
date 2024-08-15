@@ -209,6 +209,7 @@ public class TimeVoteRoomService {
 						otherTimeVote.getMemberAvailableEndTime());
 					return TimeVotePerDate.TimeVotePerDateDetail.from(otherTimeVote.getMember().getName(), timeRange);
 				})
+				.sorted(Comparator.comparing(detail -> detail.getDateTime().getMemberAvailableStartTime()))
 				.toList();
 
 			TimeVotePerDate timeVotePerDate = TimeVotePerDate.from(meetingDate.getDate(), timeVotePerDateDetails);
