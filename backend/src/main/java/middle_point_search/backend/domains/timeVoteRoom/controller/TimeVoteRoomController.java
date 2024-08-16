@@ -190,7 +190,11 @@ public class TimeVoteRoomController {
 				description = "생성된 투표방이 없습니다.",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
-
+			@ApiResponse(
+				responseCode = "404",
+				description = "투표 후보가 아닙니다.",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
 			@ApiResponse(
 				responseCode = "409",
 				description = "이미 투표를 하였습니다.",
@@ -253,6 +257,11 @@ public class TimeVoteRoomController {
 			@ApiResponse(
 				responseCode = "404",
 				description = "투표를 한 적이 없습니다.",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
+				responseCode = "404",
+				description = "투표 후보가 아닙니다.",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
