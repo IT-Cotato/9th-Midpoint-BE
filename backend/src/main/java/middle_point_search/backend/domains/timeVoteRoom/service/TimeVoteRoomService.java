@@ -1,25 +1,31 @@
 package middle_point_search.backend.domains.timeVoteRoom.service;
 
+import static middle_point_search.backend.common.exception.errorCode.UserErrorCode.*;
+import static middle_point_search.backend.domains.timeVoteRoom.dto.TimeVoteRoomDTO.*;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.exception.CustomException;
+import middle_point_search.backend.domains.member.domain.Member;
+import middle_point_search.backend.domains.room.domain.Room;
 import middle_point_search.backend.domains.timeVoteRoom.domain.MeetingDate;
 import middle_point_search.backend.domains.timeVoteRoom.domain.TimeVote;
 import middle_point_search.backend.domains.timeVoteRoom.domain.TimeVoteRoom;
 import middle_point_search.backend.domains.timeVoteRoom.repository.MeetingDateRepository;
 import middle_point_search.backend.domains.timeVoteRoom.repository.TimeVoteRepository;
 import middle_point_search.backend.domains.timeVoteRoom.repository.TimeVoteRoomRepository;
-import middle_point_search.backend.domains.member.domain.Member;
-import middle_point_search.backend.domains.room.domain.Room;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.*;
-
-import static middle_point_search.backend.common.exception.errorCode.UserErrorCode.*;
-import static middle_point_search.backend.domains.timeVoteRoom.dto.TimeVoteRoomDTO.*;
 
 @Service
 @RequiredArgsConstructor
@@ -107,11 +113,19 @@ public class TimeVoteRoomService {
 			LocalDateTime memberAvailableStartTime = timeRange.getMemberAvailableStartTime();
 			LocalDateTime memberAvailableEndTime = timeRange.getMemberAvailableEndTime();
 			LocalDateTime startDateTime = memberAvailableStartTime.toLocalDate().atStartOfDay();
-			Optional<MeetingDate> meetingDateOpt = meetingDateRepository.findByTimeVoteRoomAndDate(timeVoteRoom,
-				startDateTime.toLocalDate());
-			MeetingDate meetingDate = meetingDateOpt.orElseThrow(() -> new CustomException(VOTE_ROOM_NOT_FOUND));
-			TimeVote timeVote = new TimeVote(timeVoteRoom, meetingDate, member, memberAvailableStartTime,
+
+			MeetingDate meetingDate = meetingDateRepository.findByTimeVoteRoomAndDate(
+					timeVoteRoom,
+					startDateTime.toLocalDate())
+				.orElseThrow(() -> new CustomException(CANDIDATE_NOT_FOUND));
+
+			TimeVote timeVote = new TimeVote(
+				timeVoteRoom,
+				meetingDate,
+				member,
+				memberAvailableStartTime,
 				memberAvailableEndTime);
+
 			timeVotes.add(timeVote);
 		}
 		return timeVotes;
@@ -131,7 +145,8 @@ public class TimeVoteRoomService {
 			List<TimeVoteDetail> details = new ArrayList<>();
 
 			// 해당 날짜의 모든 투표 정보 가져오기
-			List<TimeVote> timeVotes = timeVoteRepository.findAllByTimeVoteRoomAndMeetingDate(timeVoteRoom, meetingDate);
+			List<TimeVote> timeVotes = timeVoteRepository.findAllByTimeVoteRoomAndMeetingDate(timeVoteRoom,
+				meetingDate);
 			for (TimeVote vote : timeVotes) {
 				List<TimeRange> dateTimeList = Arrays.asList(
 					new TimeRange(
