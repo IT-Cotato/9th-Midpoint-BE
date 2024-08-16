@@ -226,6 +226,11 @@ public class PlaceVoteRoomController {
 				description = "성공"
 			),
 			@ApiResponse(
+				responseCode = "400",
+				description = "투표 후보가 아닙니다.",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
 				responseCode = "401",
 				description = "인증에 실패하였습니다.",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
@@ -243,11 +248,6 @@ public class PlaceVoteRoomController {
 			@ApiResponse(
 				responseCode = "404",
 				description = "생성된 투표방이 없습니다.",
-				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
-			),
-			@ApiResponse(
-				responseCode = "404",
-				description = "투표 후보가 아닙니다.",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
@@ -289,6 +289,11 @@ public class PlaceVoteRoomController {
 				description = "성공"
 			),
 			@ApiResponse(
+				responseCode = "400",
+				description = "투표 후보가 아닙니다.",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
 				responseCode = "401",
 				description = "인증에 실패하였습니다.",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
@@ -306,11 +311,6 @@ public class PlaceVoteRoomController {
 			@ApiResponse(
 				responseCode = "404",
 				description = "생성된 투표방이 없습니다.",
-				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
-			),
-			@ApiResponse(
-				responseCode = "404",
-				description = "투표 후보가 아닙니다.",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
