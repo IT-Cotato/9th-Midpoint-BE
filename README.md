@@ -27,3 +27,23 @@
 <h4>중간 지점을 찾고 만날 장소까지 정했다면,
 만날 시간까지 투표로 정할 수 있어요!</h4>
 <img style="width: 100%;" src="https://github.com/user-attachments/assets/67503d0c-acf6-4479-aa57-1b8336484c97">
+## 👋 Members
+|                           <a href="https://github.com/Cllaude99"><img src="https://github.com/Cllaude99.png" width=120/></a>                           |                          <a href="https://github.com/chae-dahee"><img src="https://github.com/chae-dahee.png" width=120/></a>                     |
+|:-----------------------------------------------------------------------------------------------------------:|:-------------------------------------------------------------------------------------------------------:|
+|김태윤|채다희|:-----------------------------------------------------------------------------------------------------------:|:-------------------------------------------------------------------------------------------------------:|
+| [ 8기 FE ] | [ 8기 FE ]  |
+
+
+## 🛠️ Tech Stack
+
+[![My Skills](https://skillicons.dev/icons?i=html,css,js,ts,react,vite,styledcomponents,tailwind,npm,nodejs,jest)](https://skillicons.dev)
+
+## 🔨 Tools
+
+[![My Skills](https://skillicons.dev/icons?i=git,github,figma,notion,discord,vscode)](https://skillicons.dev)
+
+---
+
+
+## 클라이언트 구조
+<img width="647" alt="image" src="https://github.com/IT-Cotato/9th-Midpoint-FE/assets/96279437/48ed4311-6177-4a87-8e84-771eb1814b35">
