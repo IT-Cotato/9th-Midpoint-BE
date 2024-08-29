@@ -53,4 +53,6 @@
 <img width="647" alt="image" src="https://github.com/user-attachments/assets/a78b6636-0b37-40b7-85e8-34a7dc96550b">
 
 ## 백엔드 API 목록
+![www api cotato-midpoint site_swagger-ui_index html(iPad Air) (1)](https://github.com/user-attachments/assets/bcf0ad55-0875-4358-a85a-3147e9035f3a)
+
 <img width="647" alt="image" src="=https://github.com/user-attachments/assets/bcf0ad55-0875-4358-a85a-3147e9035f3a">
