@@ -37,11 +37,11 @@
 
 ## 🛠️ Tech Stack
 
-[![My Skills](https://skillicons.dev/icons?i=html,css,js,ts,react,vite,styledcomponents,tailwind,npm,nodejs,jest)](https://skillicons.dev)
+[![My Skills](https://skillicons.dev/icons?i=java,gradle,spring,aws,ubuntu,nginx,mysql,redis)](https://skillicons.dev)
 
 ## 🔨 Tools
 
-[![My Skills](https://skillicons.dev/icons?i=git,github,figma,notion,discord,vscode)](https://skillicons.dev)
+[![My Skills](https://skillicons.dev/icons?i=git,github,figma,notion,discord,idea,postman)](https://skillicons.dev)
 
 ---
 
