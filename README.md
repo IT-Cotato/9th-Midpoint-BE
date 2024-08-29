@@ -50,7 +50,7 @@
 <img width="647" alt="image" src="https://github.com/IT-Cotato/9th-Midpoint-FE/assets/96279437/48ed4311-6177-4a87-8e84-771eb1814b35">
 
 ## 백엔드 구조
-<img width="647" alt="image" src="https://github.com/IT-Cotato/9th-Midpoint-BE/tree/develop/backend/src/main/resources/static/image/img.png">
+<img width="647" alt="image" src="https://github.com/user-attachments/assets/a78b6636-0b37-40b7-85e8-34a7dc96550b">
 
 ## 백엔드 API 목록
 <img width="647" alt="image" src="https://github.com/IT-Cotato/9th-Midpoint-BE/backend/src/main/resources/static/image/img.png">
