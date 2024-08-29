@@ -29,10 +29,10 @@
 <img style="width: 100%;" src="https://github.com/user-attachments/assets/67503d0c-acf6-4479-aa57-1b8336484c97">
 
 ## 👋 Members
-|                           <a href="https://github.com/yooooonshine"><img src="https://github.com/Cllaude99.png" width=120/></a>                           |                          <a href="https://github.com/chae-dahee"><img src="https://github.com/chae-dahee.png" width=120/></a>                     |
+|                           <a href="https://github.com/yooooonshine"><img src="https://github.com/yooooonshine.png" width=120/></a>                           |                          <a href="https://github.com/shinyj0"><img src="https://github.com/shinyj0shinyj0.png" width=120/></a>                     |
 |:-----------------------------------------------------------------------------------------------------------:|:-------------------------------------------------------------------------------------------------------:|
 |김태윤|채다희|:-----------------------------------------------------------------------------------------------------------:|:-------------------------------------------------------------------------------------------------------:|
-| [ 8기 FE ] | [ 8기 FE ]  |
+| [ 9기 BE ] | [ 9기 BE ]  |
 
 
 ## 🛠️ Tech Stack
