@@ -50,7 +50,7 @@
 <img width="647" alt="image" src="https://github.com/IT-Cotato/9th-Midpoint-FE/assets/96279437/48ed4311-6177-4a87-8e84-771eb1814b35">
 
 ## 백엔드 구조
-<img width="647" alt="image" src="https://github.com/IT-Cotato/9th-Midpoint-BE/backend/src/main/resources/static/image/www.api.cotato-midpoint.site_swagger-ui_index.html(iPad Air) (1).png">
+<img width="647" alt="image" src="https://github.com/IT-Cotato/9th-Midpoint-BE/tree/develop/backend/src/main/resources/static/image/img.png">
 
 ## 백엔드 API 목록
 <img width="647" alt="image" src="https://github.com/IT-Cotato/9th-Midpoint-BE/backend/src/main/resources/static/image/img.png">
