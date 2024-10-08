@@ -30,7 +30,7 @@ public class ExceptionHandlingFilter extends OncePerRequestFilter {
 		} catch (Exception e) {
 			log.warn("ExceptionHandlingFilter: {}", e.getMessage());
 
-			ErrorResponse errorResponse = ErrorResponse.of(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+			ErrorResponse errorResponse = ErrorResponse.of(HttpStatus.INTERNAL_SERVER_ERROR,"C-401", e.getMessage());
 			ResponseWriter.writeResponse(response, errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
