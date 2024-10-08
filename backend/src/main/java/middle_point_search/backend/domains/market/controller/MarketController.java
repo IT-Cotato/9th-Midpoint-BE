@@ -28,11 +28,12 @@ public class MarketController {
 	@Operation(
 		summary = "중간 장소 리스트 업데이트",
 		parameters = {
-			@Parameter(name = "RoomId", description = "roomId 필요", required = true, in = ParameterIn.HEADER)
+			@Parameter(name = "RoomId", description = "roomId 필요", in = ParameterIn.HEADER),
+			@Parameter(name = "RoomType", description = "roomType 필요. [TOGETHER, SELF] 중 하나", in = ParameterIn.HEADER)
 		},
 		description = """
 			중간 지점으로 선정될 장소를 업데이트 한다.
-						
+			
 			AccessToken 필요(ADMIN 권한 필요.)"""
 	)
 	public ResponseEntity<BaseResponse> marketUpdate() {
