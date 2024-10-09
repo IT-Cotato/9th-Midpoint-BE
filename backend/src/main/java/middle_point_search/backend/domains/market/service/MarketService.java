@@ -16,6 +16,7 @@ import middle_point_search.backend.common.properties.MarketProperties;
 import middle_point_search.backend.common.webClient.util.WebClientUtil;
 import middle_point_search.backend.domains.market.domain.Market;
 import middle_point_search.backend.domains.market.dto.response.MarketApiResponse;
+import middle_point_search.backend.domains.market.repository.MarketQueryRepository;
 import middle_point_search.backend.domains.market.repository.MarketRepository;
 
 @Slf4j
@@ -24,6 +25,7 @@ import middle_point_search.backend.domains.market.repository.MarketRepository;
 @RequiredArgsConstructor
 public class MarketService {
 
+	private final MarketQueryRepository marketQueryRepository;
 	private final MarketRepository marketRepository;
 
 	private final MarketProperties marketProperties;
@@ -98,7 +100,7 @@ public class MarketService {
 	// Market List 저장
 	private void saveAllMarket(List<Market> markets) {
 		long startTime = System.currentTimeMillis();
-		marketRepository.saveAll(markets);
+		marketQueryRepository.saveAll(markets);
 		long stopTime = System.currentTimeMillis();
 		log.info("saveAllMarket | time = {}ms", stopTime - startTime);
 	}
