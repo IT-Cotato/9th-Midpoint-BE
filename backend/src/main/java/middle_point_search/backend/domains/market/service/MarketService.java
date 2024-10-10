@@ -1,7 +1,7 @@
 package middle_point_search.backend.domains.market.service;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +18,8 @@ import middle_point_search.backend.domains.market.domain.Market;
 import middle_point_search.backend.domains.market.dto.response.MarketApiResponse;
 import middle_point_search.backend.domains.market.repository.MarketQueryRepository;
 import middle_point_search.backend.domains.market.repository.MarketRepository;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Slf4j
 @Service
@@ -27,9 +29,7 @@ public class MarketService {
 
 	private final MarketQueryRepository marketQueryRepository;
 	private final MarketRepository marketRepository;
-
 	private final MarketProperties marketProperties;
-
 	private final WebClientUtil webClientUtil;
 
 	// Market 정보 업데이트하기
@@ -40,12 +40,11 @@ public class MarketService {
 		int marketCount = getMarketCount();
 		int totalPage = parseCountToPage(marketCount);
 
-		requestAndSaveMarkets(totalPage);
+		requestAndSaveAllMarkets(totalPage);
 	}
 
 	// Market 총 데이터 수 가져오기
 	private int getMarketCount() {
-		long startTime = System.currentTimeMillis();
 		String url = marketProperties.getMarketApiUrl();
 
 		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
@@ -54,54 +53,47 @@ public class MarketService {
 
 		MarketApiResponse response = webClientUtil.getMarket(url, params, MarketApiResponse.class);
 
-		if (!Objects.nonNull(response)) {
-			throw new CustomException(CommonErrorCode.EXTERNAL_SERVER_ERROR);
-		}
-
-		long stopTime = System.currentTimeMillis();
-		log.info("getMarketCount | time = {}ms", stopTime - startTime);
 		return response.getTotalCount();
 	}
 
-	// market api를 요청하고 가져온 데이터를 저장하는 메서드
-	private void requestAndSaveMarkets(int totalPage) {
-		long startTime = System.currentTimeMillis();
-		for (int i = 1; i <= totalPage; i++) {
-			String url = marketProperties.getMarketApiUrl();
-
-			MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-			params.add(marketProperties.getParamPage(), String.valueOf(i));
-			params.add(marketProperties.getParamPerPage(), marketProperties.getMarketApiRequestUnit().toString());
-
-			MarketApiResponse response = webClientUtil.getMarket(url, params, MarketApiResponse.class);
-
-			if (!Objects.nonNull(response)) {
-				throw new CustomException(CommonErrorCode.EXTERNAL_SERVER_ERROR);
-			}
-
-			List<Market> markets = response.getData().stream().map(Market::from).distinct().toList();
-
-			saveAllMarket(markets);
+	// 비동기적으로 모든 페이지의 데이터를 수집하고 저장하는 메서드
+	private void requestAndSaveAllMarkets(int totalPage) {
+		// 모든 페이지에서 데이터를 비동기로 수집
+		List<Mono<MarketApiResponse>> marketApiResponseMonos = new ArrayList<>();
+		for (int pageNumber = 1; pageNumber <= totalPage; pageNumber++) {
+			marketApiResponseMonos.add(requestMarketPage(pageNumber));
 		}
 
-		long stopTime = System.currentTimeMillis();
-		log.info("requestAndSaveMarkets | time = {}ms", stopTime - startTime);
+		// 모든 데이터를 모아서 한 번에 저장
+		Flux.concat(marketApiResponseMonos)
+			.flatMap(response -> Flux.just(response.getData().stream().map(Market::from).distinct().toList()))
+			.flatMap(Flux::fromIterable)
+			.collectList()
+			.subscribe(this::saveAllMarket, error -> {
+				throw new CustomException(CommonErrorCode.EXTERNAL_SERVER_ERROR);
+			});
 	}
 
-	// 데이터 개수를 페이지로 변환해주는 메서드(개수가 2001이면 1,2,3 페이지로 3 페이지가 리턴)
+	// 특정 페이지의 Market 데이터를 비동기적으로 요청하고 수집하는 메서드
+	private Mono<MarketApiResponse> requestMarketPage(int pageNumber) {
+		String url = marketProperties.getMarketApiUrl();
+		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+		params.add(marketProperties.getParamPage(), String.valueOf(pageNumber));
+		params.add(marketProperties.getParamPerPage(), marketProperties.getMarketApiRequestUnit().toString());
+
+		return webClientUtil.getMarketByMono(url, params, MarketApiResponse.class);
+	}
+
+	// 수집된 모든 Market 데이터를 한 번에 저장하는 메서드
+	private void saveAllMarket(List<Market> markets) {
+		marketQueryRepository.saveAll(markets);
+	}
+
+	// 데이터 개수를 페이지로 변환해주는 메서드 (예: 개수가 2001이면 1, 2, 3 페이지로 3 페이지가 리턴)
 	private int parseCountToPage(int count) {
 		if (count % marketProperties.getMarketApiRequestUnit() == 0) {
 			return count / marketProperties.getMarketApiRequestUnit();
 		}
-
 		return count / marketProperties.getMarketApiRequestUnit() + 1;
-	}
-
-	// Market List 저장
-	private void saveAllMarket(List<Market> markets) {
-		long startTime = System.currentTimeMillis();
-		marketQueryRepository.saveAll(markets);
-		long stopTime = System.currentTimeMillis();
-		log.info("saveAllMarket | time = {}ms", stopTime - startTime);
 	}
 }
