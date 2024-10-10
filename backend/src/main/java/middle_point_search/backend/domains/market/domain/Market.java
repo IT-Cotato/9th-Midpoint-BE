@@ -18,7 +18,7 @@ import middle_point_search.backend.domains.market.dto.response.MarketApiData;
 public class Market {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "market_id")
 	private Long id;
 
