@@ -47,8 +47,6 @@ public class Market {
 	}
 
 	public static Market from(MarketApiData marketApiData) {
-		System.out.println(marketApiData);
-
 		String name = parseName(marketApiData.getName());
 		String siGunGu = marketApiData.getSiGunGu();
 		String siDo = marketApiData.getSiDo();
