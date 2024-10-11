@@ -1,4 +1,4 @@
-package middle_point_search.backend.common.security.cors.conf;
+package middle_point_search.backend.common.cors;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

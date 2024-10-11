@@ -1,4 +1,4 @@
-package middle_point_search.backend.common.redis.conf;
+package middle_point_search.backend.common.redis;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
