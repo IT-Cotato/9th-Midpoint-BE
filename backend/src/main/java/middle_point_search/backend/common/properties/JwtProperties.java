@@ -14,13 +14,11 @@ public class JwtProperties {
 	private String secret;
 	private Access access;
 	private Refresh refresh;
-	private RoomId roomId;
-	private RoomType roomType;
 
 	private String ACCESS_TOKEN_SUBJECT = "AccessToken";
 	private String REFRESH_TOKEN_SUBJECT = "RefreshToken";
 	private String NAME_CLAIM = "id";
-	private String ROOM_ID_CLAIM = "roomId";
+	private String MEMBER_ID_CLAIM = "memberId";
 	private String BEARER = "Bearer ";
 
 	@Getter
@@ -34,18 +32,6 @@ public class JwtProperties {
 	@Setter
 	public static class Refresh {
 		private int expiration;
-		private String header;
-	}
-
-	@Getter
-	@Setter
-	public static class RoomId {
-		private String header;
-	}
-
-	@Getter
-	@Setter
-	public static class RoomType {
 		private String header;
 	}
 }
