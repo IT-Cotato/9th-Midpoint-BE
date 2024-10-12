@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatusCode;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import lombok.Getter;
+import middle_point_search.backend.common.exception.CustomException;
 import middle_point_search.backend.common.exception.errorCode.ErrorCode;
 
 @Getter
@@ -31,8 +32,11 @@ public class ErrorResponse extends BaseResponse {
 		this.reason = reason;
 	}
 
-	public static ErrorResponse of(HttpStatusCode status, String code, String error) {
+	public static ErrorResponse from(CustomException customException) {
 		Boolean isSuccess = false;
+		HttpStatus status = customException.getHttpStatus();
+		String code = status.toString();
+		String error = customException.getMessage();
 
 		return new ErrorResponse(isSuccess, status, code, error);
 	}
