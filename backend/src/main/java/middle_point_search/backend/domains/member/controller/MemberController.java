@@ -15,8 +15,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.dto.BaseResponse;
-import middle_point_search.backend.common.security.jwt.provider.JwtTokenProvider;
+import middle_point_search.backend.common.security.filter.jwtFilter.JwtTokenProvider;
 import middle_point_search.backend.common.util.MemberLoader;
+import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.member.service.MemberService;
 
 @Tag(name = "MEMBER API", description = "회원에 대한 API입니다.")
@@ -34,7 +35,7 @@ public class MemberController {
 		summary = "로그아웃",
 		description = """
 			로그아웃한다.
-						
+			
 			AccessToken 필요.""",
 		responses = {
 			@ApiResponse(
@@ -45,11 +46,9 @@ public class MemberController {
 	)
 	public ResponseEntity<BaseResponse> memberLogout(HttpServletRequest request) {
 		String accessToken = jwtTokenProvider.extractAccessToken(request).orElse(null);
+		Member member = memberLoader.getMember();
 
-		String name = memberLoader.getName();
-		String roomId = memberLoader.getRoomId();
-
-		memberService.logoutMember(roomId, name, accessToken);
+		memberService.logoutMember(member, accessToken);
 
 		return ResponseEntity.ok(BaseResponse.ok());
 	}
@@ -85,7 +84,6 @@ public class MemberController {
 	static class LoginRequest {
 		public String name;
 		public String pw;
-		public String roomId;
 	}
 }
 
