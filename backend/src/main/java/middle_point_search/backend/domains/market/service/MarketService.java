@@ -58,7 +58,7 @@ public class MarketService {
 		MarketApiResponse response = webClientUtil.getMarket(url, params, MarketApiResponse.class);
 
 		if (!Objects.nonNull(response)) {
-			throw new CustomException(CommonErrorCode.EXTERNAL_SERVER_ERROR);
+			throw CustomException.from(CommonErrorCode.EXTERNAL_SERVER_ERROR);
 		}
 
 		return response.getTotalCount();
@@ -76,7 +76,7 @@ public class MarketService {
 			MarketApiResponse response = webClientUtil.getMarket(url, params, MarketApiResponse.class);
 
 			if (!Objects.nonNull(response)) {
-				throw new CustomException(CommonErrorCode.EXTERNAL_SERVER_ERROR);
+				throw CustomException.from(CommonErrorCode.EXTERNAL_SERVER_ERROR);
 			}
 
 			List<Market> markets = response.getData()

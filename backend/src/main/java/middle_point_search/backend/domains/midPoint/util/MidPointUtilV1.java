@@ -30,7 +30,7 @@ public class MidPointUtilV1 implements MidPointUtil {
 	public List<MidPointsFindResponse> findMidPoints(List<AddressDTO> addresses) {
 		// address가 없을 경우
 		if (addresses.isEmpty()) {
-			throw new CustomException(PLACE_NOT_FOUND);
+			throw CustomException.from(PLACE_NOT_FOUND);
 		}
 
 		List<CoordinateDTO> coordinates = addresses.stream()

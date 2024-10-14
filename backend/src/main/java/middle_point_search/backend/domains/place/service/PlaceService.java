@@ -58,7 +58,7 @@ public class PlaceService {
 			placeRepository.save(Place.from(request, room, member));
 		} else {
 			Place place = placeRepository.findByRoomAndMember(room, member)
-				.orElseThrow(() -> new CustomException(PLACE_NOT_FOUND));
+				.orElseThrow(() -> CustomException.from(PLACE_NOT_FOUND));
 
 			place.update(request);
 		}
@@ -135,7 +135,7 @@ public class PlaceService {
 	private void checkRoomType(RoomType requestRoomType, RoomType expectationRoomType) {
 
 		if (requestRoomType != expectationRoomType) {
-			throw new CustomException(ROOM_TYPE_UNPROCESSABLE);
+			throw CustomException.from(ROOM_TYPE_UNPROCESSABLE);
 		}
 	}
 }

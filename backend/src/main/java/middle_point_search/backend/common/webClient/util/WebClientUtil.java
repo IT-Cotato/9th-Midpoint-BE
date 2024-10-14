@@ -41,9 +41,9 @@ public class WebClientUtil {
 				.build())
 			.retrieve()
 			.onStatus(HttpStatusCode::is4xxClientError,
-				clientResponse -> Mono.error(new CustomException(BAD_REQUEST)))
+				clientResponse -> Mono.error(CustomException.from(BAD_REQUEST)))
 			.onStatus(HttpStatusCode::is5xxServerError,
-				clientResponse -> Mono.error(new CustomException(API_INTERNAL_SERVER_ERROR)))
+				clientResponse -> Mono.error(CustomException.from(API_INTERNAL_SERVER_ERROR)))
 			.bodyToMono(response)
 			.block();
 	}
@@ -59,9 +59,9 @@ public class WebClientUtil {
 			.header(HttpHeaders.AUTHORIZATION, kakaoProperties.getKey())
 			.retrieve()
 			.onStatus(HttpStatusCode::is4xxClientError,
-				clientResponse -> Mono.error(new CustomException(BAD_REQUEST)))
+				clientResponse -> Mono.error(CustomException.from(BAD_REQUEST)))
 			.onStatus(HttpStatusCode::is5xxServerError,
-				clientResponse -> Mono.error(new CustomException(API_INTERNAL_SERVER_ERROR)))
+				clientResponse -> Mono.error(CustomException.from(API_INTERNAL_SERVER_ERROR)))
 			.bodyToMono(response)
 			.block();
 	}
@@ -74,9 +74,9 @@ public class WebClientUtil {
 			.header(HttpHeaders.AUTHORIZATION, kakaoProperties.getKey())
 			.retrieve()
 			.onStatus(HttpStatusCode::is4xxClientError,
-				clientResponse -> Mono.error(new CustomException(BAD_REQUEST)))
+				clientResponse -> Mono.error(CustomException.from(BAD_REQUEST)))
 			.onStatus(HttpStatusCode::is5xxServerError,
-				clientResponse -> Mono.error(new CustomException(API_INTERNAL_SERVER_ERROR)))
+				clientResponse -> Mono.error(CustomException.from(API_INTERNAL_SERVER_ERROR)))
 			.bodyToMono(response)
 			.block();
 	}

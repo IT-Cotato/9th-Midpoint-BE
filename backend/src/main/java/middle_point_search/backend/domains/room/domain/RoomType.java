@@ -22,6 +22,6 @@ public enum RoomType {
 		return Arrays.stream(RoomType.values())
 			.filter(roomType -> Objects.equals(roomType.roomName, name))
 			.findFirst()
-			.orElseThrow(() -> new CustomException(ROOM_TYPE_UNPROCESSABLE));
+			.orElseThrow(() -> CustomException.from(ROOM_TYPE_UNPROCESSABLE));
 	}
 }

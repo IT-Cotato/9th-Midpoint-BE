@@ -80,7 +80,7 @@ public class RecommendPlaceService {
 			return getKaKaoForRestaurant(kakaoRequestDTO);
 		}
 
-		throw new CustomException(CommonErrorCode.INVALID_PARAMETER);
+		throw CustomException.from(CommonErrorCode.INVALID_PARAMETER);
 	}
 
 	//Cafe, Study, Restaurant 한번에 가져오기
