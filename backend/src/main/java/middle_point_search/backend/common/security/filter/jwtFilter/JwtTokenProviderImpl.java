@@ -28,14 +28,14 @@ import lombok.extern.slf4j.Slf4j;
 import middle_point_search.backend.common.dto.DataResponse;
 import middle_point_search.backend.common.exception.CustomException;
 import middle_point_search.backend.common.properties.JwtProperties;
-import middle_point_search.backend.domains.member.repository.LogoutRepository;
-import middle_point_search.backend.domains.member.domain.RefreshToken;
-import middle_point_search.backend.domains.member.repository.RefreshTokenRepository;
 import middle_point_search.backend.common.security.filter.jwtFilter.JwtDTO.AccessAndRefreshTokenResponse;
 import middle_point_search.backend.common.security.filter.jwtFilter.JwtDTO.AccessTokenResponse;
 import middle_point_search.backend.common.util.ResponseWriter;
+import middle_point_search.backend.domains.logout.LogoutService;
 import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.member.repository.MemberRepository;
+import middle_point_search.backend.domains.refreshToken.RefreshToken;
+import middle_point_search.backend.domains.refreshToken.RefreshTokenService;
 
 @Transactional(readOnly = true)
 @Service
@@ -45,16 +45,16 @@ public class JwtTokenProviderImpl implements JwtTokenProvider {
 	private final JwtProperties jwtProperties;
 	private final MemberRepository memberRepository;
 	private final Key key;
-	private final LogoutRepository logoutRepository;
-	private final RefreshTokenRepository refreshTokenRepository;
+	private final LogoutService logoutService;
+	private final RefreshTokenService refreshTokenService;
 
 	public JwtTokenProviderImpl(JwtProperties jwtProperties, MemberRepository memberRepository,
-		LogoutRepository logoutRepository, RefreshTokenRepository refreshTokenRepository) {
+		LogoutService logoutService, RefreshTokenService refreshTokenService) {
 		this.jwtProperties = jwtProperties;
 		this.memberRepository = memberRepository;
 		this.key = Keys.hmacShaKeyFor(jwtProperties.getSecret().getBytes());
-		this.logoutRepository = logoutRepository;
-		this.refreshTokenRepository = refreshTokenRepository;
+		this.logoutService = logoutService;
+		this.refreshTokenService = refreshTokenService;
 	}
 
 	//authentication을 만들어주는 메서드
@@ -95,7 +95,7 @@ public class JwtTokenProviderImpl implements JwtTokenProvider {
 	@Override
 	@Transactional
 	public void updateRefreshToken(Long memberId, String refreshToken) {
-		Optional<RefreshToken> optionalRefreshToken = refreshTokenRepository.findByMemberId(memberId);
+		Optional<RefreshToken> optionalRefreshToken = refreshTokenService.findByMemberId(memberId);
 
 		// refreshToken이 없으면 생성 및 저장, 있으면 refreshToken 값 변경
 		RefreshToken refreshTokenObj;
@@ -106,13 +106,13 @@ public class JwtTokenProviderImpl implements JwtTokenProvider {
 			refreshTokenObj.setRefreshToken(refreshToken);
 		}
 
-		refreshTokenRepository.save(refreshTokenObj);
+		refreshTokenService.save(refreshTokenObj);
 	}
 
 	@Override
 	@Transactional
 	public void destroyRefreshToken(Long memberId) {
-		refreshTokenRepository.deleteByMemberId(memberId);
+		refreshTokenService.deleteByMemberId(memberId);
 	}
 
 	@Override
@@ -205,7 +205,7 @@ public class JwtTokenProviderImpl implements JwtTokenProvider {
 
 	public void checkRefreshTokenAndReIssueAccessAndRefreshToken(HttpServletResponse response, String refreshToken) {
 		//refreshToken이 유효한지 확인
-		RefreshToken refreshTokenObj = refreshTokenRepository.findById(refreshToken)
+		RefreshToken refreshTokenObj = refreshTokenService.findByRefreshToken(refreshToken)
 			.orElseThrow(() -> CustomException.from(INVALID_REFRESH_TOKEN));
 
 		Long memberId = refreshTokenObj.getMemberId();
@@ -221,6 +221,6 @@ public class JwtTokenProviderImpl implements JwtTokenProvider {
 
 	@Override
 	public boolean isLogout(String accessToken) {
-		return logoutRepository.existsByAccessToken(accessToken);
+		return logoutService.existsByAccessToken(accessToken);
 	}
 }

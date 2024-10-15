@@ -1,4 +1,4 @@
-package middle_point_search.backend.domains.member.domain;
+package middle_point_search.backend.domains.refreshToken;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;

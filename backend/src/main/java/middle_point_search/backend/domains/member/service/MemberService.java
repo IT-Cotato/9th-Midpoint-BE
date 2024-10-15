@@ -8,12 +8,12 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import middle_point_search.backend.common.util.encoder.PasswordEncoderUtil;
-import middle_point_search.backend.domains.member.domain.LogoutToken;
+import middle_point_search.backend.domains.logout.LogoutService;
+import middle_point_search.backend.domains.logout.LogoutToken;
 import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.member.domain.Role;
-import middle_point_search.backend.domains.member.repository.LogoutRepository;
 import middle_point_search.backend.domains.member.repository.MemberRepository;
-import middle_point_search.backend.domains.member.repository.RefreshTokenRepository;
+import middle_point_search.backend.domains.refreshToken.RefreshTokenService;
 
 @Slf4j
 @Service
@@ -22,9 +22,9 @@ import middle_point_search.backend.domains.member.repository.RefreshTokenReposit
 public class MemberService {
 
 	private final MemberRepository memberRepository;
-	private final RefreshTokenRepository refreshTokenRepository;
-	private final LogoutRepository logoutRepository;
 	private final PasswordEncoderUtil passwordEncoderUtil;
+	private final RefreshTokenService refreshTokenService;
+	private final LogoutService logoutService;
 
 	// 회원가입하기
 	@Transactional
@@ -43,10 +43,10 @@ public class MemberService {
 		Long memberId = member.getId();
 
 		// 회원의 refreshToken 삭제
-		refreshTokenRepository.deleteByMemberId(memberId);
+		refreshTokenService.deleteByMemberId(memberId);
 
 		// 같은 accessToken으로 다시 로그인하지 못하도록 블랙리스트에 저장
-		logoutRepository.save(new LogoutToken(accessToken));
+		logoutService.save(new LogoutToken(accessToken));
 	}
 
 	// 단일 회원 Role 변경하기
