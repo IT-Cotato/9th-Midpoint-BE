@@ -9,14 +9,13 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import middle_point_search.backend.common.baseEntity.BaseEntity;
@@ -33,26 +32,18 @@ public class Room extends BaseEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(unique = true, nullable = false)
-	private String identityNumber;
-
 	@OneToMany(mappedBy = "room", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<Place> places = new ArrayList<>();
 
-	@Enumerated(EnumType.STRING)
-	private RoomType roomType;
+	@Column(name = "room_name", nullable = false)
+	private String name;
 
-	@Enumerated(EnumType.STRING)
-	private Animal roomName;
-
-	public Room(String identityNumber, RoomType roomType) {
-		this.identityNumber = identityNumber;
-		this.roomType = roomType;
-		this.roomName = Animal.getRandomAnimal();
+	@Builder
+	private Room(String name) {
+		this.name = name;
 	}
 
-	public static Room from(String identityNumber, RoomType roomType) {
-		return new Room(identityNumber, roomType);
+	public void updateName(String name) {
+		this.name = name;
 	}
-
 }
