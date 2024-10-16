@@ -26,10 +26,7 @@ import middle_point_search.backend.domains.market.repository.MarketRepository;
 public class MarketService {
 
 	private final MarketRepository marketRepository;
-
 	private final MarketProperties marketProperties;
-	private final KakaoProperties kakaoProperties;
-
 	private final WebClientUtil webClientUtil;
 
 	// Market 정보 업데이트하기
