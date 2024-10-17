@@ -1,5 +1,9 @@
 package middle_point_search.backend.domains.placeVoteRoom.dto;
 
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -9,10 +13,6 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonInclude;
 
 public class PlaceVoteRoomDTO {
 	@Getter
@@ -44,30 +44,7 @@ public class PlaceVoteRoomDTO {
 		}
 	}
 
-	@Getter
-	@AllArgsConstructor(access = AccessLevel.PRIVATE)
-	public static class PlaceVoteRoomGetResponse {
-		private Boolean existence;
-		@JsonInclude(JsonInclude.Include.NON_NULL)
-		private List<PlaceCandidates> placeCandidates;
 
-		public static PlaceVoteRoomGetResponse from(Boolean existence, List<PlaceCandidates> placeCandidates) {
-			return new PlaceVoteRoomGetResponse(existence, placeCandidates);
-		}
-
-		@Getter
-		@AllArgsConstructor(access = AccessLevel.PUBLIC)
-		public static class PlaceCandidates {
-
-			private Long id;
-			private String name;
-			private String siDo;
-			private String siGunGu;
-			private String roadNameAddress;
-			private Double addressLat;
-			private Double addressLong;
-		}
-	}
 
 	@Getter
 	@AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -79,33 +56,6 @@ public class PlaceVoteRoomDTO {
 		}
 	}
 
-	@Getter
-	@AllArgsConstructor
-	public static class PlaceVoteInfoResponse {
-		private List<PlaceVoteCandidateInfo> placeCandidates;
-
-		@Getter
-		@AllArgsConstructor
-		public static class PlaceVoteCandidateInfo {
-			private Long id;
-			private String name;
-			private String siDo;
-			private String siGunGu;
-			private String roadNameAddress;
-			private Double addressLat;
-			private Double addressLong;
-			private int count;
-			private List<String> voters;
-		}
-	}
-
-	@Getter
-	@NoArgsConstructor(access = AccessLevel.PRIVATE)
-	public static class PlaceVoteRequest {
-
-		@NotNull(message = "choicePlace은 비어 있을 수 없습니다.")
-		private Long choicePlace;
-	}
 
 	@Getter
 	@AllArgsConstructor(access = AccessLevel.PRIVATE)

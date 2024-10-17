@@ -1,19 +1,20 @@
 package middle_point_search.backend.domains.placeVoteRoom.repository;
 
-import middle_point_search.backend.domains.placeVoteRoom.domain.PlaceVoteRoom;
-import middle_point_search.backend.domains.room.domain.Room;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.Optional;
+import middle_point_search.backend.domains.placeVoteRoom.domain.PlaceVoteRoom;
+import middle_point_search.backend.domains.room.domain.Room;
 
 public interface PlaceVoteRoomRepository extends JpaRepository<PlaceVoteRoom, Long> {
 
-	boolean existsByRoom(Room room);
+	boolean existsByRoom_Id(Long roomId);
 
-	Optional<PlaceVoteRoom> findByRoom_IdentityNumber(String identityNumber);
+	void deleteByRoom_Id(Long roomId);
 
-	Optional<PlaceVoteRoom> findByRoom(Room room);
+	Optional<PlaceVoteRoom> findByRoom_Id(Long roomId);
+
 }
 
 
