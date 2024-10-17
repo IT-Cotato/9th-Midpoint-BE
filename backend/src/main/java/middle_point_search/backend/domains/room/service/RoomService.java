@@ -2,6 +2,8 @@ package middle_point_search.backend.domains.room.service;
 
 import static middle_point_search.backend.common.exception.errorCode.UserErrorCode.*;
 
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,5 +41,10 @@ public class RoomService {
 			.orElseThrow(() -> CustomException.from(ROOM_NOT_FOUND));
 
 		room.updateName(request.getName());
+	}
+
+	// Room 조회
+	public Optional<Room> findRoom(Long id) {
+		return roomRepository.findById(id);
 	}
 }

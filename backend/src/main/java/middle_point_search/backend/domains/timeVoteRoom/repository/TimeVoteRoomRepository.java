@@ -1,16 +1,15 @@
 package middle_point_search.backend.domains.timeVoteRoom.repository;
 
-import middle_point_search.backend.domains.timeVoteRoom.domain.TimeVoteRoom;
-import middle_point_search.backend.domains.room.domain.Room;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.Optional;
+import middle_point_search.backend.domains.timeVoteRoom.domain.TimeVoteRoom;
 
 public interface TimeVoteRoomRepository extends JpaRepository<TimeVoteRoom, Long> {
-	boolean existsByRoom(Room room);
+	boolean existsByRoom_Id(Long roomId);
 
-	Optional<TimeVoteRoom> findByRoom_IdentityNumber(String identityNumber);
+	Optional<TimeVoteRoom> findByRoom_Id(Long roomId);
 
-	Optional<TimeVoteRoom> findByRoom(Room room);
+	void deleteByRoom_Id(Long roomId);
 }
