@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import middle_point_search.backend.common.dto.BaseResponse;
+import middle_point_search.backend.common.dto.DataResponse;
 import middle_point_search.backend.domains.market.service.MarketService;
 
 @Tag(name = "MARKET API", description = "상권에 대한 API입니다.")
@@ -40,6 +41,6 @@ public class MarketController {
 
 		return ResponseEntity
 			.status(HttpStatus.OK)
-			.body(BaseResponse.ok());
+			.body(DataResponse.ok());
 	}
 }

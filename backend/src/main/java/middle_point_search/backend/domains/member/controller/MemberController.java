@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.dto.BaseResponse;
+import middle_point_search.backend.common.dto.DataResponse;
 import middle_point_search.backend.common.security.filter.jwtFilter.JwtTokenProvider;
 import middle_point_search.backend.common.util.MemberLoader;
 import middle_point_search.backend.domains.member.domain.Member;
@@ -51,7 +52,7 @@ public class MemberController {
 
 		memberService.logoutMember(member, accessToken);
 
-		return ResponseEntity.ok(BaseResponse.ok());
+		return ResponseEntity.ok(DataResponse.ok());
 	}
 
 	@PostMapping("/login")
