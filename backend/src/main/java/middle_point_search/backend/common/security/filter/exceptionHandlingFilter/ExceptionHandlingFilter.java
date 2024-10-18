@@ -31,10 +31,10 @@ public class ExceptionHandlingFilter extends OncePerRequestFilter {
 			ResponseWriter.writeResponse(response, errorResponse, e.getHttpStatus());
 		} catch (Exception e) {
 			log.warn("ExceptionHandlingFilter: {}", e.getMessage());
+
 			ErrorCode errorCode = CommonErrorCode.INTERNAL_SERVER_ERROR;
 
 			ErrorResponse errorResponse = ErrorResponse.of(errorCode, List.of(e.getMessage()));
-
 			ResponseWriter.writeResponse(response, errorResponse, errorCode.getHttpStatus());
 		}
 	}
