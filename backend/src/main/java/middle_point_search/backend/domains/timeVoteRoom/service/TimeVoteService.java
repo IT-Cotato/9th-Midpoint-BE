@@ -136,7 +136,7 @@ public class TimeVoteService {
 						vote.getMemberAvailableEndTime()
 					)
 				);
-				TimeVoteDetail detail = TimeVoteDetail.from(vote.getMember().getName(), dateTimeList);
+				TimeVoteDetail detail = TimeVoteDetail.from(vote.getMember().getEmail(), dateTimeList);
 				details.add(detail);
 			}
 			result.put(date, details);
@@ -171,7 +171,7 @@ public class TimeVoteService {
 				.map(otherTimeVote -> {
 					TimeRange timeRange = new TimeRange(otherTimeVote.getMemberAvailableStartTime(),
 						otherTimeVote.getMemberAvailableEndTime());
-					return TimeVotePerDate.TimeVotePerDateDetail.from(otherTimeVote.getMember().getName(), timeRange);
+					return TimeVotePerDate.TimeVotePerDateDetail.from(otherTimeVote.getMember().getEmail(), timeRange);
 				})
 				.sorted(Comparator.comparing(detail -> detail.getDateTime().getMemberAvailableStartTime()))
 				.toList();

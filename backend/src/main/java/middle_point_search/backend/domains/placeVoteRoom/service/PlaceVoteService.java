@@ -130,7 +130,7 @@ public class PlaceVoteService {
 				placeVoteCandidate.getAddressLatitude(),
 				placeVoteCandidate.getAddressLatitude(),
 				placeVoteCandidate.getCount(),
-				placeVoteCandidate.getVoters().stream().map(v -> v.getMember().getName()).collect(Collectors.toList())))
+				placeVoteCandidate.getVoters().stream().map(v -> v.getMember().getEmail()).collect(Collectors.toList())))
 			.collect(Collectors.toList());
 	}
 }

@@ -23,28 +23,27 @@ public class Member extends BaseEntity {
 	private Long id;
 
 	@Column(nullable = false, unique = true)
-	private String name;
+	private String email;
 
 	@Column(nullable = false)
 	private String pw;
+
+	@Column(nullable = false)
+	private String name;
 
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
 	private Role role;
 
-	private Member(String name, String pw, Role role) {
-		this.name = name;
+	private Member(String email, String pw, String name, Role role) {
+		this.email = email;
 		this.pw = pw;
+		this.name = name;
 		this.role = role;
 	}
 
-	public static Member from(String name, String pw, Role role) {
+	public static Member from(String email, String pw, String name, Role role) {
 
-
-		return new Member(name, pw, role);
-	}
-
-	public void updateRole(Role role) {
-		this.role = role;
+		return new Member(email, pw, name, role);
 	}
 }

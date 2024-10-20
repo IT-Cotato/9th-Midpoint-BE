@@ -10,6 +10,7 @@ import middle_point_search.backend.domains.logout.LogoutService;
 import middle_point_search.backend.domains.logout.LogoutToken;
 import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.member.domain.Role;
+import middle_point_search.backend.domains.member.dto.MemberDTO.MemberCreateRequest;
 import middle_point_search.backend.domains.member.repository.MemberRepository;
 import middle_point_search.backend.domains.refreshToken.RefreshTokenService;
 
@@ -26,13 +27,11 @@ public class MemberService {
 
 	// 회원가입하기
 	@Transactional
-	public Member createMember(String name, String pw) {
-		pw = passwordEncoderUtil.encodePassword(pw);
+	public void createMember(MemberCreateRequest request) {
+		String pw = passwordEncoderUtil.encodePassword(request.getPw());
 
-		Member member = Member.from(name, pw, Role.USER);
+		Member member = Member.from(request.getEmail(), pw, request.getName(), Role.USER);
 		memberRepository.save(member);
-
-		return member;
 	}
 
 	// 회원 로그아웃 하기

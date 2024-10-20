@@ -3,11 +3,10 @@ package middle_point_search.backend.domains.logout;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
 @Service
-@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+@RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class LogoutService {
 

@@ -26,7 +26,6 @@ import middle_point_search.backend.common.properties.SecurityProperties;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	private final JwtTokenProvider jwtTokenProvider;
-
 	private final SecurityProperties securityProperties;
 	private final AntPathMatcher pathMatcher;
 
