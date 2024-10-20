@@ -45,7 +45,7 @@ public class MemberController {
 			),
 			@ApiResponse(
 				responseCode = "400",
-				description = "C-202"
+				description = "요청 파라미터가 잘못되었습니다.[C-202]"
 			),
 		}
 	)
@@ -66,6 +66,14 @@ public class MemberController {
 			@ApiResponse(
 				responseCode = "200",
 				description = "성공"
+			),
+			@ApiResponse(
+				responseCode = "401",
+				description = "인증에 실패하였습니다.[C-101]"
+			),
+			@ApiResponse(
+				responseCode = "401",
+				description = "Access Token을 재발급해야합니다.[A-004]"
 			),
 		}
 	)
