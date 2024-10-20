@@ -21,14 +21,14 @@ public class MemberLoader {
 
 	// Authentication 객체에서 Member를 찾는 메서드
 	public Member getMember() {
-		String name = getName();
+		String email = getEmail();
 
-		return memberRepository.findByName(name)
+		return memberRepository.findByEmail(email)
 			.orElseThrow(() -> CustomException.from(MEMBER_NOT_FOUND));
 	}
 
 	// Authentication 객체에서 email을 추출하는 메서드
-	public String getName() {
+	public String getEmail() {
 		return (String)SecurityContextHolder
 			.getContext()
 			.getAuthentication()

@@ -8,11 +8,6 @@ import lombok.NoArgsConstructor;
 
 public class MemberDTO {
 
-	public static class LoginRequest {
-		public String name;
-		public String pw;
-	}
-
 	@Getter
 	@NoArgsConstructor(access = AccessLevel.PRIVATE)
 	public static class MemberCreateRequest {

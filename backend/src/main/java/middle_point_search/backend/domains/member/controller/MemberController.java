@@ -5,11 +5,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,7 +18,6 @@ import middle_point_search.backend.common.dto.DataResponse;
 import middle_point_search.backend.common.security.filter.jwtFilter.JwtTokenProvider;
 import middle_point_search.backend.common.util.MemberLoader;
 import middle_point_search.backend.domains.member.domain.Member;
-import middle_point_search.backend.domains.member.dto.MemberDTO.LoginRequest;
 import middle_point_search.backend.domains.member.dto.MemberDTO.MemberCreateRequest;
 import middle_point_search.backend.domains.member.service.MemberService;
 
@@ -80,23 +78,14 @@ public class MemberController {
 		return ResponseEntity.ok(DataResponse.ok());
 	}
 
-	@PostMapping("/login")
+	@PostMapping(value = "/login", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
 	@Operation(
 		summary = "로그인",
-		description = "사용자 이름, 비밀번호, 방 ID를 사용하여 로그인",
-		requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-			description = "로그인 데이터",
-			required = true,
-			content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = LoginRequest.class))
-		),
+		description = "로그인 성공 시 accessToken, refreshToken을 반환",
 		responses = {
 			@ApiResponse(
 				responseCode = "200",
 				description = "성공"
-			),
-			@ApiResponse(
-				responseCode = "404",
-				description = "해당하는 room이 존재하지 않음"
 			),
 			@ApiResponse(
 				responseCode = "200",
@@ -104,8 +93,12 @@ public class MemberController {
 			)
 		}
 	)
-	public void fakeLoginEndpoint() {
+	public ResponseEntity<DataResponse<Void>> loginMember(
+		@RequestParam("email") String email,
+		@RequestParam("pw") String pw
+	) {
 		// 이 메소드는 실제로 실행되지 않습니다. 문서용도로만 사용됩니다.
+		return ResponseEntity.ok(DataResponse.ok());
 	}
 }
 

@@ -26,8 +26,8 @@ public class MidPointService {
 	}
 
 	// 주어진 RoomId로 중간 장소 리스트를 조회하는 메서드
-	public List<MidPointsFindResponse> findMidPointsByRoomId(String roomId) {
-		List<Place> places = placeRepository.findAllByRoom_IdentityNumber(roomId);
+	public List<MidPointsFindResponse> findMidPointsByRoomId(Long roomId) {
+		List<Place> places = placeRepository.findAllByRoom_Id(roomId);
 		List<AddressDTO> addressDTOs = places.stream()
 			.map(AddressDTO::from)
 			.toList();

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,7 +18,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.dto.DataResponse;
 import middle_point_search.backend.common.dto.ErrorResponse;
-import middle_point_search.backend.common.util.MemberLoader;
 import middle_point_search.backend.domains.midPoint.dto.MidPointDTO.MidPointsFindResponse;
 import middle_point_search.backend.domains.midPoint.service.MidPointService;
 
@@ -27,15 +27,14 @@ import middle_point_search.backend.domains.midPoint.service.MidPointService;
 @RequiredArgsConstructor
 public class MidPointController {
 
-	private final MemberLoader memberLoader;
 	private final MidPointService midPointService;
 
-	@GetMapping
+	@GetMapping("/rooms/{roomId}")
 	@Operation(
 		summary = "중간 지점 추천 장소 조회",
 		description = """
 			중간 지점 추천 장소 조회하기.
-						
+			
 			AccessToken 필요.""",
 		parameters = {
 			@Parameter(name = "RoomId", description = "roomId 필요", in = ParameterIn.HEADER),
@@ -78,9 +77,9 @@ public class MidPointController {
 			)
 		}
 	)
-	public ResponseEntity<DataResponse<List<MidPointsFindResponse>>> MidPointsFind() {
-		String roomId = memberLoader.getRoomId();
-
+	public ResponseEntity<DataResponse<List<MidPointsFindResponse>>> MidPointsFind(
+		@PathVariable("roomId") Long roomId
+	) {
 		List<MidPointsFindResponse> midPoints = midPointService.findMidPointsByRoomId(roomId);
 
 		return ResponseEntity.ok(DataResponse.from(midPoints));

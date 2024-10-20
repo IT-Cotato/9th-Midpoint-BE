@@ -8,5 +8,5 @@ import middle_point_search.backend.domains.member.domain.Member;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
 
-	Optional<Member> findByName(String name);
+	Optional<Member> findByEmail(String email);
 }

@@ -60,10 +60,10 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 		FilterChain chain,
 		Authentication authResult
 	) {
-		String email = extractName(authResult);
+		String email = extractEmail(authResult);
 
 		// 회원 id 찾기
-		Member member = memberRepository.findByName(email)
+		Member member = memberRepository.findByEmail(email)
 			.orElseThrow(() -> CustomException.from(MEMBER_NOT_FOUND));
 		Long memberId = member.getId();
 
@@ -100,7 +100,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 		return request.getParameter(PW_PARAMETER);
 	}
 
-	private String extractName(Authentication authentication) {
+	private String extractEmail(Authentication authentication) {
 		UserDetails userDetails = (UserDetails)authentication.getPrincipal();
 
 		return userDetails.getUsername();
