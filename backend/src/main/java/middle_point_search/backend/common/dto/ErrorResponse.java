@@ -35,7 +35,7 @@ public class ErrorResponse extends BaseResponse {
 	public static ErrorResponse from(CustomException customException) {
 		Boolean isSuccess = false;
 		HttpStatus status = customException.getHttpStatus();
-		String code = status.toString();
+		String code = customException.getCode();
 		String error = customException.getMessage();
 
 		return new ErrorResponse(isSuccess, status, code, error);
