@@ -19,6 +19,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import middle_point_search.backend.common.baseEntity.BaseEntity;
+import middle_point_search.backend.domains.memberRoom.MemberRoom;
 import middle_point_search.backend.domains.place.domain.Place;
 
 @Entity
@@ -37,6 +38,9 @@ public class Room extends BaseEntity {
 
 	@Column(name = "room_name", nullable = false)
 	private String name;
+
+	@OneToMany(mappedBy = "room", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private List<MemberRoom> memberRooms = new ArrayList<>();
 
 	@Builder
 	private Room(String name) {

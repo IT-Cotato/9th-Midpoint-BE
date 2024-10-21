@@ -18,7 +18,6 @@ public class MemberLoader {
 
 	private final MemberRepository memberRepository;
 
-
 	// Authentication 객체에서 Member를 찾는 메서드
 	public Member getMember() {
 		String email = getEmail();
