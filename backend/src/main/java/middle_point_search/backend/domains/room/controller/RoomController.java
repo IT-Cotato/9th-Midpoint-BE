@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.dto.DataResponse;
 import middle_point_search.backend.common.dto.ErrorResponse;
 import middle_point_search.backend.common.util.MemberLoader;
+import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.room.dto.RoomDTO.RoomCreateRequest;
 import middle_point_search.backend.domains.room.dto.RoomDTO.RoomCreateResponse;
 import middle_point_search.backend.domains.room.dto.RoomDTO.RoomNameUpdateRequest;
@@ -45,7 +46,7 @@ public class RoomController {
 			),
 			@ApiResponse(
 				responseCode = "400",
-				description = "[요청이 잘 못 되었습니다.",
+				description = "요청 파라미터가 잘못되었습니다.[C-202]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
@@ -56,7 +57,8 @@ public class RoomController {
 		}
 	)
 	public ResponseEntity<DataResponse<RoomCreateResponse>> roomCreate(@RequestBody @Valid RoomCreateRequest request) {
-		RoomCreateResponse response = roomService.createRoom(request);
+		Member member = memberLoader.getMember();
+		RoomCreateResponse response = roomService.createRoom(member, request);
 
 		return ResponseEntity.ok(DataResponse.from(response));
 	}
@@ -90,8 +92,13 @@ public class RoomController {
 			),
 		}
 	)
-	public ResponseEntity<DataResponse<Void>> roomNameUpdate(@PathVariable Long roomId, @RequestBody RoomNameUpdateRequest request) {
-		roomService.updateRoomName(roomId, request);
+	public ResponseEntity<DataResponse<Void>> roomNameUpdate(
+		@PathVariable Long roomId,
+		@RequestBody RoomNameUpdateRequest request
+	) {
+		Member member = memberLoader.getMember();
+
+		roomService.updateRoomName(member.getId(), roomId, request);
 
 		return ResponseEntity.ok(DataResponse.ok());
 	}

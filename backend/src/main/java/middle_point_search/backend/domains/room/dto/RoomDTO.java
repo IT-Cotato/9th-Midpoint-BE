@@ -29,11 +29,11 @@ public class RoomDTO {
 	}
 
 	@Getter
-	@AllArgsConstructor(access = AccessLevel.PRIVATE)
+	@NoArgsConstructor(access = AccessLevel.PRIVATE)
 	public static class RoomNameUpdateRequest {
 
 		@Parameter(required = true)
 		@NotBlank(message = "값이 비어있으면 안 됩니다.")
-		private final String name;
+		private String name;
 	}
 }

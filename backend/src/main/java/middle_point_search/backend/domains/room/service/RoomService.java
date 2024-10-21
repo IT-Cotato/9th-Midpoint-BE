@@ -9,10 +9,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.exception.CustomException;
+import middle_point_search.backend.domains.member.domain.Member;
+import middle_point_search.backend.domains.memberRoom.MemberRoom;
+import middle_point_search.backend.domains.memberRoom.MemberRoomService;
 import middle_point_search.backend.domains.room.domain.Room;
-import middle_point_search.backend.domains.room.dto.RoomDTO;
 import middle_point_search.backend.domains.room.dto.RoomDTO.RoomCreateRequest;
 import middle_point_search.backend.domains.room.dto.RoomDTO.RoomCreateResponse;
+import middle_point_search.backend.domains.room.dto.RoomDTO.RoomNameUpdateRequest;
 import middle_point_search.backend.domains.room.repository.RoomRepository;
 
 @Service
@@ -21,14 +24,21 @@ import middle_point_search.backend.domains.room.repository.RoomRepository;
 public class RoomService {
 
 	private final RoomRepository roomRepository;
+	private final MemberRoomService memberRoomService;
 
-	// Room 저장하기
+	// Room 저장하기 및 Room에 회원 저장
 	@Transactional
-	public RoomCreateResponse createRoom(RoomCreateRequest request) {
+	public RoomCreateResponse createRoom(Member member, RoomCreateRequest request) {
 		Room room = Room.builder()
 			.name(request.getName())
 			.build();
 
+		MemberRoom.builder()
+			.member(member)
+			.room(room)
+			.build();
+
+		// Room 및 MemberRoom 저장
 		roomRepository.save(room);
 
 		return RoomCreateResponse.from(room.getId());
@@ -36,10 +46,13 @@ public class RoomService {
 
 	// Room 이름 변경하기
 	@Transactional(rollbackFor = CustomException.class)
-	public void updateRoomName(Long id, RoomDTO.RoomNameUpdateRequest request) {
-		Room room = roomRepository.findById(id)
-			.orElseThrow(() -> CustomException.from(ROOM_NOT_FOUND));
+	public void updateRoomName(Long memberId, Long roomId, RoomNameUpdateRequest request) {
+		// 회원방 존재 확인
+		memberRoomService.validateMemberRoom(memberId, roomId);
 
+		// 변경
+		Room room = roomRepository.findById(roomId)
+			.orElseThrow(() -> CustomException.from(ROOM_NOT_FOUND));
 		room.updateName(request.getName());
 	}
 
