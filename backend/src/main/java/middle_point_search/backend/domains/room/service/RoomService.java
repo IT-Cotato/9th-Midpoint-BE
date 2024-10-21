@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.exception.CustomException;
 import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.memberRoom.MemberRoom;
-import middle_point_search.backend.domains.memberRoom.MemberRoomService;
+import middle_point_search.backend.domains.memberRoom.MemberRoomValidateService;
 import middle_point_search.backend.domains.room.domain.Room;
 import middle_point_search.backend.domains.room.dto.RoomDTO.RoomCreateRequest;
 import middle_point_search.backend.domains.room.dto.RoomDTO.RoomCreateResponse;
@@ -24,7 +24,7 @@ import middle_point_search.backend.domains.room.repository.RoomRepository;
 public class RoomService {
 
 	private final RoomRepository roomRepository;
-	private final MemberRoomService memberRoomService;
+	private final MemberRoomValidateService memberRoomValidateService;
 
 	// Room 저장하기 및 Room에 회원 저장
 	@Transactional
@@ -48,7 +48,7 @@ public class RoomService {
 	@Transactional(rollbackFor = CustomException.class)
 	public void updateRoomName(Long memberId, Long roomId, RoomNameUpdateRequest request) {
 		// 회원방 존재 확인
-		memberRoomService.validateMemberRoom(memberId, roomId);
+		memberRoomValidateService.validateMemberRoom(memberId, roomId);
 
 		// 변경
 		Room room = roomRepository.findById(roomId)
