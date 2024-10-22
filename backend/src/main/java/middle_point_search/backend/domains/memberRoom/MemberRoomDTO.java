@@ -1,9 +1,11 @@
 package middle_point_search.backend.domains.memberRoom;
 
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import middle_point_search.backend.domains.room.domain.Room;
 
 public class MemberRoomDTO {
 
@@ -11,7 +13,28 @@ public class MemberRoomDTO {
 	@NoArgsConstructor(access = AccessLevel.PRIVATE)
 	public static class MemberToRoomSaveRequest {
 
-		@NotBlank(message = "roomId는 필수값입니다.")
+		@NotNull(message = "roomId는 필수값입니다.")
 		private Long roomId;
+	}
+
+	@Getter
+	@AllArgsConstructor(access = AccessLevel.PRIVATE)
+	public static class RoomsByMemberIdFindResponse {
+		private Long roomId;
+		private String roomName;
+
+		public static RoomsByMemberIdFindResponse from(Room room) {
+			return new RoomsByMemberIdFindResponse(room.getId(), room.getName());
+		}
+	}
+
+	@Getter
+	@AllArgsConstructor(access = AccessLevel.PRIVATE)
+	public static class MemberRoomExistsResponse {
+		private Boolean exists;
+
+		public static MemberRoomExistsResponse from(Boolean exists) {
+			return new MemberRoomExistsResponse(exists);
+		}
 	}
 }

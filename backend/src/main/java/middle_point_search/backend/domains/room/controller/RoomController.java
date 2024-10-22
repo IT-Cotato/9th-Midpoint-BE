@@ -57,8 +57,7 @@ public class RoomController {
 		}
 	)
 	public ResponseEntity<DataResponse<RoomCreateResponse>> roomCreate(@RequestBody @Valid RoomCreateRequest request) {
-		Member member = memberLoader.getMember();
-		RoomCreateResponse response = roomService.createRoom(member, request);
+		RoomCreateResponse response = roomService.createRoom(request);
 
 		return ResponseEntity.ok(DataResponse.from(response));
 	}

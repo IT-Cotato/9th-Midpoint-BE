@@ -9,8 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.exception.CustomException;
-import middle_point_search.backend.domains.member.domain.Member;
-import middle_point_search.backend.domains.memberRoom.MemberRoom;
 import middle_point_search.backend.domains.memberRoom.MemberRoomValidateService;
 import middle_point_search.backend.domains.room.domain.Room;
 import middle_point_search.backend.domains.room.dto.RoomDTO.RoomCreateRequest;
@@ -28,17 +26,12 @@ public class RoomService {
 
 	// Room 저장하기 및 Room에 회원 저장
 	@Transactional
-	public RoomCreateResponse createRoom(Member member, RoomCreateRequest request) {
+	public RoomCreateResponse createRoom(RoomCreateRequest request) {
 		Room room = Room.builder()
 			.name(request.getName())
 			.build();
 
-		MemberRoom.builder()
-			.member(member)
-			.room(room)
-			.build();
-
-		// Room 및 MemberRoom 저장
+		// Room저장
 		roomRepository.save(room);
 
 		return RoomCreateResponse.from(room.getId());
@@ -48,7 +41,7 @@ public class RoomService {
 	@Transactional(rollbackFor = CustomException.class)
 	public void updateRoomName(Long memberId, Long roomId, RoomNameUpdateRequest request) {
 		// 회원방 존재 확인
-		memberRoomValidateService.validateMemberRoom(memberId, roomId);
+		memberRoomValidateService.validateAuthorizedMember(memberId, roomId);
 
 		// 변경
 		Room room = roomRepository.findById(roomId)
