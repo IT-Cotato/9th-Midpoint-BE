@@ -54,7 +54,7 @@ public class RoomController {
 				description = "인증에 실패하였습니다.[C-101]"
 			),
 			@ApiResponse(
-				responseCode = "401",
+				responseCode = "402",
 				description = "Access Token을 재발급해야합니다.[A-004]"
 			),
 			@ApiResponse(
@@ -87,7 +87,7 @@ public class RoomController {
 				description = "인증에 실패하였습니다.[C-101]"
 			),
 			@ApiResponse(
-				responseCode = "401",
+				responseCode = "402",
 				description = "Access Token을 재발급해야합니다.[A-004]"
 			),
 			@ApiResponse(
