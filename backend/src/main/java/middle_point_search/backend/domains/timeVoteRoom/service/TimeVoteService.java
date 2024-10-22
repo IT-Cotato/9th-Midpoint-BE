@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.exception.CustomException;
 import middle_point_search.backend.domains.member.domain.Member;
+import middle_point_search.backend.domains.memberRoom.MemberRoomValidateService;
 import middle_point_search.backend.domains.timeVoteRoom.domain.MeetingDate;
 import middle_point_search.backend.domains.timeVoteRoom.domain.TimeVote;
 import middle_point_search.backend.domains.timeVoteRoom.domain.TimeVoteRoom;
@@ -35,6 +36,7 @@ public class TimeVoteService {
 	private final TimeVoteRepository timeVoteRepository;
 	private final MeetingDateService meetingDateService;
 	private final TimeVoteRoomService timeVoteRoomService;
+	private final MemberRoomValidateService memberRoomValidateService;
 
 	//시간투표하기
 	@Transactional(rollbackFor = {CustomException.class})
@@ -43,6 +45,9 @@ public class TimeVoteService {
 		Long roomId,
 		VoteRequest request
 	) {
+		// 방에 대한 회원인지 확인
+		memberRoomValidateService.validateAuthorizedMember(member.getId(), roomId);
+
 		TimeVoteRoom timeVoteRoom = timeVoteRoomService.findByRoomId(roomId)
 			.orElseThrow(() -> CustomException.from(VOTE_ROOM_NOT_FOUND));
 
@@ -67,6 +72,9 @@ public class TimeVoteService {
 		Long roomId,
 		VoteRequest request
 	) {
+		// 방에 대한 회원인지 확인
+		memberRoomValidateService.validateAuthorizedMember(member.getId(), roomId);
+
 		TimeVoteRoom timeVoteRoom = timeVoteRoomService.findByRoomId(roomId)
 			.orElseThrow(() -> CustomException.from(VOTE_ROOM_NOT_FOUND));
 
@@ -112,7 +120,10 @@ public class TimeVoteService {
 	}
 
 	// 시간 투표 현황 정보 조회
-	public TimeVoteRoomResultResponse findTimeVoteResult(Long roomId) {
+	public TimeVoteRoomResultResponse findTimeVoteResult(Long memberId, Long roomId) {
+		// 방에 대한 회원인지 확인
+		memberRoomValidateService.validateAuthorizedMember(memberId, roomId);
+
 		TimeVoteRoom timeVoteRoom = timeVoteRoomService.findByRoomId(roomId)
 			.orElseThrow(() -> CustomException.from(VOTE_ROOM_NOT_FOUND));
 
@@ -186,6 +197,9 @@ public class TimeVoteService {
 
 	// 투표 여부 및 투표 아이템 가져오기
 	public VotedAndVoteItemsGetResponse getVotedAndVoteItems(Member member, Long roomId) {
+		// 방에 대한 회원인지 확인
+		memberRoomValidateService.validateAuthorizedMember(member.getId(), roomId);
+
 		TimeVoteRoom timeVoteRoom = timeVoteRoomService.findByRoomId(roomId)
 			.orElseThrow(() -> CustomException.from(VOTE_ROOM_NOT_FOUND));
 

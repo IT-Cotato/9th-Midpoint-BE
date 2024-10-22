@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.exception.CustomException;
+import middle_point_search.backend.domains.memberRoom.MemberRoomValidateService;
 import middle_point_search.backend.domains.room.domain.Room;
 import middle_point_search.backend.domains.room.service.RoomService;
 import middle_point_search.backend.domains.timeVoteRoom.domain.MeetingDate;
@@ -25,10 +26,14 @@ public class TimeVoteRoomService {
 
 	private final TimeVoteRoomRepository timeVoteRoomRepository;
 	private final RoomService roomService;
+	private final MemberRoomValidateService memberRoomValidateService;
 
 	// 시간 투표방 생성
 	@Transactional(rollbackFor = {CustomException.class})
-	public TimeVoteRoomCreateResponse createTimeVoteRoom(Long roomId, TimeVoteRoomCreateRequest request) {
+	public TimeVoteRoomCreateResponse createTimeVoteRoom(Long memberId, Long roomId, TimeVoteRoomCreateRequest request) {
+		// 방에 대한 회원인지 확인
+		memberRoomValidateService.validateAuthorizedMember(memberId, roomId);
+
 		boolean exists = timeVoteRoomRepository.existsByRoom_Id(roomId);
 
 		// 방존재여부 확인
@@ -40,31 +45,38 @@ public class TimeVoteRoomService {
 		Room room = roomService.findRoom(roomId)
 			.orElseThrow(() -> CustomException.from(ROOM_NOT_FOUND));
 
-		TimeVoteRoom timeVoteRoom = new TimeVoteRoom(room, request.getDates());
+		// 시간 투표방 생성
+		TimeVoteRoom timeVoteRoom = new TimeVoteRoom(room);
+		request.getDates().stream()
+			.map(date -> new MeetingDate(timeVoteRoom, date))
+			.forEach(timeVoteRoom::addMeetingDate);
 		TimeVoteRoom savedTimeVoteRoom = timeVoteRoomRepository.save(timeVoteRoom);
 
 		return TimeVoteRoomCreateResponse.from(savedTimeVoteRoom.getId());
 	}
 
-	//시간투표방 재생성하기
+	//시간투표방 변경하기
 	@Transactional(rollbackFor = {CustomException.class})
-	public TimeVoteRoomCreateResponse recreateTimeVoteRoom(Long roomId, TimeVoteRoomCreateRequest request) {
-		// 기존 투표방 삭제
-		timeVoteRoomRepository.deleteByRoom_Id(roomId);
+	public void updateTimeVoteRoom(Long memberId, Long roomId, TimeVoteRoomCreateRequest request) {
+		// 방에 대한 회원인지 확인
+		memberRoomValidateService.validateAuthorizedMember(memberId, roomId);
 
-		// 방 조회
-		Room room = roomService.findRoom(roomId)
-			.orElseThrow(() -> CustomException.from(ROOM_NOT_FOUND));
+		// 시간 투표방 조회
+		TimeVoteRoom timeVoteRoom = timeVoteRoomRepository.findByRoom_Id(roomId)
+			.orElseThrow(() -> CustomException.from(TIME_VOTE_ROOM_NOT_FOUND));
 
-		// 새로운 투표방 생성
-		TimeVoteRoom timeVoteRoom = new TimeVoteRoom(room, request.getDates());
-		TimeVoteRoom savedTimeVoteRoom = timeVoteRoomRepository.save(timeVoteRoom);
+		timeVoteRoom.resetTimeVoteRoom();
 
-		return TimeVoteRoomCreateResponse.from(savedTimeVoteRoom.getId());
+		request.getDates().stream()
+			.map(date -> new MeetingDate(timeVoteRoom, date))
+			.forEach(timeVoteRoom::addMeetingDate);
 	}
 
 	// 시간투표방 조회
-	public TimeVoteRoomGetResponse findTimeVoteRoomAndMakeDTO(Long roomId) {
+	public TimeVoteRoomGetResponse findTimeVoteRoomAndMakeDTO(Long memberId, Long roomId) {
+		// 방에 대한 회원인지 확인
+		memberRoomValidateService.validateAuthorizedMember(memberId, roomId);
+
 		Optional<TimeVoteRoom> timeVoteRoomOptional = timeVoteRoomRepository.findByRoom_Id(roomId);
 
 		return timeVoteRoomOptional
