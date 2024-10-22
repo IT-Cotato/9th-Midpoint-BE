@@ -12,14 +12,15 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.exception.CustomException;
 import middle_point_search.backend.domains.member.domain.Member;
+import middle_point_search.backend.domains.memberRoom.MemberRoomValidateService;
 import middle_point_search.backend.domains.placeVoteRoom.domain.PlaceVoteCandidate;
 import middle_point_search.backend.domains.placeVoteRoom.domain.PlaceVoteCandidateMember;
 import middle_point_search.backend.domains.placeVoteRoom.domain.PlaceVoteRoom;
+import middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteDTO.PlaceVoteCandidatesFindResponse;
 import middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteDTO.PlaceVoteCandidatesFindResponse.PlaceCandidate;
 import middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteDTO.PlaceVoteRequest;
 import middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteDTO.PlaceVoteResultsFindResponse;
-import middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteDTO.PlaceVoteCandidatesFindResponse;
-import middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteRoomDTO;
+import middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteRoomDTO.VotedAndVoteItemResponse;
 import middle_point_search.backend.domains.placeVoteRoom.repository.PlaceVoteCandidateMemberRepository;
 import middle_point_search.backend.domains.placeVoteRoom.repository.PlaceVoteCandidateRepository;
 
@@ -32,10 +33,14 @@ public class PlaceVoteService {
 	private final PlaceVoteRoomService placeVoteRoomService;
 	private final PlaceVoteCandidateRepository placeVoteCandidateRepository;
 	private final PlaceVoteCandidateMemberRepository placeVoteCandidateMemberRepository;
+	private final MemberRoomValidateService memberRoomValidateService;
 
 	// 투표 처리
 	@Transactional(rollbackFor = {CustomException.class})
 	public void vote(Member member, Long roomId, PlaceVoteRequest voteRequest) {
+		// 방에 대한 회원인지 확인
+		memberRoomValidateService.validateAuthorizedMember(member.getId(), roomId);
+
 		PlaceVoteRoom placeVoteRoom = placeVoteRoomService.findByRoomId(roomId)
 			.orElseThrow(() -> CustomException.from(VOTE_ROOM_NOT_FOUND));
 
@@ -59,6 +64,9 @@ public class PlaceVoteService {
 	// 재투표
 	@Transactional(rollbackFor = {CustomException.class})
 	public void updateVote(Member member, Long roomId, PlaceVoteRequest voteRequest) {
+		// 방에 대한 회원인지 확인
+		memberRoomValidateService.validateAuthorizedMember(member.getId(), roomId);
+
 		PlaceVoteRoom placeVoteRoom = placeVoteRoomService.findByRoomId(roomId)
 			.orElseThrow(() -> CustomException.from(VOTE_ROOM_NOT_FOUND));
 
@@ -82,7 +90,9 @@ public class PlaceVoteService {
 	}
 
 	// 장소투표방 존재 여부 확인, 존재시 true, 존재하지 않을시 false 반환
-	public PlaceVoteCandidatesFindResponse findPlaceVoteCandidates(Long roomId) {
+	public PlaceVoteCandidatesFindResponse findPlaceVoteCandidates(Long memberId, Long roomId) {
+		// 방에 대한 회원인지 확인
+		memberRoomValidateService.validateAuthorizedMember(memberId, roomId);
 
 		Optional<PlaceVoteRoom> placeVoteRoomOptional = placeVoteRoomService.findByRoomId(roomId);
 
@@ -101,20 +111,26 @@ public class PlaceVoteService {
 	}
 
 	// 내 투표 조회
-	public PlaceVoteRoomDTO.VotedAndVoteItemResponse findVotedAndVoteItem(Member member, Long roomId) {
+	public VotedAndVoteItemResponse findVotedAndVoteItem(Member member, Long roomId) {
+		// 방에 대한 회원인지 확인
+		memberRoomValidateService.validateAuthorizedMember(member.getId(), roomId);
+
 		return placeVoteCandidateMemberRepository.findByPlaceVoteCandidate_PlaceVoteRoom_Room_IdAndMember(
 				roomId,
 				member)
 			.map(placeVoteCandidateMember -> {
 				Long id = placeVoteCandidateMember.getPlaceVoteCandidate().getId();
 
-				return PlaceVoteRoomDTO.VotedAndVoteItemResponse.from(true, id);
+				return VotedAndVoteItemResponse.from(true, id);
 			})
-			.orElseGet(() -> PlaceVoteRoomDTO.VotedAndVoteItemResponse.from(false, null));
+			.orElseGet(() -> VotedAndVoteItemResponse.from(false, null));
 	}
 
 	// 장소투표 결과 조회
-	public List<PlaceVoteResultsFindResponse> findPlaceVoteResults(Long roomId) {
+	public List<PlaceVoteResultsFindResponse> findPlaceVoteResults(Long memberId, Long roomId) {
+		// 방에 대한 회원인지 확인
+		memberRoomValidateService.validateAuthorizedMember(memberId, roomId);
+
 		// 장소 투표방 조회
 		PlaceVoteRoom placeVoteRoom = placeVoteRoomService.findByRoomId(roomId)
 			.orElseThrow(() -> CustomException.from(VOTE_ROOM_NOT_FOUND));
