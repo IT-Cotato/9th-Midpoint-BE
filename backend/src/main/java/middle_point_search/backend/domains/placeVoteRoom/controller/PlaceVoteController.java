@@ -50,28 +50,26 @@ public class PlaceVoteController {
 				description = "성공"
 			),
 			@ApiResponse(
-				responseCode = "401",
-				description = "인증에 실패하였습니다.",
+				responseCode = "400",
+				description = "요청 파라미터가 잘못되었습니다.[C-202]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
+				responseCode = "401",
+				description = "인증에 실패하였습니다.[C-101]"
 			),
 			@ApiResponse(
 				responseCode = "402",
-				description = "인증 토큰이 유효하지 않습니다.",
-				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+				description = "Access Token을 재발급해야합니다.[A-004]"
 			),
 			@ApiResponse(
 				responseCode = "403",
-				description = "접근이 거부되었습니다.",
+				description = "해당 방의 회원이 아닙니다.[MR-003]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
 				responseCode = "404",
-				description = "생성된 투표방이 없습니다.",
-				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
-			),
-			@ApiResponse(
-				responseCode = "422",
-				description = "방의 타입이 일치하지 않습니다",
+				description = "생성된 투표방이 없습니다.[V-202]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			)
 		}
@@ -79,7 +77,9 @@ public class PlaceVoteController {
 	public ResponseEntity<DataResponse<List<PlaceVoteResultsFindResponse>>> placeVoteRoomResultGet(
 		@PathVariable("roomId") Long roomId
 	) {
+		Member member = memberLoader.getMember();
 		List<PlaceVoteResultsFindResponse> response = placeVoteRoomService.findPlaceVoteResults(
+			member.getId(),
 			roomId);
 		return ResponseEntity.ok(DataResponse.from(response));
 	}
@@ -97,38 +97,28 @@ public class PlaceVoteController {
 				description = "성공"
 			),
 			@ApiResponse(
-				responseCode = "400",
-				description = "투표 후보가 아닙니다.",
-				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
-			),
-			@ApiResponse(
 				responseCode = "401",
-				description = "인증에 실패하였습니다.",
+				description = "인증에 실패하였습니다.[C-101]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
 				responseCode = "402",
-				description = "인증 토큰이 유효하지 않습니다.",
+				description = "Access Token을 재발급해야합니다.[A-004]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
 				responseCode = "403",
-				description = "접근이 거부되었습니다.",
+				description = "해당 방의 회원이 아닙니다.[MR-003]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
 				responseCode = "404",
-				description = "생성된 투표방이 없습니다.",
+				description = "생성된 투표방이 없습니다.[V-202] or 투표 후보가 아닙니다.[V-101]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
 				responseCode = "409",
-				description = "이미 투표를 하였습니다.",
-				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
-			),
-			@ApiResponse(
-				responseCode = "422",
-				description = "방의 타입이 일치하지 않습니다",
+				description = "이미 투표를 하였습니다.[V-301]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			)
 		}
@@ -156,38 +146,23 @@ public class PlaceVoteController {
 				description = "성공"
 			),
 			@ApiResponse(
-				responseCode = "400",
-				description = "투표 후보가 아닙니다.",
-				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
-			),
-			@ApiResponse(
 				responseCode = "401",
-				description = "인증에 실패하였습니다.",
+				description = "인증에 실패하였습니다.[C-101]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
 				responseCode = "402",
-				description = "인증 토큰이 유효하지 않습니다.",
+				description = "Access Token을 재발급해야합니다.[A-004]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
 				responseCode = "403",
-				description = "접근이 거부되었습니다.",
+				description = "해당 방의 회원이 아닙니다.[MR-003]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
 				responseCode = "404",
-				description = "생성된 투표방이 없습니다.",
-				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
-			),
-			@ApiResponse(
-				responseCode = "404",
-				description = "투표를 한 적이 없습니다.",
-				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
-			),
-			@ApiResponse(
-				responseCode = "422",
-				description = "방의 타입이 일치하지 않습니다",
+				description = "생성된 투표방이 없습니다.[V-202] or 투표 후보가 아닙니다.[V-101] or 투표를 한 적이 없습니다.[V-201]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			)
 		}
@@ -216,22 +191,17 @@ public class PlaceVoteController {
 			),
 			@ApiResponse(
 				responseCode = "401",
-				description = "인증에 실패하였습니다.",
+				description = "인증에 실패하였습니다.[C-101]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
 				responseCode = "402",
-				description = "인증 토큰이 유효하지 않습니다.",
+				description = "Access Token을 재발급해야합니다.[A-004]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
 				responseCode = "403",
-				description = "접근이 거부되었습니다.",
-				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
-			),
-			@ApiResponse(
-				responseCode = "422",
-				description = "방의 타입이 일치하지 않습니다",
+				description = "해당 방의 회원이 아닙니다.[MR-003]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			)
 		}
@@ -239,7 +209,9 @@ public class PlaceVoteController {
 	public ResponseEntity<DataResponse<PlaceVoteCandidatesFindResponse>> placeVoteRoomFind(
 		@PathVariable("roomId") Long roomId
 	) {
+		Member member = memberLoader.getMember();
 		PlaceVoteCandidatesFindResponse response = placeVoteRoomService.findPlaceVoteCandidates(
+			member.getId(),
 			roomId);
 
 		return ResponseEntity.ok(DataResponse.from(response));
@@ -260,27 +232,17 @@ public class PlaceVoteController {
 			),
 			@ApiResponse(
 				responseCode = "401",
-				description = "인증에 실패하였습니다.",
+				description = "인증에 실패하였습니다.[C-101]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
 				responseCode = "402",
-				description = "인증 토큰이 유효하지 않습니다.",
+				description = "Access Token을 재발급해야합니다.[A-004]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
 				responseCode = "403",
-				description = "접근이 거부되었습니다.",
-				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
-			),
-			@ApiResponse(
-				responseCode = "404",
-				description = "생성된 투표방이 없습니다.",
-				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
-			),
-			@ApiResponse(
-				responseCode = "422",
-				description = "방의 타입이 일치하지 않습니다",
+				description = "해당 방의 회원이 아닙니다.[MR-003]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			)
 		}

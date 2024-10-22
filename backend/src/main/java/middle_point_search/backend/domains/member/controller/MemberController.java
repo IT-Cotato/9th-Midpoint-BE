@@ -9,12 +9,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.dto.DataResponse;
+import middle_point_search.backend.common.dto.ErrorResponse;
 import middle_point_search.backend.common.security.filter.jwtFilter.JwtTokenProvider;
 import middle_point_search.backend.common.util.MemberLoader;
 import middle_point_search.backend.domains.member.domain.Member;
@@ -45,7 +48,8 @@ public class MemberController {
 			),
 			@ApiResponse(
 				responseCode = "400",
-				description = "요청 파라미터가 잘못되었습니다.[C-202]"
+				description = "요청 파라미터가 잘못되었습니다.[C-202]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 		}
 	)
@@ -69,11 +73,13 @@ public class MemberController {
 			),
 			@ApiResponse(
 				responseCode = "401",
-				description = "인증에 실패하였습니다.[C-101]"
+				description = "인증에 실패하였습니다.[C-101]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
 				responseCode = "402",
-				description = "Access Token을 재발급해야합니다.[A-004]"
+				description = "Access Token을 재발급해야합니다.[A-004]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 		}
 	)
@@ -97,7 +103,7 @@ public class MemberController {
 			),
 			@ApiResponse(
 				responseCode = "200",
-				description = "로그인 실패(보안을 위해 비밀번호가 틀렸어도 200리턴"
+				description = "로그인 성공, 로그인 실패(보안을 위해 비밀번호가 틀렸어도 200리턴"
 			)
 		}
 	)

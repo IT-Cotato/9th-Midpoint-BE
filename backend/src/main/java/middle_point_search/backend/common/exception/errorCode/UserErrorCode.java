@@ -34,7 +34,7 @@ public enum UserErrorCode implements ErrorCode {
 	PLACE_VOTE_ROOM_NOT_FOUND(HttpStatus.NOT_FOUND, "P-401", "장소투표방이 존재하지 않습니다."),
 
 	//투표 관련
-	CANDIDATE_NOT_FOUND(HttpStatus.BAD_REQUEST, "V-101", "투표 후보가 아닙니다."),
+	CANDIDATE_NOT_FOUND(HttpStatus.NOT_FOUND, "V-101", "투표 후보가 아닙니다."),
 	VOTE_NOT_FOUND(HttpStatus.NOT_FOUND, "V-201", "투표를 한 적이 없습니다."),
 	VOTE_ROOM_NOT_FOUND(HttpStatus.NOT_FOUND, "V-202", "생성된 투표방이 없습니다."),
 	ALREADY_VOTED(HttpStatus.CONFLICT, "V-301", "이미 투표를 하였습니다."),
