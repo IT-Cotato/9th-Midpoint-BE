@@ -26,13 +26,14 @@ public enum UserErrorCode implements ErrorCode {
 	//MemberRoom 관련
 	MEMBER_ROOM_NOT_FOUND(HttpStatus.NOT_FOUND, "MR-001", "해당 방에 회원이 아닙니다"),
 	DUPLICATE_MEMBER_ROOM(HttpStatus.CONFLICT, "MR-002", "해당 방에 이미 존재하는 회원입니다."),
-	UNAUTHORIZED_MEMBER_ROOM(HttpStatus.UNAUTHORIZED, "MR-003", "해당 방에 회원이 아닙니다."),
+	UNAUTHORIZED_MEMBER_ROOM(HttpStatus.FORBIDDEN, "MR-003", "해당 방에 회원이 아닙니다."),
 
 	//장소 관련
 	PLACE_NOT_FOUND(HttpStatus.NOT_FOUND, "P-201", "방에 입력된 장소가 없습니다."),
 	PLACE_CONFLICT(HttpStatus.CONFLICT, "P-302", "이미 장소를 저장하였습니다."),
+	PLACE_VOTE_ROOM_NOT_FOUND(HttpStatus.NOT_FOUND, "P-401", "장소투표방이 존재하지 않습니다."),
 
-	//트표 관련
+	//투표 관련
 	CANDIDATE_NOT_FOUND(HttpStatus.BAD_REQUEST, "V-101", "투표 후보가 아닙니다."),
 	VOTE_NOT_FOUND(HttpStatus.NOT_FOUND, "V-201", "투표를 한 적이 없습니다."),
 	VOTE_ROOM_NOT_FOUND(HttpStatus.NOT_FOUND, "V-202", "생성된 투표방이 없습니다."),

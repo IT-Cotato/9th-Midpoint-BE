@@ -12,8 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -27,7 +25,7 @@ import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteDTO.PlaceVoteCandidatesFindResponse;
 import middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteDTO.PlaceVoteRequest;
 import middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteDTO.PlaceVoteResultsFindResponse;
-import middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteRoomDTO;
+import middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteRoomDTO.VotedAndVoteItemResponse;
 import middle_point_search.backend.domains.placeVoteRoom.service.PlaceVoteService;
 
 @Tag(name = "PLACE VOTE API", description = "장소 투표에 대한 API입니다.")
@@ -46,10 +44,6 @@ public class PlaceVoteController {
 			각 장소후보별로 해당하는 장소투표후보 id, 장소투표후보이름, 투표수, 투표한 멤버 id(이름)리스트를 반환한다.
 			
 			AccessToken 필요.""",
-		parameters = {
-			@Parameter(name = "RoomId", description = "roomId 필요", in = ParameterIn.HEADER),
-			@Parameter(name = "RoomType", description = "roomType 필요. [TOGETHER, SELF] 중 하나", in = ParameterIn.HEADER)
-		},
 		responses = {
 			@ApiResponse(
 				responseCode = "200",
@@ -97,10 +91,6 @@ public class PlaceVoteController {
 			장소투표후보 id를 응답받아 해당하는 id를 가진 투표후보를 투표하도록 한다.
 			
 			AccessToken 필요.""",
-		parameters = {
-			@Parameter(name = "RoomId", description = "roomId 필요", in = ParameterIn.HEADER),
-			@Parameter(name = "RoomType", description = "roomType 필요. [TOGETHER, SELF] 중 하나", in = ParameterIn.HEADER)
-		},
 		responses = {
 			@ApiResponse(
 				responseCode = "200",
@@ -160,10 +150,6 @@ public class PlaceVoteController {
 			장소투표후보 id를 응답받아 해당하는 id를 가진 투표후보를 재투표하도록 한다.
 			
 			AccessToken 필요.""",
-		parameters = {
-			@Parameter(name = "RoomId", description = "roomId 필요", in = ParameterIn.HEADER),
-			@Parameter(name = "RoomType", description = "roomType 필요. [TOGETHER, SELF] 중 하나", in = ParameterIn.HEADER)
-		},
 		responses = {
 			@ApiResponse(
 				responseCode = "200",
@@ -223,10 +209,6 @@ public class PlaceVoteController {
 			장소투표방 존재여부를 나타내고 존재하면 true, 존재하지않으면 false를 반환한다.
 			
 			AccessToken 필요.""",
-		parameters = {
-			@Parameter(name = "RoomId", description = "roomId 필요", in = ParameterIn.HEADER),
-			@Parameter(name = "RoomType", description = "roomType 필요. [TOGETHER, SELF] 중 하나", in = ParameterIn.HEADER)
-		},
 		responses = {
 			@ApiResponse(
 				responseCode = "200",
@@ -271,10 +253,6 @@ public class PlaceVoteController {
 			장소투표여부를 나타내고 투표를 했으면 true, 투표를 하지않았으면 false를 반환한다.
 			
 			AccessToken 필요.""",
-		parameters = {
-			@Parameter(name = "RoomId", description = "roomId 필요", in = ParameterIn.HEADER),
-			@Parameter(name = "RoomType", description = "roomType 필요. [TOGETHER, SELF] 중 하나", in = ParameterIn.HEADER)
-		},
 		responses = {
 			@ApiResponse(
 				responseCode = "200",
@@ -307,12 +285,12 @@ public class PlaceVoteController {
 			)
 		}
 	)
-	public ResponseEntity<DataResponse<PlaceVoteRoomDTO.VotedAndVoteItemResponse>> votedAndVoteItemFind(
+	public ResponseEntity<DataResponse<VotedAndVoteItemResponse>> votedAndVoteItemFind(
 		@PathVariable("roomId") Long roomId
 	) {
 		Member member = memberLoader.getMember();
 
-		PlaceVoteRoomDTO.VotedAndVoteItemResponse votedAndVoteItemResponse = placeVoteRoomService.findVotedAndVoteItem(
+		VotedAndVoteItemResponse votedAndVoteItemResponse = placeVoteRoomService.findVotedAndVoteItem(
 			member, roomId);
 		return ResponseEntity.ok(DataResponse.from(votedAndVoteItemResponse));
 	}

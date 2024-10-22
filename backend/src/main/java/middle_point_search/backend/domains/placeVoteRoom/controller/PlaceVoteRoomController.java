@@ -11,8 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -21,6 +19,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.dto.DataResponse;
 import middle_point_search.backend.common.dto.ErrorResponse;
+import middle_point_search.backend.common.util.MemberLoader;
+import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.placeVoteRoom.service.PlaceVoteRoomService;
 
 @Tag(name = "PLACE VOTE ROOM API", description = "장소 투표 방에 대한 API입니다.")
@@ -30,6 +30,7 @@ import middle_point_search.backend.domains.placeVoteRoom.service.PlaceVoteRoomSe
 public class PlaceVoteRoomController {
 
 	private final PlaceVoteRoomService placeVoteRoomService;
+	private final MemberLoader memberLoader;
 
 	@PostMapping("/rooms/{roomId}")
 	@Operation(
@@ -37,13 +38,7 @@ public class PlaceVoteRoomController {
 		description = """
 			장소후보를 리스트로 입력을 받아서 장소투표방을 생성한다.
 			
-			장소투표방을 생성시 현재 방에 해당하는 사람들은 투표를 할 수 있는 권한이 생긴다.
-			
 			AccessToken 필요.""",
-		parameters = {
-			@Parameter(name = "RoomId", description = "roomId 필요", in = ParameterIn.HEADER),
-			@Parameter(name = "RoomType", description = "roomType 필요. [TOGETHER, SELF] 중 하나", in = ParameterIn.HEADER)
-		},
 		responses = {
 			@ApiResponse(
 				responseCode = "200",
@@ -51,32 +46,30 @@ public class PlaceVoteRoomController {
 			),
 			@ApiResponse(
 				responseCode = "400",
-				description = "잘못된 요청입니다.",
+				description = "요청 파라미터가 잘못되었습니다.[C-202]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
 				responseCode = "401",
-				description = "인증에 실패하였습니다.",
-				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+				description = "인증에 실패하였습니다.[C-101]"
 			),
 			@ApiResponse(
 				responseCode = "402",
-				description = "인증 토큰이 유효하지 않습니다.",
-				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+				description = "Access Token을 재발급해야합니다.[A-004]"
 			),
 			@ApiResponse(
 				responseCode = "403",
-				description = "접근이 거부되었습니다.",
+				description = "해당 방에 회원이 아닙니다.[MR-003]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
+				responseCode = "404",
+				description = "존재하지 않는 방입니다.[R-201]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
 				responseCode = "409",
-				description = "이미 투표방이 존재합니다.",
-				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
-			),
-			@ApiResponse(
-				responseCode = "422",
-				description = "방의 타입이 일치하지 않습니다",
+				description = "이미 투표방이 존재합니다.[V-302]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			)
 		}
@@ -85,24 +78,22 @@ public class PlaceVoteRoomController {
 		@PathVariable("roomId") Long roomId,
 		@RequestBody @Valid PlaceVoteRoomCreateRequest request
 	) {
-		PlaceVoteRoomCreateResponse response = placeVoteRoomService.createPlaceVoteRoom(roomId, request);
+		Member member = memberLoader.getMember();
+		PlaceVoteRoomCreateResponse response = placeVoteRoomService.createPlaceVoteRoom(
+			member.getId(),
+			roomId,
+			request);
 
 		return ResponseEntity.ok(DataResponse.from(response));
 	}
 
 	@PutMapping("/rooms/{roomId}")
 	@Operation(
-		summary = "장소투표방 재생성하기",
+		summary = "장소투표방 업데이트하기",
 		description = """
-			장소후보를 리스트로 입력을 받아서 장소투표방을 재생성한다.
-			
-			장소투표방을 재생성시 현재 방에 해당하는 사람들은 재생성된 투표를 할 수 있는 권한이 생긴다.
+			장소후보를 리스트로 입력을 받아서 장소투표방을 업데이트한다.
 			
 			AccessToken 필요.""",
-		parameters = {
-			@Parameter(name = "RoomId", description = "roomId 필요", in = ParameterIn.HEADER),
-			@Parameter(name = "RoomType", description = "roomType 필요. [TOGETHER, SELF] 중 하나", in = ParameterIn.HEADER)
-		},
 		responses = {
 			@ApiResponse(
 				responseCode = "200",
@@ -110,42 +101,42 @@ public class PlaceVoteRoomController {
 			),
 			@ApiResponse(
 				responseCode = "400",
-				description = "잘못된 요청입니다.",
+				description = "요청 파라미터가 잘못되었습니다.[C-202]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
 				responseCode = "401",
-				description = "인증에 실패하였습니다.",
-				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+				description = "인증에 실패하였습니다.[C-101]"
 			),
 			@ApiResponse(
 				responseCode = "402",
-				description = "인증 토큰이 유효하지 않습니다.",
-				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+				description = "Access Token을 재발급해야합니다.[A-004]"
 			),
 			@ApiResponse(
 				responseCode = "403",
-				description = "접근이 거부되었습니다.",
+				description = "해당 방에 회원이 아닙니다.[MR-003]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
 				responseCode = "404",
-				description = "생성된 투표방이 없습니다.",
+				description = "존재하지 않는 방입니다.[R-201]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
-				responseCode = "422",
-				description = "방의 타입이 일치하지 않습니다",
+				responseCode = "409",
+				description = "이미 투표방이 존재합니다.[V-302]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			)
 		}
 	)
-	public ResponseEntity<DataResponse<PlaceVoteRoomCreateResponse>> placeVoteRoomRecreate(
+	public ResponseEntity<DataResponse<Void>> placeVoteRoomUpdate(
 		@PathVariable("roomId") Long roomId,
 		@RequestBody @Valid PlaceVoteRoomCreateRequest request
 	) {
-		PlaceVoteRoomCreateResponse response = placeVoteRoomService.recreatePlaceVoteRoom(roomId, request);
+		Member member = memberLoader.getMember();
 
-		return ResponseEntity.ok(DataResponse.from(response));
+		placeVoteRoomService.UpdatePlaceVoteRoom(member.getId(), roomId, request);
+
+		return ResponseEntity.ok(DataResponse.ok());
 	}
 }

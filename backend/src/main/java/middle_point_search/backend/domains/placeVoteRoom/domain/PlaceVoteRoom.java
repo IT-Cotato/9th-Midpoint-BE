@@ -1,7 +1,5 @@
 package middle_point_search.backend.domains.placeVoteRoom.domain;
 
-import static middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteRoomDTO.PlaceVoteRoomCreateRequest.*;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,19 +32,21 @@ public class PlaceVoteRoom {
 	@JoinColumn(name = "room_id")
 	private Room room;
 
-	@OneToMany(mappedBy = "placeVoteRoom", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "placeVoteRoom", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	private List<PlaceVoteCandidate> placeVoteCandidates = new ArrayList<>();
 
-	public PlaceVoteRoom(Room room, List<PlaceCandidateInfo> candidates) {
+	public PlaceVoteRoom(Room room) {
 		this.room = room;
-		this.placeVoteCandidates.clear();
-		for (PlaceCandidateInfo candidate : candidates) {
-			addPlaceVoteCandidate(candidate);
-		}
 	}
 
-	public void addPlaceVoteCandidate(PlaceCandidateInfo candidate) {
-		this.placeVoteCandidates.add(new PlaceVoteCandidate(candidate, this));
+	// 장소 투표 후보 추가
+	public void addPlaceVoteCandidate(PlaceVoteCandidate placeVoteCandidate) {
+		this.placeVoteCandidates.add(placeVoteCandidate);
+	}
+
+	// 장소 투표방 리셋
+	public void resetPlaceVoteRoom() {
+		this.placeVoteCandidates.clear();
 	}
 }
 
