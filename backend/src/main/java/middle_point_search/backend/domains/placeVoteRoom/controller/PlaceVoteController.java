@@ -22,7 +22,6 @@ import middle_point_search.backend.common.dto.DataResponse;
 import middle_point_search.backend.common.dto.ErrorResponse;
 import middle_point_search.backend.common.util.MemberLoader;
 import middle_point_search.backend.domains.member.domain.Member;
-import middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteDTO.PlaceVoteCandidatesFindResponse;
 import middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteDTO.PlaceVoteRequest;
 import middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteDTO.PlaceVoteResultsFindResponse;
 import middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteRoomDTO.VotedAndVoteItemResponse;
@@ -97,6 +96,11 @@ public class PlaceVoteController {
 				description = "성공"
 			),
 			@ApiResponse(
+				responseCode = "400",
+				description = "요청 파라미터가 잘못되었습니다.[C-202]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
 				responseCode = "401",
 				description = "인증에 실패하였습니다.[C-101]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
@@ -146,6 +150,11 @@ public class PlaceVoteController {
 				description = "성공"
 			),
 			@ApiResponse(
+				responseCode = "400",
+				description = "요청 파라미터가 잘못되었습니다.[C-202]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
 				responseCode = "401",
 				description = "인증에 실패하였습니다.[C-101]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
@@ -175,46 +184,6 @@ public class PlaceVoteController {
 
 		placeVoteRoomService.updateVote(member, roomId, request);
 		return ResponseEntity.ok(DataResponse.ok());
-	}
-
-	@GetMapping("/rooms/{roomId}")
-	@Operation(
-		summary = "장소투표방 조회하기",
-		description = """
-			장소투표방 존재여부를 나타내고 존재하면 true, 존재하지않으면 false를 반환한다.
-			
-			AccessToken 필요.""",
-		responses = {
-			@ApiResponse(
-				responseCode = "200",
-				description = "성공"
-			),
-			@ApiResponse(
-				responseCode = "401",
-				description = "인증에 실패하였습니다.[C-101]",
-				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
-			),
-			@ApiResponse(
-				responseCode = "402",
-				description = "Access Token을 재발급해야합니다.[A-004]",
-				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
-			),
-			@ApiResponse(
-				responseCode = "403",
-				description = "해당 방의 회원이 아닙니다.[MR-003]",
-				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
-			)
-		}
-	)
-	public ResponseEntity<DataResponse<PlaceVoteCandidatesFindResponse>> placeVoteRoomFind(
-		@PathVariable("roomId") Long roomId
-	) {
-		Member member = memberLoader.getMember();
-		PlaceVoteCandidatesFindResponse response = placeVoteRoomService.findPlaceVoteCandidates(
-			member.getId(),
-			roomId);
-
-		return ResponseEntity.ok(DataResponse.from(response));
 	}
 
 	//투표여부

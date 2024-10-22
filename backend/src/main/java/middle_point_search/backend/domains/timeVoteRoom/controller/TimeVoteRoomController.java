@@ -20,6 +20,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.dto.DataResponse;
 import middle_point_search.backend.common.dto.ErrorResponse;
+import middle_point_search.backend.common.util.MemberLoader;
+import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.timeVoteRoom.service.TimeVoteRoomService;
 
 @Tag(name = "TIME VOTE ROOM API", description = "시간투표방에 대한 API입니다.")
@@ -29,6 +31,7 @@ import middle_point_search.backend.domains.timeVoteRoom.service.TimeVoteRoomServ
 public class TimeVoteRoomController {
 
 	private final TimeVoteRoomService timeVoteRoomService;
+	private final MemberLoader memberLoader;
 
 	@PostMapping("/rooms/{roomId}")
 	@Operation(
@@ -46,27 +49,27 @@ public class TimeVoteRoomController {
 			),
 			@ApiResponse(
 				responseCode = "400",
-				description = "잘못된 요청입니다.",
+				description = "요청 파라미터가 잘못되었습니다.[C-202]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
 				responseCode = "401",
-				description = "인증에 실패하였습니다.",
+				description = "인증에 실패하였습니다.[C-101]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
 				responseCode = "402",
-				description = "인증 토큰이 유효하지 않습니다.",
+				description = "Access Token을 재발급해야합니다.[A-004]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
 				responseCode = "403",
-				description = "접근이 거부되었습니다.",
+				description = "해당 방의 회원이 아닙니다.[MR-003]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
 				responseCode = "409",
-				description = "이미 투표방이 존재합니다.",
+				description = "이미 투표방이 존재합니다.[V-302]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			)
 		}
@@ -75,18 +78,20 @@ public class TimeVoteRoomController {
 		@PathVariable("roomId") Long roomId,
 		@RequestBody @Valid TimeVoteRoomCreateRequest request
 	) {
-		TimeVoteRoomCreateResponse response = timeVoteRoomService.createTimeVoteRoom(roomId, request);
+		Member member = memberLoader.getMember();
+
+		TimeVoteRoomCreateResponse response = timeVoteRoomService.createTimeVoteRoom(member.getId(), roomId, request);
 
 		return ResponseEntity.ok(DataResponse.from(response));
 	}
 
 	@PutMapping("/rooms/{roomId}")
 	@Operation(
-		summary = "시간투표방 재생성하기",
+		summary = "시간투표방 업데이트하기",
 		description = """
-			날짜(yyyy-mm-dd)를 리스트로 입력을 받아서 시간투표방을 재생성한다."
+			날짜(yyyy-mm-dd)를 리스트로 입력을 받아서 시간투표방을 업데이트한다.
 			
-			시간투표방을 재생성시 현재 방에 해당하는 사람들은 재생성된 투표를 할 수 있는 권한이 생긴다.
+			기존 투표 내역은 사라진다.
 			
 			AccessToken 필요.""",
 		responses = {
@@ -96,43 +101,40 @@ public class TimeVoteRoomController {
 			),
 			@ApiResponse(
 				responseCode = "400",
-				description = "잘못된 요청입니다.",
+				description = "요청 파라미터가 잘못되었습니다.[C-202]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
 				responseCode = "401",
-				description = "인증에 실패하였습니다.",
+				description = "인증에 실패하였습니다.[C-101]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
 				responseCode = "402",
-				description = "인증 토큰이 유효하지 않습니다.",
+				description = "Access Token을 재발급해야합니다.[A-004]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
 				responseCode = "403",
-				description = "접근이 거부되었습니다.",
+				description = "해당 방의 회원이 아닙니다.[MR-003]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
 				responseCode = "404",
-				description = "생성된 투표방이 없습니다.",
-				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
-			),
-			@ApiResponse(
-				responseCode = "422",
-				description = "방의 타입이 일치하지 않습니다",
+				description = "시간투표방이 존재하지 않습니다.[TV-001]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			)
 		}
 	)
-	public ResponseEntity<DataResponse<TimeVoteRoomCreateResponse>> timeVoteRoomRecreate(
+	public ResponseEntity<DataResponse<Void>> timeVoteRoomRecreate(
 		@PathVariable("roomId") Long roomId,
 		@RequestBody @Valid TimeVoteRoomCreateRequest request
 	) {
-		TimeVoteRoomCreateResponse response = timeVoteRoomService.recreateTimeVoteRoom(roomId, request);
+		Member member = memberLoader.getMember();
 
-		return ResponseEntity.ok(DataResponse.from(response));
+		timeVoteRoomService.updateTimeVoteRoom(member.getId(), roomId, request);
+
+		return ResponseEntity.ok(DataResponse.ok());
 	}
 
 	@GetMapping("/rooms/{roomId}")
@@ -149,22 +151,17 @@ public class TimeVoteRoomController {
 			),
 			@ApiResponse(
 				responseCode = "401",
-				description = "인증에 실패하였습니다.",
+				description = "인증에 실패하였습니다.[C-101]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
 				responseCode = "402",
-				description = "인증 토큰이 유효하지 않습니다.",
+				description = "Access Token을 재발급해야합니다.[A-004]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
 				responseCode = "403",
-				description = "접근이 거부되었습니다.",
-				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
-			),
-			@ApiResponse(
-				responseCode = "422",
-				description = "방의 타입이 일치하지 않습니다",
+				description = "해당 방의 회원이 아닙니다.[MR-003]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			)
 		}
@@ -172,7 +169,9 @@ public class TimeVoteRoomController {
 	public ResponseEntity<DataResponse<TimeVoteRoomGetResponse>> timeVoteRoomGet(
 		@PathVariable("roomId") Long roomId
 	) {
-		TimeVoteRoomGetResponse response = timeVoteRoomService.findTimeVoteRoomAndMakeDTO(roomId);
+		Member member = memberLoader.getMember();
+
+		TimeVoteRoomGetResponse response = timeVoteRoomService.findTimeVoteRoomAndMakeDTO(member.getId(), roomId);
 
 		return ResponseEntity.ok(DataResponse.from(response));
 	}

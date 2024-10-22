@@ -3,6 +3,7 @@ package middle_point_search.backend.domains.placeVoteRoom.controller;
 import static middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteRoomDTO.*;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -21,6 +22,7 @@ import middle_point_search.backend.common.dto.DataResponse;
 import middle_point_search.backend.common.dto.ErrorResponse;
 import middle_point_search.backend.common.util.MemberLoader;
 import middle_point_search.backend.domains.member.domain.Member;
+import middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteDTO;
 import middle_point_search.backend.domains.placeVoteRoom.service.PlaceVoteRoomService;
 
 @Tag(name = "PLACE VOTE ROOM API", description = "장소 투표 방에 대한 API입니다.")
@@ -95,6 +97,8 @@ public class PlaceVoteRoomController {
 		description = """
 			장소후보를 리스트로 입력을 받아서 장소투표방을 업데이트한다.
 			
+			기존 투표 내역은 사라진다.
+			
 			AccessToken 필요.""",
 		responses = {
 			@ApiResponse(
@@ -142,5 +146,46 @@ public class PlaceVoteRoomController {
 		placeVoteRoomService.UpdatePlaceVoteRoom(member.getId(), roomId, request);
 
 		return ResponseEntity.ok(DataResponse.ok());
+	}
+
+
+	@GetMapping("/rooms/{roomId}")
+	@Operation(
+		summary = "장소투표방 조회하기",
+		description = """
+			장소투표방 존재여부를 나타내고 존재하면 true, 존재하지않으면 false를 반환한다.
+			
+			AccessToken 필요.""",
+		responses = {
+			@ApiResponse(
+				responseCode = "200",
+				description = "성공"
+			),
+			@ApiResponse(
+				responseCode = "401",
+				description = "인증에 실패하였습니다.[C-101]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
+				responseCode = "402",
+				description = "Access Token을 재발급해야합니다.[A-004]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
+				responseCode = "403",
+				description = "해당 방의 회원이 아닙니다.[MR-003]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			)
+		}
+	)
+	public ResponseEntity<DataResponse<PlaceVoteDTO.PlaceVoteCandidatesFindResponse>> placeVoteRoomFind(
+		@PathVariable("roomId") Long roomId
+	) {
+		Member member = memberLoader.getMember();
+		PlaceVoteDTO.PlaceVoteCandidatesFindResponse response = placeVoteRoomService.findPlaceVoteCandidates(
+			member.getId(),
+			roomId);
+
+		return ResponseEntity.ok(DataResponse.from(response));
 	}
 }

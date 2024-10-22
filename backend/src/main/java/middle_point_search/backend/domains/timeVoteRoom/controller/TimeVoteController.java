@@ -10,8 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -43,10 +41,6 @@ public class TimeVoteController {
 			가능한 투표후보날짜의 가능한 시작일시(yyyy-mm-dd hh:mm), 가능한 마지막일시(yyyy-mm-dd hh:mm)를 입력을 받아서 투표한다.
 			
 			AccessToken 필요.""",
-		parameters = {
-			@Parameter(name = "RoomId", description = "roomId 필요", in = ParameterIn.HEADER),
-			@Parameter(name = "RoomType", description = "roomType 필요. [TOGETHER, SELF] 중 하나", in = ParameterIn.HEADER)
-		},
 		responses = {
 			@ApiResponse(
 				responseCode = "200",
@@ -54,37 +48,32 @@ public class TimeVoteController {
 			),
 			@ApiResponse(
 				responseCode = "400",
-				description = "투표 후보가 아닙니다.",
+				description = "요청 파라미터가 잘못되었습니다.[C-202]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
 				responseCode = "401",
-				description = "인증에 실패하였습니다.",
+				description = "인증에 실패하였습니다.[C-101]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
 				responseCode = "402",
-				description = "인증 토큰이 유효하지 않습니다.",
+				description = "Access Token을 재발급해야합니다.[A-004]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
 				responseCode = "403",
-				description = "접근이 거부되었습니다.",
+				description = "해당 방의 회원이 아닙니다.[MR-003]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
 				responseCode = "404",
-				description = "생성된 투표방이 없습니다.",
+				description = "생성된 투표방이 없습니다.[V-202] or 투표 후보가 아닙니다.[V-101]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
 				responseCode = "409",
-				description = "이미 투표를 하였습니다.",
-				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
-			),
-			@ApiResponse(
-				responseCode = "422",
-				description = "방의 타입이 일치하지 않습니다",
+				description = "이미 투표를 하였습니다.[V-301]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			)
 		}
@@ -107,10 +96,6 @@ public class TimeVoteController {
 			가능한 투표후보날짜의 가능한 시작일시(yyyy-mm-dd hh:mm), 가능한 마지막일시(yyyy-mm-dd hh:mm)를 입력을 받아서 재투표한다.
 			
 			AccessToken 필요.""",
-		parameters = {
-			@Parameter(name = "RoomId", description = "roomId 필요", in = ParameterIn.HEADER),
-			@Parameter(name = "RoomType", description = "roomType 필요. [TOGETHER, SELF] 중 하나", in = ParameterIn.HEADER)
-		},
 		responses = {
 			@ApiResponse(
 				responseCode = "200",
@@ -118,39 +103,29 @@ public class TimeVoteController {
 			),
 			@ApiResponse(
 				responseCode = "400",
-				description = "투표 후보가 아닙니다.",
+				description = "요청 파라미터가 잘못되었습니다.[C-202]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
 				responseCode = "401",
-				description = "인증에 실패하였습니다.",
+				description = "인증에 실패하였습니다.[C-101]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
 				responseCode = "402",
-				description = "인증 토큰이 유효하지 않습니다.",
+				description = "Access Token을 재발급해야합니다.[A-004]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
 				responseCode = "403",
-				description = "접근이 거부되었습니다.",
+				description = "해당 방의 회원이 아닙니다.[MR-003]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
 				responseCode = "404",
-				description = "생성된 투표방이 없습니다.",
+				description = "생성된 투표방이 없습니다.[V-202] or 투표 후보가 아닙니다.[V-101] or 투표를 한 적이 없습니다.[V-201]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
-			@ApiResponse(
-				responseCode = "404",
-				description = "투표를 한 적이 없습니다.",
-				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
-			),
-			@ApiResponse(
-				responseCode = "422",
-				description = "방의 타입이 일치하지 않습니다",
-				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
-			)
 		}
 	)
 	public ResponseEntity<?> voteUpdate(
@@ -171,10 +146,6 @@ public class TimeVoteController {
 			         시간투표여부를 나타내고 투표를 했으면 true, 투표를 하지않았으면 false를 반환한다.
 			
 			AccessToken 필요.""",
-		parameters = {
-			@Parameter(name = "RoomId", description = "roomId 필요", in = ParameterIn.HEADER),
-			@Parameter(name = "RoomType", description = "roomType 필요. [TOGETHER, SELF] 중 하나", in = ParameterIn.HEADER)
-		},
 		responses = {
 			@ApiResponse(
 				responseCode = "200",
@@ -182,27 +153,22 @@ public class TimeVoteController {
 			),
 			@ApiResponse(
 				responseCode = "401",
-				description = "인증에 실패하였습니다.",
+				description = "인증에 실패하였습니다.[C-101]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
 				responseCode = "402",
-				description = "인증 토큰이 유효하지 않습니다.",
+				description = "Access Token을 재발급해야합니다.[A-004]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
 				responseCode = "403",
-				description = "접근이 거부되었습니다.",
+				description = "해당 방의 회원이 아닙니다.[MR-003]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
 				responseCode = "404",
-				description = "생성된 투표방이 없습니다.",
-				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
-			),
-			@ApiResponse(
-				responseCode = "422",
-				description = "방의 타입이 일치하지 않습니다",
+				description = "생성된 투표방이 없습니다.[V-202]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			)
 		}
@@ -224,10 +190,6 @@ public class TimeVoteController {
 			        시간투표후보날짜들에 대한 결과를 보여준다. 각 날짜에 대한 멤버들의 투표 현황과 총 투표한 인원의 정보를 반환한다.
 			
 			AccessToken 필요.""",
-		parameters = {
-			@Parameter(name = "RoomId", description = "roomId 필요", in = ParameterIn.HEADER),
-			@Parameter(name = "RoomType", description = "roomType 필요. [TOGETHER, SELF] 중 하나", in = ParameterIn.HEADER)
-		},
 		responses = {
 			@ApiResponse(
 				responseCode = "200",
@@ -235,36 +197,32 @@ public class TimeVoteController {
 			),
 			@ApiResponse(
 				responseCode = "401",
-				description = "인증에 실패하였습니다.",
+				description = "인증에 실패하였습니다.[C-101]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
 				responseCode = "402",
-				description = "인증 토큰이 유효하지 않습니다.",
+				description = "Access Token을 재발급해야합니다.[A-004]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
 				responseCode = "403",
-				description = "접근이 거부되었습니다.",
+				description = "해당 방의 회원이 아닙니다.[MR-003]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
 				responseCode = "404",
-				description = "생성된 투표방이 없습니다.",
-				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
-			),
-			@ApiResponse(
-				responseCode = "422",
-				description = "방의 타입이 일치하지 않습니다",
+				description = "생성된 투표방이 없습니다.[V-202]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			)
 		}
-
 	)
 	public ResponseEntity<DataResponse<TimeVoteRoomResultResponse>> timeVoteResultsGet(
 		@PathVariable Long roomId
 	) {
-		TimeVoteRoomResultResponse result = timeVoteRoomService.findTimeVoteResult(roomId);
+		Member member = memberLoader.getMember();
+
+		TimeVoteRoomResultResponse result = timeVoteRoomService.findTimeVoteResult(member.getId(), roomId);
 
 		return ResponseEntity.ok(DataResponse.from(result));
 	}
