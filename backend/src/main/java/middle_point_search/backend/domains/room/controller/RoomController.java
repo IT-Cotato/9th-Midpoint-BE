@@ -50,8 +50,16 @@ public class RoomController {
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
+				responseCode = "401",
+				description = "인증에 실패하였습니다.[C-101]"
+			),
+			@ApiResponse(
+				responseCode = "401",
+				description = "Access Token을 재발급해야합니다.[A-004]"
+			),
+			@ApiResponse(
 				responseCode = "429",
-				description = "요청을 너무 많이 했습니다.",
+				description = "요청을 너무 많이 했습니다.[C-203]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			)
 		}
@@ -76,17 +84,15 @@ public class RoomController {
 			),
 			@ApiResponse(
 				responseCode = "401",
-				description = "인증에 실패하였습니다.",
-				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+				description = "인증에 실패하였습니다.[C-101]"
 			),
 			@ApiResponse(
-				responseCode = "402",
-				description = "인증 토큰이 유효하지 않습니다.",
-				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+				responseCode = "401",
+				description = "Access Token을 재발급해야합니다.[A-004]"
 			),
 			@ApiResponse(
 				responseCode = "403",
-				description = "접근이 거부되었습니다.",
+				description = "해당 방에 회원이 아닙니다.[MR-003]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 		}
