@@ -59,7 +59,7 @@ public class PlaceVoteRoomController {
 			),
 			@ApiResponse(
 				responseCode = "403",
-				description = "해당 방에 회원이 아닙니다.[MR-003]",
+				description = "해당 방의 회원이 아닙니다.[MR-003]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
@@ -114,7 +114,7 @@ public class PlaceVoteRoomController {
 			),
 			@ApiResponse(
 				responseCode = "403",
-				description = "해당 방에 회원이 아닙니다.[MR-003]",
+				description = "해당 방의 회원이 아닙니다.[MR-003]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
