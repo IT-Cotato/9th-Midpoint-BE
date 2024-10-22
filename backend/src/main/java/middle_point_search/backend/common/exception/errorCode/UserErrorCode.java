@@ -31,7 +31,12 @@ public enum UserErrorCode implements ErrorCode {
 	//장소 관련
 	PLACE_NOT_FOUND(HttpStatus.NOT_FOUND, "P-201", "방에 입력된 장소가 없습니다."),
 	PLACE_CONFLICT(HttpStatus.CONFLICT, "P-302", "이미 장소를 저장하였습니다."),
-	PLACE_VOTE_ROOM_NOT_FOUND(HttpStatus.NOT_FOUND, "P-401", "장소투표방이 존재하지 않습니다."),
+
+	// 장소 투표 방 관련
+	PLACE_VOTE_ROOM_NOT_FOUND(HttpStatus.NOT_FOUND, "PV-001", "장소투표방이 존재하지 않습니다."),
+
+	// 시간 투표 방 관련
+	TIME_VOTE_ROOM_NOT_FOUND(HttpStatus.NOT_FOUND, "TV-001", "시간투표방이 존재하지 않습니다."),
 
 	//투표 관련
 	CANDIDATE_NOT_FOUND(HttpStatus.NOT_FOUND, "V-101", "투표 후보가 아닙니다."),
@@ -41,7 +46,8 @@ public enum UserErrorCode implements ErrorCode {
 	DUPLICATE_VOTE_ROOM(HttpStatus.CONFLICT, "V-302", "이미 투표방이 존재합니다."),
 
 	//서버 관련
-	API_INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "S-001", "API 서버에 문제가 발생하였습니다.");
+	API_INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "S-001", "API 서버에 문제가 발생하였습니다."),
+	;
 
 	private final HttpStatus httpStatus;
 	private final String code;
