@@ -3,7 +3,6 @@ package middle_point_search.backend.domains.placeVoteRoom.service;
 import static middle_point_search.backend.common.exception.errorCode.UserErrorCode.*;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -16,8 +15,6 @@ import middle_point_search.backend.domains.memberRoom.MemberRoomValidateService;
 import middle_point_search.backend.domains.placeVoteRoom.domain.PlaceVoteCandidate;
 import middle_point_search.backend.domains.placeVoteRoom.domain.PlaceVoteCandidateMember;
 import middle_point_search.backend.domains.placeVoteRoom.domain.PlaceVoteRoom;
-import middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteDTO.PlaceVoteCandidatesFindResponse;
-import middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteDTO.PlaceVoteCandidatesFindResponse.PlaceCandidate;
 import middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteDTO.PlaceVoteRequest;
 import middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteDTO.PlaceVoteResultsFindResponse;
 import middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteRoomDTO.VotedAndVoteItemResponse;
@@ -87,27 +84,6 @@ public class PlaceVoteService {
 
 		PlaceVoteCandidateMember placeVoteCandidateMember = new PlaceVoteCandidateMember(candidate, member);
 		placeVoteCandidateMemberRepository.save(placeVoteCandidateMember);
-	}
-
-	// 장소투표방 존재 여부 확인, 존재시 true, 존재하지 않을시 false 반환
-	public PlaceVoteCandidatesFindResponse findPlaceVoteCandidates(Long memberId, Long roomId) {
-		// 방에 대한 회원인지 확인
-		memberRoomValidateService.validateAuthorizedMember(memberId, roomId);
-
-		Optional<PlaceVoteRoom> placeVoteRoomOptional = placeVoteRoomService.findByRoomId(roomId);
-
-		return placeVoteRoomOptional
-			.map(placeVoteRoom -> {
-				List<PlaceCandidate> placeCandidates = placeVoteRoom.getPlaceVoteCandidates()
-					.stream()
-					.map(candidate -> new PlaceCandidate(candidate.getId(), candidate.getName(), candidate.getSiDo(),
-						candidate.getSiGunGu(), candidate.getRoadNameAddress(), candidate.getAddressLatitude(),
-						candidate.getAddressLongitude()))
-					.collect(Collectors.toList());
-
-				return PlaceVoteCandidatesFindResponse.from(true, placeCandidates);
-			})
-			.orElseGet(() -> PlaceVoteCandidatesFindResponse.from(false, null));
 	}
 
 	// 내 투표 조회

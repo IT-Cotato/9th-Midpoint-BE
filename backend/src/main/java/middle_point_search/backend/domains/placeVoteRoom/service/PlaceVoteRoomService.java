@@ -3,7 +3,9 @@ package middle_point_search.backend.domains.placeVoteRoom.service;
 import static middle_point_search.backend.common.exception.errorCode.UserErrorCode.*;
 import static middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteRoomDTO.*;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,6 +15,7 @@ import middle_point_search.backend.common.exception.CustomException;
 import middle_point_search.backend.domains.memberRoom.MemberRoomValidateService;
 import middle_point_search.backend.domains.placeVoteRoom.domain.PlaceVoteCandidate;
 import middle_point_search.backend.domains.placeVoteRoom.domain.PlaceVoteRoom;
+import middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteDTO;
 import middle_point_search.backend.domains.placeVoteRoom.repository.PlaceVoteRoomRepository;
 import middle_point_search.backend.domains.room.domain.Room;
 import middle_point_search.backend.domains.room.service.RoomService;
@@ -80,5 +83,27 @@ public class PlaceVoteRoomService {
 		if (exists) {
 			throw CustomException.from(DUPLICATE_VOTE_ROOM);
 		}
+	}
+
+	// 장소투표방 존재 여부 확인, 존재시 true, 존재하지 않을시 false 반환
+	public PlaceVoteDTO.PlaceVoteCandidatesFindResponse findPlaceVoteCandidates(Long memberId, Long roomId) {
+		// 방에 대한 회원인지 확인
+		memberRoomValidateService.validateAuthorizedMember(memberId, roomId);
+
+		Optional<PlaceVoteRoom> placeVoteRoomOptional = placeVoteRoomRepository.findByRoom_Id(roomId);
+
+		return placeVoteRoomOptional
+			.map(placeVoteRoom -> {
+				List<PlaceVoteDTO.PlaceVoteCandidatesFindResponse.PlaceCandidate> placeCandidates = placeVoteRoom.getPlaceVoteCandidates()
+					.stream()
+					.map(candidate -> new PlaceVoteDTO.PlaceVoteCandidatesFindResponse.PlaceCandidate(candidate.getId(),
+						candidate.getName(), candidate.getSiDo(),
+						candidate.getSiGunGu(), candidate.getRoadNameAddress(), candidate.getAddressLatitude(),
+						candidate.getAddressLongitude()))
+					.collect(Collectors.toList());
+
+				return PlaceVoteDTO.PlaceVoteCandidatesFindResponse.from(true, placeCandidates);
+			})
+			.orElseGet(() -> PlaceVoteDTO.PlaceVoteCandidatesFindResponse.from(false, null));
 	}
 }
