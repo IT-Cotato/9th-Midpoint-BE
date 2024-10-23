@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+import middle_point_search.backend.domains.memberRoom.MemberRoomValidateService;
 import middle_point_search.backend.domains.midPoint.dto.MidPointDTO.AddressDTO;
 import middle_point_search.backend.domains.midPoint.dto.MidPointDTO.MidPointsFindResponse;
 import middle_point_search.backend.domains.midPoint.util.MidPointUtil;
@@ -19,6 +20,7 @@ public class MidPointService {
 
 	private final MidPointUtil midPointUtil;
 	private final PlaceRepository placeRepository;
+	private final MemberRoomValidateService memberRoomValidateService;
 
 	// 주어진 주소들로 중간 장소 리스트를 조회하는 메서드
 	public List<MidPointsFindResponse> findMidPoints(List<AddressDTO> addressDTOs) {
@@ -26,7 +28,10 @@ public class MidPointService {
 	}
 
 	// 주어진 RoomId로 중간 장소 리스트를 조회하는 메서드
-	public List<MidPointsFindResponse> findMidPointsByRoomId(Long roomId) {
+	public List<MidPointsFindResponse> findMidPointsByRoomId(Long memberId, Long roomId) {
+		// 회원이 방에 속해있는지 확인
+		memberRoomValidateService.validateAuthorizedMember(memberId, roomId);
+
 		List<Place> places = placeRepository.findAllByRoom_Id(roomId);
 		List<AddressDTO> addressDTOs = places.stream()
 			.map(AddressDTO::from)
