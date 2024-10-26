@@ -29,7 +29,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	public ResponseEntity<Object> handleCustomException(CustomException e) {
 		log.warn("handleCustomException", e);
 
-		return makeErrorResponseEntity(e.getErrorCode());
+		return makeErrorResponseEntity(e);
 	}
 
 	@ExceptionHandler(IllegalArgumentException.class)
@@ -46,7 +46,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		log.warn("handleNoResourceFoundException", ex);
 
 		ErrorCode errorCode = CommonErrorCode.RESOURCE_NOT_FOUND;
-
 		return makeErrorResponseEntity(errorCode);
 	}
 
@@ -97,6 +96,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		return ResponseEntity
 			.status(errorCode.getHttpStatus())
 			.body(ErrorResponse.from(errorCode));
+	}
+
+	private ResponseEntity<Object> makeErrorResponseEntity(CustomException customException) {
+		return ResponseEntity
+			.status(customException.getHttpStatus())
+			.body(ErrorResponse.from(customException));
 	}
 
 	private ResponseEntity<Object> makeErrorResponseEntity(ErrorCode errorCode, List<String> message) {

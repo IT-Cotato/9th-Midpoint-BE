@@ -4,12 +4,11 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -18,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.dto.DataResponse;
 import middle_point_search.backend.common.dto.ErrorResponse;
 import middle_point_search.backend.common.util.MemberLoader;
+import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.midPoint.dto.MidPointDTO.MidPointsFindResponse;
 import middle_point_search.backend.domains.midPoint.service.MidPointService;
 
@@ -27,20 +27,16 @@ import middle_point_search.backend.domains.midPoint.service.MidPointService;
 @RequiredArgsConstructor
 public class MidPointController {
 
-	private final MemberLoader memberLoader;
 	private final MidPointService midPointService;
+	private final MemberLoader memberLoader;
 
-	@GetMapping
+	@GetMapping("/rooms/{roomId}")
 	@Operation(
 		summary = "중간 지점 추천 장소 조회",
 		description = """
 			중간 지점 추천 장소 조회하기.
 			
 			AccessToken 필요.""",
-		parameters = {
-			@Parameter(name = "RoomId", description = "roomId 필요", in = ParameterIn.HEADER),
-			@Parameter(name = "RoomType", description = "roomType 필요. [TOGETHER, SELF] 중 하나", in = ParameterIn.HEADER)
-		},
 		responses = {
 			@ApiResponse(
 				responseCode = "200",
@@ -48,40 +44,37 @@ public class MidPointController {
 			),
 			@ApiResponse(
 				responseCode = "400",
-				description = "요청 파라미터가 잘 못 되었습니다.",
+				description = "요청 파라미터가 잘못되었습니다.[C-202]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
 				responseCode = "401",
-				description = "인증에 실패하였습니다.",
+				description = "인증에 실패하였습니다.[C-101]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
 				responseCode = "402",
-				description = "인증 토큰이 유효하지 않습니다.",
+				description = "Access Token을 재발급해야합니다.[A-004]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
 				responseCode = "403",
-				description = "접근이 거부되었습니다.",
+				description = "해당 방의 회원이 아닙니다.[MR-003]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
 				responseCode = "404",
-				description = "방에 입력된 장소가 없습니다.",
-				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
-			),
-			@ApiResponse(
-				responseCode = "422",
-				description = "방의 타입이 일치하지 않습니다",
+				description = "방에 입력된 장소가 없습니다.[P-201]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			)
 		}
 	)
-	public ResponseEntity<DataResponse<List<MidPointsFindResponse>>> MidPointsFind() {
-		String roomId = memberLoader.getRoomId();
+	public ResponseEntity<DataResponse<List<MidPointsFindResponse>>> MidPointsFind(
+		@PathVariable("roomId") Long roomId
+	) {
+		Member member = memberLoader.getMember();
 
-		List<MidPointsFindResponse> midPoints = midPointService.findMidPointsByRoomId(roomId);
+		List<MidPointsFindResponse> midPoints = midPointService.findMidPointsByRoomId(member.getId(), roomId);
 
 		return ResponseEntity.ok(DataResponse.from(midPoints));
 	}

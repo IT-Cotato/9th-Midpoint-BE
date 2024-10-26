@@ -2,7 +2,6 @@ package middle_point_search.backend.common.dto;
 
 import java.time.LocalDateTime;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -21,12 +20,5 @@ public class BaseResponse {
 	protected BaseResponse(Boolean isSuccess, HttpStatusCode status) {
 		this.isSuccess = isSuccess;
 		this.status = status.value();
-	}
-
-	public static BaseResponse ok() {
-		boolean isSuccess = true;
-		HttpStatusCode status = HttpStatus.OK;
-
-		return new BaseResponse(isSuccess, status);
 	}
 }

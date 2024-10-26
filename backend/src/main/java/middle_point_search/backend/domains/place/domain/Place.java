@@ -8,7 +8,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -46,7 +45,8 @@ public class Place {
 	@JoinColumn(name = "room_id")
 	private Room room;
 
-	@OneToOne(mappedBy = "place", fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "member_id")
 	private Member member;
 
 	private Place(String siDo, String siGunGu, String roadNameAddress, Double addressLatitude,
@@ -67,17 +67,7 @@ public class Place {
 		this.addressLatitude = addressLatitude;
 		this.addressLongitude = addressLongitude;
 		addRoom(room);
-		addMember(member);
-	}
-
-	public static Place of(String siDo, String siGunGu, String roadNameAddress,
-		Double addressLatitude, Double addressLongitude, Room room) {
-		return new Place(siDo, siGunGu, roadNameAddress, addressLatitude, addressLongitude, room);
-	}
-
-	public static Place of(String siDo, String siGunGu, String roadNameAddress,
-		Double addressLatitude, Double addressLongitude, Room room, Member member) {
-		return new Place(siDo, siGunGu, roadNameAddress, addressLatitude, addressLongitude, room, member);
+		this.member = member;
 	}
 
 	public static Place from(PlaceSaveOrUpdateRequest placeSaveOrUpdateRequest, Room room, Member member) {
@@ -114,11 +104,6 @@ public class Place {
 	private void addRoom(Room room) {
 		this.room = room;
 		room.getPlaces().add(this);
-	}
-
-	private void addMember(Member member) {
-		this.member = member;
-		member.setPlace(this);
 	}
 
 	public void update(PlaceSaveOrUpdateRequest request) {

@@ -9,8 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -24,7 +22,7 @@ import middle_point_search.backend.domains.recommendPlace.dto.request.RecommendP
 import middle_point_search.backend.domains.recommendPlace.dto.response.RecommendPlacesFindResponse;
 import middle_point_search.backend.domains.recommendPlace.service.RecommendPlaceService;
 
-@Tag(name = "RECOMMEND PLACE API",  description = "추천 장소에 대한 API입니다.")
+@Tag(name = "RECOMMEND PLACE API", description = "추천 장소에 대한 API입니다.")
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -38,16 +36,12 @@ public class RecommendPlaceController {
 		summary = "중간 지점 근처 식당, 스터디, 카페 추천",
 		description = """
 			주소, 카테고리, 페이지 정보를 이용해 장소를 추천한다.
-						
+			
 			page는 0이상이다.
-						
+			
 			요청당 5개의 정보를 반환.
-						
+			
 			AccessToken 필요.""",
-		parameters = {
-			@Parameter(name = "RoomId", description = "roomId 필요", in = ParameterIn.HEADER),
-			@Parameter(name = "RoomType", description = "roomType 필요. [TOGETHER, SELF] 중 하나", in = ParameterIn.HEADER)
-		},
 		responses = {
 			@ApiResponse(
 				responseCode = "200",
@@ -55,34 +49,24 @@ public class RecommendPlaceController {
 			),
 			@ApiResponse(
 				responseCode = "400",
-				description = "요청 파라미터가 잘 못 되었습니다.",
+				description = "요청 파라미터가 잘못되었습니다.[C-202]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
 				responseCode = "401",
-				description = "인증에 실패하였습니다.",
+				description = "인증에 실패하였습니다.[C-101]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
 				responseCode = "402",
-				description = "인증 토큰이 유효하지 않습니다.",
-				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
-			),
-			@ApiResponse(
-				responseCode = "403",
-				description = "접근이 거부되었습니다.",
-				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
-			),
-			@ApiResponse(
-				responseCode = "422",
-				description = "방의 타입이 일치하지 않습니다",
+				description = "Access Token을 재발급해야합니다.[A-004]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			)
 		}
 	)
 	public ResponseEntity<DataResponse<Page<RecommendPlacesFindResponse>>> recommendPlacesFind(
-		@Valid @ModelAttribute @ParameterObject RecommendPlacesFindRequest request) {
-
+		@Valid @ModelAttribute @ParameterObject RecommendPlacesFindRequest request
+	) {
 		Page<RecommendPlacesFindResponse> recommendPlaces = recommendPlaceService.findRecommendPlaces(request);
 
 		return ResponseEntity.ok(DataResponse.from(recommendPlaces));

@@ -14,7 +14,7 @@ public enum CommonErrorCode implements ErrorCode {
 
 	// 2XX
 	BAD_REQUEST(HttpStatus.BAD_REQUEST, "C-201", "잘못된 요청입니다."),
-	INVALID_PARAMETER(HttpStatus.BAD_REQUEST, "C-202", "요청 파라미터가 잘 못 되었습니다."),
+	INVALID_PARAMETER(HttpStatus.BAD_REQUEST, "C-202", "요청 파라미터가 잘못되었습니다."),
 	TOO_MANY_REQUESTS(HttpStatus.TOO_MANY_REQUESTS, "C-203", "요청을 너무 많이 했습니다."),
 	DATA_BUFFER_LIMIT_ERROR(HttpStatus.PAYLOAD_TOO_LARGE, "C-204", "요청의 페이로드가 너무 큽니다."),
 

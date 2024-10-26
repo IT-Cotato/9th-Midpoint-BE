@@ -26,4 +26,11 @@ public class DataResponse<T> extends BaseResponse {
 			.data(data)
 			.build();
 	}
+
+	public static DataResponse<Void> ok() {
+		boolean isSuccess = true;
+		HttpStatusCode status = HttpStatus.OK;
+
+		return new DataResponse<>(isSuccess, status, null);
+	}
 }

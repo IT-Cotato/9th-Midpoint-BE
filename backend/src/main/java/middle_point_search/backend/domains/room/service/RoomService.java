@@ -1,20 +1,19 @@
 package middle_point_search.backend.domains.room.service;
 
-import java.util.UUID;
+import static middle_point_search.backend.common.exception.errorCode.UserErrorCode.*;
+
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.exception.CustomException;
-import middle_point_search.backend.common.exception.errorCode.CommonErrorCode;
+import middle_point_search.backend.domains.memberRoom.MemberRoomValidateService;
 import middle_point_search.backend.domains.room.domain.Room;
-import middle_point_search.backend.domains.room.domain.RoomType;
-import middle_point_search.backend.domains.room.dto.RoomDTO;
 import middle_point_search.backend.domains.room.dto.RoomDTO.RoomCreateRequest;
 import middle_point_search.backend.domains.room.dto.RoomDTO.RoomCreateResponse;
-import middle_point_search.backend.domains.room.dto.RoomDTO.RoomExistenceCheckResponse;
-import middle_point_search.backend.domains.room.dto.RoomDTO.RoomNameResponse;
+import middle_point_search.backend.domains.room.dto.RoomDTO.RoomNameUpdateRequest;
 import middle_point_search.backend.domains.room.repository.RoomRepository;
 
 @Service
@@ -23,30 +22,35 @@ import middle_point_search.backend.domains.room.repository.RoomRepository;
 public class RoomService {
 
 	private final RoomRepository roomRepository;
+	private final MemberRoomValidateService memberRoomValidateService;
 
-	//Room 저장하기
+	// Room 저장하기 및 Room에 회원 저장
 	@Transactional
 	public RoomCreateResponse createRoom(RoomCreateRequest request) {
-		String identityNumber = UUID.randomUUID().toString();
-		RoomType roomType = request.getRoomType();
+		Room room = Room.builder()
+			.name(request.getName())
+			.build();
 
-		Room room = Room.from(identityNumber, roomType);
-
+		// Room저장
 		roomRepository.save(room);
 
-		return RoomCreateResponse.from(room.getIdentityNumber());
+		return RoomCreateResponse.from(room.getId());
 	}
 
-	public RoomExistenceCheckResponse checkRoomExistence(String identityNumber) {
-		boolean existence = roomRepository.existsByIdentityNumber(identityNumber);
+	// Room 이름 변경하기
+	@Transactional(rollbackFor = CustomException.class)
+	public void updateRoomName(Long memberId, Long roomId, RoomNameUpdateRequest request) {
+		// 회원방 존재 확인
+		memberRoomValidateService.validateAuthorizedMember(memberId, roomId);
 
-		return RoomExistenceCheckResponse.from(existence);
+		// 변경
+		Room room = roomRepository.findById(roomId)
+			.orElseThrow(() -> CustomException.from(ROOM_NOT_FOUND));
+		room.updateName(request.getName());
 	}
 
-	//Room 이름 조회
-	public RoomNameResponse findRoomName(Room room) {
-		String name = room.getRoomName().getKoreanName();
-
-		return RoomNameResponse.from(name);
+	// Room 조회
+	public Optional<Room> findRoom(Long id) {
+		return roomRepository.findById(id);
 	}
 }

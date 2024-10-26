@@ -28,5 +28,4 @@ public class PlaceVoteCandidateMember {
 		this.placeVoteCandidate = placeVoteCandidate;
 		this.member = member;
 	}
-
 }
