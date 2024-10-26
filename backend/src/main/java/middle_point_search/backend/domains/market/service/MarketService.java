@@ -70,7 +70,7 @@ public class MarketService {
 			.flatMap(Flux::fromIterable)
 			.collectList()
 			.subscribe(this::saveAllMarket, error -> {
-				throw new CustomException(CommonErrorCode.EXTERNAL_SERVER_ERROR);
+				throw CustomException.from(CommonErrorCode.EXTERNAL_SERVER_ERROR);
 			});
 	}
 
