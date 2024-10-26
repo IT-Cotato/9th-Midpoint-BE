@@ -123,6 +123,39 @@ public class PlaceController {
 	}
 
 	@DeleteMapping("/rooms/{roomId}")
+	@Operation(
+		summary = "장소 삭제하기",
+		description = """
+			저장한 장소 삭제하기.
+			
+			AccessToken 필요.""",
+		responses = {
+			@ApiResponse(
+				responseCode = "200",
+				description = "성공"
+			),
+			@ApiResponse(
+				responseCode = "400",
+				description = "요청 파라미터가 잘못되었습니다.[C-202]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
+				responseCode = "401",
+				description = "인증에 실패하였습니다.[C-101]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
+				responseCode = "402",
+				description = "Access Token을 재발급해야합니다.[A-004]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
+				responseCode = "403",
+				description = "해당 방의 회원이 아닙니다.[MR-003]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			)
+		}
+	)
 	public ResponseEntity<DataResponse<Void>> placeDelete(
 		@PathVariable("roomId") Long roomId
 	) {
