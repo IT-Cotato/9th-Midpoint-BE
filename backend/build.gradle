@@ -52,6 +52,8 @@ dependencies {
     implementation group: 'com.github.vladimir-bukhtoyarov', name: 'bucket4j-core', version: '8.0.1'
     //aop
     implementation 'org.springframework.boot:spring-boot-starter-aop'
+    //s3
+    implementation 'io.awspring.cloud:spring-cloud-aws-starter-s3:3.1.1'
 }
 
 tasks.named('test') {
