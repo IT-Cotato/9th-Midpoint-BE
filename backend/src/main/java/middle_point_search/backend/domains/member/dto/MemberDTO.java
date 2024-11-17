@@ -20,5 +20,20 @@ public class MemberDTO {
 
 		@NotBlank(message = "비밀번호를 입력해주세요.")
 		private String pw;
+
+	}
+
+	@Getter
+	@NoArgsConstructor(access = AccessLevel.PRIVATE)
+	public static class ProfileUpdateResponse {
+		private String profileImageUrl;
+
+		private ProfileUpdateResponse(String profileImageUrl) {
+			this.profileImageUrl = profileImageUrl;
+		}
+
+		public static ProfileUpdateResponse from(String profileImageUrl) {
+			return new ProfileUpdateResponse(profileImageUrl);
+		}
 	}
 }

@@ -1,12 +1,15 @@
 package middle_point_search.backend.domains.member.controller;
 
+import static middle_point_search.backend.domains.member.dto.MemberDTO.*;
+
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -21,7 +24,6 @@ import middle_point_search.backend.common.dto.ErrorResponse;
 import middle_point_search.backend.common.security.filter.jwtFilter.JwtTokenProvider;
 import middle_point_search.backend.common.util.MemberLoader;
 import middle_point_search.backend.domains.member.domain.Member;
-import middle_point_search.backend.domains.member.dto.MemberDTO.MemberCreateRequest;
 import middle_point_search.backend.domains.member.service.MemberService;
 
 @Tag(name = "MEMBER API", description = "회원에 대한 API입니다.")
@@ -34,12 +36,12 @@ public class MemberController {
 	private final MemberLoader memberLoader;
 	private final JwtTokenProvider jwtTokenProvider;
 
-	@PostMapping
+	@PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	@Operation(
 		summary = "회원가입",
 		description = """
 			회원가입한다.
-			
+						
 			이름, 이메일, 비밀번호를 입력받아 회원가입한다.""",
 		responses = {
 			@ApiResponse(
@@ -53,8 +55,11 @@ public class MemberController {
 			),
 		}
 	)
-	public ResponseEntity<DataResponse<Void>> memberCreate(@RequestBody @Valid MemberCreateRequest request) {
-		memberService.createMember(request);
+	public ResponseEntity<DataResponse<Void>> memberCreate(
+		@RequestPart @Valid MemberCreateRequest request,
+		@RequestPart(value = "profileImageFile", required = false)
+		MultipartFile profileImageFile) {
+		memberService.createMember(request, profileImageFile);
 
 		return ResponseEntity.ok(DataResponse.ok());
 	}
@@ -64,7 +69,7 @@ public class MemberController {
 		summary = "로그아웃",
 		description = """
 			로그아웃한다.
-			
+						
 			AccessToken 필요.""",
 		responses = {
 			@ApiResponse(
@@ -113,6 +118,41 @@ public class MemberController {
 	) {
 		// 이 메소드는 실제로 실행되지 않습니다. 문서용도로만 사용됩니다.
 		return ResponseEntity.ok(DataResponse.ok());
+	}
+
+	@PostMapping(value = "/profile-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	@Operation(
+		summary = "프로필 이미지 업로드",
+		description = """
+			인증된 사용자의 프로필 이미지를 업로드한다.
+			            
+			성공 시 업로드된 이미지의 URL을 반환합니다.""",
+		responses = {
+			@ApiResponse(
+				responseCode = "200",
+				description = "성공",
+				content = @Content(schema = @Schema(implementation = DataResponse.class))
+			),
+			@ApiResponse(
+				responseCode = "400",
+				description = "잘못된 요청입니다.[C-202]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			)
+		}
+	)
+	public ResponseEntity<DataResponse<ProfileUpdateResponse>> updateProfileImage(
+		@RequestPart(value = "profileImageFile", required = false) MultipartFile profileImageFile) {
+
+		// 인증된 사용자 ID 가져오기
+		Long memberId = memberLoader.getMember().getId();
+
+		// 파일 업로드 및 프로필 업데이트 처리
+		String profileImageUrl = memberService.updateProfileImage(memberId, profileImageFile);
+
+		// 응답 생성
+		ProfileUpdateResponse response = ProfileUpdateResponse.from(profileImageUrl);
+
+		return ResponseEntity.ok(DataResponse.from(response));
 	}
 }
 

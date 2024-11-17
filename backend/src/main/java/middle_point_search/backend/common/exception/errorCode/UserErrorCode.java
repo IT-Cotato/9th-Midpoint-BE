@@ -16,6 +16,7 @@ public enum UserErrorCode implements ErrorCode {
 	API_UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "A-006", "API 인증 정보가 정확하지 않습니다."),
 
 	//회원 관련
+	MEMBER_FILE_UPLOAD_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "M-001", "프로필 이미지 파일 업로드 중 오류가 발생했습니다."),
 	MEMBER_CREDENTIAL_UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "M-002", "비밀번호가 일치하지 않습니다"),
 	MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "M-201", "존재하지 않는 회원입니다."),
 

@@ -35,15 +35,23 @@ public class Member extends BaseEntity {
 	@Column(nullable = false)
 	private Role role;
 
-	private Member(String email, String pw, String name, Role role) {
+	@Column(name = "profile_image_url", nullable = true)
+	private String profileImageUrl;
+
+	private Member(String email, String pw, String name, Role role, String profileImageUrl) {
 		this.email = email;
 		this.pw = pw;
 		this.name = name;
 		this.role = role;
+		this.profileImageUrl = profileImageUrl;
 	}
 
-	public static Member from(String email, String pw, String name, Role role) {
+	public static Member from(String email, String pw, String name, Role role, String profileImageUrl) {
 
-		return new Member(email, pw, name, role);
+		return new Member(email, pw, name, role, profileImageUrl);
+	}
+
+	public void updateProfileImageUrl(String profileImageUrl) {
+		this.profileImageUrl = profileImageUrl;
 	}
 }
