@@ -4,6 +4,7 @@ import static middle_point_search.backend.domains.member.dto.MemberDTO.*;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -153,6 +154,35 @@ public class MemberController {
 		ProfileUpdateResponse response = ProfileUpdateResponse.from(profileImageUrl);
 
 		return ResponseEntity.ok(DataResponse.from(response));
+	}
+
+	@DeleteMapping("/profile-image")
+	@Operation(
+		summary = "프로필 이미지 삭제",
+		description = """
+			프로필 이미지를 삭제하고 기본 프로필로 설정한다.
+			            
+			인증된 사용자만 사용할 수 있다.""",
+		responses = {
+			@ApiResponse(
+				responseCode = "200",
+				description = "성공"
+			),
+			@ApiResponse(
+				responseCode = "404",
+				description = "회원 정보를 찾을 수 없습니다.[M-201]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			)
+		}
+	)
+	public ResponseEntity<DataResponse<Void>> deleteProfileImage() {
+
+		Long memberId = memberLoader.getMember().getId();
+
+		// 프로필 이미지 기본값으로 재설정
+		memberService.resetProfileImageToDefault(memberId);
+
+		return ResponseEntity.ok(DataResponse.ok());
 	}
 }
 

@@ -69,6 +69,7 @@ public class MemberService {
 		logoutService.save(new LogoutToken(accessToken));
 	}
 
+	//프로필 이미지 바꾸기
 	@Transactional
 	public String updateProfileImage(Long memberId, MultipartFile profileImageFile) {
 		Member member = memberRepository.findById(memberId)
@@ -85,4 +86,15 @@ public class MemberService {
 
 		return profileImageUrl;
 	}
+
+	//프로필 이미지 삭제
+	@Transactional
+	public void resetProfileImageToDefault(Long memberId) {
+		Member member = memberRepository.findById(memberId)
+			.orElseThrow(() -> CustomException.from(MEMBER_NOT_FOUND));
+
+		// 기본 프로필 URL로 설정
+		member.updateProfileImageUrl(defaultProfileImageUrl);
+	}
+
 }
