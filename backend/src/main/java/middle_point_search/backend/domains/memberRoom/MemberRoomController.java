@@ -94,9 +94,9 @@ public class MemberRoomController {
 		}
 	)
 	public ResponseEntity<DataResponse<List<RoomsByMemberIdFindResponse>>> findRooms() {
-		Member member = memberLoader.getMember();
+		Long memberId = memberLoader.getMemberId();
 
-		List<RoomsByMemberIdFindResponse> responses = memberRoomService.findRooms(member);
+		List<RoomsByMemberIdFindResponse> responses = memberRoomService.findRooms(memberId);
 
 		return ResponseEntity.ok(DataResponse.from(responses));
 	}
@@ -124,9 +124,12 @@ public class MemberRoomController {
 	)
 	public ResponseEntity<DataResponse<MemberRoomExistsResponse>> existsMemberRoom(
 		@PathVariable("roomId") Long roomId) {
-		Member member = memberLoader.getMember();
+		Long memberId = memberLoader.getMemberId();
 
-		MemberRoomExistsResponse response = memberRoomService.existsMemberRoom(member.getId(), roomId);
+		System.out.println("memberId: " + memberId);
+
+
+		MemberRoomExistsResponse response = memberRoomService.existsMemberRoom(memberId, roomId);
 
 		return ResponseEntity.ok(DataResponse.from(response));
 	}

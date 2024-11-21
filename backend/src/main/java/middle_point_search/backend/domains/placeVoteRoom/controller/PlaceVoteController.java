@@ -76,10 +76,10 @@ public class PlaceVoteController {
 	public ResponseEntity<DataResponse<List<PlaceVoteResultsFindResponse>>> placeVoteRoomResultGet(
 		@PathVariable("roomId") Long roomId
 	) {
-		Member member = memberLoader.getMember();
-		List<PlaceVoteResultsFindResponse> response = placeVoteRoomService.findPlaceVoteResults(
-			member.getId(),
-			roomId);
+		Long memberId = memberLoader.getMemberId();
+
+		List<PlaceVoteResultsFindResponse> response = placeVoteRoomService.findPlaceVoteResults(memberId, roomId);
+
 		return ResponseEntity.ok(DataResponse.from(response));
 	}
 

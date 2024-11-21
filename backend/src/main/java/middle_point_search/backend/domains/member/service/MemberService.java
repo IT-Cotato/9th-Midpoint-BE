@@ -36,9 +36,7 @@ public class MemberService {
 
 	// 회원 로그아웃 하기
 	@Transactional
-	public void logoutMember(Member member, String accessToken) {
-		Long memberId = member.getId();
-
+	public void logoutMember(Long memberId, String accessToken) {
 		// 회원의 refreshToken 삭제
 		refreshTokenService.deleteByMemberId(memberId);
 

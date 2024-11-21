@@ -20,7 +20,6 @@ import middle_point_search.backend.common.dto.DataResponse;
 import middle_point_search.backend.common.dto.ErrorResponse;
 import middle_point_search.backend.common.security.filter.jwtFilter.JwtTokenProvider;
 import middle_point_search.backend.common.util.MemberLoader;
-import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.member.dto.MemberDTO.MemberCreateRequest;
 import middle_point_search.backend.domains.member.service.MemberService;
 
@@ -85,9 +84,9 @@ public class MemberController {
 	)
 	public ResponseEntity<DataResponse<Void>> memberLogout(HttpServletRequest request) {
 		String accessToken = jwtTokenProvider.extractAccessToken(request).orElse(null);
-		Member member = memberLoader.getMember();
+		Long memberId = memberLoader.getMemberId();
 
-		memberService.logoutMember(member, accessToken);
+		memberService.logoutMember(memberId, accessToken);
 
 		return ResponseEntity.ok(DataResponse.ok());
 	}

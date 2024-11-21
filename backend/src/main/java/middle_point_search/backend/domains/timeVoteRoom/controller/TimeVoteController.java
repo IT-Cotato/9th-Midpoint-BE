@@ -220,9 +220,9 @@ public class TimeVoteController {
 	public ResponseEntity<DataResponse<TimeVoteRoomResultResponse>> timeVoteResultsGet(
 		@PathVariable Long roomId
 	) {
-		Member member = memberLoader.getMember();
+		Long memberId = memberLoader.getMemberId();
 
-		TimeVoteRoomResultResponse result = timeVoteRoomService.findTimeVoteResult(member.getId(), roomId);
+		TimeVoteRoomResultResponse result = timeVoteRoomService.findTimeVoteResult(memberId, roomId);
 
 		return ResponseEntity.ok(DataResponse.from(result));
 	}

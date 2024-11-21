@@ -65,12 +65,9 @@ public class JwtTokenProviderImpl implements JwtTokenProvider {
 		Member member = memberRepository.findById(memberId)
 			.orElseThrow(() -> CustomException.from(MEMBER_NOT_FOUND));
 
-		String email = member.getEmail();
-		String pw = member.getPw();
-
 		List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(member.getRole().getValue()));
 
-		return UsernamePasswordAuthenticationToken.authenticated(email, pw, authorities);
+		return UsernamePasswordAuthenticationToken.authenticated(memberId, null, authorities);
 	}
 
 	@Override
