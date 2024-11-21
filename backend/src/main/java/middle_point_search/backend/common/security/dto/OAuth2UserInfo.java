@@ -1,4 +1,4 @@
-package middle_point_search.backend.common.security.filter.oAuth;
+package middle_point_search.backend.common.security.dto;
 
 import java.util.Map;
 
