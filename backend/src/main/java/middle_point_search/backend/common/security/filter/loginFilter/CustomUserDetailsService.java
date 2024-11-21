@@ -1,12 +1,12 @@
 package middle_point_search.backend.common.security.filter.loginFilter;
 
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
+import middle_point_search.backend.common.security.dto.CustomUserDetails;
 import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.member.repository.MemberRepository;
 
@@ -24,10 +24,6 @@ public class CustomUserDetailsService implements UserDetailsService {
 		String pw = member.getPw();
 		String role = member.getRole().getValue();
 
-		return User.builder()
-			.username(email)
-			.password(pw)
-			.roles(role)
-			.build();
+		return new CustomUserDetails(member);
 	}
 }
