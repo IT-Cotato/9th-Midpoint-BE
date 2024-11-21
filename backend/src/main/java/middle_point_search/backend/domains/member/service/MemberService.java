@@ -30,7 +30,7 @@ public class MemberService {
 	public void createMember(MemberCreateRequest request) {
 		String pw = passwordEncoderUtil.encodePassword(request.getPw());
 
-		Member member = Member.from(request.getEmail(), pw, request.getName(), Role.USER);
+		Member member = Member.createStandardMember(request.getEmail(), pw, request.getName(), Role.USER);
 		memberRepository.save(member);
 	}
 

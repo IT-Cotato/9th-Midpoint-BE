@@ -1,5 +1,7 @@
 package middle_point_search.backend.domains.member.domain;
 
+import org.apache.commons.lang3.RandomStringUtils;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -35,15 +37,58 @@ public class Member extends BaseEntity {
 	@Column(nullable = false)
 	private Role role;
 
-	private Member(String email, String pw, String name, Role role) {
+	@Column(nullable = true)
+	private String provider;
+
+	@Column(nullable = true)
+	private String providerId;
+
+	private Member(
+		String email,
+		String pw,
+		String name,
+		Role role,
+		String provider,
+		String providerId
+	) {
 		this.email = email;
 		this.pw = pw;
 		this.name = name;
 		this.role = role;
+		this.provider = provider;
+		this.providerId = providerId;
 	}
 
-	public static Member from(String email, String pw, String name, Role role) {
+	public static Member createStandardMember(
+		String email,
+		String pw,
+		String name,
+		Role role
+	) {
+		return new Member(
+			email,
+			pw,
+			name,
+			role,
+			null,
+			null
+		);
+	}
 
-		return new Member(email, pw, name, role);
+	public static Member createOAuthMember(
+		String email,
+		String name,
+		Role role,
+		String provider,
+		String providerId
+	) {
+		return new Member(
+			email,
+			RandomStringUtils.randomAlphanumeric(20),
+			name,
+			role,
+			provider,
+			providerId
+		);
 	}
 }
