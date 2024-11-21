@@ -52,6 +52,8 @@ dependencies {
     implementation group: 'com.github.vladimir-bukhtoyarov', name: 'bucket4j-core', version: '8.0.1'
     //aop
     implementation 'org.springframework.boot:spring-boot-starter-aop'
+    //outh2
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 }
 
 tasks.named('test') {
