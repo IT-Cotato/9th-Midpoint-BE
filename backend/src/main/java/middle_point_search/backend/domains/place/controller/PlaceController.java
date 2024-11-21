@@ -115,9 +115,9 @@ public class PlaceController {
 	public ResponseEntity<DataResponse<PlacesFindResponse>> placesFind(
 		@PathVariable("roomId") Long roomId
 	) {
-		Member member = memberLoader.getMember();
+		Long memberId = memberLoader.getMemberId();
 
-		PlacesFindResponse response = placeService.findPlaces(member.getId(), roomId);
+		PlacesFindResponse response = placeService.findPlaces(memberId, roomId);
 
 		return ResponseEntity.ok(DataResponse.from(response));
 	}
@@ -159,9 +159,9 @@ public class PlaceController {
 	public ResponseEntity<DataResponse<Void>> placeDelete(
 		@PathVariable("roomId") Long roomId
 	) {
-		Member member = memberLoader.getMember();
+		Long memberId = memberLoader.getMemberId();
 
-		placeService.deletePlace(member.getId(), roomId);
+		placeService.deletePlace(memberId, roomId);
 
 		return ResponseEntity.ok(DataResponse.ok());
 	}

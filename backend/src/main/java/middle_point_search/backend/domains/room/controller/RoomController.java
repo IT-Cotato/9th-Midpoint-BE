@@ -18,7 +18,6 @@ import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.dto.DataResponse;
 import middle_point_search.backend.common.dto.ErrorResponse;
 import middle_point_search.backend.common.util.MemberLoader;
-import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.room.dto.RoomDTO.RoomCreateRequest;
 import middle_point_search.backend.domains.room.dto.RoomDTO.RoomCreateResponse;
 import middle_point_search.backend.domains.room.dto.RoomDTO.RoomNameUpdateRequest;
@@ -101,9 +100,9 @@ public class RoomController {
 		@PathVariable Long roomId,
 		@RequestBody RoomNameUpdateRequest request
 	) {
-		Member member = memberLoader.getMember();
+		Long memberId = memberLoader.getMemberId();
 
-		roomService.updateRoomName(member.getId(), roomId, request);
+		roomService.updateRoomName(memberId, roomId, request);
 
 		return ResponseEntity.ok(DataResponse.ok());
 	}

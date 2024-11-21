@@ -20,15 +20,14 @@ public class MemberLoader {
 
 	// Authentication 객체에서 Member를 찾는 메서드
 	public Member getMember() {
-		String email = getEmail();
+		Long memberId = getMemberId();
 
-		return memberRepository.findByEmail(email)
+		return memberRepository.findById(memberId)
 			.orElseThrow(() -> CustomException.from(MEMBER_NOT_FOUND));
 	}
 
-	// Authentication 객체에서 email을 추출하는 메서드
-	public String getEmail() {
-		return (String)SecurityContextHolder
+	public Long getMemberId() {
+		return (Long)SecurityContextHolder
 			.getContext()
 			.getAuthentication()
 			.getPrincipal();

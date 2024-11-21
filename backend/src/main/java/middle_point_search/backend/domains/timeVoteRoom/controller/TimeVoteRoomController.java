@@ -21,7 +21,6 @@ import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.dto.DataResponse;
 import middle_point_search.backend.common.dto.ErrorResponse;
 import middle_point_search.backend.common.util.MemberLoader;
-import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.timeVoteRoom.service.TimeVoteRoomService;
 
 @Tag(name = "TIME VOTE ROOM API", description = "시간투표방에 대한 API입니다.")
@@ -78,9 +77,9 @@ public class TimeVoteRoomController {
 		@PathVariable("roomId") Long roomId,
 		@RequestBody @Valid TimeVoteRoomCreateRequest request
 	) {
-		Member member = memberLoader.getMember();
+		Long memberId = memberLoader.getMemberId();
 
-		TimeVoteRoomCreateResponse response = timeVoteRoomService.createTimeVoteRoom(member.getId(), roomId, request);
+		TimeVoteRoomCreateResponse response = timeVoteRoomService.createTimeVoteRoom(memberId, roomId, request);
 
 		return ResponseEntity.ok(DataResponse.from(response));
 	}
@@ -130,9 +129,9 @@ public class TimeVoteRoomController {
 		@PathVariable("roomId") Long roomId,
 		@RequestBody @Valid TimeVoteRoomCreateRequest request
 	) {
-		Member member = memberLoader.getMember();
+		Long memberId = memberLoader.getMemberId();
 
-		timeVoteRoomService.updateTimeVoteRoom(member.getId(), roomId, request);
+		timeVoteRoomService.updateTimeVoteRoom(memberId, roomId, request);
 
 		return ResponseEntity.ok(DataResponse.ok());
 	}
@@ -169,9 +168,9 @@ public class TimeVoteRoomController {
 	public ResponseEntity<DataResponse<TimeVoteRoomGetResponse>> timeVoteRoomGet(
 		@PathVariable("roomId") Long roomId
 	) {
-		Member member = memberLoader.getMember();
+		Long memberId = memberLoader.getMemberId();
 
-		TimeVoteRoomGetResponse response = timeVoteRoomService.findTimeVoteRoomAndMakeDTO(member.getId(), roomId);
+		TimeVoteRoomGetResponse response = timeVoteRoomService.findTimeVoteRoomAndMakeDTO(memberId, roomId);
 
 		return ResponseEntity.ok(DataResponse.from(response));
 	}

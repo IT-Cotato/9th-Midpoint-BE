@@ -17,7 +17,6 @@ import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.dto.DataResponse;
 import middle_point_search.backend.common.dto.ErrorResponse;
 import middle_point_search.backend.common.util.MemberLoader;
-import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.midPoint.dto.MidPointDTO.MidPointsFindResponse;
 import middle_point_search.backend.domains.midPoint.service.MidPointService;
 
@@ -72,9 +71,9 @@ public class MidPointController {
 	public ResponseEntity<DataResponse<List<MidPointsFindResponse>>> MidPointsFind(
 		@PathVariable("roomId") Long roomId
 	) {
-		Member member = memberLoader.getMember();
+		Long memberId = memberLoader.getMemberId();
 
-		List<MidPointsFindResponse> midPoints = midPointService.findMidPointsByRoomId(member.getId(), roomId);
+		List<MidPointsFindResponse> midPoints = midPointService.findMidPointsByRoomId(memberId, roomId);
 
 		return ResponseEntity.ok(DataResponse.from(midPoints));
 	}

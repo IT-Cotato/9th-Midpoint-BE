@@ -44,8 +44,8 @@ public class MemberRoomService {
 	}
 
 	// 회원이 속한 방들을 DTO로 조회
-	public List<RoomsByMemberIdFindResponse> findRooms(Member member) {
-		List<MemberRoom> memberRooms = memberRoomRepository.findByMember(member);
+	public List<RoomsByMemberIdFindResponse> findRooms(Long memberId) {
+		List<MemberRoom> memberRooms = memberRoomRepository.findByMember_Id(memberId);
 
 		return memberRooms.stream()
 			.map(memberRoom -> RoomsByMemberIdFindResponse.from(memberRoom.getRoom()))
