@@ -8,8 +8,8 @@
               value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %clr(%5level) %cyan(%logger) - %msg%n"/>
     <property name="FILE_LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %5level %logger - %msg%n"/>
 
-    <include resource="console-appender.xml"/>
-    <include resource="file-info-appender.xml"/>
+    <include resource="logback/console-appender.xml"/>
+    <include resource="logback/file-info-appender.xml"/>
 
 
     <!--프로필별로 로그 설정-->
