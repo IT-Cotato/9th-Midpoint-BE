@@ -35,8 +35,28 @@ public class MemberService {
 
 		String pw = passwordEncoderUtil.encodePassword(request.getPw());
 
-		Member member = Member.from(request.getEmail(), pw, request.getName(), Role.USER);
+		Member member = createMemberEntity(request, pw);
+
 		memberRepository.save(member);
+	}
+
+	// 주소 여부에 따라 회원 엔티티 생성
+	private Member createMemberEntity(MemberCreateRequest request, String pw) {
+		if (request.getExistAddress()) {
+			return Member.createWithAddress(
+				request.getEmail(),
+				pw,
+				request.getName(),
+				Role.USER,
+				request.getSiDo(),
+				request.getSiGunGu(),
+				request.getRoadNameAddress(),
+				request.getAddressLatitude(),
+				request.getAddressLongitude()
+			);
+		} else {
+			return Member.createWithoutAddress(request.getEmail(), pw, request.getName(), Role.USER);
+		}
 	}
 
 	// 중복 회원 체크하기
