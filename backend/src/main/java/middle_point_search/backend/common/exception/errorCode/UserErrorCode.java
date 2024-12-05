@@ -18,6 +18,7 @@ public enum UserErrorCode implements ErrorCode {
 	//회원 관련
 	MEMBER_CREDENTIAL_UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "M-002", "비밀번호가 일치하지 않습니다"),
 	MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "M-201", "존재하지 않는 회원입니다."),
+	DUPLICATE_MEMBER_EMAIL(HttpStatus.CONFLICT, "M-001", "이미 존재하는 이메일입니다."),
 
 	//방 관련
 	ROOM_NOT_FOUND(HttpStatus.NOT_FOUND, "R-201", "존재하지 않는 방입니다."),

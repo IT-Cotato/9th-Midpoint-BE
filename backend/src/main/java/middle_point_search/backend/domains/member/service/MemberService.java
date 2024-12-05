@@ -1,10 +1,13 @@
 package middle_point_search.backend.domains.member.service;
 
+import static middle_point_search.backend.common.exception.errorCode.UserErrorCode.*;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import middle_point_search.backend.common.exception.CustomException;
 import middle_point_search.backend.common.util.encoder.PasswordEncoderUtil;
 import middle_point_search.backend.domains.logout.LogoutService;
 import middle_point_search.backend.domains.logout.LogoutToken;
@@ -28,10 +31,19 @@ public class MemberService {
 	// 회원가입하기
 	@Transactional
 	public void createMember(MemberCreateRequest request) {
+		validateExistingEmail(request.getEmail());
+
 		String pw = passwordEncoderUtil.encodePassword(request.getPw());
 
 		Member member = Member.from(request.getEmail(), pw, request.getName(), Role.USER);
 		memberRepository.save(member);
+	}
+
+	// 중복 회원 체크하기
+	private void validateExistingEmail(String email) {
+		if(memberRepository.existsByEmail(email)) {
+			throw CustomException.from(DUPLICATE_MEMBER_EMAIL);
+		}
 	}
 
 	// 회원 로그아웃 하기

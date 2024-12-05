@@ -46,8 +46,8 @@ public class MemberController {
 				description = "성공"
 			),
 			@ApiResponse(
-				responseCode = "400",
-				description = "요청 파라미터가 잘못되었습니다.[C-202]",
+				responseCode = "409",
+				description = "이미 존재하는 이메일입니다.[M-001]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 		}
