@@ -13,6 +13,7 @@ import middle_point_search.backend.domains.memberRoom.MemberRoomValidateService;
 import middle_point_search.backend.domains.room.domain.Room;
 import middle_point_search.backend.domains.room.dto.RoomDTO.RoomCreateRequest;
 import middle_point_search.backend.domains.room.dto.RoomDTO.RoomCreateResponse;
+import middle_point_search.backend.domains.room.dto.RoomDTO.RoomExistResponse;
 import middle_point_search.backend.domains.room.dto.RoomDTO.RoomNameUpdateRequest;
 import middle_point_search.backend.domains.room.repository.RoomRepository;
 
@@ -52,5 +53,11 @@ public class RoomService {
 	// Room 조회
 	public Optional<Room> findRoom(Long id) {
 		return roomRepository.findById(id);
+	}
+
+
+	// 방 존재 확인
+	public RoomExistResponse existRoom(Long roomId) {
+		return RoomExistResponse.from(roomRepository.existsById(roomId));
 	}
 }

@@ -36,4 +36,14 @@ public class RoomDTO {
 		@NotBlank(message = "값이 비어있으면 안 됩니다.")
 		private String name;
 	}
+
+	@Getter
+	@AllArgsConstructor(access = AccessLevel.PRIVATE)
+	public static class RoomExistResponse {
+		private final boolean existence;
+
+		public static RoomExistResponse from(boolean existence) {
+			return new RoomExistResponse(existence);
+		}
+	}
 }
