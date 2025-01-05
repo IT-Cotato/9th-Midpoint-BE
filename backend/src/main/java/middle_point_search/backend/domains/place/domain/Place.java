@@ -49,18 +49,11 @@ public class Place {
 	@JoinColumn(name = "member_id")
 	private Member member;
 
-	private Place(String siDo, String siGunGu, String roadNameAddress, Double addressLatitude,
-		Double addressLongitude, Room room) {
-		this.siDo = siDo;
-		this.siGunGu = siGunGu;
-		this.roadNameAddress = roadNameAddress;
-		this.addressLatitude = addressLatitude;
-		this.addressLongitude = addressLongitude;
-		addRoom(room);
-	}
+	@Column(nullable = false)
+	private String googlePlaceId;
 
 	private Place(String siDo, String siGunGu, String roadNameAddress, Double addressLatitude,
-		Double addressLongitude, Room room, Member member) {
+		Double addressLongitude, Room room, Member member, String googlePlaceId) {
 		this.siDo = siDo;
 		this.siGunGu = siGunGu;
 		this.roadNameAddress = roadNameAddress;
@@ -68,26 +61,19 @@ public class Place {
 		this.addressLongitude = addressLongitude;
 		addRoom(room);
 		this.member = member;
+		this.googlePlaceId = googlePlaceId;
 	}
 
-	public static Place from(PlaceSaveOrUpdateRequest placeSaveOrUpdateRequest, Room room, Member member) {
+	public static Place from(PlaceSaveOrUpdateRequest placeSaveOrUpdateRequest, Room room, Member member,
+		String googlePlaceId) {
 		String siDo = placeSaveOrUpdateRequest.getSiDo();
 		String siGunGu = placeSaveOrUpdateRequest.getSiGunGu();
 		String roadNameAddress = placeSaveOrUpdateRequest.getRoadNameAddress();
 		Double addressLatitude = placeSaveOrUpdateRequest.getAddressLat();
 		Double addressLongitude = placeSaveOrUpdateRequest.getAddressLong();
 
-		return new Place(siDo, siGunGu, roadNameAddress, addressLatitude, addressLongitude, room, member);
-	}
-
-	public static Place from(PlaceSaveOrUpdateRequest placeSaveOrUpdateRequest, Room room) {
-		String siDo = placeSaveOrUpdateRequest.getSiDo();
-		String siGunGu = placeSaveOrUpdateRequest.getSiGunGu();
-		String roadNameAddress = placeSaveOrUpdateRequest.getRoadNameAddress();
-		Double addressLatitude = placeSaveOrUpdateRequest.getAddressLat();
-		Double addressLongitude = placeSaveOrUpdateRequest.getAddressLong();
-
-		return new Place(siDo, siGunGu, roadNameAddress, addressLatitude, addressLongitude, room);
+		return new Place(siDo, siGunGu, roadNameAddress, addressLatitude, addressLongitude, room, member,
+			googlePlaceId);
 	}
 
 	public PlaceVO toVO() {

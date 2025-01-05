@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import middle_point_search.backend.common.exception.CustomException;
+import middle_point_search.backend.domains.google.service.GoogleService;
 import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.memberRoom.MemberRoomValidateService;
 import middle_point_search.backend.domains.place.domain.Place;
@@ -30,6 +31,7 @@ public class PlaceService {
 	private final PlaceRepository placeRepository;
 	private final RoomService roomService;
 	private final MemberRoomValidateService memberRoomValidateService;
+	private final GoogleService googleService;
 
 	//장소 저장
 	@Transactional(rollbackFor = {CustomException.class})
@@ -40,7 +42,10 @@ public class PlaceService {
 		Room room = roomService.findRoom(roomId)
 			.orElseThrow(() -> CustomException.from(ROOM_NOT_FOUND));
 
-		placeRepository.save(Place.from(request, room, member));
+		// 구글 placeId 조회
+		String googlePlaceId = googleService.findGooglePlaceId(request.getAddressLat(), request.getAddressLong());
+
+		placeRepository.save(Place.from(request, room, member, googlePlaceId));
 	}
 
 	// 장소 조회

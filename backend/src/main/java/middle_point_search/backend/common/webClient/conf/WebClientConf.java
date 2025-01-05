@@ -2,6 +2,8 @@ package middle_point_search.backend.common.webClient.conf;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.DefaultUriBuilderFactory;
@@ -9,6 +11,7 @@ import org.springframework.web.util.DefaultUriBuilderFactory;
 import io.netty.channel.ChannelOption;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import middle_point_search.backend.common.properties.GoogleProperties;
 import middle_point_search.backend.common.properties.KakaoProperties;
 import middle_point_search.backend.common.properties.MarketProperties;
 import reactor.netty.http.client.HttpClient;
@@ -20,6 +23,7 @@ public class WebClientConf {
 
 	private final MarketProperties marketProperties;
 	private final KakaoProperties kakaoProperties;
+	private final GoogleProperties googleProperties;
 
 
 	private HttpClient httpClient = HttpClient.create()
@@ -43,6 +47,17 @@ public class WebClientConf {
 		factory.setEncodingMode(DefaultUriBuilderFactory.EncodingMode.VALUES_ONLY);
 		return WebClient.builder()
 			.uriBuilderFactory(factory)
+			.codecs(configurer -> configurer.defaultCodecs()
+				.maxInMemorySize(2 * 1024 * 1024)) // 응답 payload가 클 경우 나는 에러 방지, 최대 2MB
+			.clientConnector(new ReactorClientHttpConnector(httpClient))
+			.build();
+	}
+
+	@Bean
+	public WebClient webClientForGoogle() {
+		return WebClient.builder()
+			.baseUrl(googleProperties.getBaseUrl())
+			.defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_UTF8_VALUE)
 			.codecs(configurer -> configurer.defaultCodecs()
 				.maxInMemorySize(2 * 1024 * 1024)) // 응답 payload가 클 경우 나는 에러 방지, 최대 2MB
 			.clientConnector(new ReactorClientHttpConnector(httpClient))
