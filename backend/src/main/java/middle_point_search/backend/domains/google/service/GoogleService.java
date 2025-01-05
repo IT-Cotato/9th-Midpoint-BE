@@ -1,5 +1,7 @@
 package middle_point_search.backend.domains.google.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
@@ -10,6 +12,7 @@ import middle_point_search.backend.common.exception.CustomException;
 import middle_point_search.backend.common.exception.errorCode.UserErrorCode;
 import middle_point_search.backend.common.properties.GoogleProperties;
 import middle_point_search.backend.common.webClient.util.WebClientUtil;
+import middle_point_search.backend.domains.google.dto.DistanceMatrixResponse;
 import middle_point_search.backend.domains.google.dto.GoogleApiResponse;
 import middle_point_search.backend.domains.google.dto.ReverseGeocodeResponse;
 
@@ -20,6 +23,42 @@ public class GoogleService {
 
 	private final WebClientUtil webClientUtil;
 	private final GoogleProperties googleProperties;
+
+	// 이동 시간 조회
+	public DistanceMatrixResponse findTravelTimes(String destPlaceId, List<String> originPlaceIds) {
+		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+		params.add(googleProperties.getMap().getOrigin(), makePlaceIdsQuery(originPlaceIds));
+		params.add(googleProperties.getMap().getDestination(), makePlaceIdQuery(destPlaceId));
+		params.add("language", "ko");
+		params.add("mode", "transit");
+		params.add("region", "KR");
+
+		DistanceMatrixResponse response = webClientUtil.getGoogle(googleProperties.getMap().getDistanceMatrixUrl(),
+			params, DistanceMatrixResponse.class);
+
+		// 상태코드 체크
+		checkGoogleApiResponseStatus(response);
+
+		return  response;
+	}
+
+	// id들을 |로 구분하여 query문을 만들어줌
+	private String makePlaceIdsQuery(List<String> placeIds) {
+		StringBuilder query = new StringBuilder();
+		// coordinate 사이에 |를 넣어줌, 마지막에 | 없음
+		for (int i = 0; i < placeIds.size(); i++) {
+			query.append("place_id:").append(placeIds.get(i));
+			if (i != placeIds.size() - 1) {
+				query.append("|");
+			}
+		}
+		return query.toString();
+	}
+
+	// 장소 ID 쿼리 파라미터 생성
+	private String makePlaceIdQuery(String placeId) {
+		return "place_id:" + placeId;
+	}
 
 	// 구글 placeId 찾기
 	public String findGooglePlaceId(Double latitude, Double longitude) {
@@ -41,7 +80,7 @@ public class GoogleService {
 
 	// 상태코드 확인
 	public void checkGoogleApiResponseStatus(Object response) {
-		GoogleApiResponse googleApiResponse = (GoogleApiResponse)response;
+		GoogleApiResponse googleApiResponse = (GoogleApiResponse) response;
 		if (!googleApiResponse.getStatus().equals("OK")) {
 			throw CustomException.from(UserErrorCode.API_INTERNAL_SERVER_ERROR);
 		}

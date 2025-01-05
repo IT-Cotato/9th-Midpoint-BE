@@ -69,4 +69,59 @@ public class MidPointDTO {
 			);
 		}
 	}
+
+	@Getter
+	@AllArgsConstructor
+	public static class TravelTimesFindResponse {
+		private List<Element> elements;
+
+		@Getter
+		@AllArgsConstructor
+		public static class Element {
+			private String status;
+			private Long placeId;
+			private Duration duration;
+			private Distance distance;
+
+			@Getter
+			@AllArgsConstructor(access = AccessLevel.PRIVATE)
+			public static class Duration {
+				private String text;
+				private int value;
+			}
+
+			@Getter
+			@AllArgsConstructor(access = AccessLevel.PRIVATE)
+			public static class Distance {
+				private String text;
+				private int value;
+			}
+
+			public static Element from(
+				Long placeId,
+				String durationText,
+				int durationValue,
+				String distanceText,
+				int distanceValue
+			) {
+				return new Element(
+					"OK",
+					placeId,
+					new Element.Duration(durationText, durationValue),
+					new Element.Distance(distanceText, distanceValue));
+			}
+
+			public static Element noContent(Long placeId) {
+				return new Element(
+					"ZERO_RESULTS",
+					placeId,
+					null,
+					null);
+			}
+		}
+
+		public static TravelTimesFindResponse from(List<Element> elements) {
+			return new TravelTimesFindResponse(elements);
+		}
+	}
 }
