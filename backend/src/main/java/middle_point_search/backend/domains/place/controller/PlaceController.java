@@ -27,7 +27,7 @@ import middle_point_search.backend.domains.place.service.PlaceService;
 @Tag(name = "PLACE API", description = "회원 장소에 대한 API입니다.")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/place-rooms")
+@RequestMapping("/api/places")
 public class PlaceController {
 
 	private final PlaceService placeService;
@@ -122,7 +122,7 @@ public class PlaceController {
 		return ResponseEntity.ok(DataResponse.from(response));
 	}
 
-	@DeleteMapping("/rooms/{roomId}")
+	@DeleteMapping("/{placeId}")
 	@Operation(
 		summary = "장소 삭제하기",
 		description = """
@@ -157,11 +157,11 @@ public class PlaceController {
 		}
 	)
 	public ResponseEntity<DataResponse<Void>> placeDelete(
-		@PathVariable("roomId") Long roomId
+		@PathVariable("placeId") Long placeId
 	) {
 		Long memberId = memberLoader.getMemberId();
 
-		placeService.deletePlace(memberId, roomId);
+		placeService.deletePlace(memberId, placeId);
 
 		return ResponseEntity.ok(DataResponse.ok());
 	}

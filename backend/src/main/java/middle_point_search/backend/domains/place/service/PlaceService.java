@@ -66,9 +66,12 @@ public class PlaceService {
 	// 장소 삭제
 	@Transactional
 	public void deletePlace(Long memberId, Long placeId) {
-		// 회원이 방에 속해있는지 확인
-		memberRoomValidateService.validateAuthorizedMember(memberId, placeId);
+		Place place = placeRepository.findById(placeId)
+			.orElseThrow(() -> CustomException.from(PLACE_NOT_FOUND));
 
-		placeRepository.deleteById(placeId);
+		// 회원이 방에 속해있는지 확인
+		memberRoomValidateService.validateAuthorizedMember(memberId, place.getRoom().getId());
+
+		placeRepository.deleteByIdAndRoom_Id(placeId, place.getRoom().getId());
 	}
 }
