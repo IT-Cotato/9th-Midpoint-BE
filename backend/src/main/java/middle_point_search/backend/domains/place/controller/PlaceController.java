@@ -1,7 +1,6 @@
 package middle_point_search.backend.domains.place.controller;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -121,49 +120,5 @@ public class PlaceController {
 		PlacesFindResponse response = placeService.findPlaces(memberId, roomId);
 
 		return ResponseEntity.ok(DataResponse.from(response));
-	}
-
-	@DeleteMapping("/{placeId}")
-	@Operation(
-		summary = "장소 삭제하기",
-		description = """
-			저장한 장소 삭제하기.
-			
-			AccessToken 필요.""",
-		responses = {
-			@ApiResponse(
-				responseCode = "200",
-				description = "성공"
-			),
-			@ApiResponse(
-				responseCode = "400",
-				description = "요청 파라미터가 잘못되었습니다.[C-202]",
-				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
-			),
-			@ApiResponse(
-				responseCode = "401",
-				description = "인증에 실패하였습니다.[C-101]",
-				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
-			),
-			@ApiResponse(
-				responseCode = "402",
-				description = "Access Token을 재발급해야합니다.[A-004]",
-				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
-			),
-			@ApiResponse(
-				responseCode = "403",
-				description = "해당 방의 회원이 아닙니다.[MR-003]",
-				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
-			)
-		}
-	)
-	public ResponseEntity<DataResponse<Void>> placeDelete(
-		@PathVariable("placeId") Long placeId
-	) {
-		Long memberId = memberLoader.getMemberId();
-
-		placeService.deletePlace(memberId, placeId);
-
-		return ResponseEntity.ok(DataResponse.ok());
 	}
 }

@@ -13,8 +13,6 @@ public interface PlaceRepository extends JpaRepository<Place, Long> {
 
 	List<Place> findAllByRoom_Id(Long roomId);
 
-	void deleteByIdAndRoom_Id(Long placeId, Long roomId);
-
 	@Modifying
 	@Query("DELETE FROM Place p WHERE p.id IN :placeIds")
 	void deleteAllByIdIn(List<Long> placeIds);
