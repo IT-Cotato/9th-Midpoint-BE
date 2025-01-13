@@ -46,7 +46,7 @@ public class PlaceService {
 		// 장소들 저장
 		savePlaces(request.getSavePlaces(), room, member);
 		// 장소들 업데이트
-		updatePlaces(request.getUpdatePlaces());
+		updatePlaces(request.getUpdatePlaces(), member.getId());
 		// 장소들 삭제
 		deletePlaces(request.getDeletePlaces());
 	}
@@ -74,13 +74,14 @@ public class PlaceService {
 
 	// 장소들 업데이트
 	@Transactional(rollbackFor = {CustomException.class})
-	public void updatePlaces(List<UpdatePlaceVO> placeVOS) {
+	public void updatePlaces(List<UpdatePlaceVO> placeVOS, Long memberId) {
 		if (placeVOS == null || placeVOS.isEmpty()) {
 			return;
 		}
 
 		placeVOS.forEach(placeVO -> {
 			placeRepository.updatePlace(
+				memberId,
 				placeVO.getPlaceId(),
 				placeVO.getSiDo(),
 				placeVO.getSiGunGu(),

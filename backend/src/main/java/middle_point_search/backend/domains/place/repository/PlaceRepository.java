@@ -19,13 +19,15 @@ public interface PlaceRepository extends JpaRepository<Place, Long> {
 
 	@Modifying
 	@Query("UPDATE Place p " +
-		"SET p.siDo = :siDo, " +
+		"SET p.member.id = :memberId, " +
+		"    p.siDo = :siDo, " +
 		"    p.siGunGu = :siGunGu, " +
 		"    p.roadNameAddress = :roadNameAddress, " +
 		"    p.addressLatitude = :addressLat, " +
 		"    p.addressLongitude = :addressLong " +
 		"WHERE p.id = :placeId")
 	void updatePlace(
+		@Param("memberId") Long memberId,
 		@Param("placeId") Long placeId,
 		@Param("siDo") String siDo,
 		@Param("siGunGu") String siGunGu,
