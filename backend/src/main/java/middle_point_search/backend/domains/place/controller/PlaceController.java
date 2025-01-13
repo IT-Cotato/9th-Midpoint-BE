@@ -20,8 +20,8 @@ import middle_point_search.backend.common.dto.DataResponse;
 import middle_point_search.backend.common.dto.ErrorResponse;
 import middle_point_search.backend.common.util.MemberLoader;
 import middle_point_search.backend.domains.member.domain.Member;
-import middle_point_search.backend.domains.place.dto.PlaceDTO.PlaceSaveOrUpdateRequest;
 import middle_point_search.backend.domains.place.dto.PlaceDTO.PlacesFindResponse;
+import middle_point_search.backend.domains.place.dto.request.ChangeRequest;
 import middle_point_search.backend.domains.place.service.PlaceService;
 
 @Tag(name = "PLACE API", description = "회원 장소에 대한 API입니다.")
@@ -35,9 +35,10 @@ public class PlaceController {
 
 	@PostMapping("/rooms/{roomId}")
 	@Operation(
-		summary = "장소 저장하기",
+		summary = "장소 변경하기",
 		description = """
-			주소와 좌표를 사용하여 장소 저장
+			장소들을 저장, 삭제, 수정한다.
+			필요한 필드만 사용하면 된다.(저장만 한다면 updatePlaces, deletePlaces는 명시 안해도 된다.)
 			
 			AccessToken 필요.""",
 		responses = {
@@ -69,11 +70,11 @@ public class PlaceController {
 	)
 	public ResponseEntity<DataResponse<Void>> placeSave(
 		@PathVariable("roomId") Long roomId,
-		@RequestBody @Valid PlaceSaveOrUpdateRequest request
+		@RequestBody @Valid ChangeRequest request
 	) {
 		Member member = memberLoader.getMember();
 
-		placeService.savePlace(roomId, member, request);
+		placeService.changePlaces(roomId, member, request);
 
 		return ResponseEntity.ok(DataResponse.ok());
 	}
