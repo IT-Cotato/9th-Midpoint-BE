@@ -12,7 +12,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import middle_point_search.backend.domains.member.domain.Member;
-import middle_point_search.backend.domains.place.dto.PlaceDTO.PlaceVO;
 import middle_point_search.backend.domains.place.dto.request.ChangeRequest.SavePlaceVO;
 import middle_point_search.backend.domains.place.dto.request.ChangeRequest.UpdatePlaceVO;
 import middle_point_search.backend.domains.room.domain.Room;
@@ -80,17 +79,6 @@ public class Place {
 
 		return new Place(siDo, siGunGu, roadNameAddress, addressLatitude, addressLongitude, room, member,
 			googlePlaceId);
-	}
-
-	public PlaceVO toVO() {
-		return new PlaceVO(
-			this.id,
-			this.siDo,
-			this.siGunGu,
-			this.roadNameAddress,
-			this.addressLatitude,
-			this.addressLongitude
-		);
 	}
 
 	private void addRoom(Room room) {

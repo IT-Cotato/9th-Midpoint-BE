@@ -19,8 +19,8 @@ import middle_point_search.backend.common.dto.DataResponse;
 import middle_point_search.backend.common.dto.ErrorResponse;
 import middle_point_search.backend.common.util.MemberLoader;
 import middle_point_search.backend.domains.member.domain.Member;
-import middle_point_search.backend.domains.place.dto.PlaceDTO.PlacesFindResponse;
 import middle_point_search.backend.domains.place.dto.request.ChangeRequest;
+import middle_point_search.backend.domains.place.dto.response.FindPlacesResponse;
 import middle_point_search.backend.domains.place.service.PlaceService;
 
 @Tag(name = "PLACE API", description = "회원 장소에 대한 API입니다.")
@@ -84,6 +84,8 @@ public class PlaceController {
 		description = """
 			저장한 장소들 조회하기.
 			
+			내가 저장한 장소들과 다른 회원이 저장한 장소들을 모두 조회한다.
+			
 			AccessToken 필요.""",
 		responses = {
 			@ApiResponse(
@@ -112,12 +114,12 @@ public class PlaceController {
 			),
 		}
 	)
-	public ResponseEntity<DataResponse<PlacesFindResponse>> placesFind(
+	public ResponseEntity<DataResponse<FindPlacesResponse>> placesFind(
 		@PathVariable("roomId") Long roomId
 	) {
 		Long memberId = memberLoader.getMemberId();
 
-		PlacesFindResponse response = placeService.findPlaces(memberId, roomId);
+		FindPlacesResponse response = placeService.findPlaces(memberId, roomId);
 
 		return ResponseEntity.ok(DataResponse.from(response));
 	}

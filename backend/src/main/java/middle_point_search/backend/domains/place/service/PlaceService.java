@@ -3,7 +3,6 @@ package middle_point_search.backend.domains.place.service;
 import static middle_point_search.backend.common.exception.errorCode.UserErrorCode.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,11 +14,11 @@ import middle_point_search.backend.domains.google.service.GoogleService;
 import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.memberRoom.MemberRoomValidateService;
 import middle_point_search.backend.domains.place.domain.Place;
-import middle_point_search.backend.domains.place.dto.PlaceDTO.PlaceVO;
-import middle_point_search.backend.domains.place.dto.PlaceDTO.PlacesFindResponse;
 import middle_point_search.backend.domains.place.dto.request.ChangeRequest;
 import middle_point_search.backend.domains.place.dto.request.ChangeRequest.SavePlaceVO;
 import middle_point_search.backend.domains.place.dto.request.ChangeRequest.UpdatePlaceVO;
+import middle_point_search.backend.domains.place.dto.response.FindPlacesResponse;
+import middle_point_search.backend.domains.place.dto.response.FindPlacesResponse.PlaceVO;
 import middle_point_search.backend.domains.place.repository.PlaceRepository;
 import middle_point_search.backend.domains.room.domain.Room;
 import middle_point_search.backend.domains.room.service.RoomService;
@@ -103,17 +102,26 @@ public class PlaceService {
 	}
 
 	// 장소 조회
-	public PlacesFindResponse findPlaces(Long memberId, Long roomId) {
+	public FindPlacesResponse findPlaces(Long memberId, Long roomId) {
 		// 회원이 방에 속해있는지 확인
 		memberRoomValidateService.validateAuthorizedMember(memberId, roomId);
 
 		List<Place> places = placeRepository.findAllByRoom_Id(roomId);
 
-		List<PlaceVO> placeVOs = places.stream()
-			.map(Place::toVO)
-			.collect(Collectors.toList());
+		List<PlaceVO> myPlaces = places.stream()
+			.filter(place -> place.getMember().getId().equals(memberId))
+			.map(PlaceVO::from)
+			.toList();
 
-		boolean existence = !placeVOs.isEmpty();
-		return new PlacesFindResponse(existence, placeVOs);
+		List<PlaceVO> friendPlaces = places.stream()
+			.filter(place -> !place.getMember().getId().equals(memberId))
+			.map(PlaceVO::from)
+			.toList();
+
+		return new FindPlacesResponse(
+			!myPlaces.isEmpty(),
+			myPlaces,
+			!friendPlaces.isEmpty(),
+			friendPlaces);
 	}
 }
