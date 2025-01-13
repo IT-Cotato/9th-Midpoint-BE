@@ -13,9 +13,7 @@ public interface PlaceRepository extends JpaRepository<Place, Long> {
 
 	List<Place> findAllByRoom_Id(Long roomId);
 
-	@Modifying
-	@Query("DELETE FROM Place p WHERE p.id IN :placeIds")
-	void deleteAllByIdIn(List<Long> placeIds);
+	void deleteByIdAndRoom_Id(Long placeId, Long roomId);
 
 	@Modifying
 	@Query("UPDATE Place p " +
@@ -24,11 +22,13 @@ public interface PlaceRepository extends JpaRepository<Place, Long> {
 		"    p.siGunGu = :siGunGu, " +
 		"    p.roadNameAddress = :roadNameAddress, " +
 		"    p.addressLatitude = :addressLat, " +
-		"    p.addressLongitude = :addressLong " +
+		"    p.addressLongitude = :addressLong, " +
+		"    p.googlePlaceId = :googlePlaceId " +
 		"WHERE p.id = :placeId")
 	void updatePlace(
 		@Param("memberId") Long memberId,
 		@Param("placeId") Long placeId,
+		@Param("googlePlaceId") String googlePlaceId,
 		@Param("siDo") String siDo,
 		@Param("siGunGu") String siGunGu,
 		@Param("roadNameAddress") String roadNameAddress,

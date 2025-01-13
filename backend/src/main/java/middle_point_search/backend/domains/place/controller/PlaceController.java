@@ -1,7 +1,9 @@
 package middle_point_search.backend.domains.place.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,7 +21,8 @@ import middle_point_search.backend.common.dto.DataResponse;
 import middle_point_search.backend.common.dto.ErrorResponse;
 import middle_point_search.backend.common.util.MemberLoader;
 import middle_point_search.backend.domains.member.domain.Member;
-import middle_point_search.backend.domains.place.dto.request.ChangeRequest;
+import middle_point_search.backend.domains.place.dto.request.SavePlaceRequest;
+import middle_point_search.backend.domains.place.dto.request.UpdatePlaceRequest;
 import middle_point_search.backend.domains.place.dto.response.FindPlacesResponse;
 import middle_point_search.backend.domains.place.service.PlaceService;
 
@@ -34,10 +37,9 @@ public class PlaceController {
 
 	@PostMapping("/rooms/{roomId}")
 	@Operation(
-		summary = "장소 변경하기",
+		summary = "장소 저장하기",
 		description = """
-			장소들을 저장, 삭제, 수정한다.
-			필요한 필드만 사용하면 된다.(저장만 한다면 updatePlaces, deletePlaces는 명시 안해도 된다.)
+			주소와 좌표를 사용하여 장소 저장
 			
 			AccessToken 필요.""",
 		responses = {
@@ -69,11 +71,56 @@ public class PlaceController {
 	)
 	public ResponseEntity<DataResponse<Void>> placeSave(
 		@PathVariable("roomId") Long roomId,
-		@RequestBody @Valid ChangeRequest request
+		@RequestBody @Valid SavePlaceRequest request
 	) {
 		Member member = memberLoader.getMember();
 
-		placeService.changePlaces(roomId, member, request);
+		placeService.savePlace(roomId, member, request);
+
+		return ResponseEntity.ok(DataResponse.ok());
+	}
+
+	@PatchMapping("/rooms/{roomId}")
+	@Operation(
+		summary = "장소 변경하기",
+		description = """
+			placeId, 주소와 좌표를 사용하여 장소 변경
+			
+			AccessToken 필요.""",
+		responses = {
+			@ApiResponse(
+				responseCode = "200",
+				description = "성공"
+			),
+			@ApiResponse(
+				responseCode = "400",
+				description = "요청 파라미터가 잘못되었습니다.[C-202]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
+				responseCode = "401",
+				description = "인증에 실패하였습니다.[C-101]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
+				responseCode = "402",
+				description = "Access Token을 재발급해야합니다.[A-004]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
+				responseCode = "403",
+				description = "해당 방의 회원이 아닙니다.[MR-003]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			)
+		}
+	)
+	public ResponseEntity<DataResponse<Void>> updatePlace(
+		@PathVariable("roomId") Long roomId,
+		@RequestBody @Valid UpdatePlaceRequest request
+	) {
+		Member member = memberLoader.getMember();
+
+		placeService.updatePlace(roomId, member, request);
 
 		return ResponseEntity.ok(DataResponse.ok());
 	}
@@ -123,4 +170,50 @@ public class PlaceController {
 
 		return ResponseEntity.ok(DataResponse.from(response));
 	}
+
+
+	@DeleteMapping("/{placeId}")
+	@Operation(
+		summary = "장소 삭제하기",
+		description = """
+			저장한 장소 삭제하기.
+			
+			AccessToken 필요.""",
+		responses = {
+			@ApiResponse(
+				responseCode = "200",
+				description = "성공"
+			),
+			@ApiResponse(
+				responseCode = "400",
+				description = "요청 파라미터가 잘못되었습니다.[C-202]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
+				responseCode = "401",
+				description = "인증에 실패하였습니다.[C-101]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
+				responseCode = "402",
+				description = "Access Token을 재발급해야합니다.[A-004]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
+				responseCode = "403",
+				description = "해당 방의 회원이 아닙니다.[MR-003]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			)
+		}
+	)
+	public ResponseEntity<DataResponse<Void>> placeDelete(
+		@PathVariable("placeId") Long placeId
+	) {
+		Long memberId = memberLoader.getMemberId();
+
+		placeService.deletePlace(memberId, placeId);
+
+		return ResponseEntity.ok(DataResponse.ok());
+	}
 }
+

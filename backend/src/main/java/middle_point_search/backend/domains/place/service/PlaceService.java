@@ -14,11 +14,9 @@ import middle_point_search.backend.domains.google.service.GoogleService;
 import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.memberRoom.MemberRoomValidateService;
 import middle_point_search.backend.domains.place.domain.Place;
-import middle_point_search.backend.domains.place.dto.request.ChangeRequest;
-import middle_point_search.backend.domains.place.dto.request.ChangeRequest.SavePlaceVO;
-import middle_point_search.backend.domains.place.dto.request.ChangeRequest.UpdatePlaceVO;
+import middle_point_search.backend.domains.place.dto.request.SavePlaceRequest;
+import middle_point_search.backend.domains.place.dto.request.UpdatePlaceRequest;
 import middle_point_search.backend.domains.place.dto.response.FindPlacesResponse;
-import middle_point_search.backend.domains.place.dto.response.FindPlacesResponse.PlaceVO;
 import middle_point_search.backend.domains.place.repository.PlaceRepository;
 import middle_point_search.backend.domains.room.domain.Room;
 import middle_point_search.backend.domains.room.service.RoomService;
@@ -34,74 +32,6 @@ public class PlaceService {
 	private final MemberRoomValidateService memberRoomValidateService;
 	private final GoogleService googleService;
 
-	//장소 저장, 삭제, 업데이트
-	@Transactional(rollbackFor = {CustomException.class})
-	public void changePlaces(Long roomId, Member member, ChangeRequest request) {
-		// 회원이 방에 속해있는지 확인
-		memberRoomValidateService.validateAuthorizedMember(member.getId(), roomId);
-
-		Room room = roomService.findRoom(roomId)
-			.orElseThrow(() -> CustomException.from(ROOM_NOT_FOUND));
-
-		// 장소들 저장
-		savePlaces(request.getSavePlaces(), room, member);
-		// 장소들 업데이트
-		updatePlaces(request.getUpdatePlaces(), member.getId());
-		// 장소들 삭제
-		deletePlaces(request.getDeletePlaces());
-	}
-
-	// 장소들 저장
-	@Transactional(rollbackFor = {CustomException.class})
-	public void savePlaces(List<SavePlaceVO> placeVOS, Room room, Member member) {
-		if (placeVOS == null || placeVOS.isEmpty()) {
-			return;
-		}
-
-		List<Place> places = placeVOS.stream()
-			.map(placeVO -> {
-				// 구글 placeId 조회
-				String googlePlaceId = googleService.findGooglePlaceId(
-					placeVO.getAddressLat(),
-					placeVO.getAddressLong());
-
-				return Place.from(placeVO, room, member, googlePlaceId);
-			})
-			.toList();
-
-		placeRepository.saveAll(places);
-	}
-
-	// 장소들 업데이트
-	@Transactional(rollbackFor = {CustomException.class})
-	public void updatePlaces(List<UpdatePlaceVO> placeVOS, Long memberId) {
-		if (placeVOS == null || placeVOS.isEmpty()) {
-			return;
-		}
-
-		placeVOS.forEach(placeVO -> {
-			placeRepository.updatePlace(
-				memberId,
-				placeVO.getPlaceId(),
-				placeVO.getSiDo(),
-				placeVO.getSiGunGu(),
-				placeVO.getRoadNameAddress(),
-				placeVO.getAddressLat(),
-				placeVO.getAddressLong()
-			);
-		});
-	}
-
-	// 장소들 삭제
-	@Transactional
-	public void deletePlaces(List<Long> placeIds) {
-		if (placeIds == null || placeIds.isEmpty()) {
-			return;
-		}
-
-		placeRepository.deleteAllByIdIn(placeIds);
-	}
-
 	// 장소 조회
 	public FindPlacesResponse findPlaces(Long memberId, Long roomId) {
 		// 회원이 방에 속해있는지 확인
@@ -109,14 +39,14 @@ public class PlaceService {
 
 		List<Place> places = placeRepository.findAllByRoom_Id(roomId);
 
-		List<PlaceVO> myPlaces = places.stream()
+		List<FindPlacesResponse.PlaceVO> myPlaces = places.stream()
 			.filter(place -> place.getMember().getId().equals(memberId))
-			.map(PlaceVO::from)
+			.map(FindPlacesResponse.PlaceVO::from)
 			.toList();
 
-		List<PlaceVO> friendPlaces = places.stream()
+		List<FindPlacesResponse.PlaceVO> friendPlaces = places.stream()
 			.filter(place -> !place.getMember().getId().equals(memberId))
-			.map(PlaceVO::from)
+			.map(FindPlacesResponse.PlaceVO::from)
 			.toList();
 
 		return new FindPlacesResponse(
@@ -124,5 +54,52 @@ public class PlaceService {
 			myPlaces,
 			!friendPlaces.isEmpty(),
 			friendPlaces);
+	}
+
+	//장소 저장
+	@Transactional(rollbackFor = {CustomException.class})
+	public void savePlace(Long roomId, Member member, SavePlaceRequest request) {
+		// 회원이 방에 속해있는지 확인
+		memberRoomValidateService.validateAuthorizedMember(member.getId(), roomId);
+
+		Room room = roomService.findRoom(roomId)
+			.orElseThrow(() -> CustomException.from(ROOM_NOT_FOUND));
+
+		// 구글 placeId 조회
+		String googlePlaceId = googleService.findGooglePlaceId(request.getAddressLat(), request.getAddressLong());
+
+		placeRepository.save(Place.from(request, room, member, googlePlaceId));
+	}
+
+	//장소 업데이트
+	@Transactional(rollbackFor = {CustomException.class})
+	public void updatePlace(Long roomId, Member member, UpdatePlaceRequest request) {
+		// 회원이 방에 속해있는지 확인
+		memberRoomValidateService.validateAuthorizedMember(member.getId(), roomId);
+
+		// 구글 placeId 조회
+		String googlePlaceId = googleService.findGooglePlaceId(request.getAddressLat(), request.getAddressLong());
+
+		placeRepository.updatePlace(
+			member.getId(),
+			request.getPlaceId(),
+			googlePlaceId,
+			request.getSiDo(),
+			request.getSiGunGu(),
+			request.getRoadNameAddress(),
+			request.getAddressLat(),
+			request.getAddressLong());
+	}
+
+	// 장소 삭제
+	@Transactional
+	public void deletePlace(Long memberId, Long placeId) {
+		Place place = placeRepository.findById(placeId)
+			.orElseThrow(() -> CustomException.from(PLACE_NOT_FOUND));
+
+		// 회원이 방에 속해있는지 확인
+		memberRoomValidateService.validateAuthorizedMember(memberId, place.getRoom().getId());
+
+		placeRepository.deleteByIdAndRoom_Id(placeId, place.getRoom().getId());
 	}
 }

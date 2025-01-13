@@ -12,8 +12,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import middle_point_search.backend.domains.member.domain.Member;
-import middle_point_search.backend.domains.place.dto.request.ChangeRequest.SavePlaceVO;
-import middle_point_search.backend.domains.place.dto.request.ChangeRequest.UpdatePlaceVO;
+import middle_point_search.backend.domains.place.dto.request.SavePlaceRequest;
 import middle_point_search.backend.domains.room.domain.Room;
 
 @Entity
@@ -66,31 +65,25 @@ public class Place {
 
 	public static Place
 	from(
-		SavePlaceVO request,
+		SavePlaceRequest request,
 		Room room,
 		Member member,
 		String googlePlaceId
 	) {
-		String siDo = request.getSiDo();
-		String siGunGu = request.getSiGunGu();
-		String roadNameAddress = request.getRoadNameAddress();
-		Double addressLatitude = request.getAddressLat();
-		Double addressLongitude = request.getAddressLong();
-
-		return new Place(siDo, siGunGu, roadNameAddress, addressLatitude, addressLongitude, room, member,
-			googlePlaceId);
+		return new Place(
+			request.getSiDo(),
+			request.getSiGunGu(),
+			request.getRoadNameAddress(),
+			request.getAddressLat(),
+			request.getAddressLong(),
+			room,
+			member,
+			googlePlaceId
+		);
 	}
 
 	private void addRoom(Room room) {
 		this.room = room;
 		room.getPlaces().add(this);
-	}
-
-	public void update(UpdatePlaceVO request) {
-		this.siDo = request.getSiDo();
-		this.siGunGu = request.getSiGunGu();
-		this.roadNameAddress = request.getRoadNameAddress();
-		this.addressLatitude = request.getAddressLat();
-		this.addressLongitude = request.getAddressLong();
 	}
 }
