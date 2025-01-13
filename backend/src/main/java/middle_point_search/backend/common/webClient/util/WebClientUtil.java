@@ -13,6 +13,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.exception.CustomException;
+import middle_point_search.backend.common.properties.GoogleProperties;
 import middle_point_search.backend.common.properties.KakaoProperties;
 import middle_point_search.backend.common.properties.MarketProperties;
 import reactor.core.publisher.Mono;
@@ -23,12 +24,16 @@ public class WebClientUtil {
 
 	private final KakaoProperties kakaoProperties;
 	private final MarketProperties marketProperties;
+	private final GoogleProperties googleProperties;
 
 	@Qualifier("webClientForMarket")
 	private final WebClient webClientForMarket;
 
 	@Qualifier("webClientForKakao")
 	private final WebClient webClientForKakao;
+
+	@Qualifier("webClientForGoogle")
+	private final WebClient webClientForGoogle;
 
 	// WebClient Conf 세팅을 이용하며, url과 응답 클래스 및 파라미터를 제공하여 요청을 해 Mono로 응답받는 메서드
 	public <T> T getMarket(String url, MultiValueMap<String, String> params, Class<T> response) {
@@ -83,12 +88,15 @@ public class WebClientUtil {
 			.block();
 	}
 
-	// WebClient Conf 세팅을 이용하며, url과 응답 클래스를 제공하여 요청을 해 Mono로 응답받는 메서드
-	public <T> T getKakao(String url, Class<T> response) {
-		return webClientForKakao
+	// WebClient Conf 세팅을 이용하며, googleMap에 대해 url과 응답 클래스를 제공하여 요청을 해 Mono로 응답받는 메서드
+	public <T> T getGoogle(String url, MultiValueMap<String, String> params, Class<T> response) {
+		return webClientForGoogle
 			.method(HttpMethod.GET)
-			.uri(url)
-			.header(HttpHeaders.AUTHORIZATION, kakaoProperties.getKey())
+			.uri(uriBuilder -> uriBuilder
+				.path(url)
+				.queryParams(params)
+				.queryParam(googleProperties.getKeyName(), googleProperties.getKey())
+				.build())
 			.retrieve()
 			.onStatus(HttpStatusCode::is4xxClientError,
 				clientResponse -> Mono.error(CustomException.from(BAD_REQUEST)))
