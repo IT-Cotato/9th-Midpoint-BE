@@ -3,7 +3,7 @@ name: Java CI with Gradle
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "develop" ]
     
 jobs:
   build:
@@ -21,13 +21,13 @@ jobs:
         distribution: 'temurin'
 
     - uses: actions/checkout@v4
-    - run: touch ./backend/src/main/resources/application-api.properties
-    - run: echo "${{ secrets.API_PROPERTIES }}" > ./backend/src/main/resources/application-api.properties
-    - run: cat ./backend/src/main/resources/application-api.properties
+    - run: touch ./backend/src/main/resources/application.properties
+    - run: echo "${{ secrets.PROPERTIES }}" > ./backend/src/main/resources/application.properties
+    - run: cat ./backend/src/main/resources/application.properties
 
-    - run: touch ./backend/src/main/resources/application-security.properties
-    - run: echo "${{ secrets.SECURITY_PROPERTIES }}" > ./backend/src/main/resources/application-security.properties
-    - run: cat ./backend/src/main/resources/application-security.properties
+    - run: touch ./backend/src/main/resources/application-dev.properties
+    - run: echo "${{ secrets.DEV_PROPERTIES }}" > ./backend/src/main/resources/application-dev.properties
+    - run: cat ./backend/src/main/resources/application-dev.properties
 
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
