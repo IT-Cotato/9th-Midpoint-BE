@@ -12,8 +12,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import middle_point_search.backend.domains.member.domain.Member;
-import middle_point_search.backend.domains.place.dto.PlaceDTO.PlaceSaveOrUpdateRequest;
-import middle_point_search.backend.domains.place.dto.PlaceDTO.PlaceVO;
+import middle_point_search.backend.domains.place.dto.request.SavePlaceRequest;
 import middle_point_search.backend.domains.room.domain.Room;
 
 @Entity
@@ -64,39 +63,27 @@ public class Place {
 		this.googlePlaceId = googlePlaceId;
 	}
 
-	public static Place from(PlaceSaveOrUpdateRequest placeSaveOrUpdateRequest, Room room, Member member,
-		String googlePlaceId) {
-		String siDo = placeSaveOrUpdateRequest.getSiDo();
-		String siGunGu = placeSaveOrUpdateRequest.getSiGunGu();
-		String roadNameAddress = placeSaveOrUpdateRequest.getRoadNameAddress();
-		Double addressLatitude = placeSaveOrUpdateRequest.getAddressLat();
-		Double addressLongitude = placeSaveOrUpdateRequest.getAddressLong();
-
-		return new Place(siDo, siGunGu, roadNameAddress, addressLatitude, addressLongitude, room, member,
-			googlePlaceId);
-	}
-
-	public PlaceVO toVO() {
-		return new PlaceVO(
-			this.id,
-			this.siDo,
-			this.siGunGu,
-			this.roadNameAddress,
-			this.addressLatitude,
-			this.addressLongitude
+	public static Place
+	from(
+		SavePlaceRequest request,
+		Room room,
+		Member member,
+		String googlePlaceId
+	) {
+		return new Place(
+			request.getSiDo(),
+			request.getSiGunGu(),
+			request.getRoadNameAddress(),
+			request.getAddressLat(),
+			request.getAddressLong(),
+			room,
+			member,
+			googlePlaceId
 		);
 	}
 
 	private void addRoom(Room room) {
 		this.room = room;
 		room.getPlaces().add(this);
-	}
-
-	public void update(PlaceSaveOrUpdateRequest request) {
-		this.siDo = request.getSiDo();
-		this.siGunGu = request.getSiGunGu();
-		this.roadNameAddress = request.getRoadNameAddress();
-		this.addressLatitude = request.getAddressLat();
-		this.addressLongitude = request.getAddressLong();
 	}
 }
