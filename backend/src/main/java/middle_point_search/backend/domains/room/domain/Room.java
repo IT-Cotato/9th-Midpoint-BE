@@ -52,4 +52,8 @@ public class Room extends BaseEntity {
 	public void updateName(String name) {
 		this.name = name;
 	}
+
+	public void updateMemo(String memo) {
+		this.memo = memo;
+	}
 }

@@ -40,6 +40,13 @@ public class RoomDTO {
 	}
 
 	@Getter
+	@NoArgsConstructor(access = AccessLevel.PRIVATE)
+	public static class UpdateRoomMemoRequest {
+
+		private String memo;
+	}
+
+	@Getter
 	@AllArgsConstructor(access = AccessLevel.PRIVATE)
 	public static class RoomExistResponse {
 		private final boolean existence;

@@ -16,6 +16,7 @@ import middle_point_search.backend.domains.room.dto.RoomDTO.RoomCreateRequest;
 import middle_point_search.backend.domains.room.dto.RoomDTO.RoomCreateResponse;
 import middle_point_search.backend.domains.room.dto.RoomDTO.RoomExistResponse;
 import middle_point_search.backend.domains.room.dto.RoomDTO.RoomNameUpdateRequest;
+import middle_point_search.backend.domains.room.dto.RoomDTO.UpdateRoomMemoRequest;
 import middle_point_search.backend.domains.room.repository.RoomRepository;
 
 @Service
@@ -29,12 +30,7 @@ public class RoomService {
 	// Room 저장하기 및 Room에 회원 저장
 	@Transactional
 	public RoomCreateResponse createRoom(RoomCreateRequest request) {
-		String memo;
-		if (request.getMemo() == null) {
-			memo = "";
-		} else {
-			memo = request.getMemo();
-		}
+		String memo = makeMemoNullToBlank(request.getMemo());
 
 		Room room = Room.builder()
 			.name(request.getName())
@@ -69,5 +65,23 @@ public class RoomService {
 	// 방 존재 확인
 	public RoomExistResponse existRoom(String roomId) {
 		return RoomExistResponse.from(roomRepository.existsById(roomId));
+	}
+
+	public void updateRoomMemo(Long memberId, String roomId, UpdateRoomMemoRequest request) {
+		// 회원방 존재 확인
+		memberRoomValidateService.validateAuthorizedMember(memberId, roomId);
+
+		// 변경
+		Room room = roomRepository.findById(roomId)
+			.orElseThrow(() -> CustomException.from(ROOM_NOT_FOUND));
+		String memo = makeMemoNullToBlank(request.getMemo());
+		room.updateMemo(memo);
+	}
+
+	private String makeMemoNullToBlank(String memo) {
+		if (memo == null) {
+			return "";
+		}
+		return memo;
 	}
 }
