@@ -10,8 +10,6 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import lombok.AccessLevel;
@@ -29,12 +27,8 @@ import middle_point_search.backend.domains.place.domain.Place;
 public class Room extends BaseEntity {
 
 	@Id
-	@Column(name = "room_id")
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-
-	@Column(nullable = false, length = 36)
-	private String identityKey; // url 이동을 위한 식별키
+	@Column(name = "room_id", nullable = false, length = 36)
+	private String id;
 
 	@OneToMany(mappedBy = "room", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<Place> places = new ArrayList<>();
@@ -46,9 +40,9 @@ public class Room extends BaseEntity {
 	private List<MemberRoom> memberRooms = new ArrayList<>();
 
 	@Builder
-	private Room(String name, String identityKey) {
+	private Room(String name, String id) {
 		this.name = name;
-		this.identityKey = identityKey;
+		this.id = id;
 	}
 
 	public void updateName(String name) {

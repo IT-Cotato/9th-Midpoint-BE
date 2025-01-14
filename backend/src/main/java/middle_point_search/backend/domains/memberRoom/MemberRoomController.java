@@ -62,7 +62,7 @@ public class MemberRoomController {
 			)
 		}
 	)
-	public ResponseEntity<DataResponse<Void>> saveMemberToRoom(@PathVariable("roomId") Long roomId) {
+	public ResponseEntity<DataResponse<Void>> saveMemberToRoom(@PathVariable("roomId") String roomId) {
 		Member member = memberLoader.getMember();
 
 		memberRoomService.saveMemberToRoom(member, roomId);
@@ -123,11 +123,9 @@ public class MemberRoomController {
 		}
 	)
 	public ResponseEntity<DataResponse<MemberRoomExistsResponse>> existsMemberRoom(
-		@PathVariable("roomId") Long roomId) {
+		@PathVariable("roomId") String roomId
+	) {
 		Long memberId = memberLoader.getMemberId();
-
-		System.out.println("memberId: " + memberId);
-
 
 		MemberRoomExistsResponse response = memberRoomService.existsMemberRoom(memberId, roomId);
 

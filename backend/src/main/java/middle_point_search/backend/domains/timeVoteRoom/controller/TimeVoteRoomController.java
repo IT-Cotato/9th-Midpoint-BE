@@ -74,7 +74,7 @@ public class TimeVoteRoomController {
 		}
 	)
 	public ResponseEntity<DataResponse<TimeVoteRoomCreateResponse>> timeVoteRoomCreate(
-		@PathVariable("roomId") Long roomId,
+		@PathVariable("roomId") String roomId,
 		@RequestBody @Valid TimeVoteRoomCreateRequest request
 	) {
 		Long memberId = memberLoader.getMemberId();
@@ -126,7 +126,7 @@ public class TimeVoteRoomController {
 		}
 	)
 	public ResponseEntity<DataResponse<Void>> timeVoteRoomRecreate(
-		@PathVariable("roomId") Long roomId,
+		@PathVariable("roomId") String roomId,
 		@RequestBody @Valid TimeVoteRoomCreateRequest request
 	) {
 		Long memberId = memberLoader.getMemberId();
@@ -166,7 +166,7 @@ public class TimeVoteRoomController {
 		}
 	)
 	public ResponseEntity<DataResponse<TimeVoteRoomGetResponse>> timeVoteRoomGet(
-		@PathVariable("roomId") Long roomId
+		@PathVariable("roomId") String roomId
 	) {
 		Long memberId = memberLoader.getMemberId();
 

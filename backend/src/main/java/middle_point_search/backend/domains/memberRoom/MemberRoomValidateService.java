@@ -27,7 +27,7 @@ public class MemberRoomValidateService {
 	}
 
 	// 방에 존재하는 회원인지 판별
-	public void validateAuthorizedMember(Long memberId, Long roomId) {
+	public void validateAuthorizedMember(Long memberId, String roomId) {
 		if (!memberRoomRepository.existsByMember_IdAndRoom_Id(memberId, roomId)) {
 			throw CustomException.from(UNAUTHORIZED_MEMBER_ROOM);
 		}

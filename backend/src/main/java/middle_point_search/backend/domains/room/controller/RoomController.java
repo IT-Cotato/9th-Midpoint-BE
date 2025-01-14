@@ -101,7 +101,7 @@ public class RoomController {
 		}
 	)
 	public ResponseEntity<DataResponse<Void>> roomNameUpdate(
-		@PathVariable Long roomId,
+		@PathVariable String roomId,
 		@RequestBody RoomNameUpdateRequest request
 	) {
 		Long memberId = memberLoader.getMemberId();
@@ -138,7 +138,7 @@ public class RoomController {
 			),
 		}
 	)
-	public ResponseEntity<DataResponse<RoomExistResponse>> roomExist(@PathVariable Long roomId) {
+	public ResponseEntity<DataResponse<RoomExistResponse>> roomExist(@PathVariable String roomId) {
 		RoomExistResponse response = roomService.existRoom(roomId);
 
 		return ResponseEntity.ok(DataResponse.from(response));

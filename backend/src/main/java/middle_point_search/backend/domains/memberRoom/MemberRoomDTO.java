@@ -20,7 +20,7 @@ public class MemberRoomDTO {
 	@Getter
 	@AllArgsConstructor(access = AccessLevel.PRIVATE)
 	public static class RoomsByMemberIdFindResponse {
-		private Long roomId;
+		private String roomId;
 		private String roomName;
 
 		public static RoomsByMemberIdFindResponse from(Room room) {

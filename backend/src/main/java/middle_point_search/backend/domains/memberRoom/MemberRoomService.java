@@ -26,7 +26,7 @@ public class MemberRoomService {
 
 	// 회원방을 DTO로 저장
 	@Transactional(rollbackFor = CustomException.class)
-	public void saveMemberToRoom(Member member, Long roomId) {
+	public void saveMemberToRoom(Member member, String roomId) {
 		// 방조회
 		Room room = roomService.findRoom(roomId)
 			.orElseThrow(() -> CustomException.from(ROOM_NOT_FOUND));
@@ -53,7 +53,7 @@ public class MemberRoomService {
 	}
 
 	// 회원방이 존재하는지 확인
-	public MemberRoomExistsResponse existsMemberRoom(Long memberId, Long roomId) {
+	public MemberRoomExistsResponse existsMemberRoom(Long memberId, String roomId) {
 		Boolean exists = memberRoomRepository.existsByMember_IdAndRoom_Id(memberId, roomId);
 
 		return MemberRoomExistsResponse.from(exists);

@@ -11,9 +11,9 @@ import middle_point_search.backend.domains.place.domain.Place;
 
 public interface PlaceRepository extends JpaRepository<Place, Long> {
 
-	List<Place> findAllByRoom_Id(Long roomId);
+	List<Place> findAllByRoom_Id(String roomId);
 
-	void deleteByIdAndRoom_Id(Long placeId, Long roomId);
+	void deleteByIdAndRoom_Id(Long placeId, String roomId);
 
 	@Modifying
 	@Query("UPDATE Place p " +

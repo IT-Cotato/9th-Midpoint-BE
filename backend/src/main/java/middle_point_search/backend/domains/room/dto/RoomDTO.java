@@ -12,9 +12,9 @@ public class RoomDTO {
 	@Getter
 	@AllArgsConstructor(access = AccessLevel.PRIVATE)
 	public static class RoomCreateResponse {
-		private final Long id;
+		private final String id;
 
-		public static RoomCreateResponse from(Long id) {
+		public static RoomCreateResponse from(String id) {
 			return new RoomCreateResponse(id);
 		}
 	}

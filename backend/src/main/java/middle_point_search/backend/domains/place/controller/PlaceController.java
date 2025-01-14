@@ -70,7 +70,7 @@ public class PlaceController {
 		}
 	)
 	public ResponseEntity<DataResponse<Void>> placeSave(
-		@PathVariable("roomId") Long roomId,
+		@PathVariable("roomId") String roomId,
 		@RequestBody @Valid SavePlaceRequest request
 	) {
 		Member member = memberLoader.getMember();
@@ -115,7 +115,7 @@ public class PlaceController {
 		}
 	)
 	public ResponseEntity<DataResponse<Void>> updatePlace(
-		@PathVariable("roomId") Long roomId,
+		@PathVariable("roomId") String roomId,
 		@RequestBody @Valid UpdatePlaceRequest request
 	) {
 		Member member = memberLoader.getMember();
@@ -162,7 +162,7 @@ public class PlaceController {
 		}
 	)
 	public ResponseEntity<DataResponse<FindPlacesResponse>> placesFind(
-		@PathVariable("roomId") Long roomId
+		@PathVariable("roomId") String roomId
 	) {
 		Long memberId = memberLoader.getMemberId();
 
