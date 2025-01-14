@@ -29,8 +29,16 @@ public class RoomService {
 	// Room 저장하기 및 Room에 회원 저장
 	@Transactional
 	public RoomCreateResponse createRoom(RoomCreateRequest request) {
+		String memo;
+		if (request.getMemo() == null) {
+			memo = "";
+		} else {
+			memo = request.getMemo();
+		}
+
 		Room room = Room.builder()
 			.name(request.getName())
+			.memo(memo)
 			.id(UUID.randomUUID().toString())
 			.build();
 

@@ -39,6 +39,7 @@ public class RoomController {
 		summary = "방 생성하기",
 		description = """
 			방을 생성한다.
+			메모가 없을 경우 필드를 제거하거나 ""을 보내면 된다.
 			
 			방 생성시 회원을 방에 등록시켜줘야 한다.
 			""",

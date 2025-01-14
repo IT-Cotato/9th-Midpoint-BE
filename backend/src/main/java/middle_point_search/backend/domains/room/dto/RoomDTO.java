@@ -26,6 +26,8 @@ public class RoomDTO {
 		@Parameter(required = true)
 		@NotBlank(message = "값이 비어있으면 안 됩니다.")
 		private String name;
+
+		private String memo;
 	}
 
 	@Getter
