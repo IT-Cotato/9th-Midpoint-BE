@@ -36,16 +36,24 @@ public class Room extends BaseEntity {
 	@Column(name = "room_name", nullable = false)
 	private String name;
 
+	@Column(name = "room_memo")
+	private String memo;
+
 	@OneToMany(mappedBy = "room", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<MemberRoom> memberRooms = new ArrayList<>();
 
 	@Builder
-	private Room(String name, String id) {
+	private Room(String id, String name, String memo) {
 		this.name = name;
+		this.memo = memo;
 		this.id = id;
 	}
 
 	public void updateName(String name) {
 		this.name = name;
+	}
+
+	public void updateMemo(String memo) {
+		this.memo = memo;
 	}
 }
