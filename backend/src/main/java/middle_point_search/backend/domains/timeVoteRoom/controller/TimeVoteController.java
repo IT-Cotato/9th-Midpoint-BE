@@ -79,7 +79,7 @@ public class TimeVoteController {
 		}
 	)
 	public ResponseEntity<DataResponse<Void>> vote(
-		@PathVariable Long roomId,
+		@PathVariable String roomId,
 		@RequestBody @Valid VoteRequest request
 	) {
 		Member member = memberLoader.getMember();
@@ -129,7 +129,7 @@ public class TimeVoteController {
 		}
 	)
 	public ResponseEntity<?> voteUpdate(
-		@PathVariable Long roomId,
+		@PathVariable String roomId,
 		@RequestBody @Valid VoteRequest request
 	) {
 		Member member = memberLoader.getMember();
@@ -174,7 +174,7 @@ public class TimeVoteController {
 		}
 	)
 	public ResponseEntity<DataResponse<VotedAndVoteItemsGetResponse>> votedAndVoteItemsGet(
-		@PathVariable Long roomId
+		@PathVariable String roomId
 	) {
 		Member member = memberLoader.getMember();
 
@@ -218,7 +218,7 @@ public class TimeVoteController {
 		}
 	)
 	public ResponseEntity<DataResponse<TimeVoteRoomResultResponse>> timeVoteResultsGet(
-		@PathVariable Long roomId
+		@PathVariable String roomId
 	) {
 		Long memberId = memberLoader.getMemberId();
 

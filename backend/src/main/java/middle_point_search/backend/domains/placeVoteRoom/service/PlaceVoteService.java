@@ -34,7 +34,7 @@ public class PlaceVoteService {
 
 	// 투표 처리
 	@Transactional(rollbackFor = {CustomException.class})
-	public void vote(Member member, Long roomId, PlaceVoteRequest voteRequest) {
+	public void vote(Member member, String roomId, PlaceVoteRequest voteRequest) {
 		// 방에 대한 회원인지 확인
 		memberRoomValidateService.validateAuthorizedMember(member.getId(), roomId);
 
@@ -60,7 +60,7 @@ public class PlaceVoteService {
 
 	// 재투표
 	@Transactional(rollbackFor = {CustomException.class})
-	public void updateVote(Member member, Long roomId, PlaceVoteRequest voteRequest) {
+	public void updateVote(Member member, String roomId, PlaceVoteRequest voteRequest) {
 		// 방에 대한 회원인지 확인
 		memberRoomValidateService.validateAuthorizedMember(member.getId(), roomId);
 
@@ -87,7 +87,7 @@ public class PlaceVoteService {
 	}
 
 	// 내 투표 조회
-	public VotedAndVoteItemResponse findVotedAndVoteItem(Member member, Long roomId) {
+	public VotedAndVoteItemResponse findVotedAndVoteItem(Member member, String roomId) {
 		// 방에 대한 회원인지 확인
 		memberRoomValidateService.validateAuthorizedMember(member.getId(), roomId);
 
@@ -103,7 +103,7 @@ public class PlaceVoteService {
 	}
 
 	// 장소투표 결과 조회
-	public List<PlaceVoteResultsFindResponse> findPlaceVoteResults(Long memberId, Long roomId) {
+	public List<PlaceVoteResultsFindResponse> findPlaceVoteResults(Long memberId, String roomId) {
 		// 방에 대한 회원인지 확인
 		memberRoomValidateService.validateAuthorizedMember(memberId, roomId);
 

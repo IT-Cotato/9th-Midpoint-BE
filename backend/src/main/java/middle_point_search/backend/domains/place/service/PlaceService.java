@@ -33,7 +33,7 @@ public class PlaceService {
 	private final GoogleService googleService;
 
 	// 장소 조회
-	public FindPlacesResponse findPlaces(Long memberId, Long roomId) {
+	public FindPlacesResponse findPlaces(Long memberId, String roomId) {
 		// 회원이 방에 속해있는지 확인
 		memberRoomValidateService.validateAuthorizedMember(memberId, roomId);
 
@@ -58,7 +58,7 @@ public class PlaceService {
 
 	//장소 저장
 	@Transactional(rollbackFor = {CustomException.class})
-	public void savePlace(Long roomId, Member member, SavePlaceRequest request) {
+	public void savePlace(String roomId, Member member, SavePlaceRequest request) {
 		// 회원이 방에 속해있는지 확인
 		memberRoomValidateService.validateAuthorizedMember(member.getId(), roomId);
 
@@ -73,7 +73,7 @@ public class PlaceService {
 
 	//장소 업데이트
 	@Transactional(rollbackFor = {CustomException.class})
-	public void updatePlace(Long roomId, Member member, UpdatePlaceRequest request) {
+	public void updatePlace(String roomId, Member member, UpdatePlaceRequest request) {
 		// 회원이 방에 속해있는지 확인
 		memberRoomValidateService.validateAuthorizedMember(member.getId(), roomId);
 

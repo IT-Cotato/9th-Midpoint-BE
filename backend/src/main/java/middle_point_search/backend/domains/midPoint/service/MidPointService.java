@@ -36,7 +36,7 @@ public class MidPointService {
 	}
 
 	// 주어진 RoomId로 중간 장소 리스트를 조회하는 메서드
-	public List<MidPointsFindResponse> findMidPointsByRoomId(Long memberId, Long roomId) {
+	public List<MidPointsFindResponse> findMidPointsByRoomId(Long memberId, String roomId) {
 		// 회원이 방에 속해있는지 확인
 		memberRoomValidateService.validateAuthorizedMember(memberId, roomId);
 
@@ -49,7 +49,7 @@ public class MidPointService {
 	}
 
 	// 방 장소들의 중간지점까지의 이동시간을 조회하는 메서드
-	public TravelTimesFindResponse findTravelTimes(Long roomId, Long memberId, Double latitude, Double longitude) {
+	public TravelTimesFindResponse findTravelTimes(String roomId, Long memberId, Double latitude, Double longitude) {
 		// 회원이 방에 속해있는지 확인
 		memberRoomValidateService.validateAuthorizedMember(memberId, roomId);
 

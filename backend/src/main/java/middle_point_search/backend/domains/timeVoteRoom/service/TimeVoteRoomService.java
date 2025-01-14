@@ -30,7 +30,7 @@ public class TimeVoteRoomService {
 
 	// 시간 투표방 생성
 	@Transactional(rollbackFor = {CustomException.class})
-	public TimeVoteRoomCreateResponse createTimeVoteRoom(Long memberId, Long roomId, TimeVoteRoomCreateRequest request) {
+	public TimeVoteRoomCreateResponse createTimeVoteRoom(Long memberId, String roomId, TimeVoteRoomCreateRequest request) {
 		// 방에 대한 회원인지 확인
 		memberRoomValidateService.validateAuthorizedMember(memberId, roomId);
 
@@ -57,7 +57,7 @@ public class TimeVoteRoomService {
 
 	//시간투표방 변경하기
 	@Transactional(rollbackFor = {CustomException.class})
-	public void updateTimeVoteRoom(Long memberId, Long roomId, TimeVoteRoomCreateRequest request) {
+	public void updateTimeVoteRoom(Long memberId, String roomId, TimeVoteRoomCreateRequest request) {
 		// 방에 대한 회원인지 확인
 		memberRoomValidateService.validateAuthorizedMember(memberId, roomId);
 
@@ -73,7 +73,7 @@ public class TimeVoteRoomService {
 	}
 
 	// 시간투표방 조회
-	public TimeVoteRoomGetResponse findTimeVoteRoomAndMakeDTO(Long memberId, Long roomId) {
+	public TimeVoteRoomGetResponse findTimeVoteRoomAndMakeDTO(Long memberId, String roomId) {
 		// 방에 대한 회원인지 확인
 		memberRoomValidateService.validateAuthorizedMember(memberId, roomId);
 
@@ -91,7 +91,7 @@ public class TimeVoteRoomService {
 	}
 
 	// 시간 투표방, 방으로 조회
-	public Optional<TimeVoteRoom> findByRoomId(Long roomId) {
+	public Optional<TimeVoteRoom> findByRoomId(String roomId) {
 		return timeVoteRoomRepository.findByRoom_Id(roomId);
 	}
 }

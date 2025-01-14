@@ -74,7 +74,7 @@ public class PlaceVoteController {
 		}
 	)
 	public ResponseEntity<DataResponse<List<PlaceVoteResultsFindResponse>>> placeVoteRoomResultGet(
-		@PathVariable("roomId") Long roomId
+		@PathVariable("roomId") String roomId
 	) {
 		Long memberId = memberLoader.getMemberId();
 
@@ -128,7 +128,7 @@ public class PlaceVoteController {
 		}
 	)
 	public ResponseEntity<DataResponse<Void>> vote(
-		@PathVariable("roomId") Long roomId,
+		@PathVariable("roomId") String roomId,
 		@RequestBody @Valid PlaceVoteRequest request
 	) {
 		Member member = memberLoader.getMember();
@@ -177,7 +177,7 @@ public class PlaceVoteController {
 		}
 	)
 	public ResponseEntity<DataResponse<Void>> voteUpdate(
-		@PathVariable("roomId") Long roomId,
+		@PathVariable("roomId") String roomId,
 		@RequestBody @Valid PlaceVoteRequest request
 	) {
 		Member member = memberLoader.getMember();
@@ -217,7 +217,7 @@ public class PlaceVoteController {
 		}
 	)
 	public ResponseEntity<DataResponse<VotedAndVoteItemResponse>> votedAndVoteItemFind(
-		@PathVariable("roomId") Long roomId
+		@PathVariable("roomId") String roomId
 	) {
 		Member member = memberLoader.getMember();
 

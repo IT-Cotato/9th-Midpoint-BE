@@ -71,7 +71,7 @@ public class MidPointController {
 		}
 	)
 	public ResponseEntity<DataResponse<List<MidPointsFindResponse>>> MidPointsFind(
-		@PathVariable("roomId") Long roomId
+		@PathVariable("roomId") String roomId
 	) {
 		Long memberId = memberLoader.getMemberId();
 
@@ -125,7 +125,7 @@ public class MidPointController {
 		}
 	)
 	public ResponseEntity<DataResponse<TravelTimesFindResponse>> findPath(
-		@PathVariable Long roomId,
+		@PathVariable String roomId,
 		@RequestParam Double destLatitude,
 		@RequestParam Double destLongitude
 	) {
