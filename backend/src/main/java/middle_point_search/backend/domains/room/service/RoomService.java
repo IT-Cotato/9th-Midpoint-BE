@@ -3,6 +3,7 @@ package middle_point_search.backend.domains.room.service;
 import static middle_point_search.backend.common.exception.errorCode.UserErrorCode.*;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +31,7 @@ public class RoomService {
 	public RoomCreateResponse createRoom(RoomCreateRequest request) {
 		Room room = Room.builder()
 			.name(request.getName())
+			.identityKey(UUID.randomUUID().toString())
 			.build();
 
 		// Room저장

@@ -33,6 +33,9 @@ public class Room extends BaseEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@Column(nullable = false, length = 36)
+	private String identityKey; // url 이동을 위한 식별키
+
 	@OneToMany(mappedBy = "room", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<Place> places = new ArrayList<>();
 
@@ -43,8 +46,9 @@ public class Room extends BaseEntity {
 	private List<MemberRoom> memberRooms = new ArrayList<>();
 
 	@Builder
-	private Room(String name) {
+	private Room(String name, String identityKey) {
 		this.name = name;
+		this.identityKey = identityKey;
 	}
 
 	public void updateName(String name) {
