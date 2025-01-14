@@ -75,7 +75,7 @@ public class RoomController {
 		return ResponseEntity.ok(DataResponse.from(response));
 	}
 
-	@PatchMapping("/{roomId}")
+	@PatchMapping("/{roomId}/name")
 	@Operation(
 		summary = "방 이름 변경",
 		description = """
