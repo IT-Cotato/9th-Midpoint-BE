@@ -19,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.dto.DataResponse;
 import middle_point_search.backend.common.dto.ErrorResponse;
 import middle_point_search.backend.common.util.MemberLoader;
+import middle_point_search.backend.domains.room.dto.RoomDTO.FindRoomDetailResponse;
 import middle_point_search.backend.domains.room.dto.RoomDTO.RoomCreateRequest;
 import middle_point_search.backend.domains.room.dto.RoomDTO.RoomCreateResponse;
 import middle_point_search.backend.domains.room.dto.RoomDTO.RoomExistResponse;
@@ -113,7 +114,7 @@ public class RoomController {
 		return ResponseEntity.ok(DataResponse.ok());
 	}
 
-	@PatchMapping("/{roomId}")
+	@PatchMapping("/{roomId}/memo")
 	@Operation(
 		summary = "방 메모 변경",
 		description = """
@@ -180,6 +181,44 @@ public class RoomController {
 	)
 	public ResponseEntity<DataResponse<RoomExistResponse>> roomExist(@PathVariable String roomId) {
 		RoomExistResponse response = roomService.existRoom(roomId);
+
+		return ResponseEntity.ok(DataResponse.from(response));
+	}
+
+	@GetMapping("/{roomId}")
+	@Operation(
+		summary = "방 상세 조회",
+		description = """
+			방 상세를 조회한다.
+			
+			accessToken 필요.""",
+		responses = {
+			@ApiResponse(
+				responseCode = "200",
+				description = "성공"
+			),
+			@ApiResponse(
+				responseCode = "401",
+				description = "인증에 실패하였습니다.[C-101]"
+			),
+			@ApiResponse(
+				responseCode = "402",
+				description = "Access Token을 재발급해야합니다.[A-004]"
+			),
+			@ApiResponse(
+				responseCode = "403",
+				description = "해당 방의 회원이 아닙니다.[MR-003]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
+				responseCode = "404",
+				description = "존재하지 않는 방입니다.[R-201]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+		}
+	)
+	public ResponseEntity<DataResponse<FindRoomDetailResponse>> findRoomDetail(@PathVariable String roomId) {
+		FindRoomDetailResponse response = roomService.findRoomDetail(memberLoader.getMemberId(), roomId);
 
 		return ResponseEntity.ok(DataResponse.from(response));
 	}
