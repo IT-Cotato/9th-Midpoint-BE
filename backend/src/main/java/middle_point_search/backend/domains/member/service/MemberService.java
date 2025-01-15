@@ -2,13 +2,13 @@ package middle_point_search.backend.domains.member.service;
 
 import static middle_point_search.backend.common.exception.errorCode.UserErrorCode.*;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import middle_point_search.backend.common.exception.CustomException;
-import middle_point_search.backend.common.util.encoder.PasswordEncoderUtil;
 import middle_point_search.backend.domains.email.service.EmailService;
 import middle_point_search.backend.domains.email.service.SignupVerificationCodeService;
 import middle_point_search.backend.domains.logout.LogoutService;
@@ -29,7 +29,7 @@ import middle_point_search.backend.domains.refreshToken.RefreshTokenService;
 public class MemberService {
 
 	private final MemberRepository memberRepository;
-	private final PasswordEncoderUtil passwordEncoderUtil;
+	private final PasswordEncoder passwordEncoder;
 	private final RefreshTokenService refreshTokenService;
 	private final LogoutService logoutService;
 	private final SignupVerificationCodeService signupVerificationCodeService;
@@ -41,7 +41,7 @@ public class MemberService {
 		validateExistingEmail(request.getEmail());
 		validateEmailVerificationCode(request.getEmail(), request.getCode());
 
-		String pw = passwordEncoderUtil.encodePassword(request.getPw());
+		String pw = passwordEncoder.encode(request.getPw());
 
 		Member member = createMemberEntity(request, pw);
 
@@ -112,6 +112,26 @@ public class MemberService {
 
 		if (!isVerified) {
 			throw CustomException.from(VERIFICATION_CODE_NOT_MATCH);
+		}
+	}
+
+	// 비밀번호 변경
+	@Transactional
+	public void updatePassword(Long memberId, String password, String newPassword) {
+		Member member = memberRepository.findById(memberId)
+			.orElseThrow(() -> CustomException.from(MEMBER_NOT_FOUND));
+
+		checkPassword(password, member.getPw());
+
+		member.updatePassword(passwordEncoder.encode(newPassword));
+	}
+
+	// 비밀번호 일치 확인
+	private void checkPassword(String password, String encodedPassword) {
+		boolean matches = passwordEncoder.matches(password, encodedPassword);
+
+		if (!matches) {
+			throw CustomException.from(PASSWORD_NOT_MATCH);
 		}
 	}
 }

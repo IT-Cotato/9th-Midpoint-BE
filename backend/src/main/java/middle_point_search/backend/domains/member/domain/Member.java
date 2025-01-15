@@ -93,4 +93,10 @@ public class Member extends BaseEntity {
 		return new Member(email, pw, name, role, true, siDo, siGunGu, roadNameAddress, addressLatitude,
 			addressLongitude);
 	}
+
+	// 비밀번호 변경
+	public void updatePassword(String encodedPassword) {
+		this.pw = encodedPassword;
+
+	}
 }

@@ -2,6 +2,7 @@ package middle_point_search.backend.domains.member.controller;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +23,7 @@ import middle_point_search.backend.common.security.filter.jwtFilter.JwtTokenProv
 import middle_point_search.backend.common.util.MemberLoader;
 import middle_point_search.backend.domains.member.dto.MemberDTO.MemberCreateRequest;
 import middle_point_search.backend.domains.member.dto.request.SendEmailVerificationRequest;
+import middle_point_search.backend.domains.member.dto.request.UpdatePasswordRequest;
 import middle_point_search.backend.domains.member.dto.request.VerifyEmailVerificationCodeRequest;
 import middle_point_search.backend.domains.member.dto.response.VerifyEmailVerificationCodeResponse;
 import middle_point_search.backend.domains.member.service.MemberService;
@@ -182,6 +184,42 @@ public class MemberController {
 		VerifyEmailVerificationCodeResponse response = memberService.verifyEmailVerificationCode(request);
 
 		return ResponseEntity.ok(DataResponse.from(response));
+	}
+
+	@PatchMapping("/password")
+	@Operation(
+		summary = "비밀번호 수정",
+		description = "비밀번호 수정",
+		responses = {
+			@ApiResponse(
+				responseCode = "200",
+				description = "성공"
+			),
+			@ApiResponse(
+				responseCode = "401",
+				description = "인증에 실패하였습니다.[C-101]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
+				responseCode = "402",
+				description = "Access Token을 재발급해야합니다.[A-004]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
+				responseCode = "403",
+				description = "비밀번호가 일치하지 않습니다.[M-005]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			)
+		}
+	)
+	public ResponseEntity<DataResponse<Void>> updatePassword(
+		@Valid @RequestBody UpdatePasswordRequest updatePasswordRequest
+	) {
+		Long memberId = memberLoader.getMemberId();
+
+		memberService.updatePassword(memberId, updatePasswordRequest.password(), updatePasswordRequest.newPassword());
+
+		return ResponseEntity.ok(DataResponse.ok());
 	}
 }
 
