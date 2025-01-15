@@ -21,6 +21,7 @@ import middle_point_search.backend.common.dto.ErrorResponse;
 import middle_point_search.backend.common.security.filter.jwtFilter.JwtTokenProvider;
 import middle_point_search.backend.common.util.MemberLoader;
 import middle_point_search.backend.domains.member.dto.MemberDTO.MemberCreateRequest;
+import middle_point_search.backend.domains.member.dto.request.SendEmailVerificationRequest;
 import middle_point_search.backend.domains.member.service.MemberService;
 
 @Tag(name = "MEMBER API", description = "회원에 대한 API입니다.")
@@ -111,6 +112,35 @@ public class MemberController {
 		@RequestParam("pw") String pw
 	) {
 		// 이 메소드는 실제로 실행되지 않습니다. 문서용도로만 사용됩니다.
+		return ResponseEntity.ok(DataResponse.ok());
+	}
+
+	@PostMapping("/verification-request/signup")
+	@Operation(
+		summary = "회원가입 email 인증 요청",
+		description = "email 인증을 위한 이메일을 전송",
+		responses = {
+			@ApiResponse(
+				responseCode = "200",
+				description = "성공"
+			),
+			@ApiResponse(
+				responseCode = "409",
+				description = "이미 존재하는 이메일입니다.[M-001]",
+				content = @Content(schema = @Schema(implementation = org.springframework.web.ErrorResponse.class))
+			),
+			@ApiResponse(
+				responseCode = "500",
+				description = "이메일 전송에 실패하였습니다.[E-001]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+		}
+	)
+	public ResponseEntity<DataResponse<Void>> SendEmailVerificationRequest(
+		@RequestBody @Valid SendEmailVerificationRequest request
+	) {
+		memberService.validateDuplicatedEmailAndSendEmailVerification(request);
+
 		return ResponseEntity.ok(DataResponse.ok());
 	}
 }

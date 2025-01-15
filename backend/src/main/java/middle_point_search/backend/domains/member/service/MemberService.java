@@ -9,11 +9,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import middle_point_search.backend.common.exception.CustomException;
 import middle_point_search.backend.common.util.encoder.PasswordEncoderUtil;
+import middle_point_search.backend.domains.email.service.EmailService;
+import middle_point_search.backend.domains.email.service.SignupVerificationCodeService;
 import middle_point_search.backend.domains.logout.LogoutService;
 import middle_point_search.backend.domains.logout.LogoutToken;
 import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.member.domain.Role;
 import middle_point_search.backend.domains.member.dto.MemberDTO.MemberCreateRequest;
+import middle_point_search.backend.domains.member.dto.request.SendEmailVerificationRequest;
 import middle_point_search.backend.domains.member.repository.MemberRepository;
 import middle_point_search.backend.domains.refreshToken.RefreshTokenService;
 
@@ -27,6 +30,8 @@ public class MemberService {
 	private final PasswordEncoderUtil passwordEncoderUtil;
 	private final RefreshTokenService refreshTokenService;
 	private final LogoutService logoutService;
+	private final SignupVerificationCodeService signupVerificationCodeService;
+	private final EmailService emailService;
 
 	// 회원가입하기
 	@Transactional
@@ -61,7 +66,7 @@ public class MemberService {
 
 	// 중복 회원 체크하기
 	private void validateExistingEmail(String email) {
-		if(memberRepository.existsByEmail(email)) {
+		if (memberRepository.existsByEmail(email)) {
 			throw CustomException.from(DUPLICATE_MEMBER_EMAIL);
 		}
 	}
@@ -75,4 +80,18 @@ public class MemberService {
 		// 같은 accessToken으로 다시 로그인하지 못하도록 블랙리스트에 저장
 		logoutService.save(new LogoutToken(accessToken));
 	}
+
+	// 이메일 중복 체크 및 인증 이메일 보내기
+	public void validateDuplicatedEmailAndSendEmailVerification(
+		SendEmailVerificationRequest request
+	) {
+		String email = request.getEmail();
+
+		validateExistingEmail(email);
+
+		String verificationCode = signupVerificationCodeService.createVerificationCode();
+		signupVerificationCodeService.checkEmailCodeDuplicationAndSaveEmailCode(email, verificationCode);
+		emailService.sendVerificationCodeEmail(email, verificationCode);
+	}
 }
+
