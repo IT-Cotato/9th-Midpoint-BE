@@ -17,7 +17,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import middle_point_search.backend.common.baseEntity.BaseEntity;
-import middle_point_search.backend.domains.memberRoom.MemberRoom;
+import middle_point_search.backend.domains.memberRoom.domain.MemberRoom;
 import middle_point_search.backend.domains.place.domain.Place;
 
 @Entity

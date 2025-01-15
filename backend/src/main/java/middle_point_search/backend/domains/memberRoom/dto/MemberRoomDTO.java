@@ -1,4 +1,4 @@
-package middle_point_search.backend.domains.memberRoom;
+package middle_point_search.backend.domains.memberRoom.dto;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;

@@ -1,4 +1,4 @@
-package middle_point_search.backend.domains.memberRoom;
+package middle_point_search.backend.domains.memberRoom.domain;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

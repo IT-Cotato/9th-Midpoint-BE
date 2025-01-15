@@ -1,4 +1,4 @@
-package middle_point_search.backend.domains.memberRoom;
+package middle_point_search.backend.domains.memberRoom.controller;
 
 import java.util.List;
 
@@ -19,8 +19,9 @@ import middle_point_search.backend.common.dto.DataResponse;
 import middle_point_search.backend.common.dto.ErrorResponse;
 import middle_point_search.backend.common.util.MemberLoader;
 import middle_point_search.backend.domains.member.domain.Member;
-import middle_point_search.backend.domains.memberRoom.MemberRoomDTO.MemberRoomExistsResponse;
-import middle_point_search.backend.domains.memberRoom.MemberRoomDTO.RoomsByMemberIdFindResponse;
+import middle_point_search.backend.domains.memberRoom.dto.MemberRoomDTO.MemberRoomExistsResponse;
+import middle_point_search.backend.domains.memberRoom.dto.MemberRoomDTO.RoomsByMemberIdFindResponse;
+import middle_point_search.backend.domains.memberRoom.service.MemberRoomService;
 
 @Tag(name = "MEMBER_ROOM API", description = "회원방에 대한 API입니다.")
 @RestController

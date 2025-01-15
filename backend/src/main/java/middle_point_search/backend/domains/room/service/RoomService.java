@@ -11,8 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.exception.CustomException;
-import middle_point_search.backend.domains.memberRoom.MemberRoomRepository;
-import middle_point_search.backend.domains.memberRoom.MemberRoomValidateService;
+import middle_point_search.backend.domains.memberRoom.repository.MemberRoomRepository;
+import middle_point_search.backend.domains.memberRoom.service.MemberRoomValidateService;
 import middle_point_search.backend.domains.room.domain.Room;
 import middle_point_search.backend.domains.room.dto.RoomDTO.FindRoomDetailResponse;
 import middle_point_search.backend.domains.room.dto.RoomDTO.RoomCreateRequest;

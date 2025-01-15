@@ -12,7 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import middle_point_search.backend.common.exception.CustomException;
 import middle_point_search.backend.domains.google.service.GoogleService;
 import middle_point_search.backend.domains.member.domain.Member;
-import middle_point_search.backend.domains.memberRoom.MemberRoomValidateService;
+import middle_point_search.backend.domains.memberRoom.service.MemberRoomValidateService;
 import middle_point_search.backend.domains.place.domain.Place;
 import middle_point_search.backend.domains.place.dto.request.SavePlaceRequest;
 import middle_point_search.backend.domains.place.dto.request.UpdatePlaceRequest;

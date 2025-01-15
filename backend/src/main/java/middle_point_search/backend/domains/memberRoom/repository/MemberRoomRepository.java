@@ -1,8 +1,10 @@
-package middle_point_search.backend.domains.memberRoom;
+package middle_point_search.backend.domains.memberRoom.repository;
 
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import middle_point_search.backend.domains.memberRoom.domain.MemberRoom;
 
 public interface MemberRoomRepository extends JpaRepository<MemberRoom, Long> {
 

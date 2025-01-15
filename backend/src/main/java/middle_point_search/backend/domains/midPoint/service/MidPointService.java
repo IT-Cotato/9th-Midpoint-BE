@@ -12,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.exception.CustomException;
 import middle_point_search.backend.domains.google.dto.DistanceMatrixResponse;
 import middle_point_search.backend.domains.google.service.GoogleService;
-import middle_point_search.backend.domains.memberRoom.MemberRoomValidateService;
+import middle_point_search.backend.domains.memberRoom.service.MemberRoomValidateService;
 import middle_point_search.backend.domains.midPoint.dto.MidPointDTO.AddressDTO;
 import middle_point_search.backend.domains.midPoint.dto.MidPointDTO.MidPointsFindResponse;
 import middle_point_search.backend.domains.midPoint.dto.MidPointDTO.TravelTimesFindResponse;

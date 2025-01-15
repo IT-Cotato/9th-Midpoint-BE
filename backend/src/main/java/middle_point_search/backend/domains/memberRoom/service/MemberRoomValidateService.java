@@ -1,4 +1,4 @@
-package middle_point_search.backend.domains.memberRoom;
+package middle_point_search.backend.domains.memberRoom.service;
 
 import static middle_point_search.backend.common.exception.errorCode.UserErrorCode.*;
 
@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.exception.CustomException;
 import middle_point_search.backend.domains.member.domain.Member;
+import middle_point_search.backend.domains.memberRoom.repository.MemberRoomRepository;
 import middle_point_search.backend.domains.room.domain.Room;
 
 @Service
