@@ -31,5 +31,9 @@ public class MemberDTO {
 		private String roadNameAddress;
 		private Double addressLatitude;
 		private Double addressLongitude;
+
+		//인증코드
+		@NotBlank(message = "인증코드를 입력해주세요.")
+		private String code;
 	}
 }

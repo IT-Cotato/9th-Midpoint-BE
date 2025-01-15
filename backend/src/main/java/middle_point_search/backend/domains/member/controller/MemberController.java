@@ -42,7 +42,7 @@ public class MemberController {
 		description = """
 			회원가입한다.
 			
-			이름, 이메일, 비밀번호를 입력받아 회원가입한다.""",
+			이름, 이메일, 비밀번호, 주소, 인증 코드를 입력받아 회원가입한다.""",
 		responses = {
 			@ApiResponse(
 				responseCode = "200",
@@ -53,6 +53,16 @@ public class MemberController {
 				description = "이미 존재하는 이메일입니다.[M-001]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
+			@ApiResponse(
+				responseCode = "403",
+				description = "인증 코드가 일치하지 않습니다.[M-004]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
+				responseCode = "403",
+				description = "이메일 인증을 먼저 진행해주세요.[M-003]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			)
 		}
 	)
 	public ResponseEntity<DataResponse<Void>> memberCreate(@RequestBody @Valid MemberCreateRequest request) {
@@ -120,7 +130,11 @@ public class MemberController {
 	@PostMapping("/verification-request/signup")
 	@Operation(
 		summary = "회원가입 email 인증 요청",
-		description = "email 인증을 위한 이메일을 전송",
+		description = """
+			이메일을 입력받아 인증코드를 전송합니다.
+			이메일 인증 확인 API로 타당한 인증코드인지 확인합니다.
+			회원가입 시 인증코드를 함께 보냅니다.
+			""",
 		responses = {
 			@ApiResponse(
 				responseCode = "200",
