@@ -17,6 +17,8 @@ import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.member.domain.Role;
 import middle_point_search.backend.domains.member.dto.MemberDTO.MemberCreateRequest;
 import middle_point_search.backend.domains.member.dto.request.SendEmailVerificationRequest;
+import middle_point_search.backend.domains.member.dto.request.VerifyEmailVerificationCodeRequest;
+import middle_point_search.backend.domains.member.dto.response.VerifyEmailVerificationCodeResponse;
 import middle_point_search.backend.domains.member.repository.MemberRepository;
 import middle_point_search.backend.domains.refreshToken.RefreshTokenService;
 
@@ -92,6 +94,15 @@ public class MemberService {
 		String verificationCode = signupVerificationCodeService.createVerificationCode();
 		signupVerificationCodeService.checkEmailCodeDuplicationAndSaveEmailCode(email, verificationCode);
 		emailService.sendVerificationCodeEmail(email, verificationCode);
+	}
+
+	// 인증 코드 인증
+	public VerifyEmailVerificationCodeResponse verifyEmailVerificationCode(
+		VerifyEmailVerificationCodeRequest request
+	) {
+		boolean isVerified = signupVerificationCodeService.verifyEmailCode(request.getEmail(), request.getCode());
+
+		return new VerifyEmailVerificationCodeResponse(isVerified);
 	}
 }
 

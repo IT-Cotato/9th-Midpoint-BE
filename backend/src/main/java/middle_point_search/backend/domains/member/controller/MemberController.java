@@ -22,6 +22,8 @@ import middle_point_search.backend.common.security.filter.jwtFilter.JwtTokenProv
 import middle_point_search.backend.common.util.MemberLoader;
 import middle_point_search.backend.domains.member.dto.MemberDTO.MemberCreateRequest;
 import middle_point_search.backend.domains.member.dto.request.SendEmailVerificationRequest;
+import middle_point_search.backend.domains.member.dto.request.VerifyEmailVerificationCodeRequest;
+import middle_point_search.backend.domains.member.dto.response.VerifyEmailVerificationCodeResponse;
 import middle_point_search.backend.domains.member.service.MemberService;
 
 @Tag(name = "MEMBER API", description = "회원에 대한 API입니다.")
@@ -142,6 +144,30 @@ public class MemberController {
 		memberService.validateDuplicatedEmailAndSendEmailVerification(request);
 
 		return ResponseEntity.ok(DataResponse.ok());
+	}
+
+	@PostMapping("/verification/signup")
+	@Operation(
+		summary = "회원가입 email 인증",
+		description = "email 인증을 확인",
+		responses = {
+			@ApiResponse(
+				responseCode = "200",
+				description = "성공"
+			),
+			@ApiResponse(
+				responseCode = "403",
+				description = "이메일 인증을 먼저 진행해주세요.[M-003]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			)
+		}
+	)
+	public ResponseEntity<DataResponse<VerifyEmailVerificationCodeResponse>> verifyEmailVerificationCode(
+		@RequestBody @Valid VerifyEmailVerificationCodeRequest request
+	) {
+		VerifyEmailVerificationCodeResponse response = memberService.verifyEmailVerificationCode(request);
+
+		return ResponseEntity.ok(DataResponse.from(response));
 	}
 }
 

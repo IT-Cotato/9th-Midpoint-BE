@@ -1,11 +1,14 @@
 package middle_point_search.backend.domains.email.service;
 
+import static middle_point_search.backend.common.exception.errorCode.UserErrorCode.*;
+
 import java.util.Random;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+import middle_point_search.backend.common.exception.CustomException;
 import middle_point_search.backend.domains.email.domain.SignupVerificationCode;
 import middle_point_search.backend.domains.email.repository.SignupVerificationCodeRepository;
 
@@ -36,5 +39,16 @@ public class SignupVerificationCodeService {
 		Random random = new Random();
 
 		return String.format("%06d", random.nextInt(1000000)); // 000000부터 999999까지의 문자열 생성
+	}
+
+	// 인증 코드 확인
+	public boolean verifyEmailCode(String email, String code) throws CustomException {
+		SignupVerificationCode signupVerificationCode = signupVerificationCodeRepository.findById(email).orElse(null);
+
+		if (signupVerificationCode == null) {
+			throw CustomException.from(REQUIRE_VERIFICATION_REQUEST_FIRST);
+		}
+
+		return signupVerificationCode.getCode().equals(code);
 	}
 }
