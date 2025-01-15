@@ -39,7 +39,7 @@ public class MemberService {
 	@Transactional
 	public void createMember(MemberCreateRequest request) {
 		validateExistingEmail(request.getEmail());
-		validateEmailVerificationCode(request.getEmail(), request.getCode());
+		signupVerificationCodeService.validateEmailCodeAndDelete(request.getEmail(), request.getCode());
 
 		String pw = passwordEncoder.encode(request.getPw());
 
@@ -104,15 +104,6 @@ public class MemberService {
 		boolean isVerified = signupVerificationCodeService.verifyEmailCode(request.getEmail(), request.getCode());
 
 		return new VerifyEmailVerificationCodeResponse(isVerified);
-	}
-
-	// 인증 코드 인증 실패 시 에러 리턴
-	private void validateEmailVerificationCode(String email, String code) {
-		boolean isVerified = signupVerificationCodeService.verifyEmailCode(email, code);
-
-		if (!isVerified) {
-			throw CustomException.from(VERIFICATION_CODE_NOT_MATCH);
-		}
 	}
 
 	// 비밀번호 변경

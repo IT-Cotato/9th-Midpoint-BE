@@ -51,4 +51,14 @@ public class SignupVerificationCodeService {
 
 		return signupVerificationCode.getCode().equals(code);
 	}
+
+	// 인증 코드 판별 후 삭제
+	@Transactional
+	public void validateEmailCodeAndDelete(String email, String code) {
+		if (!verifyEmailCode(email, code)) {
+			throw CustomException.from(VERIFICATION_CODE_NOT_MATCH);
+		}
+
+		signupVerificationCodeRepository.deleteById(email);
+	}
 }
