@@ -13,13 +13,27 @@ public class EmailService {
 
 	private final EmailUtil emailUtil;
 
-	private static final String EMAIL_TITLE = "SyncSpot 회원가입 인증 코드입니다.";
+	private static final String EMAIL_VERIFICATION_TITLE = "SyncSpot 이메일 인증 코드입니다.";
+	private static final String EMAIL_NEW_PASSWORD_TITLE = "SyncSpot 임시 비밀번호입니다.";
 	private static final String EMAIL_VERIFICATION_NOTICE_TEXT = "인증 코드는 %s 입니다.";
 	private static final String EMAIL_NEW_PASSWORD_NOTICE_TEXT = "임시 비밀번호는 %s 입니다. 로그인 후 비밀번호를 변경해주세요.";
 
 	// 인증번호 이메일 보내기
 	public void sendVerificationCodeEmail(String email, String code) {
 		String text = String.format(EMAIL_VERIFICATION_NOTICE_TEXT, code);
-		emailUtil.sendEmail(email, EMAIL_TITLE, text);
+		emailUtil.sendEmail(email, EMAIL_VERIFICATION_TITLE, text);
+	}
+
+	// 비밀번호 재발급 인증번호 이메일 보내기
+	public void sendPasswordReissueVerificationCodeEmail(String email, String code) {
+		String text = String.format(EMAIL_VERIFICATION_NOTICE_TEXT, code);
+		emailUtil.sendEmail(email, EMAIL_VERIFICATION_TITLE, text);
+	}
+
+	// 새 비밀번호 이메일 보내기
+	public void sendNewPassword(String email, String newPassword) {
+		String text = String.format(EMAIL_NEW_PASSWORD_NOTICE_TEXT, newPassword);
+
+		emailUtil.sendEmail(email, EMAIL_NEW_PASSWORD_TITLE, text);
 	}
 }

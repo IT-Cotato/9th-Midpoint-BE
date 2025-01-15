@@ -2,6 +2,8 @@ package middle_point_search.backend.domains.member.service;
 
 import static middle_point_search.backend.common.exception.errorCode.UserErrorCode.*;
 
+import java.util.UUID;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import middle_point_search.backend.common.exception.CustomException;
 import middle_point_search.backend.domains.email.service.EmailService;
+import middle_point_search.backend.domains.email.service.PasswordReissueVerificationCodeService;
 import middle_point_search.backend.domains.email.service.SignupVerificationCodeService;
 import middle_point_search.backend.domains.logout.LogoutService;
 import middle_point_search.backend.domains.logout.LogoutToken;
@@ -17,6 +20,8 @@ import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.member.domain.Role;
 import middle_point_search.backend.domains.member.dto.MemberDTO.MemberCreateRequest;
 import middle_point_search.backend.domains.member.dto.request.SendEmailVerificationRequest;
+import middle_point_search.backend.domains.member.dto.request.SendNewPasswordRequest;
+import middle_point_search.backend.domains.member.dto.request.SendPasswordReissueVerificationRequest;
 import middle_point_search.backend.domains.member.dto.request.VerifyEmailVerificationCodeRequest;
 import middle_point_search.backend.domains.member.dto.response.VerifyEmailVerificationCodeResponse;
 import middle_point_search.backend.domains.member.repository.MemberRepository;
@@ -34,6 +39,7 @@ public class MemberService {
 	private final LogoutService logoutService;
 	private final SignupVerificationCodeService signupVerificationCodeService;
 	private final EmailService emailService;
+	private final PasswordReissueVerificationCodeService passwordReissueVerificationCodeService;
 
 	// 회원가입하기
 	@Transactional
@@ -125,5 +131,47 @@ public class MemberService {
 			throw CustomException.from(PASSWORD_NOT_MATCH);
 		}
 	}
+
+	// 비밀번호 재발급
+	@Transactional
+	public void validateCodeAndSendNewPassword(SendNewPasswordRequest request) {
+		String email = request.getEmail();
+
+		// 토큰 검증 및 삭제
+		passwordReissueVerificationCodeService.verifyEmailCode(email, request.getCode());
+
+		// 맞는 게 있다면 그 member 비밀번호 변경 및 전송
+		Member member = memberRepository.findByEmail(email)
+			.orElseThrow(() -> CustomException.from(MEMBER_NOT_FOUND));
+
+		// 비밀번호 변경
+		String newPassword = createNewPassword();
+		member.updatePassword(passwordEncoder.encode(newPassword));
+
+		// 새 비밀번호 이메일 전송
+		emailService.sendNewPassword(email, newPassword);
+	}
+
+	// 새 비밀번호 생성
+	private String createNewPassword() {
+		// UUID 생성
+		String uuid = UUID.randomUUID().toString().replace("-", "");
+
+		// 첫 6자 추출
+		return uuid.substring(0, 6);
+	}
+
+	// 비밀번호 재발급 인증 코드 보내기
+	public void sendPasswordReissueVerification(SendPasswordReissueVerificationRequest request) {
+		// 존재하는 회원이 아니면 에러
+		if (!memberRepository.existsByEmail(request.getEmail())) {
+			throw CustomException.from(MEMBER_NOT_FOUND);
+		}
+
+		String code = passwordReissueVerificationCodeService.createVerificationCode();
+		passwordReissueVerificationCodeService.checkEmailCodeDuplicationAndSaveEmailCode(request.getEmail(), code);
+		emailService.sendPasswordReissueVerificationCodeEmail(request.getEmail(), code);
+	}
+
 }
 
