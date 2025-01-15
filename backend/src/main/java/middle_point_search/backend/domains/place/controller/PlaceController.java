@@ -24,6 +24,7 @@ import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.place.dto.request.SavePlaceRequest;
 import middle_point_search.backend.domains.place.dto.request.UpdatePlaceRequest;
 import middle_point_search.backend.domains.place.dto.response.FindPlacesResponse;
+import middle_point_search.backend.domains.place.dto.response.SavePlaceResponse;
 import middle_point_search.backend.domains.place.service.PlaceService;
 
 @Tag(name = "PLACE API", description = "회원 장소에 대한 API입니다.")
@@ -69,15 +70,15 @@ public class PlaceController {
 			)
 		}
 	)
-	public ResponseEntity<DataResponse<Void>> placeSave(
+	public ResponseEntity<DataResponse<SavePlaceResponse>> placeSave(
 		@PathVariable("roomId") String roomId,
 		@RequestBody @Valid SavePlaceRequest request
 	) {
 		Member member = memberLoader.getMember();
 
-		placeService.savePlace(roomId, member, request);
+		SavePlaceResponse response = placeService.savePlace(roomId, member, request);
 
-		return ResponseEntity.ok(DataResponse.ok());
+		return ResponseEntity.ok(DataResponse.from(response));
 	}
 
 	@PatchMapping("/rooms/{roomId}")
@@ -170,7 +171,6 @@ public class PlaceController {
 
 		return ResponseEntity.ok(DataResponse.from(response));
 	}
-
 
 	@DeleteMapping("/{placeId}")
 	@Operation(

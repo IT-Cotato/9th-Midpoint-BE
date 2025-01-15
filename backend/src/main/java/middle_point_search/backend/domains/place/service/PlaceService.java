@@ -17,6 +17,7 @@ import middle_point_search.backend.domains.place.domain.Place;
 import middle_point_search.backend.domains.place.dto.request.SavePlaceRequest;
 import middle_point_search.backend.domains.place.dto.request.UpdatePlaceRequest;
 import middle_point_search.backend.domains.place.dto.response.FindPlacesResponse;
+import middle_point_search.backend.domains.place.dto.response.SavePlaceResponse;
 import middle_point_search.backend.domains.place.repository.PlaceRepository;
 import middle_point_search.backend.domains.room.domain.Room;
 import middle_point_search.backend.domains.room.service.RoomService;
@@ -58,7 +59,7 @@ public class PlaceService {
 
 	//장소 저장
 	@Transactional(rollbackFor = {CustomException.class})
-	public void savePlace(String roomId, Member member, SavePlaceRequest request) {
+	public SavePlaceResponse savePlace(String roomId, Member member, SavePlaceRequest request) {
 		// 회원이 방에 속해있는지 확인
 		memberRoomValidateService.validateAuthorizedMember(member.getId(), roomId);
 
@@ -68,7 +69,9 @@ public class PlaceService {
 		// 구글 placeId 조회
 		String googlePlaceId = googleService.findGooglePlaceId(request.getAddressLat(), request.getAddressLong());
 
-		placeRepository.save(Place.from(request, room, member, googlePlaceId));
+		Place place = placeRepository.save(Place.from(request, room, member, googlePlaceId));
+
+		return new SavePlaceResponse(place.getId());
 	}
 
 	//장소 업데이트
