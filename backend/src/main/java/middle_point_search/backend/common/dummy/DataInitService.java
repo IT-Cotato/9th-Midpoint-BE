@@ -9,9 +9,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import middle_point_search.backend.common.dummy.repository.JDBCRepository;
 import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.member.domain.Role;
-import middle_point_search.backend.domains.member.repository.MemberRepository;
 
 @Slf4j
 @Service
@@ -20,23 +20,32 @@ import middle_point_search.backend.domains.member.repository.MemberRepository;
 public class DataInitService {
 
 	private final PasswordEncoder passwordEncoder;
-	private final MemberRepository memberRepo;
-
+	private final JDBCRepository JDBCRepository;
 
 	@Transactional
 	public void initializeData() {
 		log.info("DataInitService.initializeData ======================");
+
+		// 시간 재기 추후 삭제
+		long startTime = System.currentTimeMillis();
+
+		String password = passwordEncoder.encode("1234");
 
 		// Members 생성
 		List<Member> members = new ArrayList<>();
 		for (int i = 1; i < 500000; i++) {
 			Member member = Member.createWithoutAddress(
 				"user" + i + "@test.com",
-				passwordEncoder.encode("1234"),
+				password,
 				"user" + i,
 				Role.USER);
 			members.add(member);
 		}
-		memberRepo.saveAll(members);
+		JDBCRepository.saveAll(members);
+
+		// 시간 재기, 추후 삭제
+		long endTime = System.currentTimeMillis();
+		long duration = endTime - startTime;
+		log.info("Data initialization took " + duration + " milliseconds");
 	}
 }
