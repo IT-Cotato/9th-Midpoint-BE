@@ -13,7 +13,7 @@ import lombok.Setter;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor(access = PROTECTED)
-@RedisHash(value = "signupVerificationCode", timeToLive = 5 * 60)
+@RedisHash(value = "signupVerificationCode", timeToLive = 10 * 60)
 public class SignupVerificationCode {
 
 	@Id
