@@ -54,6 +54,9 @@ public enum UserErrorCode implements ErrorCode {
 
 	//이메일 관련
 	EMAIL_SEND_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "E-001", "이메일 전송에 실패하였습니다."),
+
+	// S3 관련
+	INVALID_FILE_EXTENSION(HttpStatus.BAD_REQUEST,"S-001" , "유효하지 않은 파일 확장자입니다."),
 	;
 
 	private final HttpStatus httpStatus;

@@ -41,6 +41,9 @@ public class Member extends BaseEntity {
 	@ColumnDefault("false")
 	private Boolean existAddress;
 
+	@Column(nullable = true)
+	private String profileImagePath;
+
 	//주소
 	private String siDo;
 	private String siGunGu;
@@ -118,5 +121,10 @@ public class Member extends BaseEntity {
 		this.roadNameAddress = roadNameAddress;
 		this.addressLatitude = addressLatitude;
 		this.addressLongitude = addressLongitude;
+	}
+
+	// 프로필 이미지 path 변경
+	public void updateProfileImagePath(String profileImagePath) {
+		this.profileImagePath = profileImagePath;
 	}
 }
