@@ -27,10 +27,14 @@ import middle_point_search.backend.domains.member.dto.request.VerifyEmailVerific
 import middle_point_search.backend.domains.member.dto.response.FindProfileImageUrlResponse;
 import middle_point_search.backend.domains.member.dto.response.VerifyEmailVerificationCodeResponse;
 import middle_point_search.backend.domains.member.repository.MemberRepository;
+import middle_point_search.backend.domains.memberRoom.repository.MemberRoomRepository;
+import middle_point_search.backend.domains.place.repository.PlaceRepository;
+import middle_point_search.backend.domains.placeVoteRoom.repository.PlaceVoteCandidateMemberRepository;
 import middle_point_search.backend.domains.refreshToken.RefreshTokenService;
 import middle_point_search.backend.domains.s3.S3Service;
 import middle_point_search.backend.domains.s3.dto.response.CreatePreSignedUrlResponse;
 import middle_point_search.backend.domains.s3.model.PreSignedUrlPrefix;
+import middle_point_search.backend.domains.timeVoteRoom.repository.TimeVoteRepository;
 
 @Slf4j
 @Service
@@ -46,6 +50,10 @@ public class MemberService {
 	private final EmailService emailService;
 	private final PasswordReissueVerificationCodeService passwordReissueVerificationCodeService;
 	private final S3Service s3Service;
+	private final MemberRoomRepository memberRoomRepository;
+	private final PlaceRepository placeRepository;
+	private final PlaceVoteCandidateMemberRepository placeVoteCandidateMemberRepository;
+	private final TimeVoteRepository timeVoteRepository;
 
 	// 회원가입하기
 	@Transactional
@@ -239,6 +247,18 @@ public class MemberService {
 
 		s3Service.deleteFile(member.getProfileImagePath());
 		member.updateProfileImagePath(null);
+	}
+
+	@Transactional
+	public void deleteMember(Long memberId, String accessToken) {
+		memberRoomRepository.deleteAllByMemberId(memberId);
+		placeVoteCandidateMemberRepository.deleteAllByMemberId(memberId);
+		timeVoteRepository.deleteAllByMemberId(memberId);
+		placeRepository.deleteAllByMemberId(memberId);
+		memberRepository.deleteById(memberId);
+
+		// 같은 accessToken 및 refreshToken으로 접속 못하도록 로그아웃
+		logoutMember(memberId, accessToken);
 	}
 }
 

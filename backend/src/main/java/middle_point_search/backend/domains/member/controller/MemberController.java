@@ -24,6 +24,7 @@ import middle_point_search.backend.common.dto.ErrorResponse;
 import middle_point_search.backend.common.security.filter.jwtFilter.JwtTokenProvider;
 import middle_point_search.backend.common.util.MemberLoader;
 import middle_point_search.backend.domains.member.dto.MemberDTO.MemberCreateRequest;
+import middle_point_search.backend.domains.member.dto.request.DeleteMemberRequest;
 import middle_point_search.backend.domains.member.dto.request.SendEmailVerificationRequest;
 import middle_point_search.backend.domains.member.dto.request.SendNewPasswordRequest;
 import middle_point_search.backend.domains.member.dto.request.SendPasswordReissueVerificationRequest;
@@ -429,6 +430,39 @@ public class MemberController {
 		Long memberId = memberLoader.getMemberId();
 
 		memberService.deleteProfileImage(memberId);
+
+		return ResponseEntity.ok(DataResponse.ok());
+	}
+
+	@DeleteMapping("/delete")
+	@Operation(
+		summary = "회원 탈퇴",
+		description = """
+			회원 탈퇴
+			회원 탈퇴를 진행합니다.""",
+		responses = {
+			@ApiResponse(
+				responseCode = "200",
+				description = "성공"
+			),
+			@ApiResponse(
+				responseCode = "401",
+				description = "인증에 실패하였습니다.[C-101]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
+				responseCode = "402",
+				description = "Access Token을 재발급해야합니다.[A-004]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			)
+		}
+	)
+	public ResponseEntity<DataResponse<Void>> deleteMember(
+		@RequestBody @Valid DeleteMemberRequest request
+	) {
+		Long memberId = memberLoader.getMemberId();
+
+		memberService.deleteMember(memberId, request.accessToken());
 
 		return ResponseEntity.ok(DataResponse.ok());
 	}

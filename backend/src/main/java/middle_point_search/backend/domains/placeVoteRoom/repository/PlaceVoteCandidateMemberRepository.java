@@ -16,4 +16,6 @@ public interface PlaceVoteCandidateMemberRepository extends JpaRepository<PlaceV
 		Member member);
 
 	void deleteByPlaceVoteCandidate_PlaceVoteRoomAndMember(PlaceVoteRoom placeVoteRoom, Member member);
+
+	void deleteAllByMemberId(Long memberId);
 }
