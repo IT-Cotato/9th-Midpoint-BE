@@ -2,6 +2,7 @@ package middle_point_search.backend.domains.member.controller;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -398,6 +399,38 @@ public class MemberController {
 		FindProfileImageUrlResponse response = memberService.findProfileImageUrl(memberId);
 
 		return ResponseEntity.ok(DataResponse.from(response));
+	}
+
+	// 프로필 삭제
+	@DeleteMapping("/profile")
+	@Operation(
+		summary = "프로필 삭제",
+		description = """
+			프로필 삭제
+			프로필 이미지를 삭제합니다.""",
+		responses = {
+			@ApiResponse(
+				responseCode = "200",
+				description = "성공"
+			),
+			@ApiResponse(
+				responseCode = "401",
+				description = "인증에 실패하였습니다.[C-101]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
+				responseCode = "402",
+				description = "Access Token을 재발급해야합니다.[A-004]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			)
+		}
+	)
+	public ResponseEntity<DataResponse<Void>> deleteProfileImage() {
+		Long memberId = memberLoader.getMemberId();
+
+		memberService.deleteProfileImage(memberId);
+
+		return ResponseEntity.ok(DataResponse.ok());
 	}
 }
 

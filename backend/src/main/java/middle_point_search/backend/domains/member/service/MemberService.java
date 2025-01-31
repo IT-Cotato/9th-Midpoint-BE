@@ -225,5 +225,20 @@ public class MemberService {
 			return new FindProfileImageUrlResponse(true, s3Service.getUrl(member.getProfileImagePath()));
 		}
 	}
+
+	// 회원 프로필 이미지 삭제
+	@Transactional
+	public void deleteProfileImage(Long memberId) {
+		Member member = memberRepository.findById(memberId)
+			.orElseThrow(() -> CustomException.from(MEMBER_NOT_FOUND));
+
+		// path가 null이면 return
+		if (member.getProfileImagePath() == null) {
+			return;
+		}
+
+		s3Service.deleteFile(member.getProfileImagePath());
+		member.updateProfileImagePath(null);
+	}
 }
 
