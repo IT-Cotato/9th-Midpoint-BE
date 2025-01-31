@@ -22,6 +22,7 @@ import middle_point_search.backend.domains.member.dto.MemberDTO.MemberCreateRequ
 import middle_point_search.backend.domains.member.dto.request.SendEmailVerificationRequest;
 import middle_point_search.backend.domains.member.dto.request.SendNewPasswordRequest;
 import middle_point_search.backend.domains.member.dto.request.SendPasswordReissueVerificationRequest;
+import middle_point_search.backend.domains.member.dto.request.UpdateMemberInfoRequest;
 import middle_point_search.backend.domains.member.dto.request.VerifyEmailVerificationCodeRequest;
 import middle_point_search.backend.domains.member.dto.response.VerifyEmailVerificationCodeResponse;
 import middle_point_search.backend.domains.member.repository.MemberRepository;
@@ -173,5 +174,19 @@ public class MemberService {
 		emailService.sendPasswordReissueVerificationCodeEmail(request.getEmail(), code);
 	}
 
+	// 회원 정보(닉네임, 주소) 수정
+	@Transactional
+	public void updateMemberInfo(Long memberId, UpdateMemberInfoRequest request) {
+		Member member = memberRepository.findById(memberId)
+			.orElseThrow(() -> CustomException.from(MEMBER_NOT_FOUND));
+
+		member.updateName(request.name());
+		member.updateAddress(
+			request.siDo(),
+			request.siGunGu(),
+			request.roadNameAddress(),
+			request.addressLatitude(),
+			request.addressLongitude());
+	}
 }
 

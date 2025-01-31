@@ -99,4 +99,24 @@ public class Member extends BaseEntity {
 		this.pw = encodedPassword;
 
 	}
+
+	// 이름 변경
+	public void updateName(String name) {
+		this.name = name;
+	}
+
+	// 주소 변경
+	public void updateAddress(
+		String siDo,
+		String siGunGu,
+		String roadNameAddress,
+		Double addressLatitude,
+		Double addressLongitude
+	) {
+		this.siDo = siDo;
+		this.siGunGu = siGunGu;
+		this.roadNameAddress = roadNameAddress;
+		this.addressLatitude = addressLatitude;
+		this.addressLongitude = addressLongitude;
+	}
 }

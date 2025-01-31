@@ -25,6 +25,7 @@ import middle_point_search.backend.domains.member.dto.MemberDTO.MemberCreateRequ
 import middle_point_search.backend.domains.member.dto.request.SendEmailVerificationRequest;
 import middle_point_search.backend.domains.member.dto.request.SendNewPasswordRequest;
 import middle_point_search.backend.domains.member.dto.request.SendPasswordReissueVerificationRequest;
+import middle_point_search.backend.domains.member.dto.request.UpdateMemberInfoRequest;
 import middle_point_search.backend.domains.member.dto.request.UpdatePasswordRequest;
 import middle_point_search.backend.domains.member.dto.request.VerifyEmailVerificationCodeRequest;
 import middle_point_search.backend.domains.member.dto.response.VerifyEmailVerificationCodeResponse;
@@ -286,6 +287,37 @@ public class MemberController {
 		@RequestBody @Valid SendNewPasswordRequest request
 	) {
 		memberService.validateCodeAndSendNewPassword(request);
+
+		return ResponseEntity.ok(DataResponse.ok());
+	}
+
+	@PatchMapping("/info")
+	@Operation(
+		summary = "회원정보(닉네임, 주소) 수정",
+		description = "회원정보(닉네임, 주소) 수정",
+		responses = {
+			@ApiResponse(
+				responseCode = "200",
+				description = "성공"
+			),
+			@ApiResponse(
+				responseCode = "401",
+				description = "인증에 실패하였습니다.[C-101]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
+				responseCode = "402",
+				description = "Access Token을 재발급해야합니다.[A-004]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			)
+		}
+	)
+	public ResponseEntity<DataResponse<Void>> updateMemberInfo(
+		@Valid @RequestBody UpdateMemberInfoRequest request
+	) {
+		Long memberId = memberLoader.getMemberId();
+
+		memberService.updateMemberInfo(memberId, request);
 
 		return ResponseEntity.ok(DataResponse.ok());
 	}
