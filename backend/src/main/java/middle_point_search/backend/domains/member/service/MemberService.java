@@ -22,10 +22,15 @@ import middle_point_search.backend.domains.member.dto.MemberDTO.MemberCreateRequ
 import middle_point_search.backend.domains.member.dto.request.SendEmailVerificationRequest;
 import middle_point_search.backend.domains.member.dto.request.SendNewPasswordRequest;
 import middle_point_search.backend.domains.member.dto.request.SendPasswordReissueVerificationRequest;
+import middle_point_search.backend.domains.member.dto.request.UpdateMemberInfoRequest;
 import middle_point_search.backend.domains.member.dto.request.VerifyEmailVerificationCodeRequest;
+import middle_point_search.backend.domains.member.dto.response.FindProfileImageUrlResponse;
 import middle_point_search.backend.domains.member.dto.response.VerifyEmailVerificationCodeResponse;
 import middle_point_search.backend.domains.member.repository.MemberRepository;
 import middle_point_search.backend.domains.refreshToken.RefreshTokenService;
+import middle_point_search.backend.domains.s3.S3Service;
+import middle_point_search.backend.domains.s3.dto.response.CreatePreSignedUrlResponse;
+import middle_point_search.backend.domains.s3.model.PreSignedUrlPrefix;
 
 @Slf4j
 @Service
@@ -40,6 +45,7 @@ public class MemberService {
 	private final SignupVerificationCodeService signupVerificationCodeService;
 	private final EmailService emailService;
 	private final PasswordReissueVerificationCodeService passwordReissueVerificationCodeService;
+	private final S3Service s3Service;
 
 	// 회원가입하기
 	@Transactional
@@ -173,5 +179,66 @@ public class MemberService {
 		emailService.sendPasswordReissueVerificationCodeEmail(request.getEmail(), code);
 	}
 
+	// 회원 정보(닉네임, 주소) 수정
+	@Transactional
+	public void updateMemberInfo(Long memberId, UpdateMemberInfoRequest request) {
+		Member member = memberRepository.findById(memberId)
+			.orElseThrow(() -> CustomException.from(MEMBER_NOT_FOUND));
+
+		member.updateName(request.name());
+		member.updateAddress(
+			request.siDo(),
+			request.siGunGu(),
+			request.roadNameAddress(),
+			request.addressLatitude(),
+			request.addressLongitude());
+	}
+
+	// 회원 프로필 presigned path 생성
+	@Transactional
+	public CreatePreSignedUrlResponse createProfilePreSignedUrl(Long memberId, String filename) {
+		CreatePreSignedUrlResponse response = s3Service.createPreSignedUrl(PreSignedUrlPrefix.PROFILE, filename);
+
+		// DB에 path 저장
+		Member member = memberRepository.findById(memberId)
+			.orElseThrow(() -> CustomException.from(MEMBER_NOT_FOUND));
+		member.updateProfileImagePath(response.path());
+
+		return response;
+	}
+
+	// 회원 프로필 이미지 path 조회
+	@Transactional
+	public FindProfileImageUrlResponse findProfileImageUrl(Long memberId) {
+		Member member = memberRepository.findById(memberId)
+			.orElseThrow(() -> CustomException.from(MEMBER_NOT_FOUND));
+
+		// 1. path가 null이면 false
+		// 2. path가 유효하지 않으면 false
+		// 3. path가 유효하면 true 및 url 반환
+		if (member.getProfileImagePath() == null) {
+			return new FindProfileImageUrlResponse(false, null);
+		} else if (!s3Service.isFileExists(member.getProfileImagePath())) {
+			member.updateProfileImagePath(null);
+			return new FindProfileImageUrlResponse(false, null);
+		} else {
+			return new FindProfileImageUrlResponse(true, s3Service.getUrl(member.getProfileImagePath()));
+		}
+	}
+
+	// 회원 프로필 이미지 삭제
+	@Transactional
+	public void deleteProfileImage(Long memberId) {
+		Member member = memberRepository.findById(memberId)
+			.orElseThrow(() -> CustomException.from(MEMBER_NOT_FOUND));
+
+		// path가 null이면 return
+		if (member.getProfileImagePath() == null) {
+			return;
+		}
+
+		s3Service.deleteFile(member.getProfileImagePath());
+		member.updateProfileImagePath(null);
+	}
 }
 

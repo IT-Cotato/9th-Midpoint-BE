@@ -2,6 +2,8 @@ package middle_point_search.backend.domains.member.controller;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,10 +27,14 @@ import middle_point_search.backend.domains.member.dto.MemberDTO.MemberCreateRequ
 import middle_point_search.backend.domains.member.dto.request.SendEmailVerificationRequest;
 import middle_point_search.backend.domains.member.dto.request.SendNewPasswordRequest;
 import middle_point_search.backend.domains.member.dto.request.SendPasswordReissueVerificationRequest;
+import middle_point_search.backend.domains.member.dto.request.UpdateMemberInfoRequest;
 import middle_point_search.backend.domains.member.dto.request.UpdatePasswordRequest;
 import middle_point_search.backend.domains.member.dto.request.VerifyEmailVerificationCodeRequest;
+import middle_point_search.backend.domains.member.dto.response.FindProfileImageUrlResponse;
 import middle_point_search.backend.domains.member.dto.response.VerifyEmailVerificationCodeResponse;
 import middle_point_search.backend.domains.member.service.MemberService;
+import middle_point_search.backend.domains.s3.S3Service;
+import middle_point_search.backend.domains.s3.dto.response.CreatePreSignedUrlResponse;
 
 @Tag(name = "MEMBER API", description = "회원에 대한 API입니다.")
 @RestController
@@ -39,6 +45,7 @@ public class MemberController {
 	private final MemberService memberService;
 	private final MemberLoader memberLoader;
 	private final JwtTokenProvider jwtTokenProvider;
+	private final S3Service s3Service;
 
 	@PostMapping
 	@Operation(
@@ -286,6 +293,142 @@ public class MemberController {
 		@RequestBody @Valid SendNewPasswordRequest request
 	) {
 		memberService.validateCodeAndSendNewPassword(request);
+
+		return ResponseEntity.ok(DataResponse.ok());
+	}
+
+	@PatchMapping("/info")
+	@Operation(
+		summary = "회원정보(닉네임, 주소) 수정",
+		description = "회원정보(닉네임, 주소) 수정",
+		responses = {
+			@ApiResponse(
+				responseCode = "200",
+				description = "성공"
+			),
+			@ApiResponse(
+				responseCode = "401",
+				description = "인증에 실패하였습니다.[C-101]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
+				responseCode = "402",
+				description = "Access Token을 재발급해야합니다.[A-004]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			)
+		}
+	)
+	public ResponseEntity<DataResponse<Void>> updateMemberInfo(
+		@Valid @RequestBody UpdateMemberInfoRequest request
+	) {
+		Long memberId = memberLoader.getMemberId();
+
+		memberService.updateMemberInfo(memberId, request);
+
+		return ResponseEntity.ok(DataResponse.ok());
+	}
+
+	// 파일 업로드 전 사전 서명된 URL 생성
+	@GetMapping("/profile/presigned")
+	@Operation(
+		summary = "프로필 사전 서명된 URL 생성",
+		description = """
+			프로필 사전 서명된 URL을 생성합니다.
+			filename은 확장자를 포함해야 됩니다. (ex. test.jpg)
+			확장자는 jpg, jpeg, png만 가능합니다.
+			""",
+		responses = {
+			@ApiResponse(
+				responseCode = "200",
+				description = "성공"
+			),
+			@ApiResponse(
+				responseCode = "401",
+				description = "인증에 실패하였습니다.[C-101]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
+				responseCode = "402",
+				description = "Access Token을 재발급해야합니다.[A-004]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
+				responseCode = "400",
+				description = "유효하지 않은 파일 확장자입니다.[S-001]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			)
+		}
+	)
+	public ResponseEntity<DataResponse<CreatePreSignedUrlResponse>> createFilePreSignedUrl(
+		@RequestParam("filename") String filename
+	) {
+		Long memberId = memberLoader.getMemberId();
+
+		CreatePreSignedUrlResponse response = memberService.createProfilePreSignedUrl(memberId, filename);
+
+		return ResponseEntity.ok(DataResponse.from(response));
+	}
+
+	// 프로필 조회
+	@GetMapping("/profile")
+	@Operation(
+		summary = "프로필 조회",
+		description = """
+			프로필 조회
+			저장된 프로필 이미지가 없으면 isExist는 false, url은 null을 반환합니다.""",
+		responses = {
+			@ApiResponse(
+				responseCode = "200",
+				description = "성공"
+			),
+			@ApiResponse(
+				responseCode = "401",
+				description = "인증에 실패하였습니다.[C-101]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
+				responseCode = "402",
+				description = "Access Token을 재발급해야합니다.[A-004]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			)
+		}
+	)
+	public ResponseEntity<DataResponse<FindProfileImageUrlResponse>> findProfileImageUrl() {
+		Long memberId = memberLoader.getMemberId();
+
+		FindProfileImageUrlResponse response = memberService.findProfileImageUrl(memberId);
+
+		return ResponseEntity.ok(DataResponse.from(response));
+	}
+
+	// 프로필 삭제
+	@DeleteMapping("/profile")
+	@Operation(
+		summary = "프로필 삭제",
+		description = """
+			프로필 삭제
+			프로필 이미지를 삭제합니다.""",
+		responses = {
+			@ApiResponse(
+				responseCode = "200",
+				description = "성공"
+			),
+			@ApiResponse(
+				responseCode = "401",
+				description = "인증에 실패하였습니다.[C-101]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
+				responseCode = "402",
+				description = "Access Token을 재발급해야합니다.[A-004]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			)
+		}
+	)
+	public ResponseEntity<DataResponse<Void>> deleteProfileImage() {
+		Long memberId = memberLoader.getMemberId();
+
+		memberService.deleteProfileImage(memberId);
 
 		return ResponseEntity.ok(DataResponse.ok());
 	}
