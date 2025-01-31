@@ -39,7 +39,7 @@ public class GoogleService {
 		// 상태코드 체크
 		checkGoogleApiResponseStatus(response);
 
-		return  response;
+		return response;
 	}
 
 	// id들을 |로 구분하여 query문을 만들어줌
@@ -80,9 +80,24 @@ public class GoogleService {
 
 	// 상태코드 확인
 	public void checkGoogleApiResponseStatus(Object response) {
-		GoogleApiResponse googleApiResponse = (GoogleApiResponse) response;
+		GoogleApiResponse googleApiResponse = (GoogleApiResponse)response;
 		if (!googleApiResponse.getStatus().equals("OK")) {
 			throw CustomException.from(UserErrorCode.API_INTERNAL_SERVER_ERROR);
 		}
+	}
+
+	// 이동 경로 조회
+	public Object findDirections(String destPlaceId, String originPlaceId) {
+		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+		params.add("origin", "place_id:" + originPlaceId);
+		params.add("destination", "place_id:" + destPlaceId);
+		params.add("language", "ko");
+		params.add("mode", "transit");
+		params.add("region", "KR");
+
+		Object response = webClientUtil.getGoogle(googleProperties.getMap().getDirectionUrl(),
+			params, Object.class);
+
+		return response;
 	}
 }

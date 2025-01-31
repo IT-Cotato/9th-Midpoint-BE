@@ -137,4 +137,62 @@ public class MidPointController {
 			destLatitude,
 			destLongitude)));
 	}
+
+	@GetMapping("/direction")
+	@Operation(
+		summary = "중간 지점까지의 이동 경로 조회",
+		description = """
+			중간 지점까지의 이동 시간 조회하기.
+			
+			AccessToken 필요.""",
+		responses = {
+			@ApiResponse(
+				responseCode = "200",
+				description = "성공"
+			),
+			@ApiResponse(
+				responseCode = "400",
+				description = "잘못된 요청입니다.(외부 API 실패) [C-201]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
+				responseCode = "401",
+				description = "인증에 실패하였습니다.[C-101]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
+				responseCode = "402",
+				description = "Access Token을 재발급해야합니다.[A-004]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
+				responseCode = "403",
+				description = "해당 방의 회원이 아닙니다.[MR-003]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
+				responseCode = "404",
+				description = "방에 입력된 장소가 없습니다.[P-201]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
+				responseCode = "500",
+				description = "API 서버에 문제가 발생하였습니다.[S-001]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			)
+		}
+	)
+	public ResponseEntity<DataResponse<Object>> findDirections(
+		@RequestParam Double originLatitude,
+		@RequestParam Double originLongitude,
+		@RequestParam Double destLatitude,
+		@RequestParam Double destLongitude
+	) {
+
+		return ResponseEntity.ok(DataResponse.from(midPointService.findDirections(
+			originLatitude,
+			originLongitude,
+			destLatitude,
+			destLongitude)));
+	}
 }

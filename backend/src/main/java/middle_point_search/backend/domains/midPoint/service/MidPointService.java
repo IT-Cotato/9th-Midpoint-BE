@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import middle_point_search.backend.common.exception.CustomException;
 import middle_point_search.backend.domains.google.dto.DistanceMatrixResponse;
 import middle_point_search.backend.domains.google.service.GoogleService;
@@ -20,6 +21,7 @@ import middle_point_search.backend.domains.midPoint.util.MidPointUtil;
 import middle_point_search.backend.domains.place.domain.Place;
 import middle_point_search.backend.domains.place.repository.PlaceRepository;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -101,5 +103,21 @@ public class MidPointService {
 				);
 			})
 			.toList(); // 불변 리스트 생성
+	}
+
+	// 방 장소들의 중간지점까지의 이동경로를 조회하는 메서드
+	public Object findDirections(
+		Double originLatitude,
+		Double originLongitude,
+		Double destLatitude,
+		Double destLongitude
+	) {
+
+		// 출발지, 목적지 placeId 조회
+		String originPlaceId = googleService.findGooglePlaceId(originLatitude, originLongitude);
+		String destinationPlaceId = googleService.findGooglePlaceId(destLatitude, destLongitude);
+
+		// Google API 호출 및 결과 처리
+		return googleService.findDirections(destinationPlaceId, originPlaceId);
 	}
 }

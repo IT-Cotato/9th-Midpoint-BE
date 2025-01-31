@@ -23,5 +23,6 @@ public class GoogleProperties {
 		private String origin;
 		private String destination;
 		private String placeIdUrl;
+		private String directionUrl;
 	}
 }
