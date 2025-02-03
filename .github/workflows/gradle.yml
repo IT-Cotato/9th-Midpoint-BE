@@ -19,10 +19,12 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
+    # ✅ 공통 application-common.properties 생성
     - run: |
         touch ./backend/src/main/resources/application-common.properties
         echo "${{ secrets.COMMON_PROPERTIES }}" > ./backend/src/main/resources/application-common.properties
 
+    # ✅ 환경별 application-main.properties 또는 application-dev.properties 설정
     - run: |
         if [[ "${{ github.ref }}" == "refs/heads/master" ]]; then
           touch ./backend/src/main/resources/application-main.properties
@@ -33,7 +35,7 @@ jobs:
         fi
 
     - name: Setup Gradle
-      uses: gradle/actions/setup-gradle@v3.1.0
+      uses: gradle/actions/setup-gradle@v3
 
     - name: Set Gradle Wrapper executable permission
       run: chmod +x ./backend/gradlew
@@ -60,7 +62,6 @@ jobs:
 
     - name: Deploy to EC2
       run: |
-        # ✅ 환경에 맞는 EC2 키 및 호스트 설정
         if [[ "${{ github.ref }}" == "refs/heads/master" ]]; then
           echo "${{ secrets.MAIN_EC2_PEM }}" > sync_spot.pem
           scp_host="${{ secrets.MAIN_EC2_HOST }}"
@@ -71,30 +72,28 @@ jobs:
           profile="common,dev"
         fi
 
-        # ✅ SSH 키 권한 설정
         chmod 600 sync_spot.pem
 
         # ✅ SSH 연결 테스트 (연결 실패 시 종료)
         echo "Testing SSH connection to $scp_host..."
         ssh -i sync_spot.pem -o StrictHostKeyChecking=no -o ConnectTimeout=10 ${{ secrets.EC2_USERNAME }}@$scp_host "echo 'SSH connection successful.'" || { echo "SSH connection failed"; exit 255; }
 
-        # ✅ 기존 실행 중인 프로세스를 안전하게 종료 (SSH 세션 종료 방지)
+        # ✅ 기존 실행 중인 프로세스를 안전하게 종료
         echo "Stopping existing Java process on EC2..."
-        ssh -i sync_spot.pem -o StrictHostKeyChecking=no -o ServerAliveInterval=60 ${{ secrets.EC2_USERNAME }}@$scp_host << EOF
-          echo 'Stopping existing application...';
-          pgrep java && pkill -9 -f 'java' || echo 'No Java process found.';
-          sleep 2
-EOF
+        ssh -i sync_spot.pem -o StrictHostKeyChecking=no -o ServerAliveInterval=60 ${{ secrets.EC2_USERNAME }}@$scp_host "
+          if pgrep java; then pkill -9 -f 'java'; echo 'Process stopped'; else echo 'No Java process found'; fi
+        "
 
-        # ✅ 빌드된 JAR 파일 배포 (속도 제한 제거 및 Keep-Alive 설정 추가)
+        # ✅ 빌드된 JAR 파일 배포
+        echo "Uploading new application..."
         scp -i sync_spot.pem -o StrictHostKeyChecking=no -o ServerAliveInterval=60 ./backend/build/libs/backend-0.0.1-SNAPSHOT.jar \
           ${{ secrets.EC2_USERNAME }}@$scp_host:/home/${{ secrets.EC2_USERNAME }}/backend-0.0.1-SNAPSHOT.jar
 
-        # ✅ 새 애플리케이션 실행 (SSH 세션 종료 보장)
-        ssh -i sync_spot.pem -o StrictHostKeyChecking=no -o ServerAliveInterval=60 ${{ secrets.EC2_USERNAME }}@$scp_host << EOF
-          echo 'Starting new application...';
+        # ✅ 새 애플리케이션 실행 (SSH 세션 분리로 안정성 확보)
+        echo "Starting new application..."
+        ssh -i sync_spot.pem -o StrictHostKeyChecking=no -o ServerAliveInterval=60 ${{ secrets.EC2_USERNAME }}@$scp_host "
           nohup java -jar /home/${{ secrets.EC2_USERNAME }}/backend-0.0.1-SNAPSHOT.jar --spring.profiles.active=$profile > /dev/null 2>&1 & disown
-EOF
+        "
 
         # ✅ SSH 키 파일 삭제
         rm -f sync_spot.pem
