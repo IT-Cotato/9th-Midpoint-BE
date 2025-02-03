@@ -4,6 +4,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,6 +26,7 @@ import middle_point_search.backend.common.security.filter.jwtFilter.JwtTokenProv
 import middle_point_search.backend.common.util.MemberLoader;
 import middle_point_search.backend.domains.member.dto.MemberDTO.MemberCreateRequest;
 import middle_point_search.backend.domains.member.dto.request.DeleteMemberRequest;
+import middle_point_search.backend.domains.member.dto.request.LoginMemberRequest;
 import middle_point_search.backend.domains.member.dto.request.SendEmailVerificationRequest;
 import middle_point_search.backend.domains.member.dto.request.SendNewPasswordRequest;
 import middle_point_search.backend.domains.member.dto.request.SendPasswordReissueVerificationRequest;
@@ -34,7 +36,6 @@ import middle_point_search.backend.domains.member.dto.request.VerifyEmailVerific
 import middle_point_search.backend.domains.member.dto.response.FindProfileImageUrlResponse;
 import middle_point_search.backend.domains.member.dto.response.VerifyEmailVerificationCodeResponse;
 import middle_point_search.backend.domains.member.service.MemberService;
-import middle_point_search.backend.domains.s3.S3Service;
 import middle_point_search.backend.domains.s3.dto.response.CreatePreSignedUrlResponse;
 
 @Tag(name = "MEMBER API", description = "회원에 대한 API입니다.")
@@ -46,7 +47,6 @@ public class MemberController {
 	private final MemberService memberService;
 	private final MemberLoader memberLoader;
 	private final JwtTokenProvider jwtTokenProvider;
-	private final S3Service s3Service;
 
 	@PostMapping
 	@Operation(
@@ -132,8 +132,7 @@ public class MemberController {
 		}
 	)
 	public ResponseEntity<DataResponse<Void>> loginMember(
-		@RequestParam("email") String email,
-		@RequestParam("pw") String pw
+		@ModelAttribute LoginMemberRequest request
 	) {
 		// 이 메소드는 실제로 실행되지 않습니다. 문서용도로만 사용됩니다.
 		return ResponseEntity.ok(DataResponse.ok());
