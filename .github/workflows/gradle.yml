@@ -84,12 +84,13 @@ jobs:
           if pgrep java; then pkill -9 -f 'java'; echo 'Process stopped'; else echo 'No Java process found'; fi
         "
 
-        # ✅ 빌드된 JAR 파일 배포
+        # ✅ 빌드된 JAR 파일 배포 (디버깅 모드 추가)
         echo "Uploading new application..."
-        scp -i sync_spot.pem -o StrictHostKeyChecking=no -o ServerAliveInterval=60 ./backend/build/libs/backend-0.0.1-SNAPSHOT.jar \
+        scp -v -i sync_spot.pem -o StrictHostKeyChecking=no -o ConnectTimeout=30 -o ServerAliveInterval=60 \
+          ./backend/build/libs/backend-0.0.1-SNAPSHOT.jar \
           ${{ secrets.EC2_USERNAME }}@$scp_host:/home/${{ secrets.EC2_USERNAME }}/backend-0.0.1-SNAPSHOT.jar
 
-        # ✅ 새 애플리케이션 실행 (SSH 세션 분리로 안정성 확보)
+        # ✅ 새 애플리케이션 실행 (SSH 세션 안정성 확보)
         echo "Starting new application..."
         ssh -i sync_spot.pem -o StrictHostKeyChecking=no -o ServerAliveInterval=60 ${{ secrets.EC2_USERNAME }}@$scp_host "
           nohup java -jar /home/${{ secrets.EC2_USERNAME }}/backend-0.0.1-SNAPSHOT.jar --spring.profiles.active=$profile > /dev/null 2>&1 & disown
