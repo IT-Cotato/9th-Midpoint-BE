@@ -2,7 +2,7 @@ name: Java CI with Gradle
 
 on:
   push:
-    branches: [ "develop" ]
+    branches: [ "master" ]
     
 jobs:
   build:
@@ -24,9 +24,9 @@ jobs:
     - run: echo "${{ secrets.PROPERTIES }}" > ./backend/src/main/resources/application.properties
     - run: cat ./backend/src/main/resources/application.properties
 
-    - run: touch ./backend/src/main/resources/application-dev.properties
-    - run: echo "${{ secrets.DEV_PROPERTIES }}" > ./backend/src/main/resources/application-dev.properties
-    - run: cat ./backend/src/main/resources/application-dev.properties
+    - run: touch ./backend/src/main/resources/application-main.properties
+    - run: echo "${{ secrets.MAIN_PROPERTIES }}" > ./backend/src/main/resources/application-main.properties
+    - run: cat ./backend/src/main/resources/application-main.properties
 
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
@@ -56,8 +56,8 @@ jobs:
 
     - name: Deploy to EC2
       run: |
-        echo "${{ secrets.EC2_SSH_KEY }}" > sync_spot_dev.pem
+        echo "${{ secrets.MAIN_EC2_PEM }}" > sync_spot_dev.pem
         chmod 600 sync_spot_dev.pem
-        scp -i sync_spot_dev.pem -o StrictHostKeyChecking=no ./backend/build/libs/backend-0.0.1-SNAPSHOT.jar ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USERNAME }}/backend-0.0.1-SNAPSHOT.jar
-        ssh -i sync_spot_dev.pem -o StrictHostKeyChecking=no ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} "pgrep java | xargs kill -9; nohup java -jar /home/${{ secrets.EC2_USERNAME }}/backend-0.0.1-SNAPSHOT.jar &"
+        scp -i sync_spot_dev.pem -o StrictHostKeyChecking=no ./backend/build/libs/backend-0.0.1-SNAPSHOT.jar ${{ secrets.EC2_USERNAME }}@${{ secrets.MAIN_EC2_HOST }}:/home/${{ secrets.EC2_USERNAME }}/backend-0.0.1-SNAPSHOT.jar
+        ssh -i sync_spot_dev.pem -o StrictHostKeyChecking=no ${{ secrets.EC2_USERNAME }}@${{ secrets.MAIN_EC2_HOST }} "pgrep java | xargs kill -9; nohup java -jar /home/${{ secrets.EC2_USERNAME }}/backend-0.0.1-SNAPSHOT.jar &"
         rm -f sync_spot_dev.pem
