@@ -38,7 +38,7 @@ jobs:
       run: cd backend/ && ./gradlew build
 
     - name: Upload build artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4 # ✅ v4로 변경
       with:
         name: backend
         path: ./backend/build/libs/backend-0.0.1-SNAPSHOT.jar
@@ -49,7 +49,7 @@ jobs:
 
     steps:
     - name: Download build artifact
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4 # ✅ v4로 변경
       with:
         name: backend
         path: ./backend/build/libs/
