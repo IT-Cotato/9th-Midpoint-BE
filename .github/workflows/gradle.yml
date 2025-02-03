@@ -20,17 +20,13 @@ jobs:
 
     - uses: actions/checkout@v4
 
-    # ✅ 환경별 application.properties 파일 설정
-    - run: touch ./backend/src/main/resources/application.properties
+    # ✅ 공통 application-common.properties 생성
     - run: |
-        if [[ "${{ github.ref }}" == "refs/heads/master" ]]; then
-          echo "${{ secrets.MAIN_PROPERTIES }}" > ./backend/src/main/resources/application.properties
-        else
-          echo "${{ secrets.DEV_PROPERTIES }}" > ./backend/src/main/resources/application.properties
-        fi
-    - run: cat ./backend/src/main/resources/application.properties
+        touch ./backend/src/main/resources/application-common.properties
+        echo "${{ secrets.COMMON_PROPERTIES }}" > ./backend/src/main/resources/application-common.properties
+        cat ./backend/src/main/resources/application-common.properties
 
-    # ✅ 환경별 application 환경 설정 (main or dev)
+    # ✅ 환경별 application-main.properties 또는 application-dev.properties 설정
     - run: |
         if [[ "${{ github.ref }}" == "refs/heads/master" ]]; then
           touch ./backend/src/main/resources/application-main.properties
@@ -73,12 +69,18 @@ jobs:
         if [[ "${{ github.ref }}" == "refs/heads/master" ]]; then
           echo "${{ secrets.MAIN_EC2_PEM }}" > sync_spot.pem
           scp_host="${{ secrets.MAIN_EC2_HOST }}"
+          profile="common,main"
         else
           echo "${{ secrets.DEV_EC2_PEM }}" > sync_spot.pem
           scp_host="${{ secrets.DEV_EC2_HOST }}"
+          profile="common,dev"
         fi
 
         chmod 600 sync_spot.pem
         scp -i sync_spot.pem -o StrictHostKeyChecking=no ./backend/build/libs/backend-0.0.1-SNAPSHOT.jar ${{ secrets.EC2_USERNAME }}@$scp_host:/home/${{ secrets.EC2_USERNAME }}/backend-0.0.1-SNAPSHOT.jar
-        ssh -i sync_spot.pem -o StrictHostKeyChecking=no ${{ secrets.EC2_USERNAME }}@$scp_host "pgrep java | xargs kill -9; nohup java -jar /home/${{ secrets.EC2_USERNAME }}/backend-0.0.1-SNAPSHOT.jar &"
+
+        ssh -i sync_spot.pem -o StrictHostKeyChecking=no ${{ secrets.EC2_USERNAME }}@$scp_host "
+          pgrep java | xargs kill -9;
+          nohup java -jar /home/${{ secrets.EC2_USERNAME }}/backend-0.0.1-SNAPSHOT.jar --spring.profiles.active=$profile > /dev/null 2>&1 & disown"
+        
         rm -f sync_spot.pem
