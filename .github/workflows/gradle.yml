@@ -2,7 +2,7 @@ name: Java CI with Gradle
 
 on:
   push:
-    branches: [ "develop", "master" ] # ✅ develop과 master 브랜치 모두 트리거
+    branches: [ "develop", "master" ]
 
 jobs:
   build:
@@ -19,26 +19,21 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
-    # ✅ 공통 application-common.properties 생성
     - run: |
         touch ./backend/src/main/resources/application-common.properties
         echo "${{ secrets.COMMON_PROPERTIES }}" > ./backend/src/main/resources/application-common.properties
-        cat ./backend/src/main/resources/application-common.properties
 
-    # ✅ 환경별 application-main.properties 또는 application-dev.properties 설정
     - run: |
         if [[ "${{ github.ref }}" == "refs/heads/master" ]]; then
           touch ./backend/src/main/resources/application-main.properties
           echo "${{ secrets.MAIN_PROPERTIES }}" > ./backend/src/main/resources/application-main.properties
-          cat ./backend/src/main/resources/application-main.properties
         else
           touch ./backend/src/main/resources/application-dev.properties
           echo "${{ secrets.DEV_PROPERTIES }}" > ./backend/src/main/resources/application-dev.properties
-          cat ./backend/src/main/resources/application-dev.properties
         fi
 
     - name: Setup Gradle
-      uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
+      uses: gradle/actions/setup-gradle@v3.1.0
 
     - name: Set Gradle Wrapper executable permission
       run: chmod +x ./backend/gradlew
@@ -85,11 +80,11 @@ jobs:
 
         # ✅ 기존 실행 중인 프로세스를 안전하게 종료 (SSH 세션 종료 방지)
         echo "Stopping existing Java process on EC2..."
-        ssh -i sync_spot.pem -o StrictHostKeyChecking=no -o ServerAliveInterval=60 ${{ secrets.EC2_USERNAME }}@$scp_host "
+        ssh -i sync_spot.pem -o StrictHostKeyChecking=no -o ServerAliveInterval=60 ${{ secrets.EC2_USERNAME }}@$scp_host << EOF
           echo 'Stopping existing application...';
           pgrep java && pkill -9 -f 'java' || echo 'No Java process found.';
           sleep 2
-        "
+EOF
 
         # ✅ 빌드된 JAR 파일 배포 (속도 제한 제거 및 Keep-Alive 설정 추가)
         scp -i sync_spot.pem -o StrictHostKeyChecking=no -o ServerAliveInterval=60 ./backend/build/libs/backend-0.0.1-SNAPSHOT.jar \
