@@ -2,11 +2,10 @@ name: Java CI with Gradle
 
 on:
   push:
-    branches: [ "master" ]
-    
+    branches: [ "develop", "master" ] # ✅ develop과 master 브랜치 모두 트리거
+
 jobs:
   build:
-
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -20,13 +19,28 @@ jobs:
         distribution: 'temurin'
 
     - uses: actions/checkout@v4
+
+    # ✅ 환경별 application.properties 파일 설정
     - run: touch ./backend/src/main/resources/application.properties
-    - run: echo "${{ secrets.PROPERTIES }}" > ./backend/src/main/resources/application.properties
+    - run: |
+        if [[ "${{ github.ref }}" == "refs/heads/master" ]]; then
+          echo "${{ secrets.MAIN_PROPERTIES }}" > ./backend/src/main/resources/application.properties
+        else
+          echo "${{ secrets.DEV_PROPERTIES }}" > ./backend/src/main/resources/application.properties
+        fi
     - run: cat ./backend/src/main/resources/application.properties
 
-    - run: touch ./backend/src/main/resources/application-main.properties
-    - run: echo "${{ secrets.MAIN_PROPERTIES }}" > ./backend/src/main/resources/application-main.properties
-    - run: cat ./backend/src/main/resources/application-main.properties
+    # ✅ 환경별 application 환경 설정 (main or dev)
+    - run: |
+        if [[ "${{ github.ref }}" == "refs/heads/master" ]]; then
+          touch ./backend/src/main/resources/application-main.properties
+          echo "${{ secrets.MAIN_PROPERTIES }}" > ./backend/src/main/resources/application-main.properties
+          cat ./backend/src/main/resources/application-main.properties
+        else
+          touch ./backend/src/main/resources/application-dev.properties
+          echo "${{ secrets.DEV_PROPERTIES }}" > ./backend/src/main/resources/application-dev.properties
+          cat ./backend/src/main/resources/application-dev.properties
+        fi
 
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
@@ -38,7 +52,7 @@ jobs:
       run: cd backend/ && ./gradlew build
 
     - name: Upload build artifact
-      uses: actions/upload-artifact@v4 # ✅ v4로 변경
+      uses: actions/upload-artifact@v4
       with:
         name: backend
         path: ./backend/build/libs/backend-0.0.1-SNAPSHOT.jar
@@ -49,15 +63,22 @@ jobs:
 
     steps:
     - name: Download build artifact
-      uses: actions/download-artifact@v4 # ✅ v4로 변경
+      uses: actions/download-artifact@v4
       with:
         name: backend
         path: ./backend/build/libs/
 
     - name: Deploy to EC2
       run: |
-        echo "${{ secrets.MAIN_EC2_PEM }}" > sync_spot_dev.pem
-        chmod 600 sync_spot_dev.pem
-        scp -i sync_spot_dev.pem -o StrictHostKeyChecking=no ./backend/build/libs/backend-0.0.1-SNAPSHOT.jar ${{ secrets.EC2_USERNAME }}@${{ secrets.MAIN_EC2_HOST }}:/home/${{ secrets.EC2_USERNAME }}/backend-0.0.1-SNAPSHOT.jar
-        ssh -i sync_spot_dev.pem -o StrictHostKeyChecking=no ${{ secrets.EC2_USERNAME }}@${{ secrets.MAIN_EC2_HOST }} "pgrep java | xargs kill -9; nohup java -jar /home/${{ secrets.EC2_USERNAME }}/backend-0.0.1-SNAPSHOT.jar &"
-        rm -f sync_spot_dev.pem
+        if [[ "${{ github.ref }}" == "refs/heads/master" ]]; then
+          echo "${{ secrets.MAIN_EC2_PEM }}" > sync_spot.pem
+          scp_host="${{ secrets.MAIN_EC2_HOST }}"
+        else
+          echo "${{ secrets.DEV_EC2_PEM }}" > sync_spot.pem
+          scp_host="${{ secrets.DEV_EC2_HOST }}"
+        fi
+
+        chmod 600 sync_spot.pem
+        scp -i sync_spot.pem -o StrictHostKeyChecking=no ./backend/build/libs/backend-0.0.1-SNAPSHOT.jar ${{ secrets.EC2_USERNAME }}@$scp_host:/home/${{ secrets.EC2_USERNAME }}/backend-0.0.1-SNAPSHOT.jar
+        ssh -i sync_spot.pem -o StrictHostKeyChecking=no ${{ secrets.EC2_USERNAME }}@$scp_host "pgrep java | xargs kill -9; nohup java -jar /home/${{ secrets.EC2_USERNAME }}/backend-0.0.1-SNAPSHOT.jar &"
+        rm -f sync_spot.pem
