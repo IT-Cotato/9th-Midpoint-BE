@@ -23,9 +23,10 @@ import middle_point_search.backend.domains.timeVoteRoom.domain.TimeVoteRoom;
 import middle_point_search.backend.domains.timeVoteRoom.dto.TimeVoteDTO.TimeRange;
 import middle_point_search.backend.domains.timeVoteRoom.dto.TimeVoteDTO.TimeVoteDetail;
 import middle_point_search.backend.domains.timeVoteRoom.dto.TimeVoteDTO.TimeVotePerDate;
-import middle_point_search.backend.domains.timeVoteRoom.dto.TimeVoteDTO.TimeVoteRoomResultResponse;
+import middle_point_search.backend.domains.timeVoteRoom.dto.TimeVoteDTO.FindTimeVoteRoomResultResponse;
+import middle_point_search.backend.domains.timeVoteRoom.dto.TimeVoteDTO.UpdateVoteRequest;
 import middle_point_search.backend.domains.timeVoteRoom.dto.TimeVoteDTO.VoteRequest;
-import middle_point_search.backend.domains.timeVoteRoom.dto.TimeVoteDTO.VotedAndVoteItemsGetResponse;
+import middle_point_search.backend.domains.timeVoteRoom.dto.TimeVoteDTO.FindVotedAndVoteItemsResponse;
 import middle_point_search.backend.domains.timeVoteRoom.repository.TimeVoteRepository;
 
 @Service
@@ -70,7 +71,7 @@ public class TimeVoteService {
 	public void updateVote(
 		Member member,
 		String roomId,
-		VoteRequest request
+		UpdateVoteRequest request
 	) {
 		// 방에 대한 회원인지 확인
 		memberRoomValidateService.validateAuthorizedMember(member.getId(), roomId);
@@ -120,7 +121,7 @@ public class TimeVoteService {
 	}
 
 	// 시간 투표 현황 정보 조회
-	public TimeVoteRoomResultResponse findTimeVoteResult(Long memberId, String roomId) {
+	public FindTimeVoteRoomResultResponse findTimeVoteResult(Long memberId, String roomId) {
 		// 방에 대한 회원인지 확인
 		memberRoomValidateService.validateAuthorizedMember(memberId, roomId);
 
@@ -155,7 +156,7 @@ public class TimeVoteService {
 
 		List<TimeVote> distinctVotes = timeVoteRepository.findDistinctByTimeVoteRoom(timeVoteRoom);
 		int totalMemberNum = (int)distinctVotes.stream().map(TimeVote::getMember).distinct().count();
-		return TimeVoteRoomResultResponse.from(result, totalMemberNum);
+		return FindTimeVoteRoomResultResponse.from(result, totalMemberNum);
 	}
 
 	// 내 시간투표 가져오기
@@ -196,7 +197,7 @@ public class TimeVoteService {
 	}
 
 	// 투표 여부 및 투표 아이템 가져오기
-	public VotedAndVoteItemsGetResponse getVotedAndVoteItems(Member member, String roomId) {
+	public FindVotedAndVoteItemsResponse getVotedAndVoteItems(Member member, String roomId) {
 		// 방에 대한 회원인지 확인
 		memberRoomValidateService.validateAuthorizedMember(member.getId(), roomId);
 
@@ -213,7 +214,7 @@ public class TimeVoteService {
 		boolean otherVotesExistence = !otherVotes.isEmpty();
 		otherVotes = otherVotesExistence ? otherVotes : null;
 
-		return VotedAndVoteItemsGetResponse.from(myVoteExistence, myVotes, otherVotesExistence, otherVotes);
+		return FindVotedAndVoteItemsResponse.from(myVoteExistence, myVotes, otherVotesExistence, otherVotes);
 	}
 
 }
