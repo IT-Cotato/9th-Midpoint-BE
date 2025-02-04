@@ -49,7 +49,7 @@ public class MidPointDTO {
 
 	@Getter
 	@AllArgsConstructor(access = AccessLevel.PUBLIC)
-	public static class MidPointsFindResponse {
+	public static class FindMidPointsResponse {
 
 		private String name;
 		private String siDo;
@@ -58,8 +58,8 @@ public class MidPointDTO {
 		private Double addressLat;
 		private Double addressLong;
 
-		public static MidPointsFindResponse from(Market market) {
-			return new MidPointsFindResponse(
+		public static FindMidPointsResponse from(Market market) {
+			return new FindMidPointsResponse(
 				market.getName(),
 				market.getSiDo(),
 				market.getSiGunGu(),
@@ -72,7 +72,7 @@ public class MidPointDTO {
 
 	@Getter
 	@AllArgsConstructor
-	public static class TravelTimesFindResponse {
+	public static class FindTravelTimesResponse {
 		private List<Element> elements;
 
 		@Getter
@@ -120,8 +120,8 @@ public class MidPointDTO {
 			}
 		}
 
-		public static TravelTimesFindResponse from(List<Element> elements) {
-			return new TravelTimesFindResponse(elements);
+		public static FindTravelTimesResponse from(List<Element> elements) {
+			return new FindTravelTimesResponse(elements);
 		}
 	}
 }
