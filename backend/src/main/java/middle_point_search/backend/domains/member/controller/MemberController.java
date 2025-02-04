@@ -24,7 +24,7 @@ import middle_point_search.backend.common.dto.DataResponse;
 import middle_point_search.backend.common.dto.ErrorResponse;
 import middle_point_search.backend.common.security.filter.jwtFilter.JwtTokenProvider;
 import middle_point_search.backend.common.util.MemberLoader;
-import middle_point_search.backend.domains.member.dto.MemberDTO.MemberCreateRequest;
+import middle_point_search.backend.domains.member.dto.request.CreateMemberRequest;
 import middle_point_search.backend.domains.member.dto.request.DeleteMemberRequest;
 import middle_point_search.backend.domains.member.dto.request.LoginMemberRequest;
 import middle_point_search.backend.domains.member.dto.request.SendEmailVerificationRequest;
@@ -77,7 +77,7 @@ public class MemberController {
 			)
 		}
 	)
-	public ResponseEntity<DataResponse<Void>> memberCreate(@RequestBody @Valid MemberCreateRequest request) {
+	public ResponseEntity<DataResponse<Void>> createMember(@RequestBody @Valid CreateMemberRequest request) {
 		memberService.createMember(request);
 
 		return ResponseEntity.ok(DataResponse.ok());
@@ -107,7 +107,7 @@ public class MemberController {
 			),
 		}
 	)
-	public ResponseEntity<DataResponse<Void>> memberLogout(HttpServletRequest request) {
+	public ResponseEntity<DataResponse<Void>> logoutMember(HttpServletRequest request) {
 		String accessToken = jwtTokenProvider.extractAccessToken(request).orElse(null);
 		Long memberId = memberLoader.getMemberId();
 

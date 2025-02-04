@@ -116,6 +116,7 @@ public class Member extends BaseEntity {
 		Double addressLatitude,
 		Double addressLongitude
 	) {
+		this.existAddress = true;
 		this.siDo = siDo;
 		this.siGunGu = siGunGu;
 		this.roadNameAddress = roadNameAddress;

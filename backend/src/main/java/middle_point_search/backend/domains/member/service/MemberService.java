@@ -18,7 +18,7 @@ import middle_point_search.backend.domains.logout.LogoutService;
 import middle_point_search.backend.domains.logout.LogoutToken;
 import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.member.domain.Role;
-import middle_point_search.backend.domains.member.dto.MemberDTO.MemberCreateRequest;
+import middle_point_search.backend.domains.member.dto.request.CreateMemberRequest;
 import middle_point_search.backend.domains.member.dto.request.SendEmailVerificationRequest;
 import middle_point_search.backend.domains.member.dto.request.SendNewPasswordRequest;
 import middle_point_search.backend.domains.member.dto.request.SendPasswordReissueVerificationRequest;
@@ -57,7 +57,7 @@ public class MemberService {
 
 	// 회원가입하기
 	@Transactional
-	public void createMember(MemberCreateRequest request) {
+	public void createMember(CreateMemberRequest request) {
 		validateExistingEmail(request.getEmail());
 		signupVerificationCodeService.validateEmailCodeAndDelete(request.getEmail(), request.getCode());
 
@@ -69,7 +69,7 @@ public class MemberService {
 	}
 
 	// 주소 여부에 따라 회원 엔티티 생성
-	private Member createMemberEntity(MemberCreateRequest request, String pw) {
+	private Member createMemberEntity(CreateMemberRequest request, String pw) {
 		if (request.getExistAddress()) {
 			return Member.createWithAddress(
 				request.getEmail(),
