@@ -19,8 +19,8 @@ import middle_point_search.backend.common.dto.DataResponse;
 import middle_point_search.backend.common.dto.ErrorResponse;
 import middle_point_search.backend.common.util.MemberLoader;
 import middle_point_search.backend.domains.member.domain.Member;
-import middle_point_search.backend.domains.memberRoom.dto.MemberRoomDTO.MemberRoomExistsResponse;
-import middle_point_search.backend.domains.memberRoom.dto.MemberRoomDTO.RoomsByMemberIdFindResponse;
+import middle_point_search.backend.domains.memberRoom.dto.MemberRoomDTO.ExistsMemberRoomResponse;
+import middle_point_search.backend.domains.memberRoom.dto.MemberRoomDTO.FindRoomsByMemberIdResponse;
 import middle_point_search.backend.domains.memberRoom.service.MemberRoomService;
 
 @Tag(name = "MEMBER_ROOM API", description = "회원방에 대한 API입니다.")
@@ -94,10 +94,10 @@ public class MemberRoomController {
 			),
 		}
 	)
-	public ResponseEntity<DataResponse<List<RoomsByMemberIdFindResponse>>> findRooms() {
+	public ResponseEntity<DataResponse<List<FindRoomsByMemberIdResponse>>> findRooms() {
 		Long memberId = memberLoader.getMemberId();
 
-		List<RoomsByMemberIdFindResponse> responses = memberRoomService.findRooms(memberId);
+		List<FindRoomsByMemberIdResponse> responses = memberRoomService.findRooms(memberId);
 
 		return ResponseEntity.ok(DataResponse.from(responses));
 	}
@@ -123,12 +123,12 @@ public class MemberRoomController {
 			),
 		}
 	)
-	public ResponseEntity<DataResponse<MemberRoomExistsResponse>> existsMemberRoom(
+	public ResponseEntity<DataResponse<ExistsMemberRoomResponse>> existsMemberRoom(
 		@PathVariable("roomId") String roomId
 	) {
 		Long memberId = memberLoader.getMemberId();
 
-		MemberRoomExistsResponse response = memberRoomService.existsMemberRoom(memberId, roomId);
+		ExistsMemberRoomResponse response = memberRoomService.existsMemberRoom(memberId, roomId);
 
 		return ResponseEntity.ok(DataResponse.from(response));
 	}
