@@ -53,8 +53,10 @@ public class MemberController {
 		summary = "회원가입",
 		description = """
 			회원가입한다.
-			
-			이름, 이메일, 비밀번호, 주소, 인증 코드를 입력받아 회원가입한다.""",
+			이름, 이메일, 비밀번호, 주소, 인증 코드를 입력받아 회원가입한다.
+			이름은 2자 이상 30자 이하
+			비밀번호는 20자 이하
+			이메일은 254자 이하""",
 		responses = {
 			@ApiResponse(
 				responseCode = "200",

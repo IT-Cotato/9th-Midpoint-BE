@@ -24,13 +24,13 @@ public class Member extends BaseEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(nullable = false, unique = true)
+	@Column(nullable = false, unique = true, length = 254)
 	private String email;
 
 	@Column(nullable = false)
 	private String pw;
 
-	@Column(nullable = false)
+	@Column(nullable = false, length = 30)
 	private String name;
 
 	@Enumerated(EnumType.STRING)
