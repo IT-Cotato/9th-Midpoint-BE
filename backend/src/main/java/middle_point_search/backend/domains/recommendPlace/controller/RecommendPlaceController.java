@@ -19,7 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import middle_point_search.backend.common.dto.DataResponse;
 import middle_point_search.backend.common.dto.ErrorResponse;
 import middle_point_search.backend.domains.recommendPlace.dto.request.RecommendPlacesFindRequest;
-import middle_point_search.backend.domains.recommendPlace.dto.response.RecommendPlacesFindResponse;
+import middle_point_search.backend.domains.recommendPlace.dto.response.FindRecommendPlacesResponse;
 import middle_point_search.backend.domains.recommendPlace.service.RecommendPlaceService;
 
 @Tag(name = "RECOMMEND PLACE API", description = "추천 장소에 대한 API입니다.")
@@ -64,10 +64,10 @@ public class RecommendPlaceController {
 			)
 		}
 	)
-	public ResponseEntity<DataResponse<Page<RecommendPlacesFindResponse>>> recommendPlacesFind(
+	public ResponseEntity<DataResponse<Page<FindRecommendPlacesResponse>>> findRecommendPlaces(
 		@Valid @ModelAttribute @ParameterObject RecommendPlacesFindRequest request
 	) {
-		Page<RecommendPlacesFindResponse> recommendPlaces = recommendPlaceService.findRecommendPlaces(request);
+		Page<FindRecommendPlacesResponse> recommendPlaces = recommendPlaceService.findRecommendPlaces(request);
 
 		return ResponseEntity.ok(DataResponse.from(recommendPlaces));
 	}

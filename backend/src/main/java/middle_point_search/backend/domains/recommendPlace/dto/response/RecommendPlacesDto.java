@@ -21,18 +21,18 @@ public class RecommendPlacesDto {
 	@Setter
 	private int totalCount;
 
-	List<RecommendPlacesFindResponse> recommendPlaces;
+	List<FindRecommendPlacesResponse> recommendPlaces;
 
 	public static RecommendPlacesDto of(KakaoSearchResponse kakaoSearchResponse, PlaceStandard placeStandard) {
 		int pageableCount = kakaoSearchResponse.getMeta().getPageable_count();
 		int totalCount = kakaoSearchResponse.getMeta().getTotal_count();
 
-		List<RecommendPlacesFindResponse> recommendPlacesFindResponses = kakaoSearchResponse
+		List<FindRecommendPlacesResponse> findRecommendPlacesRespons = kakaoSearchResponse
 			.getDocuments()
 			.stream()
-			.map(document -> RecommendPlacesFindResponse.from(document, placeStandard))
+			.map(document -> FindRecommendPlacesResponse.from(document, placeStandard))
 			.collect(Collectors.toList());
 
-		return new RecommendPlacesDto(pageableCount, totalCount, recommendPlacesFindResponses);
+		return new RecommendPlacesDto(pageableCount, totalCount, findRecommendPlacesRespons);
 	}
 }
