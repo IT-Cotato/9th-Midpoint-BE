@@ -22,9 +22,10 @@ import middle_point_search.backend.common.dto.DataResponse;
 import middle_point_search.backend.common.dto.ErrorResponse;
 import middle_point_search.backend.common.util.MemberLoader;
 import middle_point_search.backend.domains.member.domain.Member;
-import middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteDTO.PlaceVoteRequest;
-import middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteDTO.PlaceVoteResultsFindResponse;
-import middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteRoomDTO.VotedAndVoteItemResponse;
+import middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteDTO.FindPlaceVoteResultsResponse;
+import middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteDTO.UpdateVoteRequest;
+import middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteDTO.VotePlaceRequest;
+import middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteRoomDTO.FindVotedAndVoteItemResponse;
 import middle_point_search.backend.domains.placeVoteRoom.service.PlaceVoteService;
 
 @Tag(name = "PLACE VOTE API", description = "장소 투표에 대한 API입니다.")
@@ -73,12 +74,12 @@ public class PlaceVoteController {
 			)
 		}
 	)
-	public ResponseEntity<DataResponse<List<PlaceVoteResultsFindResponse>>> placeVoteRoomResultGet(
+	public ResponseEntity<DataResponse<List<FindPlaceVoteResultsResponse>>> findPlaceVoteRoomResults(
 		@PathVariable("roomId") String roomId
 	) {
 		Long memberId = memberLoader.getMemberId();
 
-		List<PlaceVoteResultsFindResponse> response = placeVoteRoomService.findPlaceVoteResults(memberId, roomId);
+		List<FindPlaceVoteResultsResponse> response = placeVoteRoomService.findPlaceVoteResults(memberId, roomId);
 
 		return ResponseEntity.ok(DataResponse.from(response));
 	}
@@ -129,7 +130,7 @@ public class PlaceVoteController {
 	)
 	public ResponseEntity<DataResponse<Void>> vote(
 		@PathVariable("roomId") String roomId,
-		@RequestBody @Valid PlaceVoteRequest request
+		@RequestBody @Valid VotePlaceRequest request
 	) {
 		Member member = memberLoader.getMember();
 
@@ -176,9 +177,9 @@ public class PlaceVoteController {
 			)
 		}
 	)
-	public ResponseEntity<DataResponse<Void>> voteUpdate(
+	public ResponseEntity<DataResponse<Void>> updateVote(
 		@PathVariable("roomId") String roomId,
-		@RequestBody @Valid PlaceVoteRequest request
+		@RequestBody @Valid UpdateVoteRequest request
 	) {
 		Member member = memberLoader.getMember();
 
@@ -216,13 +217,12 @@ public class PlaceVoteController {
 			)
 		}
 	)
-	public ResponseEntity<DataResponse<VotedAndVoteItemResponse>> votedAndVoteItemFind(
+	public ResponseEntity<DataResponse<FindVotedAndVoteItemResponse>> findVotedAndVoteItem(
 		@PathVariable("roomId") String roomId
 	) {
 		Member member = memberLoader.getMember();
 
-		VotedAndVoteItemResponse votedAndVoteItemResponse = placeVoteRoomService.findVotedAndVoteItem(
-			member, roomId);
-		return ResponseEntity.ok(DataResponse.from(votedAndVoteItemResponse));
+		FindVotedAndVoteItemResponse response = placeVoteRoomService.findVotedAndVoteItem(member, roomId);
+		return ResponseEntity.ok(DataResponse.from(response));
 	}
 }

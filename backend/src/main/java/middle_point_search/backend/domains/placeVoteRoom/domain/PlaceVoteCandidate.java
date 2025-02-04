@@ -1,7 +1,5 @@
 package middle_point_search.backend.domains.placeVoteRoom.domain;
 
-import static middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteRoomDTO.PlaceVoteRoomCreateRequest.*;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +16,7 @@ import jakarta.persistence.OneToMany;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteRoomDTO.PlaceCandidateInfo;
 
 @Entity
 @Getter

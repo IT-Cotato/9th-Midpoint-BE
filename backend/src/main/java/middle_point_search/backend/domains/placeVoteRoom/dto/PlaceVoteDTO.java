@@ -14,7 +14,7 @@ public class PlaceVoteDTO {
 
 	@Getter
 	@AllArgsConstructor
-	public static class PlaceVoteResultsFindResponse {
+	public static class FindPlaceVoteResultsResponse {
 		private Long id;
 		private String name;
 		private String siDo;
@@ -28,7 +28,15 @@ public class PlaceVoteDTO {
 
 	@Getter
 	@NoArgsConstructor(access = AccessLevel.PRIVATE)
-	public static class PlaceVoteRequest {
+	public static class VotePlaceRequest {
+
+		@NotNull(message = "choicePlace은 비어 있을 수 없습니다.")
+		private Long choicePlace;
+	}
+
+	@Getter
+	@NoArgsConstructor(access = AccessLevel.PRIVATE)
+	public static class UpdateVoteRequest {
 
 		@NotNull(message = "choicePlace은 비어 있을 수 없습니다.")
 		private Long choicePlace;
@@ -36,13 +44,13 @@ public class PlaceVoteDTO {
 
 	@Getter
 	@AllArgsConstructor(access = AccessLevel.PRIVATE)
-	public static class PlaceVoteCandidatesFindResponse {
+	public static class FindPlaceVoteCandidatesResponse {
 		private Boolean existence;
 		@JsonInclude(JsonInclude.Include.NON_NULL)
 		private List<PlaceCandidate> placeCandidates;
 
-		public static PlaceVoteCandidatesFindResponse from(Boolean existence, List<PlaceCandidate> placeCandidates) {
-			return new PlaceVoteCandidatesFindResponse(existence, placeCandidates);
+		public static FindPlaceVoteCandidatesResponse from(Boolean existence, List<PlaceCandidate> placeCandidates) {
+			return new FindPlaceVoteCandidatesResponse(existence, placeCandidates);
 		}
 
 		@Getter

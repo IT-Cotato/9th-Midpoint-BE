@@ -15,9 +15,10 @@ import middle_point_search.backend.domains.memberRoom.service.MemberRoomValidate
 import middle_point_search.backend.domains.placeVoteRoom.domain.PlaceVoteCandidate;
 import middle_point_search.backend.domains.placeVoteRoom.domain.PlaceVoteCandidateMember;
 import middle_point_search.backend.domains.placeVoteRoom.domain.PlaceVoteRoom;
-import middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteDTO.PlaceVoteRequest;
-import middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteDTO.PlaceVoteResultsFindResponse;
-import middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteRoomDTO.VotedAndVoteItemResponse;
+import middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteDTO.FindPlaceVoteResultsResponse;
+import middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteDTO.UpdateVoteRequest;
+import middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteDTO.VotePlaceRequest;
+import middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteRoomDTO.FindVotedAndVoteItemResponse;
 import middle_point_search.backend.domains.placeVoteRoom.repository.PlaceVoteCandidateMemberRepository;
 import middle_point_search.backend.domains.placeVoteRoom.repository.PlaceVoteCandidateRepository;
 
@@ -34,7 +35,7 @@ public class PlaceVoteService {
 
 	// 투표 처리
 	@Transactional(rollbackFor = {CustomException.class})
-	public void vote(Member member, String roomId, PlaceVoteRequest voteRequest) {
+	public void vote(Member member, String roomId, VotePlaceRequest voteRequest) {
 		// 방에 대한 회원인지 확인
 		memberRoomValidateService.validateAuthorizedMember(member.getId(), roomId);
 
@@ -60,7 +61,7 @@ public class PlaceVoteService {
 
 	// 재투표
 	@Transactional(rollbackFor = {CustomException.class})
-	public void updateVote(Member member, String roomId, PlaceVoteRequest voteRequest) {
+	public void updateVote(Member member, String roomId, UpdateVoteRequest request) {
 		// 방에 대한 회원인지 확인
 		memberRoomValidateService.validateAuthorizedMember(member.getId(), roomId);
 
@@ -78,7 +79,7 @@ public class PlaceVoteService {
 		placeVoteCandidateMemberRepository.deleteByPlaceVoteCandidate_PlaceVoteRoomAndMember(placeVoteRoom, member);
 
 		// 새로 받은 항목으로 업데이트
-		long placeVoteCandidateId = voteRequest.getChoicePlace();
+		long placeVoteCandidateId = request.getChoicePlace();
 		PlaceVoteCandidate candidate = placeVoteCandidateRepository.findById(placeVoteCandidateId)
 			.orElseThrow(() -> CustomException.from(CANDIDATE_NOT_FOUND));
 
@@ -87,7 +88,7 @@ public class PlaceVoteService {
 	}
 
 	// 내 투표 조회
-	public VotedAndVoteItemResponse findVotedAndVoteItem(Member member, String roomId) {
+	public FindVotedAndVoteItemResponse findVotedAndVoteItem(Member member, String roomId) {
 		// 방에 대한 회원인지 확인
 		memberRoomValidateService.validateAuthorizedMember(member.getId(), roomId);
 
@@ -97,13 +98,13 @@ public class PlaceVoteService {
 			.map(placeVoteCandidateMember -> {
 				Long id = placeVoteCandidateMember.getPlaceVoteCandidate().getId();
 
-				return VotedAndVoteItemResponse.from(true, id);
+				return FindVotedAndVoteItemResponse.from(true, id);
 			})
-			.orElseGet(() -> VotedAndVoteItemResponse.from(false, null));
+			.orElseGet(() -> FindVotedAndVoteItemResponse.from(false, null));
 	}
 
 	// 장소투표 결과 조회
-	public List<PlaceVoteResultsFindResponse> findPlaceVoteResults(Long memberId, String roomId) {
+	public List<FindPlaceVoteResultsResponse> findPlaceVoteResults(Long memberId, String roomId) {
 		// 방에 대한 회원인지 확인
 		memberRoomValidateService.validateAuthorizedMember(memberId, roomId);
 
@@ -113,7 +114,7 @@ public class PlaceVoteService {
 
 		// 결과 조회
 		return placeVoteRoom.getPlaceVoteCandidates().stream()
-			.map(placeVoteCandidate -> new PlaceVoteResultsFindResponse(
+			.map(placeVoteCandidate -> new FindPlaceVoteResultsResponse(
 				placeVoteCandidate.getId(),
 				placeVoteCandidate.getName(),
 				placeVoteCandidate.getSiDo(),
@@ -122,7 +123,10 @@ public class PlaceVoteService {
 				placeVoteCandidate.getAddressLatitude(),
 				placeVoteCandidate.getAddressLatitude(),
 				placeVoteCandidate.getCount(),
-				placeVoteCandidate.getVoters().stream().map(v -> v.getMember().getEmail()).collect(Collectors.toList())))
+				placeVoteCandidate.getVoters()
+					.stream()
+					.map(v -> v.getMember().getEmail())
+					.collect(Collectors.toList())))
 			.collect(Collectors.toList());
 	}
 }
