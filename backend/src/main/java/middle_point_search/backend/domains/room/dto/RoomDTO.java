@@ -14,17 +14,17 @@ public class RoomDTO {
 
 	@Getter
 	@AllArgsConstructor(access = AccessLevel.PRIVATE)
-	public static class RoomCreateResponse {
+	public static class CreateRoomResponse {
 		private final String id;
 
-		public static RoomCreateResponse from(String id) {
-			return new RoomCreateResponse(id);
+		public static CreateRoomResponse from(String id) {
+			return new CreateRoomResponse(id);
 		}
 	}
 
 	@Getter
 	@NoArgsConstructor(access = AccessLevel.PRIVATE)
-	public static class RoomCreateRequest {
+	public static class CreateRoomRequest {
 
 		@Parameter(required = true)
 		@NotBlank(message = "값이 비어있으면 안 됩니다.")
@@ -35,7 +35,7 @@ public class RoomDTO {
 
 	@Getter
 	@NoArgsConstructor(access = AccessLevel.PRIVATE)
-	public static class RoomNameUpdateRequest {
+	public static class UpdateRoomNameRequest {
 
 		@Parameter(required = true)
 		@NotBlank(message = "값이 비어있으면 안 됩니다.")
@@ -51,12 +51,12 @@ public class RoomDTO {
 
 	@Getter
 	@AllArgsConstructor(access = AccessLevel.PRIVATE)
-	public static class RoomExistResponse {
+	public static class ExistRoomResponse {
 
 		private final boolean existence;
 
-		public static RoomExistResponse from(boolean existence) {
-			return new RoomExistResponse(existence);
+		public static ExistRoomResponse from(boolean existence) {
+			return new ExistRoomResponse(existence);
 		}
 	}
 

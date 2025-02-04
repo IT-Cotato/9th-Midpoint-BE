@@ -15,10 +15,10 @@ import middle_point_search.backend.domains.memberRoom.repository.MemberRoomRepos
 import middle_point_search.backend.domains.memberRoom.service.MemberRoomValidateService;
 import middle_point_search.backend.domains.room.domain.Room;
 import middle_point_search.backend.domains.room.dto.RoomDTO.FindRoomDetailResponse;
-import middle_point_search.backend.domains.room.dto.RoomDTO.RoomCreateRequest;
-import middle_point_search.backend.domains.room.dto.RoomDTO.RoomCreateResponse;
-import middle_point_search.backend.domains.room.dto.RoomDTO.RoomExistResponse;
-import middle_point_search.backend.domains.room.dto.RoomDTO.RoomNameUpdateRequest;
+import middle_point_search.backend.domains.room.dto.RoomDTO.CreateRoomRequest;
+import middle_point_search.backend.domains.room.dto.RoomDTO.CreateRoomResponse;
+import middle_point_search.backend.domains.room.dto.RoomDTO.ExistRoomResponse;
+import middle_point_search.backend.domains.room.dto.RoomDTO.UpdateRoomNameRequest;
 import middle_point_search.backend.domains.room.dto.RoomDTO.UpdateRoomMemoRequest;
 import middle_point_search.backend.domains.room.repository.RoomRepository;
 
@@ -33,7 +33,7 @@ public class RoomService {
 
 	// Room 저장하기 및 Room에 회원 저장
 	@Transactional
-	public RoomCreateResponse createRoom(RoomCreateRequest request) {
+	public CreateRoomResponse createRoom(CreateRoomRequest request) {
 		String memo = makeMemoNullToBlank(request.getMemo());
 
 		Room room = Room.builder()
@@ -45,12 +45,12 @@ public class RoomService {
 		// Room저장
 		roomRepository.save(room);
 
-		return RoomCreateResponse.from(room.getId());
+		return CreateRoomResponse.from(room.getId());
 	}
 
 	// Room 이름 변경하기
 	@Transactional(rollbackFor = CustomException.class)
-	public void updateRoomName(Long memberId, String roomId, RoomNameUpdateRequest request) {
+	public void updateRoomName(Long memberId, String roomId, UpdateRoomNameRequest request) {
 		// 회원방 존재 확인
 		memberRoomValidateService.validateAuthorizedMember(memberId, roomId);
 
@@ -67,8 +67,8 @@ public class RoomService {
 
 
 	// 방 존재 확인
-	public RoomExistResponse existRoom(String roomId) {
-		return RoomExistResponse.from(roomRepository.existsById(roomId));
+	public ExistRoomResponse existRoom(String roomId) {
+		return ExistRoomResponse.from(roomRepository.existsById(roomId));
 	}
 
 	// Room 메모 변경하기
