@@ -19,10 +19,12 @@ import middle_point_search.backend.domains.logout.LogoutToken;
 import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.member.domain.Role;
 import middle_point_search.backend.domains.member.dto.request.CreateMemberRequest;
+import middle_point_search.backend.domains.member.dto.request.FindMemberInfoResponse;
 import middle_point_search.backend.domains.member.dto.request.SendEmailVerificationRequest;
 import middle_point_search.backend.domains.member.dto.request.SendNewPasswordRequest;
 import middle_point_search.backend.domains.member.dto.request.SendPasswordReissueVerificationRequest;
-import middle_point_search.backend.domains.member.dto.request.UpdateMemberInfoRequest;
+import middle_point_search.backend.domains.member.dto.request.UpdateMemberAddressRequest;
+import middle_point_search.backend.domains.member.dto.request.UpdateMemberNameRequest;
 import middle_point_search.backend.domains.member.dto.request.VerifyEmailVerificationCodeRequest;
 import middle_point_search.backend.domains.member.dto.response.FindProfileImageUrlResponse;
 import middle_point_search.backend.domains.member.dto.response.VerifyEmailVerificationCodeResponse;
@@ -187,13 +189,21 @@ public class MemberService {
 		emailService.sendPasswordReissueVerificationCodeEmail(request.getEmail(), code);
 	}
 
-	// 회원 정보(닉네임, 주소) 수정
+	// 이름 수정
 	@Transactional
-	public void updateMemberInfo(Long memberId, UpdateMemberInfoRequest request) {
+	public void updateMemberName(Long memberId, UpdateMemberNameRequest request) {
 		Member member = memberRepository.findById(memberId)
 			.orElseThrow(() -> CustomException.from(MEMBER_NOT_FOUND));
 
 		member.updateName(request.name());
+	}
+
+	// 주소 수정
+	@Transactional
+	public void updateMemberAddress(Long memberId, UpdateMemberAddressRequest request) {
+		Member member = memberRepository.findById(memberId)
+			.orElseThrow(() -> CustomException.from(MEMBER_NOT_FOUND));
+
 		member.updateAddress(
 			request.siDo(),
 			request.siGunGu(),
@@ -259,6 +269,13 @@ public class MemberService {
 
 		// 같은 accessToken 및 refreshToken으로 접속 못하도록 로그아웃
 		logoutMember(memberId, accessToken);
+	}
+
+	public FindMemberInfoResponse findMemberInfo(Long memberId) {
+		Member member = memberRepository.findById(memberId)
+			.orElseThrow(() -> CustomException.from(MEMBER_NOT_FOUND));
+
+		return FindMemberInfoResponse.from(member);
 	}
 }
 
