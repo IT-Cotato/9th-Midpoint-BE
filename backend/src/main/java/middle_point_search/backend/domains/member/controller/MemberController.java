@@ -394,6 +394,37 @@ public class MemberController {
 		return ResponseEntity.ok(DataResponse.ok());
 	}
 
+	@DeleteMapping("/address")
+	@Operation(
+		summary = "주소 삭제",
+		description = """
+			주소 삭제
+			""",
+		responses = {
+			@ApiResponse(
+				responseCode = "200",
+				description = "성공"
+			),
+			@ApiResponse(
+				responseCode = "401",
+				description = "인증에 실패하였습니다.[C-101]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
+				responseCode = "402",
+				description = "Access Token을 재발급해야합니다.[A-004]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			)
+		}
+	)
+	public ResponseEntity<DataResponse<Void>> deleteMemberAddress() {
+		Long memberId = memberLoader.getMemberId();
+
+		memberService.deleteMemberAddress(memberId);
+
+		return ResponseEntity.ok(DataResponse.ok());
+	}
+
 
 	// 파일 업로드 전 사전 서명된 URL 생성
 	@GetMapping("/profile/presigned")

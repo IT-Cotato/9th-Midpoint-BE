@@ -212,6 +212,15 @@ public class MemberService {
 			request.addressLongitude());
 	}
 
+	// 회원 주소 삭제
+	@Transactional
+	public void deleteMemberAddress(Long memberId) {
+		Member member = memberRepository.findById(memberId)
+			.orElseThrow(() -> CustomException.from(MEMBER_NOT_FOUND));
+
+		member.deleteAddress();
+	}
+
 	// 회원 프로필 presigned path 생성
 	@Transactional
 	public CreatePreSignedUrlResponse createProfilePreSignedUrl(Long memberId, String filename) {
@@ -259,6 +268,7 @@ public class MemberService {
 		member.updateProfileImagePath(null);
 	}
 
+	// 회원 삭제
 	@Transactional
 	public void deleteMember(Long memberId, String accessToken) {
 		memberRoomRepository.deleteAllByMemberId(memberId);

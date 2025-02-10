@@ -124,6 +124,16 @@ public class Member extends BaseEntity {
 		this.addressLongitude = addressLongitude;
 	}
 
+	// 주소 삭제
+	public void deleteAddress() {
+		this.existAddress = false;
+		this.siDo = null;
+		this.siGunGu = null;
+		this.roadNameAddress = null;
+		this.addressLatitude = null;
+		this.addressLongitude = null;
+	}
+
 	// 프로필 이미지 path 변경
 	public void updateProfileImagePath(String profileImagePath) {
 		this.profileImagePath = profileImagePath;
