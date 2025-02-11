@@ -35,8 +35,8 @@ public class BaseIntegrationTest {
 	@Autowired
 	private MemberRepository memberRepository;
 
-	public final String MEMBER_EMAIL = "email@test.com";
-	public final String MEMBER_PW = "1234";
+	public static final String MEMBER_EMAIL = "email@test.com";
+	public static final String MEMBER_PW = "1234";
 
 	public AccessTokenAndRefreshToken signupAndLogin() throws Exception {
 
