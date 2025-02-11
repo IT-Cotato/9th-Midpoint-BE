@@ -7,16 +7,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.ResultActions;
 
-import com.fasterxml.jackson.databind.JsonNode;
-
 import middle_point_search.backend.domains.BaseIntegrationTest;
-import middle_point_search.backend.domains.member.domain.Member;
-import middle_point_search.backend.domains.member.domain.Role;
-import middle_point_search.backend.domains.member.dto.request.LoginMemberRequest;
+import middle_point_search.backend.domains.member.dto.AccessTokenAndRefreshToken;
 import middle_point_search.backend.domains.member.repository.MemberRepository;
 
 @DisplayName("로그아웃")
@@ -33,31 +28,10 @@ public class LogoutMemberIntegrationTest extends BaseIntegrationTest {
 
 	@BeforeEach
 	public void setUp() throws Exception {
-		String email = "email@test.com";
-		String pw = "1234";
-
-		// 멤버 저장
-		Member member = Member.createWithoutAddress(
-			email,
-			passwordEncoder.encode(pw),
-			"name",
-			Role.USER
-		);
-
-		memberRepository.save(member);
-
-		// 로그인
-		LoginMemberRequest loginMemberRequest = new LoginMemberRequest(email, pw);
-		ResultActions resultActions = mockMvc.perform(post("/api/members/login")
-			.contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-			.param("email", loginMemberRequest.email())
-			.param("pw", loginMemberRequest.pw())
-			.accept(MediaType.APPLICATION_JSON));
-
-		String responseContent = resultActions.andReturn().getResponse().getContentAsString();
-		JsonNode jsonNode = objectMapper.readTree(responseContent);
-		accessToken = jsonNode.get("data").get("accessToken").asText();
-		refreshToken = jsonNode.get("data").get("refreshToken").asText();
+		// 회원가입 및 로그인
+		AccessTokenAndRefreshToken accessTokenAndRefreshToken = signupAndLogin();
+		accessToken = accessTokenAndRefreshToken.accessToken();
+		refreshToken = accessTokenAndRefreshToken.refreshToken();
 	}
 
 	@Test
