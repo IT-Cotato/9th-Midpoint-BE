@@ -72,6 +72,7 @@ public class RoomService {
 	}
 
 	// Room 메모 변경하기
+	@Transactional
 	public void updateRoomMemo(Long memberId, String roomId, UpdateRoomMemoRequest request) {
 		// 회원방 존재 확인
 		memberRoomValidateService.validateAuthorizedMember(memberId, roomId);
