@@ -15,6 +15,7 @@ import middle_point_search.backend.domains.memberRoom.dto.MemberRoomDTO.ExistsMe
 import middle_point_search.backend.domains.memberRoom.dto.MemberRoomDTO.FindRoomsByMemberIdResponse;
 import middle_point_search.backend.domains.memberRoom.domain.MemberRoom;
 import middle_point_search.backend.domains.room.domain.Room;
+import middle_point_search.backend.domains.room.repository.RoomRepository;
 import middle_point_search.backend.domains.room.service.RoomService;
 
 @Service
@@ -25,6 +26,7 @@ public class MemberRoomService {
 	private final MemberRoomRepository memberRoomRepository;
 	private final RoomService roomService;
 	private final MemberRoomValidateService memberRoomValidateService;
+	private final RoomRepository roomRepository;
 
 	// 회원방을 DTO로 저장
 	@Transactional(rollbackFor = CustomException.class)
@@ -59,5 +61,16 @@ public class MemberRoomService {
 		Boolean exists = memberRoomRepository.existsByMember_IdAndRoom_Id(memberId, roomId);
 
 		return ExistsMemberRoomResponse.from(exists);
+	}
+
+	// 회원방에서 회원 삭제, 방이 없으면 방 삭제
+	@Transactional
+	public void deleteMemberFromRoom(Long memberId, String roomId) {
+		memberRoomRepository.deleteByRoomIdAndMemberId(roomId, memberId);
+
+		// 방에 멤버가 없으면 방 삭제
+		if (!memberRoomRepository.existsByRoomId(roomId)) {
+			roomRepository.deleteById(roomId);
+		}
 	}
 }
