@@ -25,7 +25,7 @@ import middle_point_search.backend.domains.member.dto.request.UpdatePasswordRequ
 import middle_point_search.backend.domains.member.repository.MemberRepository;
 
 @DisplayName("회원 정보 수정")
-public class UpdateMemberInfoIntegrationTest extends BaseIntegrationTest {
+public class MemberInfoIntegrationTest extends BaseIntegrationTest {
 
 	private String accessTokenFromNoAddressMember;
 	private String accessTokenFromAddressMember;
@@ -250,4 +250,26 @@ public class UpdateMemberInfoIntegrationTest extends BaseIntegrationTest {
 			});
 		}
 	}
+
+	@Nested
+	@DisplayName("주소 있는 회원 주소 삭제")
+	class 주소_있는_회원_주소_삭제 {
+		@Test
+		@DisplayName("주소 삭제에 성공한다.")
+		public void 주소삭제성공() throws Exception {
+			// when
+			mockMvc.perform(delete("/api/members/address")
+				.header("Authorization", "Bearer " + accessTokenFromAddressMember)
+				.accept(MediaType.APPLICATION_JSON)
+			);
+
+			// then
+			// 주소가 삭제되었는지
+			memberRepository.findByEmail(ADDRESS_MEMBER_EMAIL).ifPresent(member -> {
+				assertThat(member.getExistAddress()).isFalse();
+			});
+		}
+	}
+
+
 }
