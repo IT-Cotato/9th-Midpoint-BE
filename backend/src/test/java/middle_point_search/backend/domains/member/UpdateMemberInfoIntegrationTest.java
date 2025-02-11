@@ -25,7 +25,8 @@ import middle_point_search.backend.domains.member.repository.MemberRepository;
 @DisplayName("회원 정보 수정")
 public class UpdateMemberInfoIntegrationTest extends BaseIntegrationTest {
 
-	private String accessToken;
+	private String accessTokenFromNoAddressMember;
+	private String accessTokenFromAddressMember;
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
@@ -34,8 +35,11 @@ public class UpdateMemberInfoIntegrationTest extends BaseIntegrationTest {
 
 	@BeforeEach
 	public void setUp() throws Exception {
-		AccessTokenAndRefreshToken accessTokenAndRefreshToken = signupAndLogin();
-		accessToken = accessTokenAndRefreshToken.accessToken();
+		AccessTokenAndRefreshToken accessTokenAndRefreshToken = signupAndLoginNoAddressMember();
+		accessTokenFromNoAddressMember = accessTokenAndRefreshToken.accessToken();
+
+		accessTokenAndRefreshToken = signupAndLoginAddressMember();
+		accessTokenFromAddressMember = accessTokenAndRefreshToken.accessToken();
 	}
 
 	@Nested
@@ -47,19 +51,19 @@ public class UpdateMemberInfoIntegrationTest extends BaseIntegrationTest {
 			// given
 			String newPw = "5678";
 
-			UpdatePasswordRequest request = new UpdatePasswordRequest(MEMBER_PW, newPw);
+			UpdatePasswordRequest request = new UpdatePasswordRequest(NO_ADDRESS_MEMBER_PW, newPw);
 
 			// when
 			mockMvc.perform(patch("/api/members/password")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(request))
-				.header("Authorization", "Bearer " + accessToken)
+				.header("Authorization", "Bearer " + accessTokenFromNoAddressMember)
 				.accept(MediaType.APPLICATION_JSON)
 			);
 
 			// then
 			// 변경된 비밀번호가 저장되었는지
-			memberRepository.findByEmail(MEMBER_EMAIL).ifPresent(member -> {
+			memberRepository.findByEmail(NO_ADDRESS_MEMBER_EMAIL).ifPresent(member -> {
 				boolean isMatch = passwordEncoder.matches(newPw, member.getPw());
 				assertThat(isMatch).isTrue();
 			});
@@ -76,7 +80,7 @@ public class UpdateMemberInfoIntegrationTest extends BaseIntegrationTest {
 			ResultActions resultActions = mockMvc.perform(patch("/api/members/password")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(request))
-				.header("Authorization", "Bearer " + accessToken)
+				.header("Authorization", "Bearer " + accessTokenFromNoAddressMember)
 				.accept(MediaType.APPLICATION_JSON)
 			);
 
@@ -93,7 +97,7 @@ public class UpdateMemberInfoIntegrationTest extends BaseIntegrationTest {
 			ResultActions resultActions = mockMvc.perform(patch("/api/members/password")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(request))
-				.header("Authorization", "Bearer " + accessToken)
+				.header("Authorization", "Bearer " + accessTokenFromNoAddressMember)
 				.accept(MediaType.APPLICATION_JSON)
 			);
 
@@ -103,10 +107,51 @@ public class UpdateMemberInfoIntegrationTest extends BaseIntegrationTest {
 
 		private static Stream<UpdatePasswordRequest> provideInvalidUpdatePasswordRequest() {
 			return Stream.of(
-				new UpdatePasswordRequest(MEMBER_PW, null),
-				new UpdatePasswordRequest(MEMBER_PW, ""),
-				new UpdatePasswordRequest(MEMBER_PW, "012345678901234567891")
+				new UpdatePasswordRequest(NO_ADDRESS_MEMBER_PW, null),
+				new UpdatePasswordRequest(NO_ADDRESS_MEMBER_PW, ""),
+				new UpdatePasswordRequest(NO_ADDRESS_MEMBER_PW, "012345678901234567891")
 			);
+		}
+	}
+
+	@Nested
+	@DisplayName("회원 정보 조회")
+	class 회원_정보_조회 {
+		@Test
+		@DisplayName("회원 정보 조회에 성공한다.")
+		public void 회원정보조회성공() throws Exception {
+			// when
+			ResultActions resultActions = mockMvc.perform(get("/api/members/info")
+				.header("Authorization", "Bearer " + accessTokenFromNoAddressMember)
+				.accept(MediaType.APPLICATION_JSON)
+			);
+
+			// then
+			resultActions.andExpect(status().isOk())
+				.andExpect(jsonPath("$.data.email").value(NO_ADDRESS_MEMBER_EMAIL))
+				.andExpect(jsonPath("$.data.name").value(NO_ADDRESS_MEMBER_NAME))
+				.andExpect(jsonPath("$.data.existAddress").value("false"));
+		}
+
+		@Test
+		@DisplayName("주소 있는 회원 정보 조회에 성공한다.")
+		public void 주소있는회원정보조회성공() throws Exception {
+			// when
+			ResultActions resultActions = mockMvc.perform(get("/api/members/info")
+				.header("Authorization", "Bearer " + accessTokenFromAddressMember)
+				.accept(MediaType.APPLICATION_JSON)
+			);
+
+			// then
+			resultActions.andExpect(status().isOk())
+				.andExpect(jsonPath("$.data.email").value(ADDRESS_MEMBER_EMAIL))
+				.andExpect(jsonPath("$.data.name").value(ADDRESS_MEMBER_NAME))
+				.andExpect(jsonPath("$.data.existAddress").value("true"))
+				.andExpect(jsonPath("$.data.siDo").value(ADDRESS_MEMBER_SI_DO))
+				.andExpect(jsonPath("$.data.siGunGu").value(ADDRESS_MEMBER_SI_GUN_GU))
+				.andExpect(jsonPath("$.data.roadNameAddress").value(ADDRESS_MEMBER_ROAD_NAME_ADDRESS))
+				.andExpect(jsonPath("$.data.addressLatitude").value(ADDRESS_MEMBER_ADDRESS_LATITUDE))
+				.andExpect(jsonPath("$.data.addressLongitude").value(ADDRESS_MEMBER_ADDRESS_LONGITUDE));
 		}
 	}
 }

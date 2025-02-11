@@ -29,7 +29,7 @@ public class LogoutMemberIntegrationTest extends BaseIntegrationTest {
 	@BeforeEach
 	public void setUp() throws Exception {
 		// 회원가입 및 로그인
-		AccessTokenAndRefreshToken accessTokenAndRefreshToken = signupAndLogin();
+		AccessTokenAndRefreshToken accessTokenAndRefreshToken = signupAndLoginNoAddressMember();
 		accessToken = accessTokenAndRefreshToken.accessToken();
 		refreshToken = accessTokenAndRefreshToken.refreshToken();
 	}
