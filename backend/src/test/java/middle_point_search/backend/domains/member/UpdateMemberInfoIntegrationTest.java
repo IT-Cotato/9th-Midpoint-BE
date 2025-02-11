@@ -19,6 +19,8 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import middle_point_search.backend.domains.BaseIntegrationTest;
 import middle_point_search.backend.domains.member.dto.AccessTokenAndRefreshToken;
+import middle_point_search.backend.domains.member.dto.request.UpdateMemberAddressRequest;
+import middle_point_search.backend.domains.member.dto.request.UpdateMemberNameRequest;
 import middle_point_search.backend.domains.member.dto.request.UpdatePasswordRequest;
 import middle_point_search.backend.domains.member.repository.MemberRepository;
 
@@ -152,6 +154,100 @@ public class UpdateMemberInfoIntegrationTest extends BaseIntegrationTest {
 				.andExpect(jsonPath("$.data.roadNameAddress").value(ADDRESS_MEMBER_ROAD_NAME_ADDRESS))
 				.andExpect(jsonPath("$.data.addressLatitude").value(ADDRESS_MEMBER_ADDRESS_LATITUDE))
 				.andExpect(jsonPath("$.data.addressLongitude").value(ADDRESS_MEMBER_ADDRESS_LONGITUDE));
+		}
+	}
+
+	@Nested
+	@DisplayName("닉네임 수정")
+	class 닉네임_수정 {
+		@Test
+		@DisplayName("닉네임 수정에 성공한다.")
+		public void 닉네임수정성공() throws Exception {
+			// given
+			String newName = "newName";
+
+			UpdateMemberNameRequest request = new UpdateMemberNameRequest(newName);
+
+			// when
+			mockMvc.perform(patch("/api/members/name")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(request))
+				.header("Authorization", "Bearer " + accessTokenFromNoAddressMember)
+				.accept(MediaType.APPLICATION_JSON)
+			);
+
+			// then
+			// 변경된 닉네임이 저장되었는지
+			memberRepository.findByEmail(NO_ADDRESS_MEMBER_EMAIL).ifPresent(member -> {
+				assertThat(member.getName()).isEqualTo(newName);
+			});
+		}
+
+		@ParameterizedTest
+		@MethodSource("provideInvalidName")
+		@DisplayName("닉네임이 형식이 맞지 않으면 닉네임 수정에 실패한다.")
+		public void 닉네임형식오류_닉네임수정실패(String newName) throws Exception {
+			// given
+			UpdateMemberNameRequest request = new UpdateMemberNameRequest(newName);
+
+			// when
+			ResultActions resultActions = mockMvc.perform(patch("/api/members/name")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(request))
+				.header("Authorization", "Bearer " + accessTokenFromNoAddressMember)
+				.accept(MediaType.APPLICATION_JSON)
+			);
+
+			// then
+			resultActions.andExpect(jsonPath("$.code").value("C-202"));
+		}
+
+		private static Stream<String> provideInvalidName() {
+			return Stream.of(
+				null,
+				"",
+				"0123456789012345678901234567890123" // 30자 이상
+			);
+		}
+	}
+
+	@Nested
+	@DisplayName("주소 수정")
+	class 주소_수정 {
+		@Test
+		@DisplayName("주소 수정에 성공한다.")
+		public void 주소수정성공() throws Exception {
+			// given
+			String siDo = "서울특별시";
+			String siGunGu = "강남구";
+			String roadNameAddress = "강남대로 123";
+			Double addressLatitude = 37.123456;
+			Double addressLongitude = 127.123456;
+
+			// when
+			mockMvc.perform(patch("/api/members/address")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(new UpdateMemberAddressRequest(
+					siDo,
+					siGunGu,
+					roadNameAddress,
+					addressLatitude,
+					addressLongitude
+				)))
+				.header("Authorization", "Bearer " + accessTokenFromNoAddressMember)
+				.accept(MediaType.APPLICATION_JSON)
+			);
+
+			// then
+			// 변경된 주소가 저장되었는지
+			memberRepository.findByEmail(NO_ADDRESS_MEMBER_EMAIL).ifPresent(member -> {
+				assertThat(member.getExistAddress()).isTrue(); // false에서 true로 변경되었는지
+				assertThat(member.getSiDo()).isEqualTo(siDo);
+				assertThat(member.getSiGunGu()).isEqualTo(siGunGu);
+				assertThat(member.getRoadNameAddress()).isEqualTo(roadNameAddress);
+				assertThat(member.getAddressLatitude()).isEqualTo(addressLatitude);
+				assertThat(member.getAddressLongitude()).isEqualTo(addressLongitude);
+			});
 		}
 	}
 }
