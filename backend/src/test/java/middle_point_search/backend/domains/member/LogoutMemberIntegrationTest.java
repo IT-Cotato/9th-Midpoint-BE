@@ -1,0 +1,122 @@
+package middle_point_search.backend.domains.member;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.web.servlet.ResultActions;
+
+import com.fasterxml.jackson.databind.JsonNode;
+
+import middle_point_search.backend.domains.BaseIntegrationTest;
+import middle_point_search.backend.domains.member.domain.Member;
+import middle_point_search.backend.domains.member.domain.Role;
+import middle_point_search.backend.domains.member.dto.request.LoginMemberRequest;
+import middle_point_search.backend.domains.member.repository.MemberRepository;
+
+@DisplayName("로그아웃")
+public class LogoutMemberIntegrationTest extends BaseIntegrationTest {
+
+	@Autowired
+	private MemberRepository memberRepository;
+
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+
+	private String accessToken;
+	private String refreshToken;
+
+	@BeforeEach
+	public void setUp() throws Exception {
+		String email = "email@test.com";
+		String pw = "1234";
+
+		// 멤버 저장
+		Member member = Member.createWithoutAddress(
+			email,
+			passwordEncoder.encode(pw),
+			"name",
+			Role.USER
+		);
+
+		memberRepository.save(member);
+
+		// 로그인
+		LoginMemberRequest loginMemberRequest = new LoginMemberRequest(email, pw);
+		ResultActions resultActions = mockMvc.perform(post("/api/members/login")
+			.contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+			.param("email", loginMemberRequest.email())
+			.param("pw", loginMemberRequest.pw())
+			.accept(MediaType.APPLICATION_JSON));
+
+		String responseContent = resultActions.andReturn().getResponse().getContentAsString();
+		JsonNode jsonNode = objectMapper.readTree(responseContent);
+		accessToken = jsonNode.get("data").get("accessToken").asText();
+		refreshToken = jsonNode.get("data").get("refreshToken").asText();
+	}
+
+	@Test
+	@DisplayName("로그아웃에 성공한다.")
+	public void 로그아웃성공() throws Exception {
+		// when
+		ResultActions resultActions = mockMvc.perform(post("/api/members/logout")
+			.header("Authorization", "Bearer " + accessToken));
+
+		// then
+		resultActions
+			.andExpect(status().isOk());
+	}
+
+	@Test
+	@DisplayName("accessToken이 일치하지 않으면 로그아웃에 실패한다.")
+	public void accessToken일치하지않음_로그아웃실패() throws Exception {
+		String wrongAccessToken = "wrongAccessToken";
+
+		// when
+		ResultActions resultActions = mockMvc.perform(post("/api/members/logout")
+			.header("Authorization", "Bearer " + wrongAccessToken));
+
+		// then
+		// accessToken이 일치하지 않으면, 기간이 만료된 것이라 판단
+		resultActions
+			.andExpect(jsonPath("$.code").value("A-004"));
+	}
+
+	@Test
+	@DisplayName("로그아웃 후에는 refreshToken으로 재발급 불가능하다.")
+	public void refreshToken으로재발급불가능() throws Exception {
+		// given
+		// 로그아웃
+		mockMvc.perform(post("/api/members/logout")
+			.header("Authorization", "Bearer " + accessToken));
+
+		// when
+		ResultActions resultActions = mockMvc.perform(post("/api/members/refresh-token")
+			.header("Authorization-refresh", "Bearer " + refreshToken));
+
+		// then
+		resultActions
+			.andExpect(jsonPath("$.code").value("A-003"));
+	}
+
+	@Test
+	@DisplayName("로그아웃 후에는 accessToken으로 로그인 불가능하다.")
+	public void accessToken으로로그인불가능() throws Exception {
+		// given
+		mockMvc.perform(post("/api/members/logout")
+			.header("Authorization", "Bearer " + accessToken));
+
+		// when
+		ResultActions resultActions = mockMvc.perform(post("/api/members/logout")
+			.header("Authorization", "Bearer " + accessToken));
+
+		// then
+		resultActions
+			.andExpect(jsonPath("$.code").value("A-002"));
+	}
+}
