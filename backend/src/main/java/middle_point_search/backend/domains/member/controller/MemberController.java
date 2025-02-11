@@ -57,13 +57,20 @@ public class MemberController {
 		description = """
 			회원가입한다.
 			이름, 이메일, 비밀번호, 주소, 인증 코드를 입력받아 회원가입한다.
-			이름은 2자 이상 30자 이하
-			비밀번호는 20자 이하
-			이메일은 254자 이하""",
+			
+			파리미터 조건
+			- 이름은 2자 이상 30자 이하
+			- 비밀번호는 20자 이하
+			- 이메일은 254자 이하""",
 		responses = {
 			@ApiResponse(
 				responseCode = "200",
 				description = "성공"
+			),
+			@ApiResponse(
+				responseCode = "400",
+				description = "요청 파라미터가 잘못되었습니다.[C-202]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
 				responseCode = "409",
@@ -150,6 +157,10 @@ public class MemberController {
 			이메일을 입력받아 인증코드를 전송합니다.
 			이메일 인증 확인 API로 타당한 인증코드인지 확인합니다.
 			회원가입 시 인증코드를 함께 보냅니다.
+			
+			파라미터 조건
+			- 이메일 값은 비어있으면 안됨
+			- 이메일 형식이 맞아야함
 			""",
 		responses = {
 			@ApiResponse(
@@ -179,11 +190,22 @@ public class MemberController {
 	@PostMapping("/verification/signup")
 	@Operation(
 		summary = "회원가입 email 인증",
-		description = "email 인증을 확인",
+		description = """
+			email 인증을 확인
+			
+			파리미터 조건
+			- 이메일 값은 비어있으면 안됨
+			- 이메일 형식이 맞아야함
+			- 인증코드는 비어있으면 안됨""",
 		responses = {
 			@ApiResponse(
 				responseCode = "200",
 				description = "성공"
+			),
+			@ApiResponse(
+				responseCode = "400",
+				description = "요청 파라미터가 잘못되었습니다.(이메일 형식, 인증코드)[C-202]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
 				responseCode = "403",
@@ -203,11 +225,23 @@ public class MemberController {
 	@PatchMapping("/password")
 	@Operation(
 		summary = "비밀번호 수정",
-		description = "비밀번호 수정",
+		description = """
+			비밀번호 수정
+			
+			파라미터 조건
+			- 현재 비밀번호는 비어있으면 안됨
+			- 새 비밀번호는 비어있으면 안됨
+			- 새 비밀번호는 20자 이하
+			""",
 		responses = {
 			@ApiResponse(
 				responseCode = "200",
 				description = "성공"
+			),
+			@ApiResponse(
+				responseCode = "400",
+				description = "요청 파라미터가 잘못되었습니다.[C-202]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
 				responseCode = "401",
@@ -241,11 +275,19 @@ public class MemberController {
 		summary = "비밀번호 재발급 email 인증 요청",
 		description = """
 			이메일을 입력받아 비밀번호 재발급 인증코드를 전송합니다.
+			
+			파라미터 조건
+			- 이메일 값은 비어있으면 안됨
 			""",
 		responses = {
 			@ApiResponse(
 				responseCode = "200",
 				description = "성공"
+			),
+			@ApiResponse(
+				responseCode = "400",
+				description = "요청 파라미터가 잘못되었습니다.[C-202], 비밀번호는 비어있으면 안됨. 새 비밀번호는 20자 이하",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
 				responseCode = "404",
@@ -271,11 +313,20 @@ public class MemberController {
 	@Operation(
 		summary = "비밀번호 재발급",
 		description = """
-			인증 번호를 통해 비밀번호를 재발급한다.""",
+			인증 번호를 통해 비밀번호를 재발급한다.
+			
+			파라미터 조건
+			- 비밀번호는 비어있으면 안됨
+			- 새 비밀번호는 20자 이하""",
 		responses = {
 			@ApiResponse(
 				responseCode = "200",
 				description = "성공"
+			),
+			@ApiResponse(
+				responseCode = "400",
+				description = "요청 파라미터가 잘못되었습니다.[C-202]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
 				responseCode = "403",
@@ -336,11 +387,19 @@ public class MemberController {
 		summary = "닉네임 수정",
 		description = """
 			닉네임 수정
+			
+			파라미터 조건
+			- 이름은 2자 이상 30자 이하
 			""",
 		responses = {
 			@ApiResponse(
 				responseCode = "200",
 				description = "성공"
+			),
+			@ApiResponse(
+				responseCode = "400",
+				description = "요청 파라미터가 잘못되었습니다.[C-202]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
 				responseCode = "401",
@@ -369,11 +428,19 @@ public class MemberController {
 		summary = "주소 수정",
 		description = """
 			주소 수정
+			
+			파라미터 조건
+			- 각 값은 비어있으면 안됨
 			""",
 		responses = {
 			@ApiResponse(
 				responseCode = "200",
 				description = "성공"
+			),
+			@ApiResponse(
+				responseCode = "400",
+				description = "요청 파라미터가 잘못되었습니다.[C-202]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
 				responseCode = "401",
@@ -544,6 +611,11 @@ public class MemberController {
 			@ApiResponse(
 				responseCode = "200",
 				description = "성공"
+			),
+			@ApiResponse(
+				responseCode = "400",
+				description = "요청 파라미터가 잘못되었습니다.[C-202]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
 				responseCode = "401",
