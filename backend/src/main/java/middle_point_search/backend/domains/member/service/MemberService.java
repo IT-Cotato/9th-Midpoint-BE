@@ -22,6 +22,7 @@ import middle_point_search.backend.domains.member.dto.request.CreateMemberReques
 import middle_point_search.backend.domains.member.dto.request.FindMemberInfoResponse;
 import middle_point_search.backend.domains.member.dto.request.SendEmailVerificationRequest;
 import middle_point_search.backend.domains.member.dto.request.SendNewPasswordRequest;
+import middle_point_search.backend.domains.member.dto.request.SendNewPasswordResponse;
 import middle_point_search.backend.domains.member.dto.request.SendPasswordReissueVerificationRequest;
 import middle_point_search.backend.domains.member.dto.request.UpdateMemberAddressRequest;
 import middle_point_search.backend.domains.member.dto.request.UpdateMemberNameRequest;
@@ -150,7 +151,7 @@ public class MemberService {
 
 	// 비밀번호 재발급
 	@Transactional
-	public void validateCodeAndSendNewPassword(SendNewPasswordRequest request) {
+	public SendNewPasswordResponse validateCodeAndSendNewPassword(SendNewPasswordRequest request) {
 		String email = request.getEmail();
 
 		// 토큰 검증 및 삭제
@@ -166,6 +167,8 @@ public class MemberService {
 
 		// 새 비밀번호 이메일 전송
 		emailService.sendNewPassword(email, newPassword);
+
+		return new SendNewPasswordResponse(newPassword);
 	}
 
 	// 새 비밀번호 생성

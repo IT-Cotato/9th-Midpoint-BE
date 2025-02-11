@@ -30,6 +30,7 @@ import middle_point_search.backend.domains.member.dto.request.FindMemberInfoResp
 import middle_point_search.backend.domains.member.dto.request.LoginMemberRequest;
 import middle_point_search.backend.domains.member.dto.request.SendEmailVerificationRequest;
 import middle_point_search.backend.domains.member.dto.request.SendNewPasswordRequest;
+import middle_point_search.backend.domains.member.dto.request.SendNewPasswordResponse;
 import middle_point_search.backend.domains.member.dto.request.SendPasswordReissueVerificationRequest;
 import middle_point_search.backend.domains.member.dto.request.UpdateMemberAddressRequest;
 import middle_point_search.backend.domains.member.dto.request.UpdateMemberNameRequest;
@@ -291,12 +292,12 @@ public class MemberController {
 			),
 		}
 	)
-	public ResponseEntity<DataResponse<Void>> sendNewPassword(
+	public ResponseEntity<DataResponse<SendNewPasswordResponse>> sendNewPassword(
 		@RequestBody @Valid SendNewPasswordRequest request
 	) {
-		memberService.validateCodeAndSendNewPassword(request);
+		SendNewPasswordResponse response = memberService.validateCodeAndSendNewPassword(request);
 
-		return ResponseEntity.ok(DataResponse.ok());
+		return ResponseEntity.ok(DataResponse.from(response));
 	}
 
 	@GetMapping("/info")
