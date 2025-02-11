@@ -17,8 +17,10 @@ import middle_point_search.backend.domains.email.service.SignupVerificationCodeS
 import middle_point_search.backend.domains.logout.LogoutService;
 import middle_point_search.backend.domains.logout.LogoutToken;
 import middle_point_search.backend.domains.member.domain.Member;
+import middle_point_search.backend.domains.member.domain.MemberWithdrawalReason;
 import middle_point_search.backend.domains.member.domain.Role;
 import middle_point_search.backend.domains.member.dto.request.CreateMemberRequest;
+import middle_point_search.backend.domains.member.dto.request.DeleteMemberRequest;
 import middle_point_search.backend.domains.member.dto.request.FindMemberInfoResponse;
 import middle_point_search.backend.domains.member.dto.request.SendEmailVerificationRequest;
 import middle_point_search.backend.domains.member.dto.request.SendNewPasswordRequest;
@@ -30,6 +32,7 @@ import middle_point_search.backend.domains.member.dto.request.VerifyEmailVerific
 import middle_point_search.backend.domains.member.dto.response.FindProfileImageUrlResponse;
 import middle_point_search.backend.domains.member.dto.response.VerifyEmailVerificationCodeResponse;
 import middle_point_search.backend.domains.member.repository.MemberRepository;
+import middle_point_search.backend.domains.member.repository.MemberWithdrawalReasonRepository;
 import middle_point_search.backend.domains.memberRoom.repository.MemberRoomRepository;
 import middle_point_search.backend.domains.place.repository.PlaceRepository;
 import middle_point_search.backend.domains.placeVoteRoom.repository.PlaceVoteCandidateMemberRepository;
@@ -57,6 +60,7 @@ public class MemberService {
 	private final PlaceRepository placeRepository;
 	private final PlaceVoteCandidateMemberRepository placeVoteCandidateMemberRepository;
 	private final TimeVoteRepository timeVoteRepository;
+	private final MemberWithdrawalReasonRepository memberWithdrawalReasonRepository;
 
 	// 회원가입하기
 	@Transactional
@@ -273,7 +277,7 @@ public class MemberService {
 
 	// 회원 삭제
 	@Transactional
-	public void deleteMember(Long memberId, String accessToken) {
+	public void deleteMember(Long memberId, DeleteMemberRequest request) {
 		memberRoomRepository.deleteAllByMemberId(memberId);
 		placeVoteCandidateMemberRepository.deleteAllByMemberId(memberId);
 		timeVoteRepository.deleteAllByMemberId(memberId);
@@ -281,7 +285,10 @@ public class MemberService {
 		memberRepository.deleteById(memberId);
 
 		// 같은 accessToken 및 refreshToken으로 접속 못하도록 로그아웃
-		logoutMember(memberId, accessToken);
+		logoutMember(memberId, request.accessToken());
+
+		// 회원탈퇴 사유 저장
+		memberWithdrawalReasonRepository.save(new MemberWithdrawalReason(request.withdrawalReason()));
 	}
 
 	public FindMemberInfoResponse findMemberInfo(Long memberId) {

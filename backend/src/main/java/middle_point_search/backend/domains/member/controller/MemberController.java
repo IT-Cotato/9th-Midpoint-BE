@@ -560,7 +560,7 @@ public class MemberController {
 	) {
 		Long memberId = memberLoader.getMemberId();
 
-		memberService.deleteMember(memberId, request.accessToken());
+		memberService.deleteMember(memberId, request);
 
 		return ResponseEntity.ok(DataResponse.ok());
 	}
