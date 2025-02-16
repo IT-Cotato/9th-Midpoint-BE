@@ -14,8 +14,8 @@ import middle_point_search.backend.domains.google.dto.DistanceMatrixResponse;
 import middle_point_search.backend.domains.google.service.GoogleService;
 import middle_point_search.backend.domains.memberRoom.service.MemberRoomValidateService;
 import middle_point_search.backend.domains.midPoint.dto.MidPointDTO.AddressDTO;
-import middle_point_search.backend.domains.midPoint.dto.MidPointDTO.MidPointsFindResponse;
-import middle_point_search.backend.domains.midPoint.dto.MidPointDTO.TravelTimesFindResponse;
+import middle_point_search.backend.domains.midPoint.dto.MidPointDTO.FindMidPointsResponse;
+import middle_point_search.backend.domains.midPoint.dto.MidPointDTO.FindTravelTimesResponse;
 import middle_point_search.backend.domains.midPoint.util.MidPointUtil;
 import middle_point_search.backend.domains.place.domain.Place;
 import middle_point_search.backend.domains.place.repository.PlaceRepository;
@@ -31,12 +31,12 @@ public class MidPointService {
 	private final GoogleService googleService;
 
 	// 주어진 주소들로 중간 장소 리스트를 조회하는 메서드
-	public List<MidPointsFindResponse> findMidPoints(List<AddressDTO> addressDTOs) {
+	public List<FindMidPointsResponse> findMidPoints(List<AddressDTO> addressDTOs) {
 		return midPointUtil.findMidPoints(addressDTOs);
 	}
 
 	// 주어진 RoomId로 중간 장소 리스트를 조회하는 메서드
-	public List<MidPointsFindResponse> findMidPointsByRoomId(Long memberId, String roomId) {
+	public List<FindMidPointsResponse> findMidPointsByRoomId(Long memberId, String roomId) {
 		// 회원이 방에 속해있는지 확인
 		memberRoomValidateService.validateAuthorizedMember(memberId, roomId);
 
@@ -49,7 +49,7 @@ public class MidPointService {
 	}
 
 	// 방 장소들의 중간지점까지의 이동시간을 조회하는 메서드
-	public TravelTimesFindResponse findTravelTimes(String roomId, Long memberId, Double latitude, Double longitude) {
+	public FindTravelTimesResponse findTravelTimes(String roomId, Long memberId, Double latitude, Double longitude) {
 		// 회원이 방에 속해있는지 확인
 		memberRoomValidateService.validateAuthorizedMember(memberId, roomId);
 
@@ -69,9 +69,9 @@ public class MidPointService {
 		DistanceMatrixResponse distanceMatrixResponse = googleService.findTravelTimes(destinationPlaceId, originPlaceIds);
 
 		// 응답 생성
-		List<TravelTimesFindResponse.Element> elements = createTravelTimeElements(places, distanceMatrixResponse);
+		List<FindTravelTimesResponse.Element> elements = createTravelTimeElements(places, distanceMatrixResponse);
 
-		return TravelTimesFindResponse.from(elements);
+		return FindTravelTimesResponse.from(elements);
 	}
 
 	// 방에 속한 장소가 없을 때 예외처리
@@ -82,17 +82,17 @@ public class MidPointService {
 	}
 
 	// 이동 시간 요소 생성 로직
-	private List<TravelTimesFindResponse.Element> createTravelTimeElements(List<Place> places, DistanceMatrixResponse response) {
+	private List<FindTravelTimesResponse.Element> createTravelTimeElements(List<Place> places, DistanceMatrixResponse response) {
 		return IntStream.range(0, places.size())
 			.mapToObj(i -> {
 				Place place = places.get(i);
 				DistanceMatrixResponse.Element responseElement = response.getRows().get(i).getElements().get(0);
 
 				if ("ZERO_RESULTS".equals(responseElement.getStatus())) {
-					return TravelTimesFindResponse.Element.noContent(place.getId());
+					return FindTravelTimesResponse.Element.noContent(place.getId());
 				}
 
-				return TravelTimesFindResponse.Element.from(
+				return FindTravelTimesResponse.Element.from(
 					place.getId(),
 					responseElement.getDuration().getText(),
 					responseElement.getDuration().getValue(),

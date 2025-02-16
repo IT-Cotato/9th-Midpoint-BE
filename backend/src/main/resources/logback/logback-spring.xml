@@ -33,6 +33,16 @@
 
         <logger level="DEBUG" name="org.hibernate.SQL"/>
     </springProfile>
+
+    <springProfile name="main">
+
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="FILE-INFO"/>
+        </root>
+
+        <logger level="DEBUG" name="org.hibernate.SQL"/>
+    </springProfile>
 </configuration>
 
 

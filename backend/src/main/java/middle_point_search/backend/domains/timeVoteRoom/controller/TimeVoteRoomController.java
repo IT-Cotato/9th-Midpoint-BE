@@ -73,13 +73,13 @@ public class TimeVoteRoomController {
 			)
 		}
 	)
-	public ResponseEntity<DataResponse<TimeVoteRoomCreateResponse>> timeVoteRoomCreate(
+	public ResponseEntity<DataResponse<CreateTimeVoteRoomResponse>> createTimeVoteRoom(
 		@PathVariable("roomId") String roomId,
-		@RequestBody @Valid TimeVoteRoomCreateRequest request
+		@RequestBody @Valid CreateTimeVoteRoomRequest request
 	) {
 		Long memberId = memberLoader.getMemberId();
 
-		TimeVoteRoomCreateResponse response = timeVoteRoomService.createTimeVoteRoom(memberId, roomId, request);
+		CreateTimeVoteRoomResponse response = timeVoteRoomService.createTimeVoteRoom(memberId, roomId, request);
 
 		return ResponseEntity.ok(DataResponse.from(response));
 	}
@@ -125,9 +125,9 @@ public class TimeVoteRoomController {
 			)
 		}
 	)
-	public ResponseEntity<DataResponse<Void>> timeVoteRoomRecreate(
+	public ResponseEntity<DataResponse<Void>> updateTimeVoteRoom(
 		@PathVariable("roomId") String roomId,
-		@RequestBody @Valid TimeVoteRoomCreateRequest request
+		@RequestBody @Valid UpdateTimeVoteRoomRequest request
 	) {
 		Long memberId = memberLoader.getMemberId();
 
@@ -165,12 +165,12 @@ public class TimeVoteRoomController {
 			)
 		}
 	)
-	public ResponseEntity<DataResponse<TimeVoteRoomGetResponse>> timeVoteRoomGet(
+	public ResponseEntity<DataResponse<FindTimeVoteRoomResponse>> FindTimeVoteRoom(
 		@PathVariable("roomId") String roomId
 	) {
 		Long memberId = memberLoader.getMemberId();
 
-		TimeVoteRoomGetResponse response = timeVoteRoomService.findTimeVoteRoomAndMakeDTO(memberId, roomId);
+		FindTimeVoteRoomResponse response = timeVoteRoomService.findTimeVoteRoomAndMakeDTO(memberId, roomId);
 
 		return ResponseEntity.ok(DataResponse.from(response));
 	}

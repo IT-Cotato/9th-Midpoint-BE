@@ -33,5 +33,8 @@ public interface PlaceRepository extends JpaRepository<Place, Long> {
 		@Param("siGunGu") String siGunGu,
 		@Param("roadNameAddress") String roadNameAddress,
 		@Param("addressLat") Double addressLat,
-		@Param("addressLong") Double addressLong);
+		@Param("addressLong") Double addressLong
+	);
+
+	void deleteAllByMemberId(Long memberId);
 }

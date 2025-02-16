@@ -17,55 +17,65 @@ import lombok.NoArgsConstructor;
 public class PlaceVoteRoomDTO {
 	@Getter
 	@NoArgsConstructor(access = AccessLevel.PRIVATE)
-	public static class PlaceVoteRoomCreateRequest {
+	public static class CreatePlaceVoteRoomRequest {
 
 		@NotEmpty(message = "투표 후보가 제공되지 않았습니다.")
 		@Valid
 		private List<PlaceCandidateInfo> placeCandidates;
 
-		@Getter
-		@AllArgsConstructor(access = AccessLevel.PRIVATE)
-		public static class PlaceCandidateInfo {
 
-			@NotBlank(message = "name은 비어 있을 수 없습니다.")
-			private String name;
-			@NotBlank(message = "siDo는 비어 있을 수 없습니다.")
-			private String siDo;
-			@NotBlank(message = "siGunGu는 비어 있을 수 없습니다.")
-			private String siGunGu;
-			@NotBlank(message = "roadNameAddress는 비어 있을 수 없습니다.")
-			private String roadNameAddress;
-			@NotNull
-			@Positive(message = "addreesLat은 양수이어야 합니다.")
-			private Double addressLat;
-			@NotNull
-			@Positive(message = "addreesLong은 양수이어야 합니다.")
-			private Double addressLong;
-		}
 	}
 
+	@Getter
+	@NoArgsConstructor(access = AccessLevel.PRIVATE)
+	public static class UpdatePlaceVoteRoomRequest {
 
+		@NotEmpty(message = "투표 후보가 제공되지 않았습니다.")
+		@Valid
+		private List<PlaceCandidateInfo> placeCandidates;
+
+	}
 
 	@Getter
 	@AllArgsConstructor(access = AccessLevel.PRIVATE)
-	public static class PlaceVoteRoomCreateResponse {
+	public static class PlaceCandidateInfo {
+
+		@NotBlank(message = "name은 비어 있을 수 없습니다.")
+		private String name;
+		@NotBlank(message = "siDo는 비어 있을 수 없습니다.")
+		private String siDo;
+		@NotBlank(message = "siGunGu는 비어 있을 수 없습니다.")
+		private String siGunGu;
+		@NotBlank(message = "roadNameAddress는 비어 있을 수 없습니다.")
+		private String roadNameAddress;
+		@NotNull
+		@Positive(message = "addreesLat은 양수이어야 합니다.")
+		private Double addressLat;
+		@NotNull
+		@Positive(message = "addreesLong은 양수이어야 합니다.")
+		private Double addressLong;
+	}
+
+	@Getter
+	@AllArgsConstructor(access = AccessLevel.PRIVATE)
+	public static class CreatePlaceVoteRoomResponse {
 		private final Long id;
 
-		public static PlaceVoteRoomCreateResponse from(Long id) {
-			return new PlaceVoteRoomCreateResponse(id);
+		public static CreatePlaceVoteRoomResponse from(Long id) {
+			return new CreatePlaceVoteRoomResponse(id);
 		}
 	}
 
 
 	@Getter
 	@AllArgsConstructor(access = AccessLevel.PRIVATE)
-	public static class VotedAndVoteItemResponse {
+	public static class FindVotedAndVoteItemResponse {
 		private Boolean existence;
 		@JsonInclude(JsonInclude.Include.NON_NULL)
 		private Long voteItem;
 
-		public static VotedAndVoteItemResponse from(Boolean existence, Long voteItem) {
-			return new VotedAndVoteItemResponse(existence, voteItem);
+		public static FindVotedAndVoteItemResponse from(Boolean existence, Long voteItem) {
+			return new FindVotedAndVoteItemResponse(existence, voteItem);
 		}
 	}
 }

@@ -17,15 +17,30 @@ import middle_point_search.backend.domains.email.service.SignupVerificationCodeS
 import middle_point_search.backend.domains.logout.LogoutService;
 import middle_point_search.backend.domains.logout.LogoutToken;
 import middle_point_search.backend.domains.member.domain.Member;
+import middle_point_search.backend.domains.member.domain.MemberWithdrawalReason;
 import middle_point_search.backend.domains.member.domain.Role;
-import middle_point_search.backend.domains.member.dto.MemberDTO.MemberCreateRequest;
+import middle_point_search.backend.domains.member.dto.request.CreateMemberRequest;
+import middle_point_search.backend.domains.member.dto.request.DeleteMemberRequest;
+import middle_point_search.backend.domains.member.dto.request.FindMemberInfoResponse;
 import middle_point_search.backend.domains.member.dto.request.SendEmailVerificationRequest;
 import middle_point_search.backend.domains.member.dto.request.SendNewPasswordRequest;
+import middle_point_search.backend.domains.member.dto.request.SendNewPasswordResponse;
 import middle_point_search.backend.domains.member.dto.request.SendPasswordReissueVerificationRequest;
+import middle_point_search.backend.domains.member.dto.request.UpdateMemberAddressRequest;
+import middle_point_search.backend.domains.member.dto.request.UpdateMemberNameRequest;
 import middle_point_search.backend.domains.member.dto.request.VerifyEmailVerificationCodeRequest;
+import middle_point_search.backend.domains.member.dto.response.FindProfileImageUrlResponse;
 import middle_point_search.backend.domains.member.dto.response.VerifyEmailVerificationCodeResponse;
 import middle_point_search.backend.domains.member.repository.MemberRepository;
+import middle_point_search.backend.domains.member.repository.MemberWithdrawalReasonRepository;
+import middle_point_search.backend.domains.memberRoom.repository.MemberRoomRepository;
+import middle_point_search.backend.domains.place.repository.PlaceRepository;
+import middle_point_search.backend.domains.placeVoteRoom.repository.PlaceVoteCandidateMemberRepository;
 import middle_point_search.backend.domains.refreshToken.RefreshTokenService;
+import middle_point_search.backend.domains.s3.S3Service;
+import middle_point_search.backend.domains.s3.dto.response.CreatePreSignedUrlResponse;
+import middle_point_search.backend.domains.s3.model.PreSignedUrlPrefix;
+import middle_point_search.backend.domains.timeVoteRoom.repository.TimeVoteRepository;
 
 @Slf4j
 @Service
@@ -40,10 +55,16 @@ public class MemberService {
 	private final SignupVerificationCodeService signupVerificationCodeService;
 	private final EmailService emailService;
 	private final PasswordReissueVerificationCodeService passwordReissueVerificationCodeService;
+	private final S3Service s3Service;
+	private final MemberRoomRepository memberRoomRepository;
+	private final PlaceRepository placeRepository;
+	private final PlaceVoteCandidateMemberRepository placeVoteCandidateMemberRepository;
+	private final TimeVoteRepository timeVoteRepository;
+	private final MemberWithdrawalReasonRepository memberWithdrawalReasonRepository;
 
 	// 회원가입하기
 	@Transactional
-	public void createMember(MemberCreateRequest request) {
+	public void createMember(CreateMemberRequest request) {
 		validateExistingEmail(request.getEmail());
 		signupVerificationCodeService.validateEmailCodeAndDelete(request.getEmail(), request.getCode());
 
@@ -55,7 +76,7 @@ public class MemberService {
 	}
 
 	// 주소 여부에 따라 회원 엔티티 생성
-	private Member createMemberEntity(MemberCreateRequest request, String pw) {
+	private Member createMemberEntity(CreateMemberRequest request, String pw) {
 		if (request.getExistAddress()) {
 			return Member.createWithAddress(
 				request.getEmail(),
@@ -134,7 +155,7 @@ public class MemberService {
 
 	// 비밀번호 재발급
 	@Transactional
-	public void validateCodeAndSendNewPassword(SendNewPasswordRequest request) {
+	public SendNewPasswordResponse validateCodeAndSendNewPassword(SendNewPasswordRequest request) {
 		String email = request.getEmail();
 
 		// 토큰 검증 및 삭제
@@ -150,6 +171,8 @@ public class MemberService {
 
 		// 새 비밀번호 이메일 전송
 		emailService.sendNewPassword(email, newPassword);
+
+		return new SendNewPasswordResponse(newPassword);
 	}
 
 	// 새 비밀번호 생성
@@ -173,5 +196,106 @@ public class MemberService {
 		emailService.sendPasswordReissueVerificationCodeEmail(request.getEmail(), code);
 	}
 
+	// 이름 수정
+	@Transactional
+	public void updateMemberName(Long memberId, UpdateMemberNameRequest request) {
+		Member member = memberRepository.findById(memberId)
+			.orElseThrow(() -> CustomException.from(MEMBER_NOT_FOUND));
+
+		member.updateName(request.name());
+	}
+
+	// 주소 수정
+	@Transactional
+	public void updateMemberAddress(Long memberId, UpdateMemberAddressRequest request) {
+		Member member = memberRepository.findById(memberId)
+			.orElseThrow(() -> CustomException.from(MEMBER_NOT_FOUND));
+
+		member.updateAddress(
+			request.siDo(),
+			request.siGunGu(),
+			request.roadNameAddress(),
+			request.addressLatitude(),
+			request.addressLongitude());
+	}
+
+	// 회원 주소 삭제
+	@Transactional
+	public void deleteMemberAddress(Long memberId) {
+		Member member = memberRepository.findById(memberId)
+			.orElseThrow(() -> CustomException.from(MEMBER_NOT_FOUND));
+
+		member.deleteAddress();
+	}
+
+	// 회원 프로필 presigned path 생성
+	@Transactional
+	public CreatePreSignedUrlResponse createProfilePreSignedUrl(Long memberId, String filename) {
+		CreatePreSignedUrlResponse response = s3Service.createPreSignedUrl(PreSignedUrlPrefix.PROFILE, filename);
+
+		// DB에 path 저장
+		Member member = memberRepository.findById(memberId)
+			.orElseThrow(() -> CustomException.from(MEMBER_NOT_FOUND));
+		member.updateProfileImagePath(response.path());
+
+		return response;
+	}
+
+	// 회원 프로필 이미지 path 조회
+	@Transactional
+	public FindProfileImageUrlResponse findProfileImageUrl(Long memberId) {
+		Member member = memberRepository.findById(memberId)
+			.orElseThrow(() -> CustomException.from(MEMBER_NOT_FOUND));
+
+		// 1. path가 null이면 false
+		// 2. path가 유효하지 않으면 false
+		// 3. path가 유효하면 true 및 url 반환
+		if (member.getProfileImagePath() == null) {
+			return new FindProfileImageUrlResponse(false, null);
+		} else if (!s3Service.isFileExists(member.getProfileImagePath())) {
+			member.updateProfileImagePath(null);
+			return new FindProfileImageUrlResponse(false, null);
+		} else {
+			return new FindProfileImageUrlResponse(true, s3Service.getUrl(member.getProfileImagePath()));
+		}
+	}
+
+	// 회원 프로필 이미지 삭제
+	@Transactional
+	public void deleteProfileImage(Long memberId) {
+		Member member = memberRepository.findById(memberId)
+			.orElseThrow(() -> CustomException.from(MEMBER_NOT_FOUND));
+
+		// path가 null이면 return
+		if (member.getProfileImagePath() == null) {
+			return;
+		}
+
+		s3Service.deleteFile(member.getProfileImagePath());
+		member.updateProfileImagePath(null);
+	}
+
+	// 회원 삭제
+	@Transactional
+	public void deleteMember(Long memberId, DeleteMemberRequest request, String accessToken) {
+		memberRoomRepository.deleteAllByMemberId(memberId);
+		placeVoteCandidateMemberRepository.deleteAllByMemberId(memberId);
+		timeVoteRepository.deleteAllByMemberId(memberId);
+		placeRepository.deleteAllByMemberId(memberId);
+		memberRepository.deleteById(memberId);
+
+		// 같은 accessToken 및 refreshToken으로 접속 못하도록 로그아웃
+		logoutMember(memberId, accessToken);
+
+		// 회원탈퇴 사유 저장
+		memberWithdrawalReasonRepository.save(new MemberWithdrawalReason(request.withdrawalReason()));
+	}
+
+	public FindMemberInfoResponse findMemberInfo(Long memberId) {
+		Member member = memberRepository.findById(memberId)
+			.orElseThrow(() -> CustomException.from(MEMBER_NOT_FOUND));
+
+		return FindMemberInfoResponse.from(member);
+	}
 }
 

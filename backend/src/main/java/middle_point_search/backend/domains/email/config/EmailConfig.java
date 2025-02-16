@@ -1,4 +1,4 @@
-package middle_point_search.backend.common.email;
+package middle_point_search.backend.domains.email.config;
 
 import java.util.Properties;
 

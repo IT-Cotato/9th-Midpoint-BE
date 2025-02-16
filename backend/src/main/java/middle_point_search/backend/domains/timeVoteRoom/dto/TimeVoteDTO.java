@@ -29,6 +29,16 @@ public class TimeVoteDTO {
 	}
 
 	@Getter
+	@NoArgsConstructor(access = AccessLevel.PRIVATE)
+	public static class UpdateTimeVoteRequest {
+		private List<TimeRange> dateTime;
+
+		public UpdateTimeVoteRequest(List<TimeRange> dateTime) {
+			this.dateTime = dateTime;
+		}
+	}
+
+	@Getter
 	@AllArgsConstructor(access = AccessLevel.PRIVATE)
 	public static class TimeVoteDetail {
 		private String memberName;
@@ -58,30 +68,30 @@ public class TimeVoteDTO {
 	@Getter
 	@AllArgsConstructor(access = AccessLevel.PRIVATE)
 	@JsonInclude(JsonInclude.Include.NON_NULL)
-	public static class VotedAndVoteItemsGetResponse {
+	public static class FindVotedAndVoteItemsResponse {
 		private Boolean myVotesExistence;
 		private List<TimeRange> myVotes;
 		private Boolean otherVotesExistence;
 		private List<TimeVotePerDate> otherVotes;
 
-		public static VotedAndVoteItemsGetResponse from(
+		public static FindVotedAndVoteItemsResponse from(
 			Boolean myVotesExistence,
 			List<TimeRange> myVotes,
 			Boolean otherVotesExistence,
 			List<TimeVotePerDate> otherVotes) {
 
-			return new VotedAndVoteItemsGetResponse(myVotesExistence, myVotes, otherVotesExistence, otherVotes);
+			return new FindVotedAndVoteItemsResponse(myVotesExistence, myVotes, otherVotesExistence, otherVotes);
 		}
 	}
 
 	@Getter
 	@AllArgsConstructor(access = AccessLevel.PRIVATE)
-	public static class TimeVoteRoomResultResponse {
+	public static class FindTimeVoteRoomResultResponse {
 		private Map<String, List<TimeVoteDetail>> result;
 		private int totalMemberNum;
 
-		public static TimeVoteRoomResultResponse from(Map<String, List<TimeVoteDetail>> result, int totalMemberNum) {
-			return new TimeVoteRoomResultResponse(result, totalMemberNum);
+		public static FindTimeVoteRoomResultResponse from(Map<String, List<TimeVoteDetail>> result, int totalMemberNum) {
+			return new FindTimeVoteRoomResultResponse(result, totalMemberNum);
 		}
 	}
 

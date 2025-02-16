@@ -3,6 +3,7 @@ package middle_point_search.backend.domains.memberRoom.controller;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,8 +20,8 @@ import middle_point_search.backend.common.dto.DataResponse;
 import middle_point_search.backend.common.dto.ErrorResponse;
 import middle_point_search.backend.common.util.MemberLoader;
 import middle_point_search.backend.domains.member.domain.Member;
-import middle_point_search.backend.domains.memberRoom.dto.MemberRoomDTO.MemberRoomExistsResponse;
-import middle_point_search.backend.domains.memberRoom.dto.MemberRoomDTO.RoomsByMemberIdFindResponse;
+import middle_point_search.backend.domains.memberRoom.dto.MemberRoomDTO.ExistsMemberRoomResponse;
+import middle_point_search.backend.domains.memberRoom.dto.MemberRoomDTO.FindRoomsByMemberIdResponse;
 import middle_point_search.backend.domains.memberRoom.service.MemberRoomService;
 
 @Tag(name = "MEMBER_ROOM API", description = "회원방에 대한 API입니다.")
@@ -94,10 +95,10 @@ public class MemberRoomController {
 			),
 		}
 	)
-	public ResponseEntity<DataResponse<List<RoomsByMemberIdFindResponse>>> findRooms() {
+	public ResponseEntity<DataResponse<List<FindRoomsByMemberIdResponse>>> findRooms() {
 		Long memberId = memberLoader.getMemberId();
 
-		List<RoomsByMemberIdFindResponse> responses = memberRoomService.findRooms(memberId);
+		List<FindRoomsByMemberIdResponse> responses = memberRoomService.findRooms(memberId);
 
 		return ResponseEntity.ok(DataResponse.from(responses));
 	}
@@ -123,13 +124,54 @@ public class MemberRoomController {
 			),
 		}
 	)
-	public ResponseEntity<DataResponse<MemberRoomExistsResponse>> existsMemberRoom(
+	public ResponseEntity<DataResponse<ExistsMemberRoomResponse>> existsMemberRoom(
 		@PathVariable("roomId") String roomId
 	) {
 		Long memberId = memberLoader.getMemberId();
 
-		MemberRoomExistsResponse response = memberRoomService.existsMemberRoom(memberId, roomId);
+		ExistsMemberRoomResponse response = memberRoomService.existsMemberRoom(memberId, roomId);
 
 		return ResponseEntity.ok(DataResponse.from(response));
 	}
+
+	@DeleteMapping("/rooms/{roomId}")
+	@Operation(
+		summary = "회원을 방에서 삭제",
+		description = "회원을 방에서 삭제합니다.",
+		responses = {
+			@ApiResponse(
+				responseCode = "200",
+				description = "성공"
+			),
+			@ApiResponse(
+				responseCode = "401",
+				description = "인증에 실패하였습니다.[C-101]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
+				responseCode = "402",
+				description = "Access Token을 재발급해야합니다.[A-004]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
+				responseCode = "404",
+				description = "존재하지 않는 방입니다.[R-201]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
+				responseCode = "409",
+				description = "해당 방에 존재하지 않는 회원입니다.[MR-001]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			)
+		}
+	)
+	public ResponseEntity<DataResponse<Void>> deleteMemberFromRoom(@PathVariable("roomId") String roomId) {
+		Long memberId = memberLoader.getMemberId();
+
+		memberRoomService.deleteMemberFromRoom(memberId, roomId);
+
+		return ResponseEntity.ok(DataResponse.ok());
+	}
 }
+
+

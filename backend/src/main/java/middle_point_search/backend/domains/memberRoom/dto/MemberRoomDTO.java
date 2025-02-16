@@ -19,22 +19,22 @@ public class MemberRoomDTO {
 
 	@Getter
 	@AllArgsConstructor(access = AccessLevel.PRIVATE)
-	public static class RoomsByMemberIdFindResponse {
+	public static class FindRoomsByMemberIdResponse {
 		private String roomId;
 		private String roomName;
 
-		public static RoomsByMemberIdFindResponse from(Room room) {
-			return new RoomsByMemberIdFindResponse(room.getId(), room.getName());
+		public static FindRoomsByMemberIdResponse from(Room room) {
+			return new FindRoomsByMemberIdResponse(room.getId(), room.getName());
 		}
 	}
 
 	@Getter
 	@AllArgsConstructor(access = AccessLevel.PRIVATE)
-	public static class MemberRoomExistsResponse {
+	public static class ExistsMemberRoomResponse {
 		private Boolean exists;
 
-		public static MemberRoomExistsResponse from(Boolean exists) {
-			return new MemberRoomExistsResponse(exists);
+		public static ExistsMemberRoomResponse from(Boolean exists) {
+			return new ExistsMemberRoomResponse(exists);
 		}
 	}
 }

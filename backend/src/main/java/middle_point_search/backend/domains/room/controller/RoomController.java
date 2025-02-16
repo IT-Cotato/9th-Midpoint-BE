@@ -19,11 +19,11 @@ import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.dto.DataResponse;
 import middle_point_search.backend.common.dto.ErrorResponse;
 import middle_point_search.backend.common.util.MemberLoader;
+import middle_point_search.backend.domains.room.dto.RoomDTO;
 import middle_point_search.backend.domains.room.dto.RoomDTO.FindRoomDetailResponse;
-import middle_point_search.backend.domains.room.dto.RoomDTO.RoomCreateRequest;
-import middle_point_search.backend.domains.room.dto.RoomDTO.RoomCreateResponse;
-import middle_point_search.backend.domains.room.dto.RoomDTO.RoomExistResponse;
-import middle_point_search.backend.domains.room.dto.RoomDTO.RoomNameUpdateRequest;
+import middle_point_search.backend.domains.room.dto.RoomDTO.CreateRoomResponse;
+import middle_point_search.backend.domains.room.dto.RoomDTO.ExistRoomResponse;
+import middle_point_search.backend.domains.room.dto.RoomDTO.UpdateRoomNameRequest;
 import middle_point_search.backend.domains.room.dto.RoomDTO.UpdateRoomMemoRequest;
 import middle_point_search.backend.domains.room.service.RoomService;
 
@@ -70,8 +70,8 @@ public class RoomController {
 			)
 		}
 	)
-	public ResponseEntity<DataResponse<RoomCreateResponse>> roomCreate(@RequestBody @Valid RoomCreateRequest request) {
-		RoomCreateResponse response = roomService.createRoom(request);
+	public ResponseEntity<DataResponse<CreateRoomResponse>> createRoom(@RequestBody @Valid RoomDTO.CreateRoomRequest request) {
+		CreateRoomResponse response = roomService.createRoom(request);
 
 		return ResponseEntity.ok(DataResponse.from(response));
 	}
@@ -103,9 +103,9 @@ public class RoomController {
 			),
 		}
 	)
-	public ResponseEntity<DataResponse<Void>> roomNameUpdate(
+	public ResponseEntity<DataResponse<Void>> updateRoomName(
 		@PathVariable String roomId,
-		@RequestBody RoomNameUpdateRequest request
+		@RequestBody UpdateRoomNameRequest request
 	) {
 		Long memberId = memberLoader.getMemberId();
 
@@ -179,8 +179,8 @@ public class RoomController {
 			),
 		}
 	)
-	public ResponseEntity<DataResponse<RoomExistResponse>> roomExist(@PathVariable String roomId) {
-		RoomExistResponse response = roomService.existRoom(roomId);
+	public ResponseEntity<DataResponse<ExistRoomResponse>> existRoom(@PathVariable String roomId) {
+		ExistRoomResponse response = roomService.existRoom(roomId);
 
 		return ResponseEntity.ok(DataResponse.from(response));
 	}

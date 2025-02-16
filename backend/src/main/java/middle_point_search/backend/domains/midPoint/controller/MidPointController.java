@@ -18,8 +18,8 @@ import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.dto.DataResponse;
 import middle_point_search.backend.common.dto.ErrorResponse;
 import middle_point_search.backend.common.util.MemberLoader;
-import middle_point_search.backend.domains.midPoint.dto.MidPointDTO.MidPointsFindResponse;
-import middle_point_search.backend.domains.midPoint.dto.MidPointDTO.TravelTimesFindResponse;
+import middle_point_search.backend.domains.midPoint.dto.MidPointDTO.FindMidPointsResponse;
+import middle_point_search.backend.domains.midPoint.dto.MidPointDTO.FindTravelTimesResponse;
 import middle_point_search.backend.domains.midPoint.service.MidPointService;
 
 @Tag(name = "MID POINT API", description = "중간지점에 대한 API입니다.")
@@ -70,12 +70,12 @@ public class MidPointController {
 			)
 		}
 	)
-	public ResponseEntity<DataResponse<List<MidPointsFindResponse>>> MidPointsFind(
+	public ResponseEntity<DataResponse<List<FindMidPointsResponse>>> findMidPoints(
 		@PathVariable("roomId") String roomId
 	) {
 		Long memberId = memberLoader.getMemberId();
 
-		List<MidPointsFindResponse> midPoints = midPointService.findMidPointsByRoomId(memberId, roomId);
+		List<FindMidPointsResponse> midPoints = midPointService.findMidPointsByRoomId(memberId, roomId);
 
 		return ResponseEntity.ok(DataResponse.from(midPoints));
 	}
@@ -124,7 +124,7 @@ public class MidPointController {
 			)
 		}
 	)
-	public ResponseEntity<DataResponse<TravelTimesFindResponse>> findPath(
+	public ResponseEntity<DataResponse<FindTravelTimesResponse>> findTravelTimes(
 		@PathVariable String roomId,
 		@RequestParam Double destLatitude,
 		@RequestParam Double destLongitude

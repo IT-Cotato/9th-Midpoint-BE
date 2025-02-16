@@ -25,7 +25,7 @@ import middle_point_search.backend.domains.recommendPlace.dto.KakaoRequestDTO;
 import middle_point_search.backend.domains.recommendPlace.dto.request.RecommendPlacesFindRequest;
 import middle_point_search.backend.domains.recommendPlace.dto.response.KakaoSearchResponse;
 import middle_point_search.backend.domains.recommendPlace.dto.response.RecommendPlacesDto;
-import middle_point_search.backend.domains.recommendPlace.dto.response.RecommendPlacesFindResponse;
+import middle_point_search.backend.domains.recommendPlace.dto.response.FindRecommendPlacesResponse;
 
 @Slf4j
 @Service
@@ -38,7 +38,7 @@ public class RecommendPlaceService {
 	private final WebClientUtil webClientUtil;
 
 	// 키워드로 주위 장소 조회
-	public Page<RecommendPlacesFindResponse> findRecommendPlaces(RecommendPlacesFindRequest request) {
+	public Page<FindRecommendPlacesResponse> findRecommendPlaces(RecommendPlacesFindRequest request) {
 		String x = request.getAddressLong().toString();
 		String y = request.getAddressLat().toString();
 		int page = request.getPage();
@@ -55,7 +55,7 @@ public class RecommendPlaceService {
 
 		log.info("totalCount : {}", totalCount);
 
-		PageImpl<RecommendPlacesFindResponse> responses = new PageImpl<>(
+		PageImpl<FindRecommendPlacesResponse> responses = new PageImpl<>(
 			response.getRecommendPlaces(), pageable, totalCount);
 
 		log.info("offset : {}", responses.getPageable().getOffset());

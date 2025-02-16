@@ -70,7 +70,7 @@ public class PlaceController {
 			)
 		}
 	)
-	public ResponseEntity<DataResponse<SavePlaceResponse>> placeSave(
+	public ResponseEntity<DataResponse<SavePlaceResponse>> savePlace(
 		@PathVariable("roomId") String roomId,
 		@RequestBody @Valid SavePlaceRequest request
 	) {
@@ -162,7 +162,7 @@ public class PlaceController {
 			),
 		}
 	)
-	public ResponseEntity<DataResponse<FindPlacesResponse>> placesFind(
+	public ResponseEntity<DataResponse<FindPlacesResponse>> findPlaces(
 		@PathVariable("roomId") String roomId
 	) {
 		Long memberId = memberLoader.getMemberId();
@@ -206,7 +206,7 @@ public class PlaceController {
 			)
 		}
 	)
-	public ResponseEntity<DataResponse<Void>> placeDelete(
+	public ResponseEntity<DataResponse<Void>> deletePlace(
 		@PathVariable("placeId") Long placeId
 	) {
 		Long memberId = memberLoader.getMemberId();

@@ -8,7 +8,7 @@ import middle_point_search.backend.domains.recommendPlace.dto.response.KakaoSear
 
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class RecommendPlacesFindResponse implements Comparable<RecommendPlacesFindResponse> {
+public class FindRecommendPlacesResponse implements Comparable<FindRecommendPlacesResponse> {
 
 	private final String name;
 	private final String siDo;
@@ -21,7 +21,7 @@ public class RecommendPlacesFindResponse implements Comparable<RecommendPlacesFi
 	private final PlaceStandard placeStandard;
 	private final String distance;
 
-	public static RecommendPlacesFindResponse from(Document document, PlaceStandard placeStandard) {
+	public static FindRecommendPlacesResponse from(Document document, PlaceStandard placeStandard) {
 
 		String[] splitAddress = splitAddress(document.getRoad_address_name());
 
@@ -29,7 +29,7 @@ public class RecommendPlacesFindResponse implements Comparable<RecommendPlacesFi
 		String siGunGu = splitAddress[1];
 		String roadNameAddress = splitAddress[2];
 
-		return new RecommendPlacesFindResponse(
+		return new FindRecommendPlacesResponse(
 			document.getPlace_name(),
 			siDo,
 			siGunGu,
@@ -56,7 +56,7 @@ public class RecommendPlacesFindResponse implements Comparable<RecommendPlacesFi
 	}
 
 	@Override
-	public int compareTo(RecommendPlacesFindResponse o) {
+	public int compareTo(FindRecommendPlacesResponse o) {
 		return Integer.parseInt(this.distance) - Integer.parseInt(o.distance);
 	}
 }
