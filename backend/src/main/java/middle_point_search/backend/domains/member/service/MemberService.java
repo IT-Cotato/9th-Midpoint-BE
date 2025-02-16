@@ -277,7 +277,7 @@ public class MemberService {
 
 	// 회원 삭제
 	@Transactional
-	public void deleteMember(Long memberId, DeleteMemberRequest request) {
+	public void deleteMember(Long memberId, DeleteMemberRequest request, String accessToken) {
 		memberRoomRepository.deleteAllByMemberId(memberId);
 		placeVoteCandidateMemberRepository.deleteAllByMemberId(memberId);
 		timeVoteRepository.deleteAllByMemberId(memberId);
@@ -285,7 +285,7 @@ public class MemberService {
 		memberRepository.deleteById(memberId);
 
 		// 같은 accessToken 및 refreshToken으로 접속 못하도록 로그아웃
-		logoutMember(memberId, request.accessToken());
+		logoutMember(memberId, accessToken);
 
 		// 회원탈퇴 사유 저장
 		memberWithdrawalReasonRepository.save(new MemberWithdrawalReason(request.withdrawalReason()));

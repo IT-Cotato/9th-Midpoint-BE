@@ -24,7 +24,7 @@ import middle_point_search.backend.domains.timeVoteRoom.dto.TimeVoteDTO.TimeRang
 import middle_point_search.backend.domains.timeVoteRoom.dto.TimeVoteDTO.TimeVoteDetail;
 import middle_point_search.backend.domains.timeVoteRoom.dto.TimeVoteDTO.TimeVotePerDate;
 import middle_point_search.backend.domains.timeVoteRoom.dto.TimeVoteDTO.FindTimeVoteRoomResultResponse;
-import middle_point_search.backend.domains.timeVoteRoom.dto.TimeVoteDTO.UpdateVoteRequest;
+import middle_point_search.backend.domains.timeVoteRoom.dto.TimeVoteDTO.UpdateTimeVoteRequest;
 import middle_point_search.backend.domains.timeVoteRoom.dto.TimeVoteDTO.VoteRequest;
 import middle_point_search.backend.domains.timeVoteRoom.dto.TimeVoteDTO.FindVotedAndVoteItemsResponse;
 import middle_point_search.backend.domains.timeVoteRoom.repository.TimeVoteRepository;
@@ -71,7 +71,7 @@ public class TimeVoteService {
 	public void updateVote(
 		Member member,
 		String roomId,
-		UpdateVoteRequest request
+		UpdateTimeVoteRequest request
 	) {
 		// 방에 대한 회원인지 확인
 		memberRoomValidateService.validateAuthorizedMember(member.getId(), roomId);

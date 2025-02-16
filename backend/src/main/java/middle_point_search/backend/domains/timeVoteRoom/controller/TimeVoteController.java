@@ -21,9 +21,9 @@ import middle_point_search.backend.common.dto.ErrorResponse;
 import middle_point_search.backend.common.util.MemberLoader;
 import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.timeVoteRoom.dto.TimeVoteDTO.FindTimeVoteRoomResultResponse;
-import middle_point_search.backend.domains.timeVoteRoom.dto.TimeVoteDTO.UpdateVoteRequest;
-import middle_point_search.backend.domains.timeVoteRoom.dto.TimeVoteDTO.VoteRequest;
 import middle_point_search.backend.domains.timeVoteRoom.dto.TimeVoteDTO.FindVotedAndVoteItemsResponse;
+import middle_point_search.backend.domains.timeVoteRoom.dto.TimeVoteDTO.UpdateTimeVoteRequest;
+import middle_point_search.backend.domains.timeVoteRoom.dto.TimeVoteDTO.VoteRequest;
 import middle_point_search.backend.domains.timeVoteRoom.service.TimeVoteService;
 
 @Tag(name = "TIME VOTE API", description = "시간투표에 대한 API입니다.")
@@ -129,9 +129,9 @@ public class TimeVoteController {
 			),
 		}
 	)
-	public ResponseEntity<DataResponse<Void>> updateVote(
+	public ResponseEntity<DataResponse<Void>> updateTimeVote(
 		@PathVariable String roomId,
-		@RequestBody @Valid UpdateVoteRequest request
+		@RequestBody @Valid UpdateTimeVoteRequest request
 	) {
 		Member member = memberLoader.getMember();
 

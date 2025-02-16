@@ -36,7 +36,7 @@ public class PlaceVoteDTO {
 
 	@Getter
 	@NoArgsConstructor(access = AccessLevel.PRIVATE)
-	public static class UpdateVoteRequest {
+	public static class UpdatePlaceVoteRequest {
 
 		@NotNull(message = "choicePlace은 비어 있을 수 없습니다.")
 		private Long choicePlace;

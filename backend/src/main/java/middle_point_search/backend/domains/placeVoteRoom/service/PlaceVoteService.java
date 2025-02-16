@@ -16,7 +16,7 @@ import middle_point_search.backend.domains.placeVoteRoom.domain.PlaceVoteCandida
 import middle_point_search.backend.domains.placeVoteRoom.domain.PlaceVoteCandidateMember;
 import middle_point_search.backend.domains.placeVoteRoom.domain.PlaceVoteRoom;
 import middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteDTO.FindPlaceVoteResultsResponse;
-import middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteDTO.UpdateVoteRequest;
+import middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteDTO.UpdatePlaceVoteRequest;
 import middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteDTO.VotePlaceRequest;
 import middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteRoomDTO.FindVotedAndVoteItemResponse;
 import middle_point_search.backend.domains.placeVoteRoom.repository.PlaceVoteCandidateMemberRepository;
@@ -61,7 +61,7 @@ public class PlaceVoteService {
 
 	// 재투표
 	@Transactional(rollbackFor = {CustomException.class})
-	public void updateVote(Member member, String roomId, UpdateVoteRequest request) {
+	public void updateVote(Member member, String roomId, UpdatePlaceVoteRequest request) {
 		// 방에 대한 회원인지 확인
 		memberRoomValidateService.validateAuthorizedMember(member.getId(), roomId);
 

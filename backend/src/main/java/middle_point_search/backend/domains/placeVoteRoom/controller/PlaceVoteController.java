@@ -23,7 +23,7 @@ import middle_point_search.backend.common.dto.ErrorResponse;
 import middle_point_search.backend.common.util.MemberLoader;
 import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteDTO.FindPlaceVoteResultsResponse;
-import middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteDTO.UpdateVoteRequest;
+import middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteDTO.UpdatePlaceVoteRequest;
 import middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteDTO.VotePlaceRequest;
 import middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteRoomDTO.FindVotedAndVoteItemResponse;
 import middle_point_search.backend.domains.placeVoteRoom.service.PlaceVoteService;
@@ -177,9 +177,9 @@ public class PlaceVoteController {
 			)
 		}
 	)
-	public ResponseEntity<DataResponse<Void>> updateVote(
+	public ResponseEntity<DataResponse<Void>> updatePlaceVote(
 		@PathVariable("roomId") String roomId,
-		@RequestBody @Valid UpdateVoteRequest request
+		@RequestBody @Valid UpdatePlaceVoteRequest request
 	) {
 		Member member = memberLoader.getMember();
 
