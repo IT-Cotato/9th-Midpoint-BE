@@ -22,6 +22,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.dto.DataResponse;
 import middle_point_search.backend.common.dto.ErrorResponse;
+import middle_point_search.backend.common.exception.CustomException;
+import middle_point_search.backend.common.exception.errorCode.UserErrorCode;
 import middle_point_search.backend.common.security.filter.jwtFilter.JwtTokenProvider;
 import middle_point_search.backend.common.util.MemberLoader;
 import middle_point_search.backend.domains.member.dto.request.CreateMemberRequest;
@@ -556,11 +558,15 @@ public class MemberController {
 		}
 	)
 	public ResponseEntity<DataResponse<Void>> deleteMember(
-		@RequestBody @Valid DeleteMemberRequest request
+		@RequestBody @Valid DeleteMemberRequest request,
+		HttpServletRequest httpServletRequest
 	) {
+		String accessToken = jwtTokenProvider.extractAccessToken(httpServletRequest)
+			.orElseThrow(() -> CustomException.from(UserErrorCode.INVALID_ACCESS_TOKEN));
+
 		Long memberId = memberLoader.getMemberId();
 
-		memberService.deleteMember(memberId, request);
+		memberService.deleteMember(memberId, request, accessToken);
 
 		return ResponseEntity.ok(DataResponse.ok());
 	}
