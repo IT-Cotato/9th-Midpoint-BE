@@ -11,6 +11,7 @@ import middle_point_search.backend.common.properties.KakaoProperties;
 import middle_point_search.backend.common.properties.MarketProperties;
 import middle_point_search.backend.common.properties.RedisProperties;
 import middle_point_search.backend.common.properties.SecurityProperties;
+import middle_point_search.backend.common.properties.SwaggerProperties;
 
 // 전역적으로 사용되는 상수
 @Configuration
@@ -22,7 +23,8 @@ import middle_point_search.backend.common.properties.SecurityProperties;
 	KakaoProperties.class,
 	RedisProperties.class,
 	GoogleProperties.class,
-	EmailProperties.class
+	EmailProperties.class,
+	SwaggerProperties.class
 })
 public class PropertyConfig {
 }

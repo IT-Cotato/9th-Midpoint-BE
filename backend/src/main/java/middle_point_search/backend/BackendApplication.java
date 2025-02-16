@@ -10,8 +10,6 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.scheduling.annotation.EnableAsync;
 
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.servers.Server;
 import jakarta.annotation.PostConstruct;
 import middle_point_search.backend.common.filter.RateLimitFilter;
 
@@ -19,7 +17,6 @@ import middle_point_search.backend.common.filter.RateLimitFilter;
 @SpringBootApplication
 @EnableJpaAuditing
 @EnableAspectJAutoProxy
-@OpenAPIDefinition(servers = {@Server(url = "/", description = "https://www.api.cotato-midpoint.site")})
 public class BackendApplication {
 
 	public static void main(String[] args) {
