@@ -30,10 +30,10 @@ public class TimeVoteDTO {
 
 	@Getter
 	@NoArgsConstructor(access = AccessLevel.PRIVATE)
-	public static class UpdateVoteRequest {
+	public static class UpdateTimeVoteRequest {
 		private List<TimeRange> dateTime;
 
-		public UpdateVoteRequest(List<TimeRange> dateTime) {
+		public UpdateTimeVoteRequest(List<TimeRange> dateTime) {
 			this.dateTime = dateTime;
 		}
 	}
