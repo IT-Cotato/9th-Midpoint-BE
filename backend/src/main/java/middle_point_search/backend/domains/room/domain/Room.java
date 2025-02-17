@@ -12,6 +12,7 @@ import jakarta.persistence.EntityListeners;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,6 +20,8 @@ import lombok.NoArgsConstructor;
 import middle_point_search.backend.common.baseEntity.BaseEntity;
 import middle_point_search.backend.domains.memberRoom.domain.MemberRoom;
 import middle_point_search.backend.domains.place.domain.Place;
+import middle_point_search.backend.domains.placeVoteRoom.domain.PlaceVoteRoom;
+import middle_point_search.backend.domains.timeVoteRoom.domain.TimeVoteRoom;
 
 @Entity
 @Getter
@@ -41,6 +44,12 @@ public class Room extends BaseEntity {
 
 	@OneToMany(mappedBy = "room", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<MemberRoom> memberRooms = new ArrayList<>();
+
+	@OneToOne(mappedBy = "room", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private TimeVoteRoom timeVoteRoom;
+
+	@OneToOne(mappedBy = "room", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private PlaceVoteRoom placeVoteRoom;
 
 	@Builder
 	private Room(String id, String name, String memo) {
