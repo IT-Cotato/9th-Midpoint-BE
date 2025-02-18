@@ -1,4 +1,4 @@
-package middle_point_search.backend.domains;
+package middle_point_search.backend.common;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
@@ -17,7 +17,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.member.domain.Role;
-import middle_point_search.backend.domains.member.dto.AccessTokenAndRefreshToken;
+import middle_point_search.backend.common.dto.AccessTokenAndRefreshToken;
 import middle_point_search.backend.domains.member.dto.request.LoginMemberRequest;
 import middle_point_search.backend.domains.member.repository.MemberRepository;
 

@@ -17,8 +17,8 @@ import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.ResultActions;
 
-import middle_point_search.backend.domains.BaseIntegrationTest;
-import middle_point_search.backend.domains.member.dto.AccessTokenAndRefreshToken;
+import middle_point_search.backend.common.BaseIntegrationTest;
+import middle_point_search.backend.common.dto.AccessTokenAndRefreshToken;
 import middle_point_search.backend.domains.member.dto.request.UpdateMemberAddressRequest;
 import middle_point_search.backend.domains.member.dto.request.UpdateMemberNameRequest;
 import middle_point_search.backend.domains.member.dto.request.UpdatePasswordRequest;

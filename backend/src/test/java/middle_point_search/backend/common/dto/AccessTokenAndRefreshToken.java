@@ -1,4 +1,4 @@
-package middle_point_search.backend.domains.member.dto;
+package middle_point_search.backend.common.dto;
 
 public record AccessTokenAndRefreshToken(
 	String accessToken,

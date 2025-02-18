@@ -13,7 +13,7 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import middle_point_search.backend.domains.BaseIntegrationTest;
+import middle_point_search.backend.common.BaseIntegrationTest;
 import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.member.domain.Role;
 import middle_point_search.backend.domains.member.dto.request.LoginMemberRequest;

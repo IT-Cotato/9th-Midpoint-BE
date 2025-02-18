@@ -15,7 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.ResultActions;
 
-import middle_point_search.backend.domains.BaseIntegrationTest;
+import middle_point_search.backend.common.BaseIntegrationTest;
 import middle_point_search.backend.domains.email.domain.SignupVerificationCode;
 import middle_point_search.backend.domains.email.repository.SignupVerificationCodeRepository;
 import middle_point_search.backend.domains.member.domain.Member;

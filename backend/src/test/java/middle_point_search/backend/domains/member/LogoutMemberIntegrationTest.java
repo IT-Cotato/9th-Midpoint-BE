@@ -10,8 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.ResultActions;
 
-import middle_point_search.backend.domains.BaseIntegrationTest;
-import middle_point_search.backend.domains.member.dto.AccessTokenAndRefreshToken;
+import middle_point_search.backend.common.BaseIntegrationTest;
+import middle_point_search.backend.common.dto.AccessTokenAndRefreshToken;
 import middle_point_search.backend.domains.member.repository.MemberRepository;
 
 @DisplayName("로그아웃")
