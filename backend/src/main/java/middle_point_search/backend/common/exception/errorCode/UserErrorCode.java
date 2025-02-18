@@ -9,7 +9,6 @@ public enum UserErrorCode implements ErrorCode {
 
 	//인증 및 토큰 관련
 	UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "A-001", "인증에 실패하였습니다."),
-	INVALID_ACCESS_TOKEN(HttpStatus.UNAUTHORIZED, "A-002", "Access Token이 유효하지 않습니다."),
 	INVALID_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "A-003", "Refresh Token이 유효하지 않습니다."),
 	REISSUE_ACCESS_TOKEN(HttpStatus.PAYMENT_REQUIRED, "A-004", "Access Token을 재발급해야합니다."),
 	ACCESS_DENIED(HttpStatus.FORBIDDEN, "A-005", "접근 권한이 없습니다."),

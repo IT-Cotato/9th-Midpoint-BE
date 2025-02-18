@@ -14,12 +14,12 @@ import middle_point_search.backend.common.exception.CustomException;
 import middle_point_search.backend.domains.memberRoom.repository.MemberRoomRepository;
 import middle_point_search.backend.domains.memberRoom.service.MemberRoomValidateService;
 import middle_point_search.backend.domains.room.domain.Room;
-import middle_point_search.backend.domains.room.dto.RoomDTO.FindRoomDetailResponse;
-import middle_point_search.backend.domains.room.dto.RoomDTO.CreateRoomRequest;
-import middle_point_search.backend.domains.room.dto.RoomDTO.CreateRoomResponse;
-import middle_point_search.backend.domains.room.dto.RoomDTO.ExistRoomResponse;
-import middle_point_search.backend.domains.room.dto.RoomDTO.UpdateRoomNameRequest;
-import middle_point_search.backend.domains.room.dto.RoomDTO.UpdateRoomMemoRequest;
+import middle_point_search.backend.domains.room.dto.request.CreateRoomRequest;
+import middle_point_search.backend.domains.room.dto.request.UpdateRoomMemoRequest;
+import middle_point_search.backend.domains.room.dto.request.UpdateRoomNameRequest;
+import middle_point_search.backend.domains.room.dto.response.CreateRoomResponse;
+import middle_point_search.backend.domains.room.dto.response.ExistRoomResponse;
+import middle_point_search.backend.domains.room.dto.response.FindRoomDetailResponse;
 import middle_point_search.backend.domains.room.repository.RoomRepository;
 
 @Service
@@ -34,10 +34,10 @@ public class RoomService {
 	// Room 저장하기 및 Room에 회원 저장
 	@Transactional
 	public CreateRoomResponse createRoom(CreateRoomRequest request) {
-		String memo = makeMemoNullToBlank(request.getMemo());
+		String memo = makeMemoNullToBlank(request.memo());
 
 		Room room = Room.builder()
-			.name(request.getName())
+			.name(request.name())
 			.memo(memo)
 			.id(UUID.randomUUID().toString())
 			.build();
@@ -51,13 +51,18 @@ public class RoomService {
 	// Room 이름 변경하기
 	@Transactional(rollbackFor = CustomException.class)
 	public void updateRoomName(Long memberId, String roomId, UpdateRoomNameRequest request) {
+		// 방 존재 확인
+		if (!roomRepository.existsById(roomId)) {
+			throw CustomException.from(ROOM_NOT_FOUND);
+		}
+
 		// 회원방 존재 확인
 		memberRoomValidateService.validateAuthorizedMember(memberId, roomId);
 
 		// 변경
 		Room room = roomRepository.findById(roomId)
 			.orElseThrow(() -> CustomException.from(ROOM_NOT_FOUND));
-		room.updateName(request.getName());
+		room.updateName(request.name());
 	}
 
 	// Room 조회
@@ -74,13 +79,18 @@ public class RoomService {
 	// Room 메모 변경하기
 	@Transactional
 	public void updateRoomMemo(Long memberId, String roomId, UpdateRoomMemoRequest request) {
+		// 방 존재 확인
+		if (!roomRepository.existsById(roomId)) {
+			throw CustomException.from(ROOM_NOT_FOUND);
+		}
+
 		// 회원방 존재 확인
 		memberRoomValidateService.validateAuthorizedMember(memberId, roomId);
 
 		// 변경
 		Room room = roomRepository.findById(roomId)
 			.orElseThrow(() -> CustomException.from(ROOM_NOT_FOUND));
-		String memo = makeMemoNullToBlank(request.getMemo());
+		String memo = makeMemoNullToBlank(request.memo());
 		room.updateMemo(memo);
 	}
 
@@ -94,6 +104,11 @@ public class RoomService {
 
 	// 방 상세 조회
 	public FindRoomDetailResponse findRoomDetail(Long memberId, String roomId) {
+		// 방 존재 확인
+		if (!roomRepository.existsById(roomId)) {
+			throw CustomException.from(ROOM_NOT_FOUND);
+		}
+
 		// 회원방 존재 확인
 		memberRoomValidateService.validateAuthorizedMember(memberId, roomId);
 
