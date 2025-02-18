@@ -30,7 +30,7 @@ public class MemberProfileImageIntegrationTest extends BaseIntegrationTest {
 	@BeforeEach
 	public void setUp() throws Exception {
 		// 회원가입 및 로그인
-		AccessTokenAndRefreshToken accessTokenAndRefreshToken = signupAndLoginNoAddressMember();
+		AccessTokenAndRefreshToken accessTokenAndRefreshToken = signupAndLoginMember(false);
 		accessToken = accessTokenAndRefreshToken.accessToken();
 		memberEmail = NO_ADDRESS_MEMBER_EMAIL;
 	}

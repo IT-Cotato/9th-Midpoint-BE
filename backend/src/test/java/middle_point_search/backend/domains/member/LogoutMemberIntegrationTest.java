@@ -6,22 +6,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.ResultActions;
 
 import middle_point_search.backend.common.BaseIntegrationTest;
 import middle_point_search.backend.common.dto.AccessTokenAndRefreshToken;
-import middle_point_search.backend.domains.member.repository.MemberRepository;
 
 @DisplayName("로그아웃")
 public class LogoutMemberIntegrationTest extends BaseIntegrationTest {
-
-	@Autowired
-	private MemberRepository memberRepository;
-
-	@Autowired
-	private PasswordEncoder passwordEncoder;
 
 	private String accessToken;
 	private String refreshToken;
@@ -29,7 +20,7 @@ public class LogoutMemberIntegrationTest extends BaseIntegrationTest {
 	@BeforeEach
 	public void setUp() throws Exception {
 		// 회원가입 및 로그인
-		AccessTokenAndRefreshToken accessTokenAndRefreshToken = signupAndLoginNoAddressMember();
+		AccessTokenAndRefreshToken accessTokenAndRefreshToken = signupAndLoginMember(false);
 		accessToken = accessTokenAndRefreshToken.accessToken();
 		refreshToken = accessTokenAndRefreshToken.refreshToken();
 	}

@@ -37,10 +37,10 @@ public class MemberInfoIntegrationTest extends BaseIntegrationTest {
 
 	@BeforeEach
 	public void setUp() throws Exception {
-		AccessTokenAndRefreshToken accessTokenAndRefreshToken = signupAndLoginNoAddressMember();
+		AccessTokenAndRefreshToken accessTokenAndRefreshToken = signupAndLoginMember(false);
 		accessTokenFromNoAddressMember = accessTokenAndRefreshToken.accessToken();
 
-		accessTokenAndRefreshToken = signupAndLoginAddressMember();
+		accessTokenAndRefreshToken = signupAndLoginMember(true);
 		accessTokenFromAddressMember = accessTokenAndRefreshToken.accessToken();
 	}
 

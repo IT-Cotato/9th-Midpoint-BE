@@ -39,7 +39,7 @@ public class FIndRoomDetailIntegrationTest extends BaseIntegrationTest {
 	public void setUp() throws Exception {
 		// given
 		// 회원가입 및 로그인
-		AccessTokenAndRefreshToken accessTokenAndRefreshToken = signupAndLoginNoAddressMember();
+		AccessTokenAndRefreshToken accessTokenAndRefreshToken = signupAndLoginMember(false);
 		accessToken = accessTokenAndRefreshToken.accessToken();
 		memberEmail = NO_ADDRESS_MEMBER_EMAIL;
 
@@ -81,7 +81,7 @@ public class FIndRoomDetailIntegrationTest extends BaseIntegrationTest {
 	public void 해당방의회원이아니면_방상세조회실패() throws Exception {
 		// given
 		// 회원가입 및 로그인
-		AccessTokenAndRefreshToken accessTokenAndRefreshToken = signupAndLoginAddressMember();
+		AccessTokenAndRefreshToken accessTokenAndRefreshToken = signupAndLoginMember(true);
 		String anotherAccessToken = accessTokenAndRefreshToken.accessToken();
 
 		// when

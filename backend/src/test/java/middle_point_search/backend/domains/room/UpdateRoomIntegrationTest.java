@@ -44,11 +44,11 @@ public class UpdateRoomIntegrationTest extends BaseIntegrationTest {
 	@BeforeEach
 	public void setUp() throws Exception {
 		// 회원가입 및 로그인
-		AccessTokenAndRefreshToken accessTokenAndRefreshToken = signupAndLoginNoAddressMember();
+		AccessTokenAndRefreshToken accessTokenAndRefreshToken = signupAndLoginMember(false);
 		member1AccessToken = accessTokenAndRefreshToken.accessToken();
 		String member1Email = NO_ADDRESS_MEMBER_EMAIL;
 
-		AccessTokenAndRefreshToken accessTokenAndRefreshToken2 = signupAndLoginAddressMember();
+		AccessTokenAndRefreshToken accessTokenAndRefreshToken2 = signupAndLoginMember(true);
 		member2AccessToken = accessTokenAndRefreshToken2.accessToken();
 
 		// 방 생성

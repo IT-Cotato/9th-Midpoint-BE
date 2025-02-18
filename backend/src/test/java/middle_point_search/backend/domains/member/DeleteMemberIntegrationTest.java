@@ -35,7 +35,7 @@ public class DeleteMemberIntegrationTest extends BaseIntegrationTest {
 	@BeforeEach
 	public void setUp() throws Exception {
 		// 회원가입 및 로그인
-		AccessTokenAndRefreshToken accessTokenAndRefreshToken = signupAndLoginNoAddressMember();
+		AccessTokenAndRefreshToken accessTokenAndRefreshToken = signupAndLoginMember(false);
 		accessToken = accessTokenAndRefreshToken.accessToken();
 	}
 

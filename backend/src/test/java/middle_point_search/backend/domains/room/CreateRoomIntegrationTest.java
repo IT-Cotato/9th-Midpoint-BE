@@ -32,7 +32,7 @@ public class CreateRoomIntegrationTest extends BaseIntegrationTest {
 
 	@BeforeEach
 	public void setUp() throws Exception {
-		AccessTokenAndRefreshToken accessTokenAndRefreshToken = signupAndLoginNoAddressMember();
+		AccessTokenAndRefreshToken accessTokenAndRefreshToken = signupAndLoginMember(false);
 
 		accessToken = accessTokenAndRefreshToken.accessToken();
 	}
