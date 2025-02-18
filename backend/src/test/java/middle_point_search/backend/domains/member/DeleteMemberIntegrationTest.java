@@ -63,7 +63,7 @@ public class DeleteMemberIntegrationTest extends BaseIntegrationTest {
 			.build();
 		memberRoomRepository.save(memberRoom);
 
-		DeleteMemberRequest deleteMemberRequest = new DeleteMemberRequest(accessToken, "탈퇴 사유");
+		DeleteMemberRequest deleteMemberRequest = new DeleteMemberRequest("탈퇴 사유");
 
 		// when
 		ResultActions resultActions = mockMvc.perform(delete("/api/members/delete")
