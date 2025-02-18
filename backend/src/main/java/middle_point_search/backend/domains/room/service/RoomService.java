@@ -51,6 +51,11 @@ public class RoomService {
 	// Room 이름 변경하기
 	@Transactional(rollbackFor = CustomException.class)
 	public void updateRoomName(Long memberId, String roomId, UpdateRoomNameRequest request) {
+		// 방 존재 확인
+		if (!roomRepository.existsById(roomId)) {
+			throw CustomException.from(ROOM_NOT_FOUND);
+		}
+
 		// 회원방 존재 확인
 		memberRoomValidateService.validateAuthorizedMember(memberId, roomId);
 
@@ -74,6 +79,11 @@ public class RoomService {
 	// Room 메모 변경하기
 	@Transactional
 	public void updateRoomMemo(Long memberId, String roomId, UpdateRoomMemoRequest request) {
+		// 방 존재 확인
+		if (!roomRepository.existsById(roomId)) {
+			throw CustomException.from(ROOM_NOT_FOUND);
+		}
+
 		// 회원방 존재 확인
 		memberRoomValidateService.validateAuthorizedMember(memberId, roomId);
 
