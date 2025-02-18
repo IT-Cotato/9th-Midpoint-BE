@@ -542,9 +542,9 @@ public class MemberController {
 	// 프로필 조회
 	@GetMapping("/profile")
 	@Operation(
-		summary = "프로필 조회",
+		summary = "프로필 이미지 조회",
 		description = """
-			프로필 조회
+			프로필 이미지 조회
 			저장된 프로필 이미지가 없으면 isExist는 false, url은 null을 반환합니다.""",
 		responses = {
 			@ApiResponse(
@@ -574,9 +574,9 @@ public class MemberController {
 	// 프로필 삭제
 	@DeleteMapping("/profile")
 	@Operation(
-		summary = "프로필 삭제",
+		summary = "프로필 이미지 삭제",
 		description = """
-			프로필 삭제
+			프로필 이미지 삭제
 			프로필 이미지를 삭제합니다.""",
 		responses = {
 			@ApiResponse(
