@@ -104,6 +104,11 @@ public class RoomService {
 
 	// 방 상세 조회
 	public FindRoomDetailResponse findRoomDetail(Long memberId, String roomId) {
+		// 방 존재 확인
+		if (!roomRepository.existsById(roomId)) {
+			throw CustomException.from(ROOM_NOT_FOUND);
+		}
+
 		// 회원방 존재 확인
 		memberRoomValidateService.validateAuthorizedMember(memberId, roomId);
 
