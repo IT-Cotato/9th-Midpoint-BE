@@ -56,7 +56,7 @@ public class CreateRoomIntegrationTest extends BaseIntegrationTest {
 
 		// then
 		resultActions.andExpect(status().isOk())
-			.andExpect(jsonPath("$.id").exists());
+			.andExpect(jsonPath("$.data.id").exists());
 
 		CreateRoomResponse response = getResponseData(resultActions, CreateRoomResponse.class);
 		Room room = roomRepository.findById(response.id()).get();

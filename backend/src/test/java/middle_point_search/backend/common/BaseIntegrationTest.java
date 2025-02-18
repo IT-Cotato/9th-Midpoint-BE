@@ -111,6 +111,8 @@ public class BaseIntegrationTest {
 
 	public <T> T getResponseData(ResultActions resultActions, Class<T> responseType) throws Exception {
 		String responseContent = resultActions.andReturn().getResponse().getContentAsString();
-		return objectMapper.readValue(responseContent, responseType);
+		JsonNode rootNode = objectMapper.readTree(responseContent);
+		JsonNode dataNode = rootNode.path("data");  // "data" 내부만 가져옴
+		return objectMapper.treeToValue(dataNode, responseType);
 	}
 }
