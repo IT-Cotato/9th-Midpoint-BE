@@ -101,6 +101,11 @@ public class RoomController {
 				description = "해당 방의 회원이 아닙니다.[MR-003]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
+			@ApiResponse(
+				responseCode = "404",
+				description = "존재하지 않는 방입니다.[R-201]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			)
 		}
 	)
 	public ResponseEntity<DataResponse<Void>> updateRoomName(
@@ -139,6 +144,11 @@ public class RoomController {
 				description = "해당 방의 회원이 아닙니다.[MR-003]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
+			@ApiResponse(
+				responseCode = "404",
+				description = "존재하지 않는 방입니다.[R-201]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			)
 		}
 	)
 	public ResponseEntity<DataResponse<Void>> updateRoomMemo(
