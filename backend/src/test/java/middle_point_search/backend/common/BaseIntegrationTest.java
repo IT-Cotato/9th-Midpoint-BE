@@ -108,4 +108,9 @@ public class BaseIntegrationTest {
 
 		return new AccessTokenAndRefreshToken(accessToken, refreshToken);
 	}
+
+	public <T> T getResponseData(ResultActions resultActions, Class<T> responseType) throws Exception {
+		String responseContent = resultActions.andReturn().getResponse().getContentAsString();
+		return objectMapper.readValue(responseContent, responseType);
+	}
 }
