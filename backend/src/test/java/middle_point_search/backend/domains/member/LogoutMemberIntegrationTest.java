@@ -91,6 +91,6 @@ public class LogoutMemberIntegrationTest extends BaseIntegrationTest {
 
 		// then
 		resultActions
-			.andExpect(jsonPath("$.code").value("A-002"));
+			.andExpect(jsonPath("$.code").value("A-004"));
 	}
 }
