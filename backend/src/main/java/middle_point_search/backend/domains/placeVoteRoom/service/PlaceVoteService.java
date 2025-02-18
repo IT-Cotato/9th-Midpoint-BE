@@ -125,7 +125,7 @@ public class PlaceVoteService {
 				placeVoteCandidate.getCount(),
 				placeVoteCandidate.getVoters()
 					.stream()
-					.map(v -> v.getMember().getEmail())
+					.map(v -> v.getMember().getName())
 					.collect(Collectors.toList())))
 			.collect(Collectors.toList());
 	}

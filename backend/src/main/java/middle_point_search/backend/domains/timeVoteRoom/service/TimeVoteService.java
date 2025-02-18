@@ -148,7 +148,7 @@ public class TimeVoteService {
 						vote.getMemberAvailableEndTime()
 					)
 				);
-				TimeVoteDetail detail = TimeVoteDetail.from(vote.getMember().getEmail(), dateTimeList);
+				TimeVoteDetail detail = TimeVoteDetail.from(vote.getMember().getName(), dateTimeList);
 				details.add(detail);
 			}
 			result.put(date, details);
