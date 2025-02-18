@@ -105,7 +105,7 @@ public class RoomController {
 	)
 	public ResponseEntity<DataResponse<Void>> updateRoomName(
 		@PathVariable String roomId,
-		@RequestBody UpdateRoomNameRequest request
+		@RequestBody @Valid UpdateRoomNameRequest request
 	) {
 		Long memberId = memberLoader.getMemberId();
 
