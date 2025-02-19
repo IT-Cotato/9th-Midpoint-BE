@@ -5,9 +5,7 @@ import java.util.List;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import middle_point_search.backend.common.dummy.repository.JDBCRepository;
@@ -17,7 +15,6 @@ import middle_point_search.backend.domains.member.repository.MemberRepository;
 import middle_point_search.backend.domains.memberRoom.domain.MemberRoom;
 import middle_point_search.backend.domains.place.domain.Place;
 import middle_point_search.backend.domains.room.domain.Room;
-import middle_point_search.backend.domains.room.repository.RoomRepository;
 
 @Slf4j
 @Service
@@ -27,17 +24,12 @@ public class DataInitService {
 	private final PasswordEncoder passwordEncoder;
 	private final JDBCRepository JDBCRepository;
 	private final MemberRepository memberRepository;
-	private final RoomRepository roomRepository;
 
-	private final EntityManager entityManager;
-
-	@Transactional
 	public void initializeData() {
 		log.info("DataInitService.initializeData ======================");
 
 		// 시간 재기 추후 삭제
 		long startTime = System.currentTimeMillis();
-
 
 		// Members 생성
 		List<Member> members = new ArrayList<>();
@@ -56,7 +48,7 @@ public class DataInitService {
 
 		// Rooms 생성
 		List<Room> rooms = new ArrayList<>();
-		for (int i = 1; i <= 500000; i++) {
+		for (int i = 1; i <= 1; i++) {
 			Room room = Room.builder()
 				.id(String.valueOf(i))
 				.name("room" + i)
@@ -65,10 +57,6 @@ public class DataInitService {
 			rooms.add(room);
 		}
 		JDBCRepository.saveAllRooms(rooms);
-
-		rooms = roomRepository.findAll(); //엔티티 조회
-
-		log.info("Room is managed by JPA: {}", entityManager.contains(rooms.get(0)));
 
 		// MemberRooms 생성
 		List<MemberRoom> memberRooms = new ArrayList<>();
@@ -96,7 +84,6 @@ public class DataInitService {
 				.build();
 			places.add(place);
 		}
-		entityManager.clear(); // room들이 변경감지되어 place를 저장하기 전에 clear
 		JDBCRepository.saveAllPlaces(places);
 
 		// 시간 재기, 추후 삭제

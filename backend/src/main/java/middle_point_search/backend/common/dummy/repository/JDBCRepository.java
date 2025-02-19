@@ -83,6 +83,4 @@ public class JDBCRepository {
 				ps.setString(8, place.getGooglePlaceId());
 			});
 	}
-
-	// 모든 PLace bulk 저장
 }
