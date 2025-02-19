@@ -65,10 +65,10 @@ public class MemberService {
 	// 회원가입하기
 	@Transactional
 	public void createMember(CreateMemberRequest request) {
-		validateExistingEmail(request.getEmail());
-		signupVerificationCodeService.validateEmailCodeAndDelete(request.getEmail(), request.getCode());
+		validateExistingEmail(request.email());
+		signupVerificationCodeService.validateEmailCodeAndDelete(request.email(), request.code());
 
-		String pw = passwordEncoder.encode(request.getPw());
+		String pw = passwordEncoder.encode(request.pw());
 
 		Member member = createMemberEntity(request, pw);
 
@@ -77,20 +77,20 @@ public class MemberService {
 
 	// 주소 여부에 따라 회원 엔티티 생성
 	private Member createMemberEntity(CreateMemberRequest request, String pw) {
-		if (request.getExistAddress()) {
+		if (request.existAddress()) {
 			return Member.createWithAddress(
-				request.getEmail(),
+				request.email(),
 				pw,
-				request.getName(),
+				request.name(),
 				Role.USER,
-				request.getSiDo(),
-				request.getSiGunGu(),
-				request.getRoadNameAddress(),
-				request.getAddressLatitude(),
-				request.getAddressLongitude()
+				request.siDo(),
+				request.siGunGu(),
+				request.roadNameAddress(),
+				request.addressLatitude(),
+				request.addressLongitude()
 			);
 		} else {
-			return Member.createWithoutAddress(request.getEmail(), pw, request.getName(), Role.USER);
+			return Member.createWithoutAddress(request.email(), pw, request.name(), Role.USER);
 		}
 	}
 

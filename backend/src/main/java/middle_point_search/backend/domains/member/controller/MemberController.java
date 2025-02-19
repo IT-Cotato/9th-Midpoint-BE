@@ -1,5 +1,7 @@
 package middle_point_search.backend.domains.member.controller;
 
+import static middle_point_search.backend.common.exception.errorCode.UserErrorCode.*;
+
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,7 +25,6 @@ import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.dto.DataResponse;
 import middle_point_search.backend.common.dto.ErrorResponse;
 import middle_point_search.backend.common.exception.CustomException;
-import middle_point_search.backend.common.exception.errorCode.UserErrorCode;
 import middle_point_search.backend.common.security.filter.jwtFilter.JwtTokenProvider;
 import middle_point_search.backend.common.util.MemberLoader;
 import middle_point_search.backend.domains.member.dto.request.CreateMemberRequest;
@@ -58,12 +59,21 @@ public class MemberController {
 		summary = "회원가입",
 		description = """
 			회원가입한다.
+			이름, 이메일, 비밀번호, 주소, 인증 코드를 입력받아 회원가입한다.
 			
-			이름, 이메일, 비밀번호, 주소, 인증 코드를 입력받아 회원가입한다.""",
+			파리미터 조건
+			- 이름은 2자 이상 30자 이하
+			- 비밀번호는 20자 이하
+			- 이메일은 254자 이하""",
 		responses = {
 			@ApiResponse(
 				responseCode = "200",
 				description = "성공"
+			),
+			@ApiResponse(
+				responseCode = "400",
+				description = "요청 파라미터가 잘못되었습니다.[C-202]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
 				responseCode = "409",
@@ -150,6 +160,10 @@ public class MemberController {
 			이메일을 입력받아 인증코드를 전송합니다.
 			이메일 인증 확인 API로 타당한 인증코드인지 확인합니다.
 			회원가입 시 인증코드를 함께 보냅니다.
+			
+			파라미터 조건
+			- 이메일 값은 비어있으면 안됨
+			- 이메일 형식이 맞아야함
 			""",
 		responses = {
 			@ApiResponse(
@@ -179,11 +193,22 @@ public class MemberController {
 	@PostMapping("/verification/signup")
 	@Operation(
 		summary = "회원가입 email 인증",
-		description = "email 인증을 확인",
+		description = """
+			email 인증을 확인
+			
+			파리미터 조건
+			- 이메일 값은 비어있으면 안됨
+			- 이메일 형식이 맞아야함
+			- 인증코드는 비어있으면 안됨""",
 		responses = {
 			@ApiResponse(
 				responseCode = "200",
 				description = "성공"
+			),
+			@ApiResponse(
+				responseCode = "400",
+				description = "요청 파라미터가 잘못되었습니다.(이메일 형식, 인증코드)[C-202]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
 				responseCode = "403",
@@ -203,11 +228,23 @@ public class MemberController {
 	@PatchMapping("/password")
 	@Operation(
 		summary = "비밀번호 수정",
-		description = "비밀번호 수정",
+		description = """
+			비밀번호 수정
+			
+			파라미터 조건
+			- 현재 비밀번호는 비어있으면 안됨
+			- 새 비밀번호는 비어있으면 안됨
+			- 새 비밀번호는 20자 이하
+			""",
 		responses = {
 			@ApiResponse(
 				responseCode = "200",
 				description = "성공"
+			),
+			@ApiResponse(
+				responseCode = "400",
+				description = "요청 파라미터가 잘못되었습니다.[C-202]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
 				responseCode = "401",
@@ -241,11 +278,19 @@ public class MemberController {
 		summary = "비밀번호 재발급 email 인증 요청",
 		description = """
 			이메일을 입력받아 비밀번호 재발급 인증코드를 전송합니다.
+			
+			파라미터 조건
+			- 이메일 값은 비어있으면 안됨
 			""",
 		responses = {
 			@ApiResponse(
 				responseCode = "200",
 				description = "성공"
+			),
+			@ApiResponse(
+				responseCode = "400",
+				description = "요청 파라미터가 잘못되었습니다.[C-202], 비밀번호는 비어있으면 안됨. 새 비밀번호는 20자 이하",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
 				responseCode = "404",
@@ -271,11 +316,20 @@ public class MemberController {
 	@Operation(
 		summary = "비밀번호 재발급",
 		description = """
-			인증 번호를 통해 비밀번호를 재발급한다.""",
+			인증 번호를 통해 비밀번호를 재발급한다.
+			
+			파라미터 조건
+			- 비밀번호는 비어있으면 안됨
+			- 새 비밀번호는 20자 이하""",
 		responses = {
 			@ApiResponse(
 				responseCode = "200",
 				description = "성공"
+			),
+			@ApiResponse(
+				responseCode = "400",
+				description = "요청 파라미터가 잘못되었습니다.[C-202]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
 				responseCode = "403",
@@ -336,11 +390,19 @@ public class MemberController {
 		summary = "닉네임 수정",
 		description = """
 			닉네임 수정
+			
+			파라미터 조건
+			- 이름은 2자 이상 30자 이하
 			""",
 		responses = {
 			@ApiResponse(
 				responseCode = "200",
 				description = "성공"
+			),
+			@ApiResponse(
+				responseCode = "400",
+				description = "요청 파라미터가 잘못되었습니다.[C-202]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
 				responseCode = "401",
@@ -369,11 +431,19 @@ public class MemberController {
 		summary = "주소 수정",
 		description = """
 			주소 수정
+			
+			파라미터 조건
+			- 각 값은 비어있으면 안됨
 			""",
 		responses = {
 			@ApiResponse(
 				responseCode = "200",
 				description = "성공"
+			),
+			@ApiResponse(
+				responseCode = "400",
+				description = "요청 파라미터가 잘못되었습니다.[C-202]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
 				responseCode = "401",
@@ -428,7 +498,6 @@ public class MemberController {
 		return ResponseEntity.ok(DataResponse.ok());
 	}
 
-
 	// 파일 업로드 전 사전 서명된 URL 생성
 	@GetMapping("/profile/presigned")
 	@Operation(
@@ -473,9 +542,9 @@ public class MemberController {
 	// 프로필 조회
 	@GetMapping("/profile")
 	@Operation(
-		summary = "프로필 조회",
+		summary = "프로필 이미지 조회",
 		description = """
-			프로필 조회
+			프로필 이미지 조회
 			저장된 프로필 이미지가 없으면 isExist는 false, url은 null을 반환합니다.""",
 		responses = {
 			@ApiResponse(
@@ -505,9 +574,9 @@ public class MemberController {
 	// 프로필 삭제
 	@DeleteMapping("/profile")
 	@Operation(
-		summary = "프로필 삭제",
+		summary = "프로필 이미지 삭제",
 		description = """
-			프로필 삭제
+			프로필 이미지 삭제
 			프로필 이미지를 삭제합니다.""",
 		responses = {
 			@ApiResponse(
@@ -546,6 +615,11 @@ public class MemberController {
 				description = "성공"
 			),
 			@ApiResponse(
+				responseCode = "400",
+				description = "요청 파라미터가 잘못되었습니다.[C-202]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
 				responseCode = "401",
 				description = "인증에 실패하였습니다.[C-101]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
@@ -562,7 +636,7 @@ public class MemberController {
 		HttpServletRequest httpServletRequest
 	) {
 		String accessToken = jwtTokenProvider.extractAccessToken(httpServletRequest)
-			.orElseThrow(() -> CustomException.from(UserErrorCode.INVALID_ACCESS_TOKEN));
+			.orElseThrow(() -> CustomException.from(REISSUE_ACCESS_TOKEN));
 
 		Long memberId = memberLoader.getMemberId();
 

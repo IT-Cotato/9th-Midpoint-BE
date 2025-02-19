@@ -14,7 +14,7 @@ import lombok.Setter;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor(access = PROTECTED)
-@RedisHash(value = "refreshToken", timeToLive =1209600)
+@RedisHash(value = "refreshToken", timeToLive = 1209600)
 public class RefreshToken {
 
 	@Id

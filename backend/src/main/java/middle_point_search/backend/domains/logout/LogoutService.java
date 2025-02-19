@@ -20,6 +20,6 @@ public class LogoutService {
 
 	// AccessToken으로 LogoutToken 존재 여부 확인
 	public boolean existsByAccessToken(String accessToken) {
-		return logoutRepository.existsByAccessToken(accessToken);
+		return logoutRepository.existsById(accessToken);
 	}
 }
