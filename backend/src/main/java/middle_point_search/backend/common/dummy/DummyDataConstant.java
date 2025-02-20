@@ -7,7 +7,6 @@ public enum DummyDataConstant {
 	PLACE_COUNT(500000),
 	;
 
-
 	final int count;
 
 	DummyDataConstant(int count) {

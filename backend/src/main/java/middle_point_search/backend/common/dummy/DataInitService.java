@@ -8,13 +8,14 @@ import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import middle_point_search.backend.common.dummy.dto.MemberDummyDto;
+import middle_point_search.backend.common.dummy.dto.MemberRoomDummyDto;
+import middle_point_search.backend.common.dummy.dto.PlaceDummyDto;
+import middle_point_search.backend.common.dummy.dto.RoomDummyDto;
 import middle_point_search.backend.common.dummy.repository.JDBCRepository;
 import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.member.domain.Role;
 import middle_point_search.backend.domains.member.repository.MemberRepository;
-import middle_point_search.backend.domains.memberRoom.domain.MemberRoom;
-import middle_point_search.backend.domains.place.domain.Place;
-import middle_point_search.backend.domains.room.domain.Room;
 
 @Slf4j
 @Service
@@ -22,7 +23,7 @@ import middle_point_search.backend.domains.room.domain.Room;
 public class DataInitService {
 
 	private final PasswordEncoder passwordEncoder;
-	private final JDBCRepository JDBCRepository;
+	private final JDBCRepository jdbcRepository;
 	private final MemberRepository memberRepository;
 
 	public void initializeData() {
@@ -32,59 +33,59 @@ public class DataInitService {
 		long startTime = System.currentTimeMillis();
 
 		// Members 생성
-		List<Member> members = new ArrayList<>();
+		List<MemberDummyDto> memberDtos = new ArrayList<>();
 		String password = passwordEncoder.encode("1234");
 		for (int i = 1; i <= DummyDataConstant.MEMBER_ROOM_COUNT.count; i++) {
-			Member member = Member.createWithoutAddress(
+			MemberDummyDto member = new MemberDummyDto(
 				"user" + i + "@test.com",
 				password,
 				"user" + i,
 				Role.USER);
-			members.add(member);
+			memberDtos.add(member);
 		}
-		JDBCRepository.saveAllMembers(members);
+		jdbcRepository.saveAllMembers(memberDtos);
 
-		members = memberRepository.findAll(); // 엔티티 조회
+		List<Member> members = memberRepository.findAll(); // 엔티티 조회
 
 		// Rooms 생성
-		List<Room> rooms = new ArrayList<>();
+		List<RoomDummyDto> rooms = new ArrayList<>();
 		for (int i = 1; i <= DummyDataConstant.ROOM_COUNT.count; i++) {
-			Room room = Room.builder()
-				.id(String.valueOf(i))
-				.name("room" + i)
-				.memo("memo" + i)
-				.build();
+			RoomDummyDto room = new RoomDummyDto(
+				String.valueOf(i),
+				"room" + i,
+				"memo" + i
+			);
 			rooms.add(room);
 		}
-		JDBCRepository.saveAllRooms(rooms);
+		jdbcRepository.saveAllRooms(rooms);
 
 		// MemberRooms 생성
-		List<MemberRoom> memberRooms = new ArrayList<>();
+		List<MemberRoomDummyDto> memberRooms = new ArrayList<>();
 		for (int i = 1; i <= DummyDataConstant.MEMBER_ROOM_COUNT.count; i++) {
-			MemberRoom memberRoom = MemberRoom.builder()
-				.member(members.get(i - 1))
-				.room(rooms.get(i - 1))
-				.build();
+			MemberRoomDummyDto memberRoom = new MemberRoomDummyDto(
+				(long)i,
+				String.valueOf(i)
+			);
 			memberRooms.add(memberRoom);
 		}
-		JDBCRepository.saveAllMemberRooms(memberRooms);
+		jdbcRepository.saveAllMemberRooms(memberRooms);
 
 		// Places 생성
-		List<Place> places = new ArrayList<>();
+		List<PlaceDummyDto> places = new ArrayList<>();
 		for (int i = 1; i <= DummyDataConstant.PLACE_COUNT.count; i++) {
-			Place place = Place.builder()
-				.siDo("siDo" + i)
-				.siGunGu("siGunGu" + i)
-				.roadNameAddress("roadNameAddress" + i)
-				.addressLatitude(37.0 + i * 0.0001)
-				.addressLongitude(127.0 + i * 0.0001)
-				.room(rooms.get(i - 1))
-				.member(members.get(i - 1))
-				.googlePlaceId("googlePlaceId" + i)
-				.build();
+			PlaceDummyDto place = new PlaceDummyDto(
+				"siDo" + i,
+				"siGunGu" + i,
+				"roadNameAddress" + i,
+				37.0 + i * 0.0001,
+				127.0 + i * 0.0001,
+				String.valueOf(i),
+				(long)i,
+				"googlePlaceId" + i
+			);
 			places.add(place);
 		}
-		JDBCRepository.saveAllPlaces(places);
+		jdbcRepository.saveAllPlaces(places);
 
 		// 시간 재기, 추후 삭제
 		long endTime = System.currentTimeMillis();
