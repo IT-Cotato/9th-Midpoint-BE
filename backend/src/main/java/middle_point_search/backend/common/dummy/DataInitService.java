@@ -152,7 +152,7 @@ public class DataInitService {
 	private void initializePlaceVoteCandidateMemberData() {
 		// PlaceVoteCandidateMembers 생성
 		List<PlaceVoteCandidateMemberDummyDto>	placeVoteCandidateMembers = new ArrayList<>();
-		for (int i = 0; i < DummyDataConstant.PLACE_VOTE_CANDIDATE_MEMBER_COUNT.count; i++) {
+		for (int i = 1; i <= DummyDataConstant.PLACE_VOTE_CANDIDATE_MEMBER_COUNT.count; i++) {
 			PlaceVoteCandidateMemberDummyDto placeVoteCandidateMember = new PlaceVoteCandidateMemberDummyDto(
 				(long)i, // memberId
 				(long)i // placeVoteCandidateId
