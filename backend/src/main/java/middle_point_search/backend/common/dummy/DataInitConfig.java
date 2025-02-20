@@ -24,8 +24,8 @@ public class DataInitConfig {
 
 				dataInitService.initializeMemberData();
 				dataInitService.initializeRoomData();
-				dataInitService.initializeMemberRoomData();
-				dataInitService.initializePlaceData();
+				dataInitService.initializeMemberRoomData(); // Member, Room 필요
+				dataInitService.initializePlaceData(); // Member, Room 필요
 				dataInitService.initializeTimeVote();
 				dataInitService.initializePlaceVote();
 				// 시간 재기, 추후 삭제

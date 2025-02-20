@@ -106,9 +106,9 @@ public class DataInitService {
 
 	// PlaceVote 더미데이터 초기화
 	public void initializePlaceVote() {
-		initializePlaceVoteRoom();
-		initializePlaceVoteCandidateData();
-		initializePlaceVoteCandidateMemberData();
+		initializePlaceVoteRoom(); // Room 필요
+		initializePlaceVoteCandidateData(); // PlaceVoteRoom 필요
+		initializePlaceVoteCandidateMemberData(); // Member, PlaceVoteCandidate 필요
 	}
 
 	// PlaceVoteRoom 더미데이터 초기화
@@ -168,9 +168,9 @@ public class DataInitService {
 		LocalDateTime start = LocalDateTime.of(2021, 10, 1, 10, 0);
 		LocalDateTime end = LocalDateTime.of(2021, 10, 1, 12, 0);
 
-		initializeTimeVoteRoom();
-		initializeMeetingDate(date);
-		initializeTimeVote(start, end);
+		initializeTimeVoteRoom(); // Room 필요
+		initializeMeetingDate(date); // TimeVoteRoom 필요
+		initializeTimeVote(start, end); // TimeVoteRoom, MeetingDate, Member 필요
 	}
 
 	// TimeVoteRooms 저장
