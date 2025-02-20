@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.dummy.dto.MemberDummyDto;
 import middle_point_search.backend.common.dummy.dto.MemberRoomDummyDto;
 import middle_point_search.backend.common.dummy.dto.PlaceDummyDto;
+import middle_point_search.backend.common.dummy.dto.PlaceVoteRoomDummyDto;
 import middle_point_search.backend.common.dummy.dto.RoomDummyDto;
 
 @Repository
@@ -83,6 +84,19 @@ public class JDBCRepository {
 				ps.setString(6, place.roomId());
 				ps.setLong(7, place.memberId());
 				ps.setString(8, place.googlePlaceId());
+			});
+	}
+
+	// 모든 PlaceVoteRoom bulk 저장
+	public void saveAllPlaceVoteRooms(List<PlaceVoteRoomDummyDto> placeVoteRooms) {
+		String sql = "INSERT INTO place_vote_room (room_id) " +
+			"VALUES (?)";
+
+		jdbcTemplate.batchUpdate(sql,
+			placeVoteRooms,
+			placeVoteRooms.size(),
+			(PreparedStatement ps, PlaceVoteRoomDummyDto placeVoteRoom) -> {
+				ps.setString(1, placeVoteRoom.roomId());
 			});
 	}
 }

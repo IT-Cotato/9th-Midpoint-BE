@@ -1,10 +1,11 @@
 package middle_point_search.backend.common.dummy;
 
 public enum DummyDataConstant {
-	MEMBER_COUNT(500000),
-	ROOM_COUNT(500000),
-	MEMBER_ROOM_COUNT(500000),
-	PLACE_COUNT(500000),
+	MEMBER_COUNT(1),
+	ROOM_COUNT(1),
+	MEMBER_ROOM_COUNT(1),
+	PLACE_COUNT(1),
+	PLACE_VOTE_ROOM_COUNT(1);
 	;
 
 	final int count;

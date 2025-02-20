@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import middle_point_search.backend.common.dummy.dto.MemberDummyDto;
 import middle_point_search.backend.common.dummy.dto.MemberRoomDummyDto;
 import middle_point_search.backend.common.dummy.dto.PlaceDummyDto;
+import middle_point_search.backend.common.dummy.dto.PlaceVoteRoomDummyDto;
 import middle_point_search.backend.common.dummy.dto.RoomDummyDto;
 import middle_point_search.backend.common.dummy.repository.JDBCRepository;
 import middle_point_search.backend.domains.member.domain.Role;
@@ -85,5 +86,17 @@ public class DataInitService {
 			places.add(place);
 		}
 		jdbcRepository.saveAllPlaces(places);
+	}
+
+	// PlaceVoteRoom 더미데이터 초기화
+	public void initializePlaceVoteRoomData() {
+		List<PlaceVoteRoomDummyDto> placeVoteRooms = new ArrayList<>();
+		for (int i = 1; i <= DummyDataConstant.PLACE_VOTE_ROOM_COUNT.count; i++) {
+			PlaceVoteRoomDummyDto placeVoteRoom = new PlaceVoteRoomDummyDto(
+				String.valueOf(i) // roomId
+			);
+			placeVoteRooms.add(placeVoteRoom);
+		}
+		jdbcRepository.saveAllPlaceVoteRooms(placeVoteRooms);
 	}
 }
