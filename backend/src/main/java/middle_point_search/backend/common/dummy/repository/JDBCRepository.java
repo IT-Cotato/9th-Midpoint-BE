@@ -1,12 +1,15 @@
 package middle_point_search.backend.common.dummy.repository;
 
+import java.sql.Date;
 import java.sql.PreparedStatement;
+import java.sql.Timestamp;
 import java.util.List;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import lombok.RequiredArgsConstructor;
+import middle_point_search.backend.common.dummy.dto.MeetingDateDummyDto;
 import middle_point_search.backend.common.dummy.dto.MemberDummyDto;
 import middle_point_search.backend.common.dummy.dto.MemberRoomDummyDto;
 import middle_point_search.backend.common.dummy.dto.PlaceDummyDto;
@@ -14,6 +17,8 @@ import middle_point_search.backend.common.dummy.dto.PlaceVoteCandidateDummyDto;
 import middle_point_search.backend.common.dummy.dto.PlaceVoteCandidateMemberDummyDto;
 import middle_point_search.backend.common.dummy.dto.PlaceVoteRoomDummyDto;
 import middle_point_search.backend.common.dummy.dto.RoomDummyDto;
+import middle_point_search.backend.common.dummy.dto.TimeVoteDummyDto;
+import middle_point_search.backend.common.dummy.dto.TimeVoteRoomDummyDto;
 
 @Repository
 @RequiredArgsConstructor
@@ -132,6 +137,50 @@ public class JDBCRepository {
 			(PreparedStatement ps, PlaceVoteCandidateMemberDummyDto placeVoteCandidateMember) -> {
 				ps.setLong(1, placeVoteCandidateMember.memberId());
 				ps.setLong(2, placeVoteCandidateMember.placeVoteCandidateId());
+			});
+	}
+
+	// 모든 TimeVoteRoom bulk 저장
+	public void saveAllTimeVoteRooms(List<TimeVoteRoomDummyDto> timeVoteRooms) {
+		String sql = "INSERT INTO time_vote_room (room_id) " +
+			"VALUES (?)";
+
+		jdbcTemplate.batchUpdate(sql,
+			timeVoteRooms,
+			timeVoteRooms.size(),
+			(PreparedStatement ps, TimeVoteRoomDummyDto timeVoteRoom) -> {
+				ps.setString(1, timeVoteRoom.roomId());
+			});
+	}
+
+	// 모든 MeetingDate bulk 저장
+	public void saveAllMeetingDates(List<MeetingDateDummyDto> meetingDates) {
+		String sql = "INSERT INTO meeting_date (time_vote_room_id, date) " +
+			"VALUES (?, ?)";
+
+		jdbcTemplate.batchUpdate(sql,
+			meetingDates,
+			meetingDates.size(),
+			(PreparedStatement ps, MeetingDateDummyDto meetingDate) -> {
+				ps.setLong(1, meetingDate.timeVoteRoomId());
+				ps.setDate(2, Date.valueOf(meetingDate.date()));
+			});
+	}
+
+	// 모든 TimeVote bulk 저장
+	public void saveAllTimeVotes(List<TimeVoteDummyDto> timeVotes) {
+		String sql = "INSERT INTO time_vote (time_vote_room_id, meeting_date_id, member_id, member_available_start_time, member_available_end_time) " +
+			"VALUES (?, ?, ?, ?, ?)";
+
+		jdbcTemplate.batchUpdate(sql,
+			timeVotes,
+			timeVotes.size(),
+			(PreparedStatement ps, TimeVoteDummyDto timeVote) -> {
+				ps.setLong(1, timeVote.timeVoteRoomId());
+				ps.setLong(2, timeVote.meetingDateId());
+				ps.setLong(3, timeVote.memberId());
+				ps.setTimestamp(4, Timestamp.valueOf(timeVote.memberAvailableStartTime()));
+				ps.setTimestamp(5, Timestamp.valueOf(timeVote.memberAvailableEndTime()));
 			});
 	}
 }

@@ -1,5 +1,7 @@
 package middle_point_search.backend.common.dummy;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import middle_point_search.backend.common.dummy.dto.MeetingDateDummyDto;
 import middle_point_search.backend.common.dummy.dto.MemberDummyDto;
 import middle_point_search.backend.common.dummy.dto.MemberRoomDummyDto;
 import middle_point_search.backend.common.dummy.dto.PlaceDummyDto;
@@ -15,6 +18,8 @@ import middle_point_search.backend.common.dummy.dto.PlaceVoteCandidateDummyDto;
 import middle_point_search.backend.common.dummy.dto.PlaceVoteCandidateMemberDummyDto;
 import middle_point_search.backend.common.dummy.dto.PlaceVoteRoomDummyDto;
 import middle_point_search.backend.common.dummy.dto.RoomDummyDto;
+import middle_point_search.backend.common.dummy.dto.TimeVoteDummyDto;
+import middle_point_search.backend.common.dummy.dto.TimeVoteRoomDummyDto;
 import middle_point_search.backend.common.dummy.repository.JDBCRepository;
 import middle_point_search.backend.domains.google.service.GoogleService;
 import middle_point_search.backend.domains.member.domain.Role;
@@ -99,8 +104,15 @@ public class DataInitService {
 		jdbcRepository.saveAllPlaces(places);
 	}
 
+	// PlaceVote 더미데이터 초기화
+	public void initializePlaceVote() {
+		initializePlaceVoteRoom();
+		initializePlaceVoteCandidateData();
+		initializePlaceVoteCandidateMemberData();
+	}
+
 	// PlaceVoteRoom 더미데이터 초기화
-	public void initializePlaceVoteRoomData() {
+	private void initializePlaceVoteRoom() {
 		List<PlaceVoteRoomDummyDto> placeVoteRooms = new ArrayList<>();
 		for (int i = 1; i <= DummyDataConstant.PLACE_VOTE_ROOM_COUNT.count; i++) {
 			PlaceVoteRoomDummyDto placeVoteRoom = new PlaceVoteRoomDummyDto(
@@ -112,7 +124,7 @@ public class DataInitService {
 	}
 
 	// PlaceVoteCandidate 더미데이터 초기화
-	public void initializePlaceVoteCandidateData() {
+	private void initializePlaceVoteCandidateData() {
 		String siDo = "서울특별시";
 		String siGunGu = "마포구";
 		String roadNameAddress = "양화로 160";
@@ -137,7 +149,7 @@ public class DataInitService {
 	}
 
 	// PlaceVoteCandidateMember 더미데이터 초기화
-	public void initializePlaceVoteCandidateMemberData() {
+	private void initializePlaceVoteCandidateMemberData() {
 		// PlaceVoteCandidateMembers 생성
 		List<PlaceVoteCandidateMemberDummyDto>	placeVoteCandidateMembers = new ArrayList<>();
 		for (int i = 0; i < DummyDataConstant.PLACE_VOTE_CANDIDATE_MEMBER_COUNT.count; i++) {
@@ -148,5 +160,57 @@ public class DataInitService {
 			placeVoteCandidateMembers.add(placeVoteCandidateMember);
 		}
 		jdbcRepository.saveAllPlaceVoteCandidateMembers(placeVoteCandidateMembers);
+	}
+
+	// TimeVoteRoom, MeetingDate, TimeVote 더미데이터 초기화
+	public void initializeTimeVote() {
+		LocalDate date = LocalDate.of(2021, 10, 1);
+		LocalDateTime start = LocalDateTime.of(2021, 10, 1, 10, 0);
+		LocalDateTime end = LocalDateTime.of(2021, 10, 1, 12, 0);
+
+		initializeTimeVoteRoom();
+		initializeMeetingDate(date);
+		initializeTimeVote(start, end);
+	}
+
+	// TimeVoteRooms 저장
+	private void initializeTimeVoteRoom() {
+		List<TimeVoteRoomDummyDto> timeVoteRooms = new ArrayList<>();
+		for (int i = 1; i <= DummyDataConstant.TIME_VOTE_ROOM_COUNT.count; i++) {
+			TimeVoteRoomDummyDto timeVoteRoom = new TimeVoteRoomDummyDto(
+				String.valueOf(i) // roomId
+			);
+			timeVoteRooms.add(timeVoteRoom);
+		}
+		jdbcRepository.saveAllTimeVoteRooms(timeVoteRooms);
+	}
+
+	// MeetingDates 저장
+	private void initializeMeetingDate(LocalDate date) {
+		List<MeetingDateDummyDto> meetingDates = new ArrayList<>();
+		for (int i = 1; i <= DummyDataConstant.MEETING_DATE_COUNT.count; i++) {
+			MeetingDateDummyDto meetingDate = new MeetingDateDummyDto(
+				(long)i,
+				date
+			);
+			meetingDates.add(meetingDate);
+		}
+		jdbcRepository.saveAllMeetingDates(meetingDates);
+	}
+
+	// TimeVotes 저장
+	private void initializeTimeVote(LocalDateTime start, LocalDateTime end) {
+		List<TimeVoteDummyDto> timeVotes = new ArrayList<>();
+		for (int i = 1; i <= DummyDataConstant.TIME_VOTE_COUNT.count; i++) {
+			TimeVoteDummyDto timeVote = new TimeVoteDummyDto(
+				(long)i, // timeVoteRoomId
+				(long)i, // meetingDateId
+				(long)i, // memberId
+				start,
+				end
+			);
+			timeVotes.add(timeVote);
+		}
+		jdbcRepository.saveAllTimeVotes(timeVotes);
 	}
 }
