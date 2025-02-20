@@ -6,8 +6,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import middle_point_search.backend.domains.member.repository.MemberRepository;
 
+@Slf4j
 @Profile("!main")
 @Configuration
 @RequiredArgsConstructor
@@ -16,11 +18,21 @@ public class DataInitConfig {
 	@Bean
 	CommandLineRunner initData(MemberRepository memberRepo, DataInitService dataInitService) {
 		return args -> {
-			// 각각의 전제 데이터가 충족되었을 경우
-
 			if (memberRepo.count() == 0) {
-				dataInitService.initializeData();
+				// 시간 재기 추후 삭제
+				long startTime = System.currentTimeMillis();
+
+				dataInitService.initializeMemberData();
+				dataInitService.initializeRoomData();
+				dataInitService.initializeMemberRoomData();
+				dataInitService.initializePlaceData();
+
+				// 시간 재기, 추후 삭제
+				long endTime = System.currentTimeMillis();
+				long duration = endTime - startTime;
+				log.info("Data initialization took " + duration + " milliseconds");
 			}
+
 		};
 	}
 }

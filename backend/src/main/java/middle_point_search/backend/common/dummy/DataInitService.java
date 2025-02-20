@@ -13,9 +13,7 @@ import middle_point_search.backend.common.dummy.dto.MemberRoomDummyDto;
 import middle_point_search.backend.common.dummy.dto.PlaceDummyDto;
 import middle_point_search.backend.common.dummy.dto.RoomDummyDto;
 import middle_point_search.backend.common.dummy.repository.JDBCRepository;
-import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.member.domain.Role;
-import middle_point_search.backend.domains.member.repository.MemberRepository;
 
 @Slf4j
 @Service
@@ -24,15 +22,9 @@ public class DataInitService {
 
 	private final PasswordEncoder passwordEncoder;
 	private final JDBCRepository jdbcRepository;
-	private final MemberRepository memberRepository;
 
-	public void initializeData() {
-		log.info("DataInitService.initializeData ======================");
-
-		// 시간 재기 추후 삭제
-		long startTime = System.currentTimeMillis();
-
-		// Members 생성
+	// 멤버 더미데이터 초기화
+	public void initializeMemberData() {
 		List<MemberDummyDto> memberDtos = new ArrayList<>();
 		String password = passwordEncoder.encode("1234");
 		for (int i = 1; i <= DummyDataConstant.MEMBER_ROOM_COUNT.count; i++) {
@@ -44,9 +36,10 @@ public class DataInitService {
 			memberDtos.add(member);
 		}
 		jdbcRepository.saveAllMembers(memberDtos);
+	}
 
-		List<Member> members = memberRepository.findAll(); // 엔티티 조회
-
+	// 방 더미데이터 초기화
+	public void initializeRoomData() {
 		// Rooms 생성
 		List<RoomDummyDto> rooms = new ArrayList<>();
 		for (int i = 1; i <= DummyDataConstant.ROOM_COUNT.count; i++) {
@@ -58,18 +51,24 @@ public class DataInitService {
 			rooms.add(room);
 		}
 		jdbcRepository.saveAllRooms(rooms);
+	}
 
+	// MemberRoom 더미데이터 초기화
+	public void initializeMemberRoomData() {
 		// MemberRooms 생성
 		List<MemberRoomDummyDto> memberRooms = new ArrayList<>();
 		for (int i = 1; i <= DummyDataConstant.MEMBER_ROOM_COUNT.count; i++) {
 			MemberRoomDummyDto memberRoom = new MemberRoomDummyDto(
-				(long)i,
-				String.valueOf(i)
+				(long)i, // memberId
+				String.valueOf(i) // roomId
 			);
 			memberRooms.add(memberRoom);
 		}
 		jdbcRepository.saveAllMemberRooms(memberRooms);
+	}
 
+	// Place 더미데이터 초기화
+	public void initializePlaceData() {
 		// Places 생성
 		List<PlaceDummyDto> places = new ArrayList<>();
 		for (int i = 1; i <= DummyDataConstant.PLACE_COUNT.count; i++) {
@@ -79,17 +78,12 @@ public class DataInitService {
 				"roadNameAddress" + i,
 				37.0 + i * 0.0001,
 				127.0 + i * 0.0001,
-				String.valueOf(i),
-				(long)i,
+				String.valueOf(i), // roomId
+				(long)i, // memberId
 				"googlePlaceId" + i
 			);
 			places.add(place);
 		}
 		jdbcRepository.saveAllPlaces(places);
-
-		// 시간 재기, 추후 삭제
-		long endTime = System.currentTimeMillis();
-		long duration = endTime - startTime;
-		log.info("Data initialization took " + duration + " milliseconds");
 	}
 }

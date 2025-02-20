@@ -35,12 +35,6 @@ public class JDBCRepository {
 			});
 	}
 
-	// 모든 멤버 삭제
-	public void deleteAllMembers() {
-		String sql = "DELETE FROM member";
-		jdbcTemplate.update(sql);
-	}
-
 	// 모든 방 bulk 저장
 	public void saveAllRooms(List<RoomDummyDto> rooms) {
 		String sql = "INSERT INTO room (room_id, room_name, room_memo) " +
