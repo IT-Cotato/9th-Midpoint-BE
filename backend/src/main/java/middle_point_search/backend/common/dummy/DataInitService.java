@@ -34,7 +34,7 @@ public class DataInitService {
 		// Members 생성
 		List<Member> members = new ArrayList<>();
 		String password = passwordEncoder.encode("1234");
-		for (int i = 1; i <= 500000; i++) {
+		for (int i = 1; i <= DummyDataConstant.MEMBER_ROOM_COUNT.count; i++) {
 			Member member = Member.createWithoutAddress(
 				"user" + i + "@test.com",
 				password,
@@ -48,7 +48,7 @@ public class DataInitService {
 
 		// Rooms 생성
 		List<Room> rooms = new ArrayList<>();
-		for (int i = 1; i <= 1; i++) {
+		for (int i = 1; i <= DummyDataConstant.ROOM_COUNT.count; i++) {
 			Room room = Room.builder()
 				.id(String.valueOf(i))
 				.name("room" + i)
@@ -60,7 +60,7 @@ public class DataInitService {
 
 		// MemberRooms 생성
 		List<MemberRoom> memberRooms = new ArrayList<>();
-		for (int i = 1; i <= 500000; i++) {
+		for (int i = 1; i <= DummyDataConstant.MEMBER_ROOM_COUNT.count; i++) {
 			MemberRoom memberRoom = MemberRoom.builder()
 				.member(members.get(i - 1))
 				.room(rooms.get(i - 1))
@@ -71,7 +71,7 @@ public class DataInitService {
 
 		// Places 생성
 		List<Place> places = new ArrayList<>();
-		for (int i = 1; i <= 500000; i++) {
+		for (int i = 1; i <= DummyDataConstant.PLACE_COUNT.count; i++) {
 			Place place = Place.builder()
 				.siDo("siDo" + i)
 				.siGunGu("siGunGu" + i)
