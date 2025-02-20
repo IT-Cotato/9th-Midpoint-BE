@@ -27,6 +27,7 @@ public class DataInitConfig {
 				dataInitService.initializeMemberRoomData();
 				dataInitService.initializePlaceData();
 				dataInitService.initializePlaceVoteRoomData();
+				dataInitService.initializePlaceVoteCandidateData();
 
 				// 시간 재기, 추후 삭제
 				long endTime = System.currentTimeMillis();

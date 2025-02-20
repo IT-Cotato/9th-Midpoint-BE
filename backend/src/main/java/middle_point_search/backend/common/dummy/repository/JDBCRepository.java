@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.dummy.dto.MemberDummyDto;
 import middle_point_search.backend.common.dummy.dto.MemberRoomDummyDto;
 import middle_point_search.backend.common.dummy.dto.PlaceDummyDto;
+import middle_point_search.backend.common.dummy.dto.PlaceVoteCandidateDummyDto;
 import middle_point_search.backend.common.dummy.dto.PlaceVoteRoomDummyDto;
 import middle_point_search.backend.common.dummy.dto.RoomDummyDto;
 
@@ -97,6 +98,25 @@ public class JDBCRepository {
 			placeVoteRooms.size(),
 			(PreparedStatement ps, PlaceVoteRoomDummyDto placeVoteRoom) -> {
 				ps.setString(1, placeVoteRoom.roomId());
+			});
+	}
+
+	// 모든 PlaceVoteCandidate bulk 저장
+	public void saveAllPlaceVoteCandidates(List<PlaceVoteCandidateDummyDto> placeVoteCandidates) {
+		String sql = "INSERT INTO place_vote_candidate (name, si_do, si_gun_gu, road_name_address, address_latitude, address_longitude, place_vote_room_id) " +
+			"VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+		jdbcTemplate.batchUpdate(sql,
+			placeVoteCandidates,
+			placeVoteCandidates.size(),
+			(PreparedStatement ps, PlaceVoteCandidateDummyDto placeVoteCandidate) -> {
+				ps.setString(1, placeVoteCandidate.name());
+				ps.setString(2, placeVoteCandidate.siDo());
+				ps.setString(3, placeVoteCandidate.siGunGu());
+				ps.setString(4, placeVoteCandidate.roadNameAddress());
+				ps.setDouble(5, placeVoteCandidate.addressLatitude());
+				ps.setDouble(6, placeVoteCandidate.addressLongitude());
+				ps.setLong(7, placeVoteCandidate.placeVoteRoomId());
 			});
 	}
 }

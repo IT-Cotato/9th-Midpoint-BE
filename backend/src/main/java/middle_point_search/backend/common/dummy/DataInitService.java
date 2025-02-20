@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import middle_point_search.backend.common.dummy.dto.MemberDummyDto;
 import middle_point_search.backend.common.dummy.dto.MemberRoomDummyDto;
 import middle_point_search.backend.common.dummy.dto.PlaceDummyDto;
+import middle_point_search.backend.common.dummy.dto.PlaceVoteCandidateDummyDto;
 import middle_point_search.backend.common.dummy.dto.PlaceVoteRoomDummyDto;
 import middle_point_search.backend.common.dummy.dto.RoomDummyDto;
 import middle_point_search.backend.common.dummy.repository.JDBCRepository;
@@ -98,5 +99,24 @@ public class DataInitService {
 			placeVoteRooms.add(placeVoteRoom);
 		}
 		jdbcRepository.saveAllPlaceVoteRooms(placeVoteRooms);
+	}
+
+	// PlaceVoteCandidate 더미데이터 초기화
+	public void initializePlaceVoteCandidateData() {
+		// PlaceVoteCandidates 생성
+		List<PlaceVoteCandidateDummyDto> placeVoteCandidates = new ArrayList<>();
+		for (int i = 1; i <= DummyDataConstant.PLACE_VOTE_CANDIDATE_COUNT.count; i++) {
+			PlaceVoteCandidateDummyDto placeVoteCandidate = new PlaceVoteCandidateDummyDto(
+				"placeVoteCandidate" + i,
+				"siDo" + i,
+				"siGunGu" + i,
+				"roadNameAddress" + i,
+				37.0 + i * 0.0001,
+				127.0 + i * 0.0001,
+				(long)i // placeVoteRoomId
+			);
+			placeVoteCandidates.add(placeVoteCandidate);
+		}
+		jdbcRepository.saveAllPlaceVoteCandidates(placeVoteCandidates);
 	}
 }
