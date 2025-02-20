@@ -7,6 +7,7 @@ public enum DummyDataConstant {
 	PLACE_COUNT(1),
 	PLACE_VOTE_ROOM_COUNT(1),
 	PLACE_VOTE_CANDIDATE_COUNT(1),
+	PLACE_VOTE_CANDIDATE_MEMBER_COUNT(1)
 	;
 
 	final int count;
