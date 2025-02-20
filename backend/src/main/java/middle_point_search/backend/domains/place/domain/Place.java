@@ -9,6 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import middle_point_search.backend.domains.member.domain.Member;
@@ -51,6 +52,7 @@ public class Place {
 	@Column(nullable = false)
 	private String googlePlaceId;
 
+	@Builder
 	private Place(String siDo, String siGunGu, String roadNameAddress, Double addressLatitude,
 		Double addressLongitude, Room room, Member member, String googlePlaceId) {
 		this.siDo = siDo;
