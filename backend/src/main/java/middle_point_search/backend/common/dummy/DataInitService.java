@@ -15,6 +15,7 @@ import middle_point_search.backend.common.dummy.dto.PlaceVoteCandidateDummyDto;
 import middle_point_search.backend.common.dummy.dto.PlaceVoteRoomDummyDto;
 import middle_point_search.backend.common.dummy.dto.RoomDummyDto;
 import middle_point_search.backend.common.dummy.repository.JDBCRepository;
+import middle_point_search.backend.domains.google.service.GoogleService;
 import middle_point_search.backend.domains.member.domain.Role;
 
 @Slf4j
@@ -24,6 +25,7 @@ public class DataInitService {
 
 	private final PasswordEncoder passwordEncoder;
 	private final JDBCRepository jdbcRepository;
+	private final GoogleService googleService;
 
 	// 멤버 더미데이터 초기화
 	public void initializeMemberData() {
@@ -71,18 +73,25 @@ public class DataInitService {
 
 	// Place 더미데이터 초기화
 	public void initializePlaceData() {
+		String siDo = "서울특별시";
+		String siGunGu = "강남구";
+		String roadNameAddress = "테헤란로 521";
+		Double latitude = 37.49186244665138;
+		Double longitude = 127.00909141903338;
+		String googlePlaceId = googleService.findGooglePlaceId(latitude, longitude);
+
 		// Places 생성
 		List<PlaceDummyDto> places = new ArrayList<>();
 		for (int i = 1; i <= DummyDataConstant.PLACE_COUNT.count; i++) {
 			PlaceDummyDto place = new PlaceDummyDto(
-				"siDo" + i,
-				"siGunGu" + i,
-				"roadNameAddress" + i,
-				37.0 + i * 0.0001,
-				127.0 + i * 0.0001,
+				siDo,
+				siGunGu,
+				roadNameAddress,
+				latitude,
+				longitude,
 				String.valueOf(i), // roomId
 				(long)i, // memberId
-				"googlePlaceId" + i
+				googlePlaceId
 			);
 			places.add(place);
 		}
@@ -103,16 +112,22 @@ public class DataInitService {
 
 	// PlaceVoteCandidate 더미데이터 초기화
 	public void initializePlaceVoteCandidateData() {
+		String siDo = "서울특별시";
+		String siGunGu = "마포구";
+		String roadNameAddress = "양화로 160";
+		Double latitude =  37.55559246073183;
+		Double longitude = 126.92274772146207 ;
+
 		// PlaceVoteCandidates 생성
 		List<PlaceVoteCandidateDummyDto> placeVoteCandidates = new ArrayList<>();
 		for (int i = 1; i <= DummyDataConstant.PLACE_VOTE_CANDIDATE_COUNT.count; i++) {
 			PlaceVoteCandidateDummyDto placeVoteCandidate = new PlaceVoteCandidateDummyDto(
 				"placeVoteCandidate" + i,
-				"siDo" + i,
-				"siGunGu" + i,
-				"roadNameAddress" + i,
-				37.0 + i * 0.0001,
-				127.0 + i * 0.0001,
+				siDo,
+				siGunGu,
+				roadNameAddress,
+				latitude,
+				longitude,
 				(long)i // placeVoteRoomId
 			);
 			placeVoteCandidates.add(placeVoteCandidate);
