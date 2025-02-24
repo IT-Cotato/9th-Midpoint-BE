@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.exception.CustomException;
-import middle_point_search.backend.domains.memberRoom.MemberRoomValidateService;
+import middle_point_search.backend.domains.memberRoom.service.MemberRoomValidateService;
 import middle_point_search.backend.domains.room.domain.Room;
 import middle_point_search.backend.domains.room.service.RoomService;
 import middle_point_search.backend.domains.timeVoteRoom.domain.MeetingDate;
@@ -30,7 +30,7 @@ public class TimeVoteRoomService {
 
 	// 시간 투표방 생성
 	@Transactional(rollbackFor = {CustomException.class})
-	public TimeVoteRoomCreateResponse createTimeVoteRoom(Long memberId, Long roomId, TimeVoteRoomCreateRequest request) {
+	public CreateTimeVoteRoomResponse createTimeVoteRoom(Long memberId, String roomId, CreateTimeVoteRoomRequest request) {
 		// 방에 대한 회원인지 확인
 		memberRoomValidateService.validateAuthorizedMember(memberId, roomId);
 
@@ -52,12 +52,12 @@ public class TimeVoteRoomService {
 			.forEach(timeVoteRoom::addMeetingDate);
 		TimeVoteRoom savedTimeVoteRoom = timeVoteRoomRepository.save(timeVoteRoom);
 
-		return TimeVoteRoomCreateResponse.from(savedTimeVoteRoom.getId());
+		return CreateTimeVoteRoomResponse.from(savedTimeVoteRoom.getId());
 	}
 
 	//시간투표방 변경하기
 	@Transactional(rollbackFor = {CustomException.class})
-	public void updateTimeVoteRoom(Long memberId, Long roomId, TimeVoteRoomCreateRequest request) {
+	public void updateTimeVoteRoom(Long memberId, String roomId, UpdateTimeVoteRoomRequest request) {
 		// 방에 대한 회원인지 확인
 		memberRoomValidateService.validateAuthorizedMember(memberId, roomId);
 
@@ -73,7 +73,7 @@ public class TimeVoteRoomService {
 	}
 
 	// 시간투표방 조회
-	public TimeVoteRoomGetResponse findTimeVoteRoomAndMakeDTO(Long memberId, Long roomId) {
+	public FindTimeVoteRoomResponse findTimeVoteRoomAndMakeDTO(Long memberId, String roomId) {
 		// 방에 대한 회원인지 확인
 		memberRoomValidateService.validateAuthorizedMember(memberId, roomId);
 
@@ -85,13 +85,13 @@ public class TimeVoteRoomService {
 					.stream()
 					.map(MeetingDate::getDate)
 					.toList();
-				return TimeVoteRoomGetResponse.from(true, dates);
+				return FindTimeVoteRoomResponse.from(true, dates);
 			})
-			.orElseGet(() -> TimeVoteRoomGetResponse.from(false, null));
+			.orElseGet(() -> FindTimeVoteRoomResponse.from(false, null));
 	}
 
 	// 시간 투표방, 방으로 조회
-	public Optional<TimeVoteRoom> findByRoomId(Long roomId) {
+	public Optional<TimeVoteRoom> findByRoomId(String roomId) {
 		return timeVoteRoomRepository.findByRoom_Id(roomId);
 	}
 }

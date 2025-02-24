@@ -16,7 +16,7 @@ import middle_point_search.backend.domains.market.domain.Market;
 import middle_point_search.backend.domains.market.repository.MarketRepository;
 import middle_point_search.backend.domains.midPoint.dto.MidPointDTO.AddressDTO;
 import middle_point_search.backend.domains.midPoint.dto.MidPointDTO.CoordinateDTO;
-import middle_point_search.backend.domains.midPoint.dto.MidPointDTO.MidPointsFindResponse;
+import middle_point_search.backend.domains.midPoint.dto.MidPointDTO.FindMidPointsResponse;
 
 @Slf4j
 @Component
@@ -27,7 +27,7 @@ public class MidPointUtilV1 implements MidPointUtil {
 	private final int NUMBER_OF_RESULT = 5;
 
 	@Override
-	public List<MidPointsFindResponse> findMidPoints(List<AddressDTO> addresses) {
+	public List<FindMidPointsResponse> findMidPoints(List<AddressDTO> addresses) {
 		// address가 없을 경우
 		if (addresses.isEmpty()) {
 			throw CustomException.from(PLACE_NOT_FOUND);
@@ -43,7 +43,7 @@ public class MidPointUtilV1 implements MidPointUtil {
 	}
 
 	// 주어진 중간 위치 좌표를 통해 추천 장소를 구하는 메서드
-	private List<MidPointsFindResponse> findMidPointsByCoordinate(CoordinateDTO mid) {
+	private List<FindMidPointsResponse> findMidPointsByCoordinate(CoordinateDTO mid) {
 		double midX = mid.getX();
 		double midY = mid.getY();
 
@@ -67,10 +67,10 @@ public class MidPointUtilV1 implements MidPointUtil {
 			}
 		});
 
-		List<MidPointsFindResponse> responses = new ArrayList<>();
+		List<FindMidPointsResponse> responses = new ArrayList<>();
 
 		for (int i = 0; i < NUMBER_OF_RESULT; i++) {
-			responses.add(MidPointsFindResponse.from(markets.get(i)));
+			responses.add(FindMidPointsResponse.from(markets.get(i)));
 		}
 
 		return responses;

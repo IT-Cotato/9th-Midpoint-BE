@@ -87,7 +87,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	private void checkLogoutToken(String accessToken) {
 		if (jwtTokenProvider.isLogout(accessToken)) {
 			log.info("logout된 accessToken으로 인증 실패");
-			throw CustomException.from(INVALID_ACCESS_TOKEN);
+			throw CustomException.from(REISSUE_ACCESS_TOKEN);
 		}
 	}
 }

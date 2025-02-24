@@ -1,9 +1,10 @@
 package middle_point_search.backend.domains.room.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,9 +19,12 @@ import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.dto.DataResponse;
 import middle_point_search.backend.common.dto.ErrorResponse;
 import middle_point_search.backend.common.util.MemberLoader;
-import middle_point_search.backend.domains.room.dto.RoomDTO.RoomCreateRequest;
-import middle_point_search.backend.domains.room.dto.RoomDTO.RoomCreateResponse;
-import middle_point_search.backend.domains.room.dto.RoomDTO.RoomNameUpdateRequest;
+import middle_point_search.backend.domains.room.dto.request.CreateRoomRequest;
+import middle_point_search.backend.domains.room.dto.request.UpdateRoomMemoRequest;
+import middle_point_search.backend.domains.room.dto.request.UpdateRoomNameRequest;
+import middle_point_search.backend.domains.room.dto.response.CreateRoomResponse;
+import middle_point_search.backend.domains.room.dto.response.ExistRoomResponse;
+import middle_point_search.backend.domains.room.dto.response.FindRoomDetailResponse;
 import middle_point_search.backend.domains.room.service.RoomService;
 
 @Tag(name = "ROOM API", description = "방에 대한 API입니다.")
@@ -37,6 +41,9 @@ public class RoomController {
 		summary = "방 생성하기",
 		description = """
 			방을 생성한다.
+			메모가 없을 경우 필드를 제거하거나 ""을 보내면 된다.
+			
+			방 생성시 회원을 방에 등록시켜줘야 한다.
 			""",
 		responses = {
 			@ApiResponse(
@@ -63,13 +70,13 @@ public class RoomController {
 			)
 		}
 	)
-	public ResponseEntity<DataResponse<RoomCreateResponse>> roomCreate(@RequestBody @Valid RoomCreateRequest request) {
-		RoomCreateResponse response = roomService.createRoom(request);
+	public ResponseEntity<DataResponse<CreateRoomResponse>> createRoom(@RequestBody @Valid CreateRoomRequest request) {
+		CreateRoomResponse response = roomService.createRoom(request);
 
 		return ResponseEntity.ok(DataResponse.from(response));
 	}
 
-	@PutMapping("/{roomId}")
+	@PatchMapping("/{roomId}/name")
 	@Operation(
 		summary = "방 이름 변경",
 		description = """
@@ -94,17 +101,136 @@ public class RoomController {
 				description = "해당 방의 회원이 아닙니다.[MR-003]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
+			@ApiResponse(
+				responseCode = "404",
+				description = "존재하지 않는 방입니다.[R-201]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			)
 		}
 	)
-	public ResponseEntity<DataResponse<Void>> roomNameUpdate(
-		@PathVariable Long roomId,
-		@RequestBody RoomNameUpdateRequest request
+	public ResponseEntity<DataResponse<Void>> updateRoomName(
+		@PathVariable String roomId,
+		@RequestBody @Valid UpdateRoomNameRequest request
 	) {
 		Long memberId = memberLoader.getMemberId();
 
 		roomService.updateRoomName(memberId, roomId, request);
 
 		return ResponseEntity.ok(DataResponse.ok());
+	}
+
+	@PatchMapping("/{roomId}/memo")
+	@Operation(
+		summary = "방 메모 변경",
+		description = """
+			방 메모를 변경한다.
+			
+			accessToken 필요.""",
+		responses = {
+			@ApiResponse(
+				responseCode = "200",
+				description = "성공"
+			),
+			@ApiResponse(
+				responseCode = "401",
+				description = "인증에 실패하였습니다.[C-101]"
+			),
+			@ApiResponse(
+				responseCode = "402",
+				description = "Access Token을 재발급해야합니다.[A-004]"
+			),
+			@ApiResponse(
+				responseCode = "403",
+				description = "해당 방의 회원이 아닙니다.[MR-003]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
+				responseCode = "404",
+				description = "존재하지 않는 방입니다.[R-201]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			)
+		}
+	)
+	public ResponseEntity<DataResponse<Void>> updateRoomMemo(
+		@PathVariable String roomId,
+		@RequestBody UpdateRoomMemoRequest request
+	) {
+		Long memberId = memberLoader.getMemberId();
+
+		roomService.updateRoomMemo(memberId, roomId, request);
+
+		return ResponseEntity.ok(DataResponse.ok());
+	}
+
+	@GetMapping("/{roomId}/existence")
+	@Operation(
+		summary = "방 존재확인",
+		description = """
+			방이 존재하는 지 조회한다.
+			
+			accessToken 필요.""",
+		responses = {
+			@ApiResponse(
+				responseCode = "200",
+				description = "성공"
+			),
+			@ApiResponse(
+				responseCode = "401",
+				description = "인증에 실패하였습니다.[C-101]"
+			),
+			@ApiResponse(
+				responseCode = "402",
+				description = "Access Token을 재발급해야합니다.[A-004]"
+			),
+			@ApiResponse(
+				responseCode = "404",
+				description = "존재하지 않는 방입니다.[R-201]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+		}
+	)
+	public ResponseEntity<DataResponse<ExistRoomResponse>> existRoom(@PathVariable String roomId) {
+		ExistRoomResponse response = roomService.existRoom(roomId);
+
+		return ResponseEntity.ok(DataResponse.from(response));
+	}
+
+	@GetMapping("/{roomId}")
+	@Operation(
+		summary = "방 상세 조회",
+		description = """
+			방 상세를 조회한다.
+			
+			accessToken 필요.""",
+		responses = {
+			@ApiResponse(
+				responseCode = "200",
+				description = "성공"
+			),
+			@ApiResponse(
+				responseCode = "401",
+				description = "인증에 실패하였습니다.[C-101]"
+			),
+			@ApiResponse(
+				responseCode = "402",
+				description = "Access Token을 재발급해야합니다.[A-004]"
+			),
+			@ApiResponse(
+				responseCode = "403",
+				description = "해당 방의 회원이 아닙니다.[MR-003]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+			@ApiResponse(
+				responseCode = "404",
+				description = "존재하지 않는 방입니다.[R-201]",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+			),
+		}
+	)
+	public ResponseEntity<DataResponse<FindRoomDetailResponse>> findRoomDetail(@PathVariable String roomId) {
+		FindRoomDetailResponse response = roomService.findRoomDetail(memberLoader.getMemberId(), roomId);
+
+		return ResponseEntity.ok(DataResponse.from(response));
 	}
 }
 

@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.exception.CustomException;
-import middle_point_search.backend.domains.memberRoom.MemberRoomValidateService;
+import middle_point_search.backend.domains.memberRoom.service.MemberRoomValidateService;
 import middle_point_search.backend.domains.placeVoteRoom.domain.PlaceVoteCandidate;
 import middle_point_search.backend.domains.placeVoteRoom.domain.PlaceVoteRoom;
 import middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteDTO;
@@ -31,8 +31,11 @@ public class PlaceVoteRoomService {
 
 	// 장소투표방 생성
 	@Transactional(rollbackFor = {CustomException.class})
-	public PlaceVoteRoomCreateResponse createPlaceVoteRoom(Long memberId, Long roomId,
-		PlaceVoteRoomCreateRequest request) {
+	public CreatePlaceVoteRoomResponse createPlaceVoteRoom(
+		Long memberId,
+		String roomId,
+		CreatePlaceVoteRoomRequest request
+	) {
 		// 방에 대한 회원인지 확인
 		memberRoomValidateService.validateAuthorizedMember(memberId, roomId);
 
@@ -51,12 +54,12 @@ public class PlaceVoteRoomService {
 
 		PlaceVoteRoom savedPlaceVoteRoom = placeVoteRoomRepository.save(placeVoteRoom);
 
-		return PlaceVoteRoomCreateResponse.from(savedPlaceVoteRoom.getId());
+		return CreatePlaceVoteRoomResponse.from(savedPlaceVoteRoom.getId());
 	}
 
 	//장소투표방 리셋
 	@Transactional(rollbackFor = {CustomException.class})
-	public void UpdatePlaceVoteRoom(Long memberId, Long roomId, PlaceVoteRoomCreateRequest request) {
+	public void UpdatePlaceVoteRoom(Long memberId, String roomId, UpdatePlaceVoteRoomRequest request) {
 		// 방에 대한 회원인지 확인
 		memberRoomValidateService.validateAuthorizedMember(memberId, roomId);
 
@@ -73,12 +76,12 @@ public class PlaceVoteRoomService {
 	}
 
 	// 장소투표방 조회
-	public Optional<PlaceVoteRoom> findByRoomId(Long roomId) {
+	public Optional<PlaceVoteRoom> findByRoomId(String roomId) {
 		return placeVoteRoomRepository.findByRoom_Id(roomId);
 	}
 
 	// 장소투표방 중복 체크
-	private void validateDuplicatePlaceVoteRoom(Long roomId) {
+	private void validateDuplicatePlaceVoteRoom(String roomId) {
 		boolean exists = placeVoteRoomRepository.existsByRoom_Id(roomId);
 		if (exists) {
 			throw CustomException.from(DUPLICATE_VOTE_ROOM);
@@ -86,7 +89,7 @@ public class PlaceVoteRoomService {
 	}
 
 	// 장소투표방 존재 여부 확인, 존재시 true, 존재하지 않을시 false 반환
-	public PlaceVoteDTO.PlaceVoteCandidatesFindResponse findPlaceVoteCandidates(Long memberId, Long roomId) {
+	public PlaceVoteDTO.FindPlaceVoteCandidatesResponse findPlaceVoteCandidates(Long memberId, String roomId) {
 		// 방에 대한 회원인지 확인
 		memberRoomValidateService.validateAuthorizedMember(memberId, roomId);
 
@@ -94,16 +97,16 @@ public class PlaceVoteRoomService {
 
 		return placeVoteRoomOptional
 			.map(placeVoteRoom -> {
-				List<PlaceVoteDTO.PlaceVoteCandidatesFindResponse.PlaceCandidate> placeCandidates = placeVoteRoom.getPlaceVoteCandidates()
+				List<PlaceVoteDTO.FindPlaceVoteCandidatesResponse.PlaceCandidate> placeCandidates = placeVoteRoom.getPlaceVoteCandidates()
 					.stream()
-					.map(candidate -> new PlaceVoteDTO.PlaceVoteCandidatesFindResponse.PlaceCandidate(candidate.getId(),
+					.map(candidate -> new PlaceVoteDTO.FindPlaceVoteCandidatesResponse.PlaceCandidate(candidate.getId(),
 						candidate.getName(), candidate.getSiDo(),
 						candidate.getSiGunGu(), candidate.getRoadNameAddress(), candidate.getAddressLatitude(),
 						candidate.getAddressLongitude()))
 					.collect(Collectors.toList());
 
-				return PlaceVoteDTO.PlaceVoteCandidatesFindResponse.from(true, placeCandidates);
+				return PlaceVoteDTO.FindPlaceVoteCandidatesResponse.from(true, placeCandidates);
 			})
-			.orElseGet(() -> PlaceVoteDTO.PlaceVoteCandidatesFindResponse.from(false, null));
+			.orElseGet(() -> PlaceVoteDTO.FindPlaceVoteCandidatesResponse.from(false, null));
 	}
 }

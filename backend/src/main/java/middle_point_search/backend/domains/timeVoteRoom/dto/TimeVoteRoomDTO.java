@@ -15,7 +15,15 @@ import lombok.NoArgsConstructor;
 public class TimeVoteRoomDTO {
 	@Getter
 	@NoArgsConstructor(access = AccessLevel.PRIVATE)
-	public static class TimeVoteRoomCreateRequest {
+	public static class CreateTimeVoteRoomRequest {
+
+		@NotEmpty(message = "투표 후보가 제공되지 않았습니다.")
+		private List<@NotNull(message = "날짜는 비어있을 수 없습니다.") LocalDate> dates;
+	}
+
+	@Getter
+	@NoArgsConstructor(access = AccessLevel.PRIVATE)
+	public static class UpdateTimeVoteRoomRequest {
 
 		@NotEmpty(message = "투표 후보가 제공되지 않았습니다.")
 		private List<@NotNull(message = "날짜는 비어있을 수 없습니다.") LocalDate> dates;
@@ -24,22 +32,22 @@ public class TimeVoteRoomDTO {
 	@Getter
 	@AllArgsConstructor(access = AccessLevel.PRIVATE)
 	@JsonInclude(JsonInclude.Include.NON_NULL)
-	public static class TimeVoteRoomGetResponse {
+	public static class FindTimeVoteRoomResponse {
 		private Boolean existence;
 		private List<LocalDate> dates;
 
-		public static TimeVoteRoomGetResponse from(Boolean existence, List<LocalDate> dates) {
-			return new TimeVoteRoomGetResponse(existence, dates);
+		public static FindTimeVoteRoomResponse from(Boolean existence, List<LocalDate> dates) {
+			return new FindTimeVoteRoomResponse(existence, dates);
 		}
 	}
 
 	@Getter
 	@AllArgsConstructor(access = AccessLevel.PRIVATE)
-	public static class TimeVoteRoomCreateResponse {
+	public static class CreateTimeVoteRoomResponse {
 		private final Long id;
 
-		public static TimeVoteRoomCreateResponse from(Long id) {
-			return new TimeVoteRoomCreateResponse(id);
+		public static CreateTimeVoteRoomResponse from(Long id) {
+			return new CreateTimeVoteRoomResponse(id);
 		}
 	}
 }

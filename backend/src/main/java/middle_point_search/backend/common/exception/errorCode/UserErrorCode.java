@@ -9,7 +9,6 @@ public enum UserErrorCode implements ErrorCode {
 
 	//인증 및 토큰 관련
 	UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "A-001", "인증에 실패하였습니다."),
-	INVALID_ACCESS_TOKEN(HttpStatus.UNAUTHORIZED, "A-002", "Access Token이 유효하지 않습니다."),
 	INVALID_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "A-003", "Refresh Token이 유효하지 않습니다."),
 	REISSUE_ACCESS_TOKEN(HttpStatus.PAYMENT_REQUIRED, "A-004", "Access Token을 재발급해야합니다."),
 	ACCESS_DENIED(HttpStatus.FORBIDDEN, "A-005", "접근 권한이 없습니다."),
@@ -18,6 +17,10 @@ public enum UserErrorCode implements ErrorCode {
 	//회원 관련
 	MEMBER_CREDENTIAL_UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "M-002", "비밀번호가 일치하지 않습니다"),
 	MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "M-201", "존재하지 않는 회원입니다."),
+	DUPLICATE_MEMBER_EMAIL(HttpStatus.CONFLICT, "M-001", "이미 존재하는 이메일입니다."),
+	REQUIRE_VERIFICATION_REQUEST_FIRST(HttpStatus.FORBIDDEN, "M-003", "이메일 인증을 먼저 진행해주세요."),
+	VERIFICATION_CODE_NOT_MATCH(HttpStatus.FORBIDDEN, "M-004", "인증 코드가 일치하지 않습니다."),
+	PASSWORD_NOT_MATCH(HttpStatus.FORBIDDEN, "M-005", "비밀번호가 일치하지 않습니다."),
 
 	//방 관련
 	ROOM_NOT_FOUND(HttpStatus.NOT_FOUND, "R-201", "존재하지 않는 방입니다."),
@@ -47,6 +50,12 @@ public enum UserErrorCode implements ErrorCode {
 
 	//서버 관련
 	API_INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "S-001", "API 서버에 문제가 발생하였습니다."),
+
+	//이메일 관련
+	EMAIL_SEND_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "E-001", "이메일 전송에 실패하였습니다."),
+
+	// S3 관련
+	INVALID_FILE_EXTENSION(HttpStatus.BAD_REQUEST,"S-001" , "유효하지 않은 파일 확장자입니다."),
 	;
 
 	private final HttpStatus httpStatus;

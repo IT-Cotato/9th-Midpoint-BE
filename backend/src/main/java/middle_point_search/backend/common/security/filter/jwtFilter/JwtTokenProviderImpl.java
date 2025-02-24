@@ -60,7 +60,7 @@ public class JwtTokenProviderImpl implements JwtTokenProvider {
 	//authentication을 만들어주는 메서드
 	@Override
 	public Authentication getAuthentication(String accessToken) {
-		Long memberId = extractMemberId(accessToken).orElseThrow(() -> CustomException.from(INVALID_ACCESS_TOKEN));
+		Long memberId = extractMemberId(accessToken).orElseThrow(() -> CustomException.from(REISSUE_ACCESS_TOKEN));
 
 		Member member = memberRepository.findById(memberId)
 			.orElseThrow(() -> CustomException.from(MEMBER_NOT_FOUND));

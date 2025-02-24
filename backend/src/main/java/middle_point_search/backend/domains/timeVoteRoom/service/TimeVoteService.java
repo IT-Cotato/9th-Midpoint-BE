@@ -16,16 +16,17 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.exception.CustomException;
 import middle_point_search.backend.domains.member.domain.Member;
-import middle_point_search.backend.domains.memberRoom.MemberRoomValidateService;
+import middle_point_search.backend.domains.memberRoom.service.MemberRoomValidateService;
 import middle_point_search.backend.domains.timeVoteRoom.domain.MeetingDate;
 import middle_point_search.backend.domains.timeVoteRoom.domain.TimeVote;
 import middle_point_search.backend.domains.timeVoteRoom.domain.TimeVoteRoom;
 import middle_point_search.backend.domains.timeVoteRoom.dto.TimeVoteDTO.TimeRange;
 import middle_point_search.backend.domains.timeVoteRoom.dto.TimeVoteDTO.TimeVoteDetail;
 import middle_point_search.backend.domains.timeVoteRoom.dto.TimeVoteDTO.TimeVotePerDate;
-import middle_point_search.backend.domains.timeVoteRoom.dto.TimeVoteDTO.TimeVoteRoomResultResponse;
+import middle_point_search.backend.domains.timeVoteRoom.dto.TimeVoteDTO.FindTimeVoteRoomResultResponse;
+import middle_point_search.backend.domains.timeVoteRoom.dto.TimeVoteDTO.UpdateTimeVoteRequest;
 import middle_point_search.backend.domains.timeVoteRoom.dto.TimeVoteDTO.VoteRequest;
-import middle_point_search.backend.domains.timeVoteRoom.dto.TimeVoteDTO.VotedAndVoteItemsGetResponse;
+import middle_point_search.backend.domains.timeVoteRoom.dto.TimeVoteDTO.FindVotedAndVoteItemsResponse;
 import middle_point_search.backend.domains.timeVoteRoom.repository.TimeVoteRepository;
 
 @Service
@@ -42,7 +43,7 @@ public class TimeVoteService {
 	@Transactional(rollbackFor = {CustomException.class})
 	public void vote(
 		Member member,
-		Long roomId,
+		String roomId,
 		VoteRequest request
 	) {
 		// 방에 대한 회원인지 확인
@@ -69,8 +70,8 @@ public class TimeVoteService {
 	@Transactional(rollbackFor = {CustomException.class})
 	public void updateVote(
 		Member member,
-		Long roomId,
-		VoteRequest request
+		String roomId,
+		UpdateTimeVoteRequest request
 	) {
 		// 방에 대한 회원인지 확인
 		memberRoomValidateService.validateAuthorizedMember(member.getId(), roomId);
@@ -120,7 +121,7 @@ public class TimeVoteService {
 	}
 
 	// 시간 투표 현황 정보 조회
-	public TimeVoteRoomResultResponse findTimeVoteResult(Long memberId, Long roomId) {
+	public FindTimeVoteRoomResultResponse findTimeVoteResult(Long memberId, String roomId) {
 		// 방에 대한 회원인지 확인
 		memberRoomValidateService.validateAuthorizedMember(memberId, roomId);
 
@@ -147,7 +148,7 @@ public class TimeVoteService {
 						vote.getMemberAvailableEndTime()
 					)
 				);
-				TimeVoteDetail detail = TimeVoteDetail.from(vote.getMember().getEmail(), dateTimeList);
+				TimeVoteDetail detail = TimeVoteDetail.from(vote.getMember().getName(), dateTimeList);
 				details.add(detail);
 			}
 			result.put(date, details);
@@ -155,7 +156,7 @@ public class TimeVoteService {
 
 		List<TimeVote> distinctVotes = timeVoteRepository.findDistinctByTimeVoteRoom(timeVoteRoom);
 		int totalMemberNum = (int)distinctVotes.stream().map(TimeVote::getMember).distinct().count();
-		return TimeVoteRoomResultResponse.from(result, totalMemberNum);
+		return FindTimeVoteRoomResultResponse.from(result, totalMemberNum);
 	}
 
 	// 내 시간투표 가져오기
@@ -196,7 +197,7 @@ public class TimeVoteService {
 	}
 
 	// 투표 여부 및 투표 아이템 가져오기
-	public VotedAndVoteItemsGetResponse getVotedAndVoteItems(Member member, Long roomId) {
+	public FindVotedAndVoteItemsResponse getVotedAndVoteItems(Member member, String roomId) {
 		// 방에 대한 회원인지 확인
 		memberRoomValidateService.validateAuthorizedMember(member.getId(), roomId);
 
@@ -213,7 +214,7 @@ public class TimeVoteService {
 		boolean otherVotesExistence = !otherVotes.isEmpty();
 		otherVotes = otherVotesExistence ? otherVotes : null;
 
-		return VotedAndVoteItemsGetResponse.from(myVoteExistence, myVotes, otherVotesExistence, otherVotes);
+		return FindVotedAndVoteItemsResponse.from(myVoteExistence, myVotes, otherVotesExistence, otherVotes);
 	}
 
 }

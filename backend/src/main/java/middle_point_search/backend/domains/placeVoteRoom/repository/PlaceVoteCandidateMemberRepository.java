@@ -12,8 +12,10 @@ public interface PlaceVoteCandidateMemberRepository extends JpaRepository<PlaceV
 
 	boolean existsByPlaceVoteCandidate_PlaceVoteRoomAndMember(PlaceVoteRoom placeVoteRoom, Member member);
 
-	Optional<PlaceVoteCandidateMember> findByPlaceVoteCandidate_PlaceVoteRoom_Room_IdAndMember(Long roomId,
+	Optional<PlaceVoteCandidateMember> findByPlaceVoteCandidate_PlaceVoteRoom_Room_IdAndMember(String roomId,
 		Member member);
 
 	void deleteByPlaceVoteCandidate_PlaceVoteRoomAndMember(PlaceVoteRoom placeVoteRoom, Member member);
+
+	void deleteAllByMemberId(Long memberId);
 }

@@ -36,8 +36,7 @@ out/
 ### VS Code ###
 .vscode/
 ### application-security ###
-src/main/resources/application-api.properties
-src/main/resources/application-security.properties
+src/main/resources/application*
 
 ### log ###
 log/**

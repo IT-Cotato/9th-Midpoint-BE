@@ -1,6 +1,6 @@
 package middle_point_search.backend.domains.member.domain;
 
-import org.apache.commons.lang3.RandomStringUtils;
+import org.hibernate.annotations.ColumnDefault;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -24,18 +24,25 @@ public class Member extends BaseEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(nullable = false, unique = true)
+	@Column(nullable = false, unique = true, length = 254)
 	private String email;
 
 	@Column(nullable = false)
 	private String pw;
 
-	@Column(nullable = false)
+	@Column(nullable = false, length = 30)
 	private String name;
 
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
 	private Role role;
+
+	@Column(nullable = false)
+	@ColumnDefault("false")
+	private Boolean existAddress;
+
+	@Column(nullable = true)
+	private String profileImagePath;
 
 	@Column(nullable = true)
 	private String provider;
@@ -43,11 +50,24 @@ public class Member extends BaseEntity {
 	@Column(nullable = true)
 	private String providerId;
 
+	//주소
+	private String siDo;
+	private String siGunGu;
+	private String roadNameAddress;
+	private Double addressLatitude;
+	private Double addressLongitude;
+
 	private Member(
 		String email,
 		String pw,
 		String name,
 		Role role,
+		Boolean existAddress,
+		String siDo,
+		String siGunGu,
+		String roadNameAddress,
+		Double addressLatitude,
+		Double addressLongitude,
 		String provider,
 		String providerId
 	) {
@@ -55,40 +75,77 @@ public class Member extends BaseEntity {
 		this.pw = pw;
 		this.name = name;
 		this.role = role;
+		this.existAddress = existAddress;
+		this.siDo = siDo;
+		this.siGunGu = siGunGu;
+		this.roadNameAddress = roadNameAddress;
+		this.addressLatitude = addressLatitude;
+		this.addressLongitude = addressLongitude;
 		this.provider = provider;
 		this.providerId = providerId;
 	}
 
-	public static Member createStandardMember(
+	// 주소 없이 회원 생성
+	public static Member createWithoutAddress(String email, String pw, String name, Role role) {
+
+		return new Member(email, pw, name, role, false, null, null, null, null, null);
+	}
+
+	// 주소와 함께 회원 생성
+	public static Member createWithAddress(
 		String email,
 		String pw,
 		String name,
-		Role role
+		Role role,
+		String siDo,
+		String siGunGu,
+		String roadNameAddress,
+		Double addressLatitude,
+		Double addressLongitude
 	) {
-		return new Member(
-			email,
-			pw,
-			name,
-			role,
-			null,
-			null
-		);
+		return new Member(email, pw, name, role, true, siDo, siGunGu, roadNameAddress, addressLatitude,
+			addressLongitude);
 	}
 
-	public static Member createOAuthMember(
-		String email,
-		String name,
-		Role role,
-		String provider,
-		String providerId
+	// 비밀번호 변경
+	public void updatePassword(String encodedPassword) {
+		this.pw = encodedPassword;
+
+	}
+
+	// 이름 변경
+	public void updateName(String name) {
+		this.name = name;
+	}
+
+	// 주소 변경
+	public void updateAddress(
+		String siDo,
+		String siGunGu,
+		String roadNameAddress,
+		Double addressLatitude,
+		Double addressLongitude
 	) {
-		return new Member(
-			email,
-			RandomStringUtils.randomAlphanumeric(20),
-			name,
-			role,
-			provider,
-			providerId
-		);
+		this.existAddress = true;
+		this.siDo = siDo;
+		this.siGunGu = siGunGu;
+		this.roadNameAddress = roadNameAddress;
+		this.addressLatitude = addressLatitude;
+		this.addressLongitude = addressLongitude;
+	}
+
+	// 주소 삭제
+	public void deleteAddress() {
+		this.existAddress = false;
+		this.siDo = null;
+		this.siGunGu = null;
+		this.roadNameAddress = null;
+		this.addressLatitude = null;
+		this.addressLongitude = null;
+	}
+
+	// 프로필 이미지 path 변경
+	public void updateProfileImagePath(String profileImagePath) {
+		this.profileImagePath = profileImagePath;
 	}
 }

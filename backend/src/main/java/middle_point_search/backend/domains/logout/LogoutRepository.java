@@ -5,6 +5,4 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface LogoutRepository extends CrudRepository<LogoutToken, String> {
-
-	boolean existsByAccessToken(String accessToken);
 }

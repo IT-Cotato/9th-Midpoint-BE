@@ -49,7 +49,7 @@ public class MidPointDTO {
 
 	@Getter
 	@AllArgsConstructor(access = AccessLevel.PUBLIC)
-	public static class MidPointsFindResponse {
+	public static class FindMidPointsResponse {
 
 		private String name;
 		private String siDo;
@@ -58,8 +58,8 @@ public class MidPointDTO {
 		private Double addressLat;
 		private Double addressLong;
 
-		public static MidPointsFindResponse from(Market market) {
-			return new MidPointsFindResponse(
+		public static FindMidPointsResponse from(Market market) {
+			return new FindMidPointsResponse(
 				market.getName(),
 				market.getSiDo(),
 				market.getSiGunGu(),
@@ -67,6 +67,61 @@ public class MidPointDTO {
 				market.getAddressLatitude(),
 				market.getAddressLongitude()
 			);
+		}
+	}
+
+	@Getter
+	@AllArgsConstructor
+	public static class FindTravelTimesResponse {
+		private List<Element> elements;
+
+		@Getter
+		@AllArgsConstructor
+		public static class Element {
+			private String status;
+			private Long placeId;
+			private Duration duration;
+			private Distance distance;
+
+			@Getter
+			@AllArgsConstructor(access = AccessLevel.PRIVATE)
+			public static class Duration {
+				private String text;
+				private int value;
+			}
+
+			@Getter
+			@AllArgsConstructor(access = AccessLevel.PRIVATE)
+			public static class Distance {
+				private String text;
+				private int value;
+			}
+
+			public static Element from(
+				Long placeId,
+				String durationText,
+				int durationValue,
+				String distanceText,
+				int distanceValue
+			) {
+				return new Element(
+					"OK",
+					placeId,
+					new Element.Duration(durationText, durationValue),
+					new Element.Distance(distanceText, distanceValue));
+			}
+
+			public static Element noContent(Long placeId) {
+				return new Element(
+					"ZERO_RESULTS",
+					placeId,
+					null,
+					null);
+			}
+		}
+
+		public static FindTravelTimesResponse from(List<Element> elements) {
+			return new FindTravelTimesResponse(elements);
 		}
 	}
 }

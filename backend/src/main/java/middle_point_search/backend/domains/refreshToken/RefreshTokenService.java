@@ -33,6 +33,7 @@ public class RefreshTokenService {
 	// MemberId로 RefreshToken 삭제
 	@Transactional
 	public void deleteByMemberId(Long memberId) {
-		refreshTokenRepository.deleteByMemberId(memberId);
+		refreshTokenRepository.findByMemberId(memberId)
+			.ifPresent(refreshTokenRepository::delete);
 	}
 }

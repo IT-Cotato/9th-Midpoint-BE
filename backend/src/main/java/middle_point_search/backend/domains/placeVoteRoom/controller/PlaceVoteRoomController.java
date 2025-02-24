@@ -21,7 +21,7 @@ import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.dto.DataResponse;
 import middle_point_search.backend.common.dto.ErrorResponse;
 import middle_point_search.backend.common.util.MemberLoader;
-import middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteDTO;
+import middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteDTO.FindPlaceVoteCandidatesResponse;
 import middle_point_search.backend.domains.placeVoteRoom.service.PlaceVoteRoomService;
 
 @Tag(name = "PLACE VOTE ROOM API", description = "장소 투표 방에 대한 API입니다.")
@@ -77,12 +77,12 @@ public class PlaceVoteRoomController {
 			)
 		}
 	)
-	public ResponseEntity<DataResponse<PlaceVoteRoomCreateResponse>> placeVoteRoomCreate(
-		@PathVariable("roomId") Long roomId,
-		@RequestBody @Valid PlaceVoteRoomCreateRequest request
+	public ResponseEntity<DataResponse<CreatePlaceVoteRoomResponse>> createPlaceVoteRoom(
+		@PathVariable("roomId") String roomId,
+		@RequestBody @Valid CreatePlaceVoteRoomRequest request
 	) {
 		Long memberId = memberLoader.getMemberId();
-		PlaceVoteRoomCreateResponse response = placeVoteRoomService.createPlaceVoteRoom(
+		CreatePlaceVoteRoomResponse response = placeVoteRoomService.createPlaceVoteRoom(
 			memberId,
 			roomId,
 			request);
@@ -136,9 +136,9 @@ public class PlaceVoteRoomController {
 			)
 		}
 	)
-	public ResponseEntity<DataResponse<Void>> placeVoteRoomUpdate(
-		@PathVariable("roomId") Long roomId,
-		@RequestBody @Valid PlaceVoteRoomCreateRequest request
+	public ResponseEntity<DataResponse<Void>> updatePlaceVoteRoom(
+		@PathVariable("roomId") String roomId,
+		@RequestBody @Valid UpdatePlaceVoteRoomRequest request
 	) {
 		Long memberId = memberLoader.getMemberId();
 
@@ -177,12 +177,12 @@ public class PlaceVoteRoomController {
 			)
 		}
 	)
-	public ResponseEntity<DataResponse<PlaceVoteDTO.PlaceVoteCandidatesFindResponse>> placeVoteRoomFind(
-		@PathVariable("roomId") Long roomId
+	public ResponseEntity<DataResponse<FindPlaceVoteCandidatesResponse>> findPlaceVoteCandidates(
+		@PathVariable("roomId") String roomId
 	) {
 		Long memberId = memberLoader.getMemberId();
 
-		PlaceVoteDTO.PlaceVoteCandidatesFindResponse response = placeVoteRoomService.findPlaceVoteCandidates(
+		FindPlaceVoteCandidatesResponse response = placeVoteRoomService.findPlaceVoteCandidates(
 			memberId,
 			roomId);
 
