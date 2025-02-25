@@ -1,5 +1,7 @@
 package middle_point_search.backend.domains.member.domain;
 
+import java.util.UUID;
+
 import org.hibernate.annotations.ColumnDefault;
 
 import jakarta.persistence.Column;
@@ -13,6 +15,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import middle_point_search.backend.common.baseEntity.BaseEntity;
+import middle_point_search.backend.domains.member.dto.OAuth2UserInfo;
 
 @Entity
 @Getter
@@ -44,6 +47,10 @@ public class Member extends BaseEntity {
 	@Column(nullable = true)
 	private String profileImagePath;
 
+	@Enumerated(EnumType.STRING)
+	@Column(nullable = false)
+	private AuthType authType;
+
 	@Column(nullable = true)
 	private String provider;
 
@@ -68,6 +75,7 @@ public class Member extends BaseEntity {
 		String roadNameAddress,
 		Double addressLatitude,
 		Double addressLongitude,
+		AuthType authType,
 		String provider,
 		String providerId
 	) {
@@ -81,6 +89,7 @@ public class Member extends BaseEntity {
 		this.roadNameAddress = roadNameAddress;
 		this.addressLatitude = addressLatitude;
 		this.addressLongitude = addressLongitude;
+		this.authType = authType;
 		this.provider = provider;
 		this.providerId = providerId;
 	}
@@ -88,7 +97,21 @@ public class Member extends BaseEntity {
 	// 주소 없이 회원 생성
 	public static Member createWithoutAddress(String email, String pw, String name, Role role) {
 
-		return new Member(email, pw, name, role, false, null, null, null, null, null);
+		return new Member(
+			email,
+			pw,
+			name,
+			role,
+			false,
+			null,
+			null,
+			null,
+			null,
+			null,
+			AuthType.LOCAL,
+			null,
+			null
+		);
 	}
 
 	// 주소와 함께 회원 생성
@@ -103,8 +126,40 @@ public class Member extends BaseEntity {
 		Double addressLatitude,
 		Double addressLongitude
 	) {
-		return new Member(email, pw, name, role, true, siDo, siGunGu, roadNameAddress, addressLatitude,
-			addressLongitude);
+		return new Member(
+			email,
+			pw,
+			name,
+			role,
+			true,
+			siDo,
+			siGunGu,
+			roadNameAddress,
+			addressLatitude,
+			addressLongitude,
+			AuthType.LOCAL,
+			null,
+			null
+		);
+	}
+
+	// OAuth 회원 생성
+	public static Member createOAuthMember(OAuth2UserInfo oAuth2UserInfo) {
+		return new Member(
+			oAuth2UserInfo.getEmail(),
+			UUID.randomUUID().toString(),
+			oAuth2UserInfo.getName(),
+			Role.USER,
+			false,
+			null,
+			null,
+			null,
+			null,
+			null,
+			AuthType.OAUTH,
+			oAuth2UserInfo.getProvider(),
+			oAuth2UserInfo.getProviderId()
+		);
 	}
 
 	// 비밀번호 변경

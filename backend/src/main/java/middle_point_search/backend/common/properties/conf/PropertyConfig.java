@@ -9,6 +9,7 @@ import middle_point_search.backend.common.properties.GoogleProperties;
 import middle_point_search.backend.common.properties.JwtProperties;
 import middle_point_search.backend.common.properties.KakaoProperties;
 import middle_point_search.backend.common.properties.MarketProperties;
+import middle_point_search.backend.common.properties.OAuthProperties;
 import middle_point_search.backend.common.properties.RedisProperties;
 import middle_point_search.backend.common.properties.SecurityProperties;
 import middle_point_search.backend.common.properties.SwaggerProperties;
@@ -24,7 +25,8 @@ import middle_point_search.backend.common.properties.SwaggerProperties;
 	RedisProperties.class,
 	GoogleProperties.class,
 	EmailProperties.class,
-	SwaggerProperties.class
+	SwaggerProperties.class,
+	OAuthProperties.class
 })
 public class PropertyConfig {
 }

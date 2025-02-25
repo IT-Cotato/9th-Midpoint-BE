@@ -23,8 +23,6 @@ import middle_point_search.backend.common.security.filter.exceptionHandlingFilte
 import middle_point_search.backend.common.security.filter.jwtFilter.JwtAuthenticationFilter;
 import middle_point_search.backend.common.security.filter.jwtFilter.JwtTokenProvider;
 import middle_point_search.backend.common.security.filter.loginFilter.LoginFilter;
-import middle_point_search.backend.common.security.oAuth.CustomOAuth2UserService;
-import middle_point_search.backend.common.security.oAuth.OAuth2LoginSuccessHandler;
 import middle_point_search.backend.domains.member.repository.MemberRepository;
 
 @Configuration
@@ -36,8 +34,6 @@ public class SecurityConfig {
 
 	private final UserDetailsService userDetailsService;
 	private final JwtTokenProvider jwtTokenProvider;
-	private final CustomOAuth2UserService customOAuth2UserService;
-	private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
 
 	private final UrlBasedCorsConfigurationSource ConfigurationSource;
 	private final SecurityProperties securityProperties;
@@ -67,12 +63,6 @@ public class SecurityConfig {
 		http.addFilterAfter(loginFilter(), LogoutFilter.class)
 			.addFilterBefore(jwtAuthenticationFilter(), LoginFilter.class)
 			.addFilterBefore(exceptionHandlingFilter(), JwtAuthenticationFilter.class);
-
-		// oauth
-		http.oauth2Login((oauth2) -> oauth2
-			.userInfoEndpoint(userInfoEndpoint -> userInfoEndpoint
-				.userService(customOAuth2UserService))
-			.successHandler(oAuth2LoginSuccessHandler));
 
 		return http.build();
 	}

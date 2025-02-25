@@ -1,12 +1,10 @@
-package middle_point_search.backend.common.security.dto;
+package middle_point_search.backend.domains.member.dto;
 
 import java.util.Map;
 
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
-import middle_point_search.backend.domains.member.domain.Member;
-import middle_point_search.backend.domains.member.domain.Role;
 
 @Builder
 @Getter
@@ -16,7 +14,6 @@ public class OAuth2UserInfo {
 	private final static String KAKAO = "kakao";
 	private final static String NAVER = "naver";
 
-	private String loginId;
 	private String email;
 	private String name;
 	private String provider;
@@ -36,35 +33,38 @@ public class OAuth2UserInfo {
 	}
 
 	private static OAuth2UserInfo ofGoogle(Map<String, Object> attributes) {
+		// 일반 유저와 구분하기 위해 뒤에 (google) 추가
+		String email = String.format("%s(%s)", (String)attributes.get("email"), GOOGLE);
+
 		return OAuth2UserInfo.builder()
 			.provider(GOOGLE)
-			.loginId((String)attributes.get("email"))
 			.name((String)attributes.get("name"))
-			.email((String)attributes.get("email"))
+			.email(email)
 			.providerId((String)attributes.get("sub"))
 			.build();
 	}
 
 	private static OAuth2UserInfo ofKakao(Map<String, Object> attributes) {
+		// 일반 유저와 구분하기 위해 뒤에 (kakao) 추가
+		String email = String.format("%s(%s)", (String)((Map)attributes.get("kakao_account")).get("email"), KAKAO);
+
 		return OAuth2UserInfo.builder()
 			.provider(KAKAO)
-			.loginId(attributes.get("id").toString())
 			.name((String)((Map)attributes.get("properties")).get("nickname"))
+			.email(email)
 			.providerId(attributes.get("id").toString())
 			.build();
 	}
 
 	private static OAuth2UserInfo ofNaver(Map<String, Object> attributes) {
+		// 일반 유저와 구분하기 위해 뒤에 (naver) 추가
+		String email = String.format("%s(%s)", (String)((Map)attributes.get("response")).get("email"), NAVER);
+
 		return OAuth2UserInfo.builder()
 			.provider(NAVER)
-			.loginId((String)((Map)attributes.get("response")).get("id"))
 			.name((String)((Map)attributes.get("response")).get("name"))
+			.email(email)
 			.providerId((String)((Map)attributes.get("response")).get("id"))
 			.build();
 	}
-
-	public Member toEntity() {
-		return Member.createOAuthMember(loginId, name, Role.USER, provider, providerId);
-	}
-
 }
