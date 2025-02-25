@@ -13,7 +13,8 @@ public record FindMemberInfoResponse(
 	String siGunGu,
 	String roadNameAddress,
 	Double addressLatitude,
-	Double addressLongitude
+	Double addressLongitude,
+	Boolean isOauth
 ) {
 	public static FindMemberInfoResponse from(Member member) {
 		if (member.getExistAddress()) {
@@ -25,7 +26,8 @@ public record FindMemberInfoResponse(
 				member.getSiGunGu(),
 				member.getRoadNameAddress(),
 				member.getAddressLatitude(),
-				member.getAddressLongitude()
+				member.getAddressLongitude(),
+				member.getProvider() != null
 			);
 		} else {
 			return new FindMemberInfoResponse(
@@ -36,7 +38,8 @@ public record FindMemberInfoResponse(
 				null,
 				null,
 				null,
-				null
+				null,
+				member.getProvider() != null
 			);
 		}
 	}
