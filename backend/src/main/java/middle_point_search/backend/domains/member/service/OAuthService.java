@@ -32,11 +32,6 @@ public class OAuthService {
 		String oauthAccessToken = getOauthAccessToken(provider, code);
 		OAuth2UserInfo oAuth2UserInfo = getUserInfo(provider, oauthAccessToken);
 
-		System.out.println(oAuth2UserInfo.getEmail());
-		System.out.println(oAuth2UserInfo.getName());
-		System.out.println(oAuth2UserInfo.getProvider());
-		System.out.println(oAuth2UserInfo.getProviderId());
-
 		// oAuth2UserInfo가 저장되어 있는지 유저 정보 확인
 		// 없으면 DB 저장 후 해당 유저를 저장
 		// 있으면 해당 유저를 저장

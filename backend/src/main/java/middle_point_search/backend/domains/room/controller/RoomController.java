@@ -57,7 +57,10 @@ public class RoomController {
 			),
 			@ApiResponse(
 				responseCode = "401",
-				description = "인증에 실패하였습니다.[C-101]"
+				description = """
+					인증에 실패하였습니다.[C-101] \n
+					Refresh Token이 유효하지 않습니다.[A-003]""",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
 				responseCode = "402",
@@ -90,7 +93,10 @@ public class RoomController {
 			),
 			@ApiResponse(
 				responseCode = "401",
-				description = "인증에 실패하였습니다.[C-101]"
+				description = """
+					인증에 실패하였습니다.[C-101] \n
+					Refresh Token이 유효하지 않습니다.[A-003]""",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
 				responseCode = "402",
@@ -133,7 +139,10 @@ public class RoomController {
 			),
 			@ApiResponse(
 				responseCode = "401",
-				description = "인증에 실패하였습니다.[C-101]"
+				description = """
+					인증에 실패하였습니다.[C-101] \n
+					Refresh Token이 유효하지 않습니다.[A-003]""",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
 				responseCode = "402",
@@ -176,7 +185,10 @@ public class RoomController {
 			),
 			@ApiResponse(
 				responseCode = "401",
-				description = "인증에 실패하였습니다.[C-101]"
+				description = """
+					인증에 실패하였습니다.[C-101] \n
+					Refresh Token이 유효하지 않습니다.[A-003]""",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
 				responseCode = "402",
@@ -209,7 +221,10 @@ public class RoomController {
 			),
 			@ApiResponse(
 				responseCode = "401",
-				description = "인증에 실패하였습니다.[C-101]"
+				description = """
+					인증에 실패하였습니다.[C-101] \n
+					Refresh Token이 유효하지 않습니다.[A-003]""",
+				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
 				responseCode = "402",
