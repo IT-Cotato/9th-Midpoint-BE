@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.dto.DataResponse;
 import middle_point_search.backend.domains.member.dto.request.OAuthLoginRequest;
@@ -21,6 +22,12 @@ public class OAuthController {
 	private final OAuthService oAuthService;
 
 	@PostMapping("/login/{provider}")
+	@Operation(
+		summary = "OAuth 로그인",
+		description = """
+			OAuth 로그인을 진행한다.
+			"""
+	)
 	public ResponseEntity<DataResponse<LoginMemberResponse>> login(
 		@PathVariable String provider,
 		@RequestBody OAuthLoginRequest request

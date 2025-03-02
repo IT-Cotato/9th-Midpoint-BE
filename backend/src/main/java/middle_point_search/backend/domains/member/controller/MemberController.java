@@ -112,7 +112,9 @@ public class MemberController {
 			),
 			@ApiResponse(
 				responseCode = "401",
-				description = "인증에 실패하였습니다.[C-101]",
+				description = """
+					인증에 실패하였습니다.[C-101] \n
+					Refresh Token이 유효하지 않습니다.[A-003]""",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
@@ -248,7 +250,9 @@ public class MemberController {
 			),
 			@ApiResponse(
 				responseCode = "401",
-				description = "인증에 실패하였습니다.[C-101]",
+				description = """
+					인증에 실패하였습니다.[C-101] \n
+					Refresh Token이 유효하지 않습니다.[A-003]""",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
@@ -333,12 +337,7 @@ public class MemberController {
 			),
 			@ApiResponse(
 				responseCode = "403",
-				description = "이메일 인증을 먼저 진행해주세요.[M-003]",
-				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
-			),
-			@ApiResponse(
-				responseCode = "403",
-				description = "인증 코드가 일치하지 않습니다.[M-004]",
+				description = "이메일 인증을 먼저 진행해주세요.[M-003] \n 인증 코드가 일치하지 않습니다.[M-004]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
@@ -367,7 +366,9 @@ public class MemberController {
 			),
 			@ApiResponse(
 				responseCode = "401",
-				description = "인증에 실패하였습니다.[C-101]",
+				description = """
+					인증에 실패하였습니다.[C-101] \n
+					Refresh Token이 유효하지 않습니다.[A-003]""",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
@@ -406,7 +407,9 @@ public class MemberController {
 			),
 			@ApiResponse(
 				responseCode = "401",
-				description = "인증에 실패하였습니다.[C-101]",
+				description = """
+					인증에 실패하였습니다.[C-101] \n
+					Refresh Token이 유효하지 않습니다.[A-003]""",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
@@ -447,7 +450,9 @@ public class MemberController {
 			),
 			@ApiResponse(
 				responseCode = "401",
-				description = "인증에 실패하였습니다.[C-101]",
+				description = """
+					인증에 실패하였습니다.[C-101] \n
+					Refresh Token이 유효하지 않습니다.[A-003]""",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
@@ -480,7 +485,9 @@ public class MemberController {
 			),
 			@ApiResponse(
 				responseCode = "401",
-				description = "인증에 실패하였습니다.[C-101]",
+				description = """
+					인증에 실패하였습니다.[C-101] \n
+					Refresh Token이 유효하지 않습니다.[A-003]""",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
@@ -514,7 +521,9 @@ public class MemberController {
 			),
 			@ApiResponse(
 				responseCode = "401",
-				description = "인증에 실패하였습니다.[C-101]",
+				description = """
+					인증에 실패하였습니다.[C-101] \n
+					Refresh Token이 유효하지 않습니다.[A-003]""",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
@@ -553,7 +562,9 @@ public class MemberController {
 			),
 			@ApiResponse(
 				responseCode = "401",
-				description = "인증에 실패하였습니다.[C-101]",
+				description = """
+					인증에 실패하였습니다.[C-101] \n
+					Refresh Token이 유효하지 않습니다.[A-003]""",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
@@ -585,7 +596,9 @@ public class MemberController {
 			),
 			@ApiResponse(
 				responseCode = "401",
-				description = "인증에 실패하였습니다.[C-101]",
+				description = """
+					인증에 실패하였습니다.[C-101] \n
+					Refresh Token이 유효하지 않습니다.[A-003]""",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
@@ -621,7 +634,9 @@ public class MemberController {
 			),
 			@ApiResponse(
 				responseCode = "401",
-				description = "인증에 실패하였습니다.[C-101]",
+				description = """
+					인증에 실패하였습니다.[C-101] \n
+					Refresh Token이 유효하지 않습니다.[A-003]""",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			),
 			@ApiResponse(
