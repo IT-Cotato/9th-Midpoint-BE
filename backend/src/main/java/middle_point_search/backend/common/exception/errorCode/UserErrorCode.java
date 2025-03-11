@@ -27,7 +27,6 @@ public enum UserErrorCode implements ErrorCode {
 	ROOM_TYPE_UNPROCESSABLE(HttpStatus.UNPROCESSABLE_ENTITY, "R-001", "방의 타입이 일치하지 않습니다."),
 
 	//MemberRoom 관련
-	MEMBER_ROOM_NOT_FOUND(HttpStatus.NOT_FOUND, "MR-001", "해당 방에 회원이 아닙니다"),
 	DUPLICATE_MEMBER_ROOM(HttpStatus.CONFLICT, "MR-002", "해당 방에 이미 존재하는 회원입니다."),
 	UNAUTHORIZED_MEMBER_ROOM(HttpStatus.FORBIDDEN, "MR-003", "해당 방의 회원이 아닙니다."),
 
