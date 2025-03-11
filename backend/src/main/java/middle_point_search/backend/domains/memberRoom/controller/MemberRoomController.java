@@ -168,7 +168,7 @@ public class MemberRoomController {
 			),
 			@ApiResponse(
 				responseCode = "409",
-				description = "해당 방에 존재하지 않는 회원입니다.[MR-001]",
+				description = "해당 방에 존재하지 않는 회원입니다.[MR-003]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			)
 		}

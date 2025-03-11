@@ -66,6 +66,16 @@ public class MemberRoomService {
 	// 회원방에서 회원 삭제, 방이 없으면 방 삭제
 	@Transactional
 	public void deleteMemberFromRoom(Long memberId, String roomId) {
+		// 방이 없으면 예외
+		if (!roomRepository.existsById(roomId)) {
+			throw CustomException.from(ROOM_NOT_FOUND);
+		}
+
+		// 방에 존재하는 회원이 아니면 예외
+		if (!memberRoomRepository.existsByRoomIdAndMemberId(roomId, memberId)) {
+			throw CustomException.from(UNAUTHORIZED_MEMBER_ROOM);
+		}
+
 		memberRoomRepository.deleteByRoomIdAndMemberId(roomId, memberId);
 
 		// 방에 멤버가 없으면 방 삭제
