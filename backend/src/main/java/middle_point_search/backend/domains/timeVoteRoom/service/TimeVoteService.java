@@ -20,13 +20,13 @@ import middle_point_search.backend.domains.memberRoom.service.MemberRoomValidate
 import middle_point_search.backend.domains.timeVoteRoom.domain.MeetingDate;
 import middle_point_search.backend.domains.timeVoteRoom.domain.TimeVote;
 import middle_point_search.backend.domains.timeVoteRoom.domain.TimeVoteRoom;
-import middle_point_search.backend.domains.timeVoteRoom.dto.TimeVoteDTO.TimeRange;
-import middle_point_search.backend.domains.timeVoteRoom.dto.TimeVoteDTO.TimeVoteDetail;
-import middle_point_search.backend.domains.timeVoteRoom.dto.TimeVoteDTO.TimeVotePerDate;
-import middle_point_search.backend.domains.timeVoteRoom.dto.TimeVoteDTO.FindTimeVoteRoomResultResponse;
-import middle_point_search.backend.domains.timeVoteRoom.dto.TimeVoteDTO.UpdateTimeVoteRequest;
-import middle_point_search.backend.domains.timeVoteRoom.dto.TimeVoteDTO.VoteRequest;
-import middle_point_search.backend.domains.timeVoteRoom.dto.TimeVoteDTO.FindVotedAndVoteItemsResponse;
+import middle_point_search.backend.domains.timeVoteRoom.dto.dto.TimeRange;
+import middle_point_search.backend.domains.timeVoteRoom.dto.dto.TimeVoteDetail;
+import middle_point_search.backend.domains.timeVoteRoom.dto.dto.TimeVotePerDate;
+import middle_point_search.backend.domains.timeVoteRoom.dto.request.UpdateTimeVoteRequest;
+import middle_point_search.backend.domains.timeVoteRoom.dto.request.VoteRequest;
+import middle_point_search.backend.domains.timeVoteRoom.dto.response.FindTimeVoteRoomResultResponse;
+import middle_point_search.backend.domains.timeVoteRoom.dto.response.FindVotedAndVoteItemsResponse;
 import middle_point_search.backend.domains.timeVoteRoom.repository.TimeVoteRepository;
 
 @Service
@@ -59,7 +59,7 @@ public class TimeVoteService {
 		}
 
 		// 새로운 투표 추가
-		List<TimeVote> timeVotes = request.getDateTime().stream()
+		List<TimeVote> timeVotes = request.dateTime().stream()
 			.map(dateTime -> createTimeVote(dateTime, timeVoteRoom, member))
 			.toList();
 
@@ -90,7 +90,7 @@ public class TimeVoteService {
 		timeVoteRepository.deleteAll(existingVotes);
 
 		// 새로운 투표 추가
-		List<TimeVote> timeVotes = request.getDateTime().stream()
+		List<TimeVote> timeVotes = request.dateTime().stream()
 			.map(dateTime -> createTimeVote(dateTime, timeVoteRoom, member))
 			.toList();
 
