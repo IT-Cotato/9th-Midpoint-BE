@@ -23,6 +23,16 @@
         <logger level="DEBUG" name="org.hibernate.SQL"/>
     </springProfile>
 
+    <!--test: 콘솔에 출력-->
+    <springProfile name="test">
+
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+        </root>
+
+        <logger level="DEBUG" name="org.hibernate.SQL"/>
+    </springProfile>
+
     <!--dev:콘솔, 파일 둘다 출력-->
     <springProfile name="dev">
 

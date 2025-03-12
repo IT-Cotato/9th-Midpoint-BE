@@ -67,7 +67,7 @@ public class PlaceService {
 			.orElseThrow(() -> CustomException.from(ROOM_NOT_FOUND));
 
 		// 구글 placeId 조회
-		String googlePlaceId = googleService.findGooglePlaceId(request.getAddressLat(), request.getAddressLong());
+		String googlePlaceId = googleService.findGooglePlaceId(request.addressLat(), request.addressLong());
 
 		Place place = placeRepository.save(Place.from(request, room, member, googlePlaceId));
 
@@ -81,17 +81,17 @@ public class PlaceService {
 		memberRoomValidateService.validateAuthorizedMember(member.getId(), roomId);
 
 		// 구글 placeId 조회
-		String googlePlaceId = googleService.findGooglePlaceId(request.getAddressLat(), request.getAddressLong());
+		String googlePlaceId = googleService.findGooglePlaceId(request.addressLat(), request.addressLong());
 
 		placeRepository.updatePlace(
 			member.getId(),
-			request.getPlaceId(),
+			request.placeId(),
 			googlePlaceId,
-			request.getSiDo(),
-			request.getSiGunGu(),
-			request.getRoadNameAddress(),
-			request.getAddressLat(),
-			request.getAddressLong());
+			request.siDo(),
+			request.siGunGu(),
+			request.roadNameAddress(),
+			request.addressLat(),
+			request.addressLong());
 	}
 
 	// 장소 삭제
