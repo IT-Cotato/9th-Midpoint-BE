@@ -73,11 +73,11 @@ public class Place {
 		String googlePlaceId
 	) {
 		return new Place(
-			request.getSiDo(),
-			request.getSiGunGu(),
-			request.getRoadNameAddress(),
-			request.getAddressLat(),
-			request.getAddressLong(),
+			request.siDo(),
+			request.siGunGu(),
+			request.roadNameAddress(),
+			request.addressLat(),
+			request.addressLong(),
 			room,
 			member,
 			googlePlaceId

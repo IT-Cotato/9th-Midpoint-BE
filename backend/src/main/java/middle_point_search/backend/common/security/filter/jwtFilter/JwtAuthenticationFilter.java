@@ -18,7 +18,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import middle_point_search.backend.common.exception.CustomException;
-import middle_point_search.backend.common.exception.errorCode.CommonErrorCode;
 import middle_point_search.backend.common.properties.SecurityProperties;
 
 @Slf4j
@@ -73,7 +72,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			throw CustomException.from(REISSUE_ACCESS_TOKEN);
 		} else {
 			log.info("인증 실패");
-			throw CustomException.from(CommonErrorCode.UNAUTHORIZED);
+			throw CustomException.from(INVALID_REFRESH_TOKEN);
 		}
 	}
 
