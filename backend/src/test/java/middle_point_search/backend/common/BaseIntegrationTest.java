@@ -8,6 +8,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,9 +16,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import middle_point_search.backend.common.dto.AccessTokenAndRefreshToken;
 import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.member.domain.Role;
-import middle_point_search.backend.common.dto.AccessTokenAndRefreshToken;
 import middle_point_search.backend.domains.member.dto.request.LoginMemberRequest;
 import middle_point_search.backend.domains.member.repository.MemberRepository;
 
@@ -25,6 +26,7 @@ import middle_point_search.backend.domains.member.repository.MemberRepository;
 @Disabled
 @AutoConfigureMockMvc
 @Transactional
+@ActiveProfiles({"test", "common"})
 public class BaseIntegrationTest {
 	@Autowired
 	protected MockMvc mockMvc;
