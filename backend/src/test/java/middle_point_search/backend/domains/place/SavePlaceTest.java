@@ -21,7 +21,6 @@ import middle_point_search.backend.domains.member.repository.MemberRepository;
 import middle_point_search.backend.domains.memberRoom.domain.MemberRoom;
 import middle_point_search.backend.domains.memberRoom.repository.MemberRoomRepository;
 import middle_point_search.backend.domains.place.dto.request.SavePlaceRequest;
-import middle_point_search.backend.domains.place.repository.PlaceRepository;
 import middle_point_search.backend.domains.room.domain.Room;
 import middle_point_search.backend.domains.room.repository.RoomRepository;
 
@@ -37,8 +36,6 @@ public class SavePlaceTest extends BaseIntegrationTest {
 	private RoomRepository roomRepository;
 	@Autowired
 	private MemberRepository memberRepository;
-	@Autowired
-	private PlaceRepository placeRepository;
 
 	@BeforeEach
 	void setUp() throws Exception {
