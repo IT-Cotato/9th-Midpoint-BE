@@ -72,7 +72,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			throw CustomException.from(REISSUE_ACCESS_TOKEN);
 		} else {
 			log.info("인증 실패");
-			throw CustomException.from(REISSUE_ACCESS_TOKEN);
+			throw CustomException.from(INVALID_REFRESH_TOKEN);
 		}
 	}
 
