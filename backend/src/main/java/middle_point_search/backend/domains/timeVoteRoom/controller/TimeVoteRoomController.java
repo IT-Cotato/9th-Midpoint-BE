@@ -173,7 +173,7 @@ public class TimeVoteRoomController {
 			)
 		}
 	)
-	public ResponseEntity<DataResponse<FindTimeVoteRoomResponse>> FindTimeVoteRoom(
+	public ResponseEntity<DataResponse<FindTimeVoteRoomResponse>> findTimeVoteRoom(
 		@PathVariable("roomId") String roomId
 	) {
 		Long memberId = memberLoader.getMemberId();
