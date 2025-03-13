@@ -20,10 +20,10 @@ import middle_point_search.backend.common.dto.DataResponse;
 import middle_point_search.backend.common.dto.ErrorResponse;
 import middle_point_search.backend.common.util.MemberLoader;
 import middle_point_search.backend.domains.member.domain.Member;
-import middle_point_search.backend.domains.timeVoteRoom.dto.request.UpdateTimeVoteRequest;
 import middle_point_search.backend.domains.timeVoteRoom.dto.request.CreateTimeVoteRequest;
-import middle_point_search.backend.domains.timeVoteRoom.dto.response.FindTimeVoteRoomResultResponse;
+import middle_point_search.backend.domains.timeVoteRoom.dto.request.UpdateTimeVoteRequest;
 import middle_point_search.backend.domains.timeVoteRoom.dto.response.FindOngoingTimeVoteStatusResponse;
+import middle_point_search.backend.domains.timeVoteRoom.dto.response.FindTimeVoteRoomResultResponse;
 import middle_point_search.backend.domains.timeVoteRoom.service.TimeVoteService;
 
 @Tag(name = "TIME VOTE API", description = "시간투표에 대한 API입니다.")
