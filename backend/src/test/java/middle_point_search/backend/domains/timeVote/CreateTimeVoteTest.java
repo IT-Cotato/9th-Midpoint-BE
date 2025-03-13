@@ -38,7 +38,6 @@ public class CreateTimeVoteTest extends BaseIntegrationTest {
 
 	private String memberAccessToken;
 	private String memberEmail;
-	private String friendEmail;
 
 	@Autowired
 	private MemberRoomRepository memberRoomRepository;
@@ -56,12 +55,9 @@ public class CreateTimeVoteTest extends BaseIntegrationTest {
 	@BeforeEach
 	void setUp() throws Exception {
 		AccessTokenAndRefreshToken accessTokenAndRefreshToken = signupAndLoginMember(false);
-		signupAndLoginMember(true);
 
 		memberEmail = NO_ADDRESS_MEMBER_EMAIL;
 		memberAccessToken = accessTokenAndRefreshToken.accessToken();
-
-		friendEmail = ADDRESS_MEMBER_EMAIL;
 	}
 
 	@Test
