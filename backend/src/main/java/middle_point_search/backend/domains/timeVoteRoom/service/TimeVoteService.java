@@ -24,9 +24,9 @@ import middle_point_search.backend.domains.timeVoteRoom.dto.dto.TimeRange;
 import middle_point_search.backend.domains.timeVoteRoom.dto.dto.TimeVoteDetail;
 import middle_point_search.backend.domains.timeVoteRoom.dto.dto.TimeVotePerDate;
 import middle_point_search.backend.domains.timeVoteRoom.dto.request.UpdateTimeVoteRequest;
-import middle_point_search.backend.domains.timeVoteRoom.dto.request.VoteRequest;
+import middle_point_search.backend.domains.timeVoteRoom.dto.request.CreateTimeVoteRequest;
 import middle_point_search.backend.domains.timeVoteRoom.dto.response.FindTimeVoteRoomResultResponse;
-import middle_point_search.backend.domains.timeVoteRoom.dto.response.FindVotedAndVoteItemsResponse;
+import middle_point_search.backend.domains.timeVoteRoom.dto.response.FindOngoingTimeVoteStatusResponse;
 import middle_point_search.backend.domains.timeVoteRoom.repository.TimeVoteRepository;
 
 @Service
@@ -41,10 +41,10 @@ public class TimeVoteService {
 
 	//시간투표하기
 	@Transactional(rollbackFor = {CustomException.class})
-	public void vote(
+	public void createTimeVote(
 		Member member,
 		String roomId,
-		VoteRequest request
+		CreateTimeVoteRequest request
 	) {
 		// 방에 대한 회원인지 확인
 		memberRoomValidateService.validateAuthorizedMember(member.getId(), roomId);
@@ -68,7 +68,7 @@ public class TimeVoteService {
 
 	// 시간 투표 수정
 	@Transactional(rollbackFor = {CustomException.class})
-	public void updateVote(
+	public void updateTimeVote(
 		Member member,
 		String roomId,
 		UpdateTimeVoteRequest request
@@ -197,7 +197,7 @@ public class TimeVoteService {
 	}
 
 	// 투표 여부 및 투표 아이템 가져오기
-	public FindVotedAndVoteItemsResponse getVotedAndVoteItems(Member member, String roomId) {
+	public FindOngoingTimeVoteStatusResponse findOngoingTimeVoteStatus(Member member, String roomId) {
 		// 방에 대한 회원인지 확인
 		memberRoomValidateService.validateAuthorizedMember(member.getId(), roomId);
 
@@ -214,7 +214,7 @@ public class TimeVoteService {
 		boolean otherVotesExistence = !otherVotes.isEmpty();
 		otherVotes = otherVotesExistence ? otherVotes : null;
 
-		return FindVotedAndVoteItemsResponse.from(myVoteExistence, myVotes, otherVotesExistence, otherVotes);
+		return FindOngoingTimeVoteStatusResponse.from(myVoteExistence, myVotes, otherVotesExistence, otherVotes);
 	}
 
 }

@@ -4,7 +4,7 @@ import java.util.List;
 
 import middle_point_search.backend.domains.timeVoteRoom.dto.dto.TimeRange;
 
-public record VoteRequest(
+public record CreateTimeVoteRequest(
 	List<TimeRange> dateTime
 ) {
 }
