@@ -10,7 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import middle_point_search.backend.domains.member.repository.MemberRepository;
 
 @Slf4j
-@Profile("!main")
+@Profile({"dev", "local"})
 @Configuration
 @RequiredArgsConstructor
 public class DataInitConfig {
