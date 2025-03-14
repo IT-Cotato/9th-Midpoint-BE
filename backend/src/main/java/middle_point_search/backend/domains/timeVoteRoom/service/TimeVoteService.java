@@ -177,20 +177,27 @@ public class TimeVoteService {
 		List<MeetingDate> meetingDates = timeVoteRoom.getMeetingDates();
 
 		for (MeetingDate meetingDate : meetingDates) {
-			List<TimeVotePerDate.TimeVotePerDateDetail> timeVotePerDateDetails = timeVoteRepository.findAllByTimeVoteRoomAndMeetingDateExceptMember(
-					timeVoteRoom, meetingDate, member)
+			// 미팅 날 별로 다른 사람들의 투표 정보 가져오기
+			List<TimeVotePerDate.TimeVotePerDateDetail> timeVotePerDateDetails = timeVoteRepository
+				.findAllByTimeVoteRoomAndMeetingDateExceptMember(timeVoteRoom, meetingDate, member)
 				.stream()
 				.map(otherTimeVote -> {
-					TimeRange timeRange = new TimeRange(otherTimeVote.getMemberAvailableStartTime(),
+					TimeRange timeRange = new TimeRange(
+						otherTimeVote.getMemberAvailableStartTime(),
 						otherTimeVote.getMemberAvailableEndTime());
+
 					return TimeVotePerDate.TimeVotePerDateDetail.from(otherTimeVote.getMember().getEmail(), timeRange);
 				})
 				.sorted(Comparator.comparing(detail -> detail.getDateTime().getMemberAvailableStartTime()))
 				.toList();
 
-			TimeVotePerDate timeVotePerDate = TimeVotePerDate.from(meetingDate.getDate(), timeVotePerDateDetails);
+			// 특정 미팅날에 투표 정보가 없으면 넘김
+			if (timeVotePerDateDetails.isEmpty()) {
+				continue;
+			}
 
-			otherVotes.add(timeVotePerDate);
+			// 다른 사람들의 투표 정보를 미팅 날짜별로 저장
+			otherVotes.add(TimeVotePerDate.from(meetingDate.getDate(), timeVotePerDateDetails));
 		}
 
 		return otherVotes;
