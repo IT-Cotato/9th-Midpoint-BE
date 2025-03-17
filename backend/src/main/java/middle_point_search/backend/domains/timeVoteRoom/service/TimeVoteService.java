@@ -4,7 +4,6 @@ import static middle_point_search.backend.common.exception.errorCode.UserErrorCo
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -23,10 +22,10 @@ import middle_point_search.backend.domains.timeVoteRoom.domain.TimeVoteRoom;
 import middle_point_search.backend.domains.timeVoteRoom.dto.dto.TimeRange;
 import middle_point_search.backend.domains.timeVoteRoom.dto.dto.TimeVoteDetail;
 import middle_point_search.backend.domains.timeVoteRoom.dto.dto.TimeVotePerDate;
-import middle_point_search.backend.domains.timeVoteRoom.dto.request.UpdateTimeVoteRequest;
 import middle_point_search.backend.domains.timeVoteRoom.dto.request.CreateTimeVoteRequest;
-import middle_point_search.backend.domains.timeVoteRoom.dto.response.FindTimeVoteRoomResultResponse;
+import middle_point_search.backend.domains.timeVoteRoom.dto.request.UpdateTimeVoteRequest;
 import middle_point_search.backend.domains.timeVoteRoom.dto.response.FindOngoingTimeVoteStatusResponse;
+import middle_point_search.backend.domains.timeVoteRoom.dto.response.FindTimeVoteRoomResultResponse;
 import middle_point_search.backend.domains.timeVoteRoom.repository.TimeVoteRepository;
 
 @Service
@@ -130,33 +129,54 @@ public class TimeVoteService {
 
 		// 모든 투표 정보 가져오기
 		List<MeetingDate> meetingDates = meetingDateService.findByTimeVoteRoom(timeVoteRoom);
-
-		Map<String, List<TimeVoteDetail>> result = new LinkedHashMap<>();
 		meetingDates.sort(Comparator.comparing(MeetingDate::getDate));
 
-		for (MeetingDate meetingDate : meetingDates) {
-			String date = meetingDate.getDate().toString();
-			List<TimeVoteDetail> details = new ArrayList<>();
+		// 날짜별 투표 정보 저장
+		Map<String, List<TimeVoteDetail>> result = new LinkedHashMap<>();
 
-			// 해당 날짜의 모든 투표 정보 가져오기
-			List<TimeVote> timeVotes = timeVoteRepository.findAllByTimeVoteRoomAndMeetingDate(timeVoteRoom,
+		for (MeetingDate meetingDate : meetingDates) {
+				// 해당 날짜의 모든 투표 정보 가져오기
+			List<TimeVote> timeVotes = timeVoteRepository.findAllByTimeVoteRoomAndMeetingDate(
+				timeVoteRoom,
 				meetingDate);
-			for (TimeVote vote : timeVotes) {
-				List<TimeRange> dateTimeList = Arrays.asList(
-					new TimeRange(
-						vote.getMemberAvailableStartTime(),
-						vote.getMemberAvailableEndTime()
-					)
-				);
-				TimeVoteDetail detail = TimeVoteDetail.from(vote.getMember().getEmail(), dateTimeList);
-				details.add(detail);
-			}
-			result.put(date, details);
+
+			// TimeVote -> TimeVoteDetail로 변환
+			List<TimeVoteDetail> details = timeVotes.stream()
+				.map(timeVote -> {
+					TimeRange timeRange = new TimeRange(
+						timeVote.getMemberAvailableStartTime(),
+						timeVote.getMemberAvailableEndTime()
+					);
+					return TimeVoteDetail.from(timeVote.getMember().getEmail(), timeRange);
+				})
+				.toList();
+
+			result.put(meetingDate.getDate().toString(), details);
 		}
 
-		List<TimeVote> distinctVotes = timeVoteRepository.findDistinctByTimeVoteRoom(timeVoteRoom);
-		int totalMemberNum = (int)distinctVotes.stream().map(TimeVote::getMember).distinct().count();
+		int totalMemberNum = timeVoteRepository.countByTimeVoteRoomDistinctByMember(timeVoteRoom);
 		return FindTimeVoteRoomResultResponse.from(result, totalMemberNum);
+	}
+
+	// 투표 여부 및 투표 아이템 가져오기
+	public FindOngoingTimeVoteStatusResponse findOngoingTimeVoteStatus(Member member, String roomId) {
+		// 방에 대한 회원인지 확인
+		memberRoomValidateService.validateAuthorizedMember(member.getId(), roomId);
+
+		TimeVoteRoom timeVoteRoom = timeVoteRoomService.findByRoomId(roomId)
+			.orElseThrow(() -> CustomException.from(VOTE_ROOM_NOT_FOUND));
+
+		//내 시간투표 가져오기
+		List<TimeRange> myVotes = findMyVotes(timeVoteRoom, member);
+		boolean myVoteExistence = !myVotes.isEmpty();
+		myVotes = myVoteExistence ? myVotes : null;
+
+		//다른 사람 시간 투표 가져오기
+		List<TimeVotePerDate> otherVotes = getOtherVotes(timeVoteRoom, member);
+		boolean otherVotesExistence = !otherVotes.isEmpty();
+		otherVotes = otherVotesExistence ? otherVotes : null;
+
+		return FindOngoingTimeVoteStatusResponse.from(myVoteExistence, myVotes, otherVotesExistence, otherVotes);
 	}
 
 	// 내 시간투표 가져오기
@@ -201,27 +221,6 @@ public class TimeVoteService {
 		}
 
 		return otherVotes;
-	}
-
-	// 투표 여부 및 투표 아이템 가져오기
-	public FindOngoingTimeVoteStatusResponse findOngoingTimeVoteStatus(Member member, String roomId) {
-		// 방에 대한 회원인지 확인
-		memberRoomValidateService.validateAuthorizedMember(member.getId(), roomId);
-
-		TimeVoteRoom timeVoteRoom = timeVoteRoomService.findByRoomId(roomId)
-			.orElseThrow(() -> CustomException.from(VOTE_ROOM_NOT_FOUND));
-
-		//내 시간투표 가져오기
-		List<TimeRange> myVotes = findMyVotes(timeVoteRoom, member);
-		boolean myVoteExistence = !myVotes.isEmpty();
-		myVotes = myVoteExistence ? myVotes : null;
-
-		//다른 사람 시간 투표 가져오기
-		List<TimeVotePerDate> otherVotes = getOtherVotes(timeVoteRoom, member);
-		boolean otherVotesExistence = !otherVotes.isEmpty();
-		otherVotes = otherVotesExistence ? otherVotes : null;
-
-		return FindOngoingTimeVoteStatusResponse.from(myVoteExistence, myVotes, otherVotesExistence, otherVotes);
 	}
 
 }

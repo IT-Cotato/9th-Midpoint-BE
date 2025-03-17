@@ -17,11 +17,13 @@ public interface TimeVoteRepository extends JpaRepository<TimeVote, Long> {
 
 	List<TimeVote> findAllByTimeVoteRoomAndMeetingDate(TimeVoteRoom timeVoteRoom, MeetingDate meetingDate);
 
-	List<TimeVote> findDistinctByTimeVoteRoom(TimeVoteRoom timeVoteRoom);
-
 	@Query("select tv from TimeVote tv where tv.timeVoteRoom = :timeVoteRoom and tv.meetingDate = :meetingDate and tv.member != :member")
 	List<TimeVote> findAllByTimeVoteRoomAndMeetingDateExceptMember(TimeVoteRoom timeVoteRoom, MeetingDate meetingDate, Member member);
 
 	void deleteAllByMemberId(Long memberId);
+
+	// 특정 TimeVoteRoom에 해당하는 투표들을 멥버로 distinct하게 가져온다.
+	@Query("select count(distinct tv.member) from TimeVote tv where tv.timeVoteRoom = :timeVoteRoom")
+	int countByTimeVoteRoomDistinctByMember(TimeVoteRoom timeVoteRoom);
 }
 
