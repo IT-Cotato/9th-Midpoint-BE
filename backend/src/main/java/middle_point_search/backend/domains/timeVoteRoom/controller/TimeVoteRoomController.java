@@ -1,7 +1,5 @@
 package middle_point_search.backend.domains.timeVoteRoom.controller;
 
-import static middle_point_search.backend.domains.timeVoteRoom.dto.TimeVoteRoomDTO.*;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,6 +19,10 @@ import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.dto.DataResponse;
 import middle_point_search.backend.common.dto.ErrorResponse;
 import middle_point_search.backend.common.util.MemberLoader;
+import middle_point_search.backend.domains.timeVoteRoom.dto.request.CreateTimeVoteRoomRequest;
+import middle_point_search.backend.domains.timeVoteRoom.dto.request.UpdateTimeVoteRoomRequest;
+import middle_point_search.backend.domains.timeVoteRoom.dto.response.CreateTimeVoteRoomResponse;
+import middle_point_search.backend.domains.timeVoteRoom.dto.response.FindTimeVoteRoomResponse;
 import middle_point_search.backend.domains.timeVoteRoom.service.TimeVoteRoomService;
 
 @Tag(name = "TIME VOTE ROOM API", description = "시간투표방에 대한 API입니다.")
@@ -171,7 +173,7 @@ public class TimeVoteRoomController {
 			)
 		}
 	)
-	public ResponseEntity<DataResponse<FindTimeVoteRoomResponse>> FindTimeVoteRoom(
+	public ResponseEntity<DataResponse<FindTimeVoteRoomResponse>> findTimeVoteRoom(
 		@PathVariable("roomId") String roomId
 	) {
 		Long memberId = memberLoader.getMemberId();

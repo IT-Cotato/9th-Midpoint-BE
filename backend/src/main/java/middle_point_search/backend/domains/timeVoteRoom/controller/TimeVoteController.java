@@ -20,10 +20,10 @@ import middle_point_search.backend.common.dto.DataResponse;
 import middle_point_search.backend.common.dto.ErrorResponse;
 import middle_point_search.backend.common.util.MemberLoader;
 import middle_point_search.backend.domains.member.domain.Member;
-import middle_point_search.backend.domains.timeVoteRoom.dto.TimeVoteDTO.FindTimeVoteRoomResultResponse;
-import middle_point_search.backend.domains.timeVoteRoom.dto.TimeVoteDTO.FindVotedAndVoteItemsResponse;
-import middle_point_search.backend.domains.timeVoteRoom.dto.TimeVoteDTO.UpdateTimeVoteRequest;
-import middle_point_search.backend.domains.timeVoteRoom.dto.TimeVoteDTO.VoteRequest;
+import middle_point_search.backend.domains.timeVoteRoom.dto.request.CreateTimeVoteRequest;
+import middle_point_search.backend.domains.timeVoteRoom.dto.request.UpdateTimeVoteRequest;
+import middle_point_search.backend.domains.timeVoteRoom.dto.response.FindOngoingTimeVoteStatusResponse;
+import middle_point_search.backend.domains.timeVoteRoom.dto.response.FindTimeVoteRoomResultResponse;
 import middle_point_search.backend.domains.timeVoteRoom.service.TimeVoteService;
 
 @Tag(name = "TIME VOTE API", description = "시간투표에 대한 API입니다.")
@@ -81,13 +81,13 @@ public class TimeVoteController {
 			)
 		}
 	)
-	public ResponseEntity<DataResponse<Void>> vote(
+	public ResponseEntity<DataResponse<Void>> createTimeVote(
 		@PathVariable String roomId,
-		@RequestBody @Valid VoteRequest request
+		@RequestBody @Valid CreateTimeVoteRequest request
 	) {
 		Member member = memberLoader.getMember();
 
-		timeVoteRoomService.vote(member, roomId, request);
+		timeVoteRoomService.createTimeVote(member, roomId, request);
 
 		return ResponseEntity.ok(DataResponse.ok());
 	}
@@ -139,7 +139,7 @@ public class TimeVoteController {
 	) {
 		Member member = memberLoader.getMember();
 
-		timeVoteRoomService.updateVote(member, roomId, request);
+		timeVoteRoomService.updateTimeVote(member, roomId, request);
 
 		return ResponseEntity.ok(DataResponse.ok());
 	}
@@ -180,12 +180,12 @@ public class TimeVoteController {
 			)
 		}
 	)
-	public ResponseEntity<DataResponse<FindVotedAndVoteItemsResponse>> findVotedAndVoteItems(
+	public ResponseEntity<DataResponse<FindOngoingTimeVoteStatusResponse>> findOngoingTimeVoteStatus(
 		@PathVariable String roomId
 	) {
 		Member member = memberLoader.getMember();
 
-		FindVotedAndVoteItemsResponse response = timeVoteRoomService.getVotedAndVoteItems(member, roomId);
+		FindOngoingTimeVoteStatusResponse response = timeVoteRoomService.findOngoingTimeVoteStatus(member, roomId);
 
 		return ResponseEntity.ok(DataResponse.from(response));
 	}

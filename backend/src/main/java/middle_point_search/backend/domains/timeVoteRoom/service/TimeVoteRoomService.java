@@ -1,7 +1,6 @@
 package middle_point_search.backend.domains.timeVoteRoom.service;
 
 import static middle_point_search.backend.common.exception.errorCode.UserErrorCode.*;
-import static middle_point_search.backend.domains.timeVoteRoom.dto.TimeVoteRoomDTO.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -17,6 +16,10 @@ import middle_point_search.backend.domains.room.domain.Room;
 import middle_point_search.backend.domains.room.service.RoomService;
 import middle_point_search.backend.domains.timeVoteRoom.domain.MeetingDate;
 import middle_point_search.backend.domains.timeVoteRoom.domain.TimeVoteRoom;
+import middle_point_search.backend.domains.timeVoteRoom.dto.request.CreateTimeVoteRoomRequest;
+import middle_point_search.backend.domains.timeVoteRoom.dto.request.UpdateTimeVoteRoomRequest;
+import middle_point_search.backend.domains.timeVoteRoom.dto.response.CreateTimeVoteRoomResponse;
+import middle_point_search.backend.domains.timeVoteRoom.dto.response.FindTimeVoteRoomResponse;
 import middle_point_search.backend.domains.timeVoteRoom.repository.TimeVoteRoomRepository;
 
 @Service
@@ -47,7 +50,7 @@ public class TimeVoteRoomService {
 
 		// 시간 투표방 생성
 		TimeVoteRoom timeVoteRoom = new TimeVoteRoom(room);
-		request.getDates().stream()
+		request.dates().stream()
 			.map(date -> new MeetingDate(timeVoteRoom, date))
 			.forEach(timeVoteRoom::addMeetingDate);
 		TimeVoteRoom savedTimeVoteRoom = timeVoteRoomRepository.save(timeVoteRoom);
@@ -67,7 +70,7 @@ public class TimeVoteRoomService {
 
 		timeVoteRoom.resetTimeVoteRoom();
 
-		request.getDates().stream()
+		request.dates().stream()
 			.map(date -> new MeetingDate(timeVoteRoom, date))
 			.forEach(timeVoteRoom::addMeetingDate);
 	}
