@@ -21,33 +21,22 @@ public class SignupVerificationCodeService {
 
 	@Transactional
 	public void checkEmailCodeDuplicationAndSaveEmailCode(String email, String code) {
-		SignupVerificationCode signupVerificationCode = signupVerificationCodeRepository.findById(email).orElse(null);
-
-		// 1. 이미 저장된 emailCode가 있으면 code만 변경
-		// 2. 없으면 새로 생성
-		if (signupVerificationCode != null) {
-			signupVerificationCode.setCode(code);
-		} else {
-			signupVerificationCode = new SignupVerificationCode(email, code);
-		}
-
-		signupVerificationCodeRepository.save(signupVerificationCode);
+		signupVerificationCodeRepository.findById(email)
+			.ifPresentOrElse(
+				existing -> existing.setCode(code),
+				() -> signupVerificationCodeRepository.save(new SignupVerificationCode(email, code))
+			);
 	}
 
 	// 인증 코드 생성
 	public String createVerificationCode() {
-		Random random = new Random();
-
-		return String.format("%06d", random.nextInt(1000000)); // 000000부터 999999까지의 문자열 생성
+		return String.format("%06d", new Random().nextInt(1000000)); // 000000부터 999999까지의 문자열 생성
 	}
 
 	// 인증 코드 확인
 	public boolean verifyEmailCode(String email, String code) throws CustomException {
-		SignupVerificationCode signupVerificationCode = signupVerificationCodeRepository.findById(email).orElse(null);
-
-		if (signupVerificationCode == null) {
-			throw CustomException.from(REQUIRE_VERIFICATION_REQUEST_FIRST);
-		}
+		SignupVerificationCode signupVerificationCode = signupVerificationCodeRepository.findById(email)
+			.orElseThrow(() -> CustomException.from(REQUIRE_VERIFICATION_REQUEST_FIRST));
 
 		return signupVerificationCode.getCode().equals(code);
 	}

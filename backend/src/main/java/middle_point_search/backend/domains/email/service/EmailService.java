@@ -33,7 +33,6 @@ public class EmailService {
 	// 새 비밀번호 이메일 보내기
 	public void sendNewPassword(String email, String newPassword) {
 		String text = String.format(EMAIL_NEW_PASSWORD_NOTICE_TEXT, newPassword);
-
 		emailUtil.sendEmail(email, EMAIL_NEW_PASSWORD_TITLE, text);
 	}
 }
