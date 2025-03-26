@@ -15,10 +15,10 @@ import middle_point_search.backend.domains.memberRoom.service.MemberRoomValidate
 import middle_point_search.backend.domains.placeVoteRoom.domain.PlaceVoteCandidate;
 import middle_point_search.backend.domains.placeVoteRoom.domain.PlaceVoteCandidateMember;
 import middle_point_search.backend.domains.placeVoteRoom.domain.PlaceVoteRoom;
-import middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteDTO.FindPlaceVoteResultsResponse;
-import middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteDTO.UpdatePlaceVoteRequest;
-import middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteDTO.VotePlaceRequest;
-import middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteRoomDTO.FindVotedAndVoteItemResponse;
+import middle_point_search.backend.domains.placeVoteRoom.dto.request.UpdatePlaceVoteRequest;
+import middle_point_search.backend.domains.placeVoteRoom.dto.request.VotePlaceRequest;
+import middle_point_search.backend.domains.placeVoteRoom.dto.response.FindPlaceVoteResultsResponse;
+import middle_point_search.backend.domains.placeVoteRoom.dto.response.FindVotedAndVoteItemResponse;
 import middle_point_search.backend.domains.placeVoteRoom.repository.PlaceVoteCandidateMemberRepository;
 import middle_point_search.backend.domains.placeVoteRoom.repository.PlaceVoteCandidateRepository;
 
@@ -45,7 +45,7 @@ public class PlaceVoteService {
 		validateAlreadyVoted(placeVoteRoom, member);
 
 		// 투표 후보 조회
-		long placeVoteId = voteRequest.getChoicePlace();
+		long placeVoteId = voteRequest.choicePlace();
 		PlaceVoteCandidate candidate = placeVoteCandidateRepository.findById(placeVoteId)
 			.orElseThrow(() -> CustomException.from(CANDIDATE_NOT_FOUND));
 
@@ -68,7 +68,7 @@ public class PlaceVoteService {
 		placeVoteCandidateMemberRepository.deleteByPlaceVoteCandidate_PlaceVoteRoomAndMember(placeVoteRoom, member);
 
 		// 새로 받은 항목으로 업데이트
-		long placeVoteCandidateId = request.getChoicePlace();
+		long placeVoteCandidateId = request.choicePlace();
 		PlaceVoteCandidate candidate = placeVoteCandidateRepository.findById(placeVoteCandidateId)
 			.orElseThrow(() -> CustomException.from(CANDIDATE_NOT_FOUND));
 
