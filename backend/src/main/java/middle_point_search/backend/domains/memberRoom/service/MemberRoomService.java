@@ -10,13 +10,13 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.exception.CustomException;
 import middle_point_search.backend.domains.member.domain.Member;
-import middle_point_search.backend.domains.memberRoom.repository.MemberRoomRepository;
+import middle_point_search.backend.domains.memberRoom.domain.MemberRoom;
 import middle_point_search.backend.domains.memberRoom.dto.MemberRoomDTO.ExistsMemberRoomResponse;
 import middle_point_search.backend.domains.memberRoom.dto.MemberRoomDTO.FindRoomsByMemberIdResponse;
-import middle_point_search.backend.domains.memberRoom.domain.MemberRoom;
+import middle_point_search.backend.domains.memberRoom.repository.MemberRoomRepository;
 import middle_point_search.backend.domains.room.domain.Room;
 import middle_point_search.backend.domains.room.repository.RoomRepository;
-import middle_point_search.backend.domains.room.service.RoomService;
+import middle_point_search.backend.domains.room.service.RoomValidationService;
 
 @Service
 @RequiredArgsConstructor
@@ -24,15 +24,15 @@ import middle_point_search.backend.domains.room.service.RoomService;
 public class MemberRoomService {
 
 	private final MemberRoomRepository memberRoomRepository;
-	private final RoomService roomService;
 	private final MemberRoomValidateService memberRoomValidateService;
 	private final RoomRepository roomRepository;
+	private final RoomValidationService roomValidationService;
 
 	// 회원방을 DTO로 저장
 	@Transactional(rollbackFor = CustomException.class)
 	public void saveMemberToRoom(Member member, String roomId) {
 		// 방조회
-		Room room = roomService.findRoom(roomId)
+		Room room = roomRepository.findById(roomId)
 			.orElseThrow(() -> CustomException.from(ROOM_NOT_FOUND));
 
 		// 중복 확인
@@ -66,15 +66,8 @@ public class MemberRoomService {
 	// 회원방에서 회원 삭제, 방이 없으면 방 삭제
 	@Transactional
 	public void deleteMemberFromRoom(Long memberId, String roomId) {
-		// 방이 없으면 예외
-		if (!roomRepository.existsById(roomId)) {
-			throw CustomException.from(ROOM_NOT_FOUND);
-		}
-
-		// 방에 존재하는 회원이 아니면 예외
-		if (!memberRoomRepository.existsByRoomIdAndMemberId(roomId, memberId)) {
-			throw CustomException.from(UNAUTHORIZED_MEMBER_ROOM);
-		}
+		roomValidationService.validateRoomExisting(roomId);
+		memberRoomValidateService.validateAuthorizedMember(memberId, roomId);
 
 		memberRoomRepository.deleteByRoomIdAndMemberId(roomId, memberId);
 

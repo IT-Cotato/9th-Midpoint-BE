@@ -139,7 +139,7 @@ public class PlaceVoteController {
 	) {
 		Member member = memberLoader.getMember();
 
-		placeVoteRoomService.vote(member, roomId, request);
+		placeVoteRoomService.votePlace(member, roomId, request);
 		return ResponseEntity.ok(DataResponse.ok());
 	}
 

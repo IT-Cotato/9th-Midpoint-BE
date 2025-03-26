@@ -1,4 +1,4 @@
-package middle_point_search.backend.domains.refreshToken;
+package middle_point_search.backend.domains.refreshToken.service;
 
 import java.util.Optional;
 
@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+import middle_point_search.backend.domains.refreshToken.domain.RefreshToken;
+import middle_point_search.backend.domains.refreshToken.repository.RefreshTokenRepository;
 
 @Service
 @RequiredArgsConstructor

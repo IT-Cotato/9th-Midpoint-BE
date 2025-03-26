@@ -20,7 +20,7 @@ import middle_point_search.backend.domains.place.dto.response.FindPlacesResponse
 import middle_point_search.backend.domains.place.dto.response.SavePlaceResponse;
 import middle_point_search.backend.domains.place.repository.PlaceRepository;
 import middle_point_search.backend.domains.room.domain.Room;
-import middle_point_search.backend.domains.room.service.RoomService;
+import middle_point_search.backend.domains.room.repository.RoomRepository;
 
 @Slf4j
 @Service
@@ -29,7 +29,7 @@ import middle_point_search.backend.domains.room.service.RoomService;
 public class PlaceService {
 
 	private final PlaceRepository placeRepository;
-	private final RoomService roomService;
+	private final RoomRepository roomRepository;
 	private final MemberRoomValidateService memberRoomValidateService;
 	private final GoogleService googleService;
 
@@ -63,7 +63,7 @@ public class PlaceService {
 		// 회원이 방에 속해있는지 확인
 		memberRoomValidateService.validateAuthorizedMember(member.getId(), roomId);
 
-		Room room = roomService.findRoom(roomId)
+		Room room = roomRepository.findById(roomId)
 			.orElseThrow(() -> CustomException.from(ROOM_NOT_FOUND));
 
 		// 구글 placeId 조회

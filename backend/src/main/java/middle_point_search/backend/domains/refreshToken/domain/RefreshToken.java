@@ -1,4 +1,4 @@
-package middle_point_search.backend.domains.refreshToken;
+package middle_point_search.backend.domains.refreshToken.domain;
 
 import static lombok.AccessLevel.*;
 

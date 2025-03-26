@@ -18,7 +18,7 @@ import middle_point_search.backend.domains.placeVoteRoom.domain.PlaceVoteRoom;
 import middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteDTO;
 import middle_point_search.backend.domains.placeVoteRoom.repository.PlaceVoteRoomRepository;
 import middle_point_search.backend.domains.room.domain.Room;
-import middle_point_search.backend.domains.room.service.RoomService;
+import middle_point_search.backend.domains.room.repository.RoomRepository;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +26,7 @@ import middle_point_search.backend.domains.room.service.RoomService;
 public class PlaceVoteRoomService {
 
 	private final PlaceVoteRoomRepository placeVoteRoomRepository;
-	private final RoomService roomService;
+	private final RoomRepository roomRepository;
 	private final MemberRoomValidateService memberRoomValidateService;
 
 	// 장소투표방 생성
@@ -43,7 +43,7 @@ public class PlaceVoteRoomService {
 		validateDuplicatePlaceVoteRoom(roomId);
 
 		// 방 조회
-		Room room = roomService.findRoom(roomId)
+		Room room = roomRepository.findById(roomId)
 			.orElseThrow(() -> CustomException.from(ROOM_NOT_FOUND));
 
 		// 장소투표방 엔티티 생성 및 저장
