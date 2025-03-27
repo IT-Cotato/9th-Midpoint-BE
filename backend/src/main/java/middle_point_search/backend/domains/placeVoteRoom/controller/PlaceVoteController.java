@@ -22,10 +22,10 @@ import middle_point_search.backend.common.dto.DataResponse;
 import middle_point_search.backend.common.dto.ErrorResponse;
 import middle_point_search.backend.common.util.MemberLoader;
 import middle_point_search.backend.domains.member.domain.Member;
-import middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteDTO.FindPlaceVoteResultsResponse;
-import middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteDTO.UpdatePlaceVoteRequest;
-import middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteDTO.VotePlaceRequest;
-import middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteRoomDTO.FindVotedAndVoteItemResponse;
+import middle_point_search.backend.domains.placeVoteRoom.dto.request.UpdatePlaceVoteRequest;
+import middle_point_search.backend.domains.placeVoteRoom.dto.request.VotePlaceRequest;
+import middle_point_search.backend.domains.placeVoteRoom.dto.response.FindPlaceVoteResultsResponse;
+import middle_point_search.backend.domains.placeVoteRoom.dto.response.FindVotedAndVoteItemResponse;
 import middle_point_search.backend.domains.placeVoteRoom.service.PlaceVoteService;
 
 @Tag(name = "PLACE VOTE API", description = "장소 투표에 대한 API입니다.")
@@ -139,7 +139,7 @@ public class PlaceVoteController {
 	) {
 		Member member = memberLoader.getMember();
 
-		placeVoteRoomService.vote(member, roomId, request);
+		placeVoteRoomService.votePlace(member, roomId, request);
 		return ResponseEntity.ok(DataResponse.ok());
 	}
 

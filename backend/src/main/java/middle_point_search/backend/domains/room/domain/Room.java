@@ -45,10 +45,10 @@ public class Room extends BaseEntity {
 	@OneToMany(mappedBy = "room", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<MemberRoom> memberRooms = new ArrayList<>();
 
-	@OneToOne(mappedBy = "room", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToOne(mappedBy = "room", cascade = CascadeType.ALL)
 	private TimeVoteRoom timeVoteRoom;
 
-	@OneToOne(mappedBy = "room", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToOne(mappedBy = "room", cascade = CascadeType.ALL)
 	private PlaceVoteRoom placeVoteRoom;
 
 	@Builder

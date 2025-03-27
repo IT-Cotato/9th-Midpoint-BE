@@ -43,10 +43,6 @@ public class TimeVoteRoom {
 		this.room = room;
 	}
 
-	public void addTimeVote(TimeVote timeVote) {
-		this.timeVotes.add(timeVote);
-	}
-
 	public void addMeetingDate(MeetingDate meetingDate) {
 		this.meetingDates.add(meetingDate);
 	}

@@ -26,7 +26,9 @@ import middle_point_search.backend.domains.timeVoteRoom.dto.request.CreateTimeVo
 import middle_point_search.backend.domains.timeVoteRoom.dto.request.UpdateTimeVoteRequest;
 import middle_point_search.backend.domains.timeVoteRoom.dto.response.FindOngoingTimeVoteStatusResponse;
 import middle_point_search.backend.domains.timeVoteRoom.dto.response.FindTimeVoteRoomResultResponse;
+import middle_point_search.backend.domains.timeVoteRoom.repository.MeetingDateRepository;
 import middle_point_search.backend.domains.timeVoteRoom.repository.TimeVoteRepository;
+import middle_point_search.backend.domains.timeVoteRoom.repository.TimeVoteRoomRepository;
 
 @Service
 @RequiredArgsConstructor
@@ -34,9 +36,9 @@ import middle_point_search.backend.domains.timeVoteRoom.repository.TimeVoteRepos
 public class TimeVoteService {
 
 	private final TimeVoteRepository timeVoteRepository;
-	private final MeetingDateService meetingDateService;
-	private final TimeVoteRoomService timeVoteRoomService;
+	private final TimeVoteRoomRepository timeVoteRoomRepository;
 	private final MemberRoomValidateService memberRoomValidateService;
+	private final MeetingDateRepository meetingDateRepository;
 
 	//시간투표하기
 	@Transactional(rollbackFor = {CustomException.class})
@@ -48,12 +50,11 @@ public class TimeVoteService {
 		// 방에 대한 회원인지 확인
 		memberRoomValidateService.validateAuthorizedMember(member.getId(), roomId);
 
-		TimeVoteRoom timeVoteRoom = timeVoteRoomService.findByRoomId(roomId)
+		TimeVoteRoom timeVoteRoom = timeVoteRoomRepository.findByRoom_Id(roomId)
 			.orElseThrow(() -> CustomException.from(VOTE_ROOM_NOT_FOUND));
 
 		// 이미 투표했는지 확인
-		boolean alreadyVoted = timeVoteRepository.existsByTimeVoteRoomAndMember(timeVoteRoom, member);
-		if (alreadyVoted) {
+		if (timeVoteRepository.existsByTimeVoteRoomAndMember(timeVoteRoom, member)) {
 			throw CustomException.from(ALREADY_VOTED);
 		}
 
@@ -75,7 +76,7 @@ public class TimeVoteService {
 		// 방에 대한 회원인지 확인
 		memberRoomValidateService.validateAuthorizedMember(member.getId(), roomId);
 
-		TimeVoteRoom timeVoteRoom = timeVoteRoomService.findByRoomId(roomId)
+		TimeVoteRoom timeVoteRoom = timeVoteRoomRepository.findByRoom_Id(roomId)
 			.orElseThrow(() -> CustomException.from(VOTE_ROOM_NOT_FOUND));
 
 		List<TimeVote> existingVotes = timeVoteRepository.findAllByTimeVoteRoomAndMember(timeVoteRoom, member);
@@ -106,7 +107,7 @@ public class TimeVoteService {
 		LocalDateTime memberAvailableEndTime = dateTime.getMemberAvailableEndTime();
 		LocalDateTime startDateTime = memberAvailableStartTime.toLocalDate().atStartOfDay();
 
-		MeetingDate meetingDate = meetingDateService.findByTimeVoteRoomAndDate(
+		MeetingDate meetingDate = meetingDateRepository.findByTimeVoteRoomAndDate(
 				timeVoteRoom,
 				startDateTime.toLocalDate())
 			.orElseThrow(() -> CustomException.from(CANDIDATE_NOT_FOUND));
@@ -124,11 +125,11 @@ public class TimeVoteService {
 		// 방에 대한 회원인지 확인
 		memberRoomValidateService.validateAuthorizedMember(memberId, roomId);
 
-		TimeVoteRoom timeVoteRoom = timeVoteRoomService.findByRoomId(roomId)
+		TimeVoteRoom timeVoteRoom = timeVoteRoomRepository.findByRoom_Id(roomId)
 			.orElseThrow(() -> CustomException.from(VOTE_ROOM_NOT_FOUND));
 
 		// 모든 투표 정보 가져오기
-		List<MeetingDate> meetingDates = meetingDateService.findByTimeVoteRoom(timeVoteRoom);
+		List<MeetingDate> meetingDates = meetingDateRepository.findByTimeVoteRoom(timeVoteRoom);
 		meetingDates.sort(Comparator.comparing(MeetingDate::getDate));
 
 		// 날짜별 투표 정보 저장
@@ -163,7 +164,7 @@ public class TimeVoteService {
 		// 방에 대한 회원인지 확인
 		memberRoomValidateService.validateAuthorizedMember(member.getId(), roomId);
 
-		TimeVoteRoom timeVoteRoom = timeVoteRoomService.findByRoomId(roomId)
+		TimeVoteRoom timeVoteRoom = timeVoteRoomRepository.findByRoom_Id(roomId)
 			.orElseThrow(() -> CustomException.from(VOTE_ROOM_NOT_FOUND));
 
 		//내 시간투표 가져오기
@@ -181,11 +182,10 @@ public class TimeVoteService {
 
 	// 내 시간투표 가져오기
 	private List<TimeRange> findMyVotes(TimeVoteRoom timeVoteRoom, Member member) {
-		List<TimeVote> myTimeVotes = timeVoteRepository.findAllByTimeVoteRoomAndMember(timeVoteRoom,
-			member);
-
-		return myTimeVotes.stream()
-			.map(myTimeVote -> new TimeRange(myTimeVote.getMemberAvailableStartTime(),
+		return timeVoteRepository.findAllByTimeVoteRoomAndMember(timeVoteRoom, member)
+			.stream()
+			.map(myTimeVote -> new TimeRange(
+				myTimeVote.getMemberAvailableStartTime(),
 				myTimeVote.getMemberAvailableEndTime()))
 			.toList();
 	}

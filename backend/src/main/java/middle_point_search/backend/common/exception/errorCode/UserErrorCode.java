@@ -48,7 +48,7 @@ public enum UserErrorCode implements ErrorCode {
 	DUPLICATE_VOTE_ROOM(HttpStatus.CONFLICT, "V-302", "이미 투표방이 존재합니다."),
 
 	//서버 관련
-	API_INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "S-001", "API 서버에 문제가 발생하였습니다."),
+	API_INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "AS-001", "API 서버에 문제가 발생하였습니다."),
 
 	//이메일 관련
 	EMAIL_SEND_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "E-001", "이메일 전송에 실패하였습니다."),

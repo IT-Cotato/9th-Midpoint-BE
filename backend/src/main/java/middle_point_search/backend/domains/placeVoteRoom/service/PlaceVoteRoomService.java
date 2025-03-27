@@ -1,7 +1,6 @@
 package middle_point_search.backend.domains.placeVoteRoom.service;
 
 import static middle_point_search.backend.common.exception.errorCode.UserErrorCode.*;
-import static middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteRoomDTO.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,10 +14,13 @@ import middle_point_search.backend.common.exception.CustomException;
 import middle_point_search.backend.domains.memberRoom.service.MemberRoomValidateService;
 import middle_point_search.backend.domains.placeVoteRoom.domain.PlaceVoteCandidate;
 import middle_point_search.backend.domains.placeVoteRoom.domain.PlaceVoteRoom;
-import middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteDTO;
+import middle_point_search.backend.domains.placeVoteRoom.dto.request.CreatePlaceVoteRoomRequest;
+import middle_point_search.backend.domains.placeVoteRoom.dto.request.UpdatePlaceVoteRoomRequest;
+import middle_point_search.backend.domains.placeVoteRoom.dto.response.CreatePlaceVoteRoomResponse;
+import middle_point_search.backend.domains.placeVoteRoom.dto.response.FindPlaceVoteCandidatesResponse;
 import middle_point_search.backend.domains.placeVoteRoom.repository.PlaceVoteRoomRepository;
 import middle_point_search.backend.domains.room.domain.Room;
-import middle_point_search.backend.domains.room.service.RoomService;
+import middle_point_search.backend.domains.room.repository.RoomRepository;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +28,7 @@ import middle_point_search.backend.domains.room.service.RoomService;
 public class PlaceVoteRoomService {
 
 	private final PlaceVoteRoomRepository placeVoteRoomRepository;
-	private final RoomService roomService;
+	private final RoomRepository roomRepository;
 	private final MemberRoomValidateService memberRoomValidateService;
 
 	// 장소투표방 생성
@@ -43,12 +45,12 @@ public class PlaceVoteRoomService {
 		validateDuplicatePlaceVoteRoom(roomId);
 
 		// 방 조회
-		Room room = roomService.findRoom(roomId)
+		Room room = roomRepository.findById(roomId)
 			.orElseThrow(() -> CustomException.from(ROOM_NOT_FOUND));
 
 		// 장소투표방 엔티티 생성 및 저장
 		PlaceVoteRoom placeVoteRoom = new PlaceVoteRoom(room);
-		request.getPlaceCandidates().stream()
+		request.placeCandidates().stream()
 			.map(placeCandidateInfo -> new PlaceVoteCandidate(placeCandidateInfo, placeVoteRoom))
 			.forEach(placeVoteRoom::addPlaceVoteCandidate);
 
@@ -70,7 +72,7 @@ public class PlaceVoteRoomService {
 		placeVoteRoom.resetPlaceVoteRoom();
 
 		// 장소투표 후보 추가
-		request.getPlaceCandidates().stream()
+		request.placeCandidates().stream()
 			.map(placeCandidateInfo -> new PlaceVoteCandidate(placeCandidateInfo, placeVoteRoom))
 			.forEach(placeVoteRoom::addPlaceVoteCandidate);
 	}
@@ -89,7 +91,7 @@ public class PlaceVoteRoomService {
 	}
 
 	// 장소투표방 존재 여부 확인, 존재시 true, 존재하지 않을시 false 반환
-	public PlaceVoteDTO.FindPlaceVoteCandidatesResponse findPlaceVoteCandidates(Long memberId, String roomId) {
+	public FindPlaceVoteCandidatesResponse findPlaceVoteCandidates(Long memberId, String roomId) {
 		// 방에 대한 회원인지 확인
 		memberRoomValidateService.validateAuthorizedMember(memberId, roomId);
 
@@ -97,16 +99,16 @@ public class PlaceVoteRoomService {
 
 		return placeVoteRoomOptional
 			.map(placeVoteRoom -> {
-				List<PlaceVoteDTO.FindPlaceVoteCandidatesResponse.PlaceCandidate> placeCandidates = placeVoteRoom.getPlaceVoteCandidates()
+				List<FindPlaceVoteCandidatesResponse.PlaceCandidate> placeCandidates = placeVoteRoom.getPlaceVoteCandidates()
 					.stream()
-					.map(candidate -> new PlaceVoteDTO.FindPlaceVoteCandidatesResponse.PlaceCandidate(candidate.getId(),
+					.map(candidate -> new FindPlaceVoteCandidatesResponse.PlaceCandidate(candidate.getId(),
 						candidate.getName(), candidate.getSiDo(),
 						candidate.getSiGunGu(), candidate.getRoadNameAddress(), candidate.getAddressLatitude(),
 						candidate.getAddressLongitude()))
 					.collect(Collectors.toList());
 
-				return PlaceVoteDTO.FindPlaceVoteCandidatesResponse.from(true, placeCandidates);
+				return FindPlaceVoteCandidatesResponse.from(true, placeCandidates);
 			})
-			.orElseGet(() -> PlaceVoteDTO.FindPlaceVoteCandidatesResponse.from(false, null));
+			.orElseGet(() -> FindPlaceVoteCandidatesResponse.from(false, null));
 	}
 }

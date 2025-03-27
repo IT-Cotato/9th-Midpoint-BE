@@ -36,7 +36,7 @@ import middle_point_search.backend.domains.member.repository.MemberWithdrawalRea
 import middle_point_search.backend.domains.memberRoom.repository.MemberRoomRepository;
 import middle_point_search.backend.domains.place.repository.PlaceRepository;
 import middle_point_search.backend.domains.placeVoteRoom.repository.PlaceVoteCandidateMemberRepository;
-import middle_point_search.backend.domains.refreshToken.RefreshTokenService;
+import middle_point_search.backend.domains.refreshToken.service.RefreshTokenService;
 import middle_point_search.backend.domains.s3.S3Service;
 import middle_point_search.backend.domains.s3.dto.response.CreatePreSignedUrlResponse;
 import middle_point_search.backend.domains.s3.model.PreSignedUrlPrefix;
@@ -68,9 +68,7 @@ public class MemberService {
 		validateExistingEmail(request.email());
 		signupVerificationCodeService.validateEmailCodeAndDelete(request.email(), request.code());
 
-		String pw = passwordEncoder.encode(request.pw());
-
-		Member member = createMemberEntity(request, pw);
+		Member member = createMemberEntity(request, passwordEncoder.encode(request.pw()));
 
 		memberRepository.save(member);
 	}
@@ -177,11 +175,11 @@ public class MemberService {
 
 	// 새 비밀번호 생성
 	private String createNewPassword() {
-		// UUID 생성
-		String uuid = UUID.randomUUID().toString().replace("-", "");
-
-		// 첫 6자 추출
-		return uuid.substring(0, 6);
+		// UUID 생성, 6자리
+		return UUID.randomUUID()
+			.toString()
+			.replace("-", "")
+			.substring(0, 6);
 	}
 
 	// 비밀번호 재발급 인증 코드 보내기
@@ -234,9 +232,9 @@ public class MemberService {
 		CreatePreSignedUrlResponse response = s3Service.createPreSignedUrl(PreSignedUrlPrefix.PROFILE, filename);
 
 		// DB에 path 저장
-		Member member = memberRepository.findById(memberId)
-			.orElseThrow(() -> CustomException.from(MEMBER_NOT_FOUND));
-		member.updateProfileImagePath(response.path());
+		memberRepository.findById(memberId)
+			.orElseThrow(() -> CustomException.from(MEMBER_NOT_FOUND))
+			.updateProfileImagePath(response.path());
 
 		return response;
 	}

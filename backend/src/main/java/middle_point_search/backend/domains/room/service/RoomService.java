@@ -3,7 +3,6 @@ package middle_point_search.backend.domains.room.service;
 import static middle_point_search.backend.common.exception.errorCode.UserErrorCode.*;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
@@ -30,6 +29,7 @@ public class RoomService {
 	private final RoomRepository roomRepository;
 	private final MemberRoomValidateService memberRoomValidateService;
 	private final MemberRoomRepository memberRoomRepository;
+	private final RoomValidationService roomValidationService;
 
 	// Room 저장하기 및 Room에 회원 저장
 	@Transactional
@@ -42,34 +42,20 @@ public class RoomService {
 			.id(UUID.randomUUID().toString())
 			.build();
 
-		// Room저장
-		roomRepository.save(room);
-
-		return CreateRoomResponse.from(room.getId());
+		return CreateRoomResponse.from(roomRepository.save(room).getId());
 	}
 
 	// Room 이름 변경하기
 	@Transactional(rollbackFor = CustomException.class)
 	public void updateRoomName(Long memberId, String roomId, UpdateRoomNameRequest request) {
-		// 방 존재 확인
-		if (!roomRepository.existsById(roomId)) {
-			throw CustomException.from(ROOM_NOT_FOUND);
-		}
-
-		// 회원방 존재 확인
+		roomValidationService.validateRoomExisting(roomId);
 		memberRoomValidateService.validateAuthorizedMember(memberId, roomId);
 
 		// 변경
-		Room room = roomRepository.findById(roomId)
-			.orElseThrow(() -> CustomException.from(ROOM_NOT_FOUND));
-		room.updateName(request.name());
+		roomRepository.findById(roomId)
+			.orElseThrow(() -> CustomException.from(ROOM_NOT_FOUND))
+			.updateName(request.name());
 	}
-
-	// Room 조회
-	public Optional<Room> findRoom(String id) {
-		return roomRepository.findById(id);
-	}
-
 
 	// 방 존재 확인
 	public ExistRoomResponse existRoom(String roomId) {
@@ -79,19 +65,15 @@ public class RoomService {
 	// Room 메모 변경하기
 	@Transactional
 	public void updateRoomMemo(Long memberId, String roomId, UpdateRoomMemoRequest request) {
-		// 방 존재 확인
-		if (!roomRepository.existsById(roomId)) {
-			throw CustomException.from(ROOM_NOT_FOUND);
-		}
-
-		// 회원방 존재 확인
+		roomValidationService.validateRoomExisting(roomId);
 		memberRoomValidateService.validateAuthorizedMember(memberId, roomId);
 
 		// 변경
-		Room room = roomRepository.findById(roomId)
-			.orElseThrow(() -> CustomException.from(ROOM_NOT_FOUND));
 		String memo = makeMemoNullToBlank(request.memo());
-		room.updateMemo(memo);
+
+		roomRepository.findById(roomId)
+			.orElseThrow(() -> CustomException.from(ROOM_NOT_FOUND))
+			.updateMemo(memo);
 	}
 
 	// 메모가 null일 경우 ""로 변경
@@ -104,12 +86,7 @@ public class RoomService {
 
 	// 방 상세 조회
 	public FindRoomDetailResponse findRoomDetail(Long memberId, String roomId) {
-		// 방 존재 확인
-		if (!roomRepository.existsById(roomId)) {
-			throw CustomException.from(ROOM_NOT_FOUND);
-		}
-
-		// 회원방 존재 확인
+		roomValidationService.validateRoomExisting(roomId);
 		memberRoomValidateService.validateAuthorizedMember(memberId, roomId);
 
 		// 조회

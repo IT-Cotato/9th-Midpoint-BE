@@ -16,7 +16,7 @@ import jakarta.persistence.OneToMany;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import middle_point_search.backend.domains.placeVoteRoom.dto.PlaceVoteRoomDTO.PlaceCandidateInfo;
+import middle_point_search.backend.domains.placeVoteRoom.dto.dto.PlaceCandidateInfo;
 
 @Entity
 @Getter

@@ -49,26 +49,17 @@ public class RecommendPlaceService {
 
 		RecommendPlacesDto response = checkPlaceStandardAndGetResponse(request, kakaoRequestDTO);
 
-		log.info("data count : {}", response.getRecommendPlaces().size());
-
-		int totalCount = response.getPageableCount();
-
-		log.info("totalCount : {}", totalCount);
-
-		PageImpl<FindRecommendPlacesResponse> responses = new PageImpl<>(
-			response.getRecommendPlaces(), pageable, totalCount);
-
-		log.info("offset : {}", responses.getPageable().getOffset());
-		log.info("totalCount : {}", responses.getTotalElements());
-		log.info("totalPage : {}", responses.getTotalPages());
-
-		return responses;
+		return new PageImpl<>(
+			response.getRecommendPlaces(),
+			pageable,
+			response.getPageableCount());
 	}
 
 	//PlaceStandard에 따라 KakaoSearchResponse를 가져오는 메서드
 	private RecommendPlacesDto checkPlaceStandardAndGetResponse(
 		RecommendPlacesFindRequest request,
-		KakaoRequestDTO kakaoRequestDTO) {
+		KakaoRequestDTO kakaoRequestDTO
+	) {
 
 		if (request.getPlaceStandard() == PlaceStandard.ALL) {
 			return getKaKaoForAll(kakaoRequestDTO);

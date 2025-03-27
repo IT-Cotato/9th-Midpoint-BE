@@ -34,8 +34,9 @@ import middle_point_search.backend.common.util.ResponseWriter;
 import middle_point_search.backend.domains.logout.LogoutService;
 import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.member.repository.MemberRepository;
-import middle_point_search.backend.domains.refreshToken.RefreshToken;
-import middle_point_search.backend.domains.refreshToken.RefreshTokenService;
+import middle_point_search.backend.domains.refreshToken.domain.RefreshToken;
+import middle_point_search.backend.domains.refreshToken.repository.RefreshTokenRepository;
+import middle_point_search.backend.domains.refreshToken.service.RefreshTokenService;
 
 @Transactional(readOnly = true)
 @Service
@@ -47,14 +48,17 @@ public class JwtTokenProviderImpl implements JwtTokenProvider {
 	private final Key key;
 	private final LogoutService logoutService;
 	private final RefreshTokenService refreshTokenService;
+	private final RefreshTokenRepository refreshTokenRepository;
 
 	public JwtTokenProviderImpl(JwtProperties jwtProperties, MemberRepository memberRepository,
-		LogoutService logoutService, RefreshTokenService refreshTokenService) {
+		LogoutService logoutService, RefreshTokenService refreshTokenService,
+		RefreshTokenRepository refreshTokenRepository) {
 		this.jwtProperties = jwtProperties;
 		this.memberRepository = memberRepository;
 		this.key = Keys.hmacShaKeyFor(jwtProperties.getSecret().getBytes());
 		this.logoutService = logoutService;
 		this.refreshTokenService = refreshTokenService;
+		this.refreshTokenRepository = refreshTokenRepository;
 	}
 
 	//authentication을 만들어주는 메서드
@@ -92,18 +96,11 @@ public class JwtTokenProviderImpl implements JwtTokenProvider {
 	@Override
 	@Transactional
 	public void updateRefreshToken(Long memberId, String refreshToken) {
-		Optional<RefreshToken> optionalRefreshToken = refreshTokenService.findByMemberId(memberId);
-
-		// refreshToken이 없으면 생성 및 저장, 있으면 refreshToken 값 변경
-		RefreshToken refreshTokenObj;
-		if (optionalRefreshToken.isEmpty()) {
-			refreshTokenObj = new RefreshToken(refreshToken, memberId);
-		} else {
-			refreshTokenObj = optionalRefreshToken.get();
-			refreshTokenObj.setRefreshToken(refreshToken);
-		}
-
-		refreshTokenService.save(refreshTokenObj);
+		refreshTokenRepository.findByMemberId(memberId)
+			.ifPresentOrElse(
+				existing -> existing.setRefreshToken(refreshToken),
+				() -> refreshTokenRepository.save(new RefreshToken(refreshToken, memberId))
+			);
 	}
 
 	@Override
@@ -127,9 +124,10 @@ public class JwtTokenProviderImpl implements JwtTokenProvider {
 	public void sendAccessToken(HttpServletResponse response, String accessToken) {
 		setAccessTokenHeader(response, accessToken);
 
-		AccessTokenResponse accessTokenResponse = AccessTokenResponse.from(accessToken);
-
-		ResponseWriter.writeResponse(response, DataResponse.from(accessTokenResponse), HttpStatus.OK);
+		ResponseWriter.writeResponse(
+			response,
+			DataResponse.from(AccessTokenResponse.from(accessToken)),
+			HttpStatus.OK);
 	}
 
 	@Override
@@ -202,7 +200,7 @@ public class JwtTokenProviderImpl implements JwtTokenProvider {
 
 	public void checkRefreshTokenAndReIssueAccessAndRefreshToken(HttpServletResponse response, String refreshToken) {
 		//refreshToken이 유효한지 확인
-		RefreshToken refreshTokenObj = refreshTokenService.findByRefreshToken(refreshToken)
+		RefreshToken refreshTokenObj = refreshTokenRepository.findById(refreshToken)
 			.orElseThrow(() -> CustomException.from(INVALID_REFRESH_TOKEN));
 
 		Long memberId = refreshTokenObj.getMemberId();

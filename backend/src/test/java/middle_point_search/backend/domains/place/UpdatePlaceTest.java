@@ -297,6 +297,6 @@ public class UpdatePlaceTest extends BaseIntegrationTest {
 
 		// then
 		resultActions
-			.andExpect(jsonPath("$.code").value("C-203"));
+			.andExpect(jsonPath("$.code").value("MR-003"));
 	}
 }
