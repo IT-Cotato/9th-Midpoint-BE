@@ -200,7 +200,7 @@ public class JwtTokenProviderImpl implements JwtTokenProvider {
 
 	public void checkRefreshTokenAndReIssueAccessAndRefreshToken(HttpServletResponse response, String refreshToken) {
 		//refreshToken이 유효한지 확인
-		RefreshToken refreshTokenObj = refreshTokenService.findByRefreshToken(refreshToken)
+		RefreshToken refreshTokenObj = refreshTokenRepository.findById(refreshToken)
 			.orElseThrow(() -> CustomException.from(INVALID_REFRESH_TOKEN));
 
 		Long memberId = refreshTokenObj.getMemberId();
