@@ -123,7 +123,7 @@ public class MidPointController {
 			),
 			@ApiResponse(
 				responseCode = "500",
-				description = "API 서버에 문제가 발생하였습니다.[S-001]",
+				description = "API 서버에 문제가 발생하였습니다.[AS-001]",
 				content = @Content(schema = @Schema(implementation = ErrorResponse.class))
 			)
 		}

@@ -249,7 +249,7 @@ public class SavePlaceTest extends BaseIntegrationTest {
 			.content(objectMapper.writeValueAsString(savePlaceRequest)));
 
 		// then
-		resultActions.andExpect(status().isBadRequest())
-			.andExpect(jsonPath("$.code").value("S-001"));
+		resultActions.andExpect(status().isInternalServerError())
+			.andExpect(jsonPath("$.code").value("AS-001"));
 	}
 }
