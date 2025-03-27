@@ -92,7 +92,7 @@ public class RoomService {
 		// 조회
 		Room room = roomRepository.findById(roomId)
 			.orElseThrow(() -> CustomException.from(ROOM_NOT_FOUND));
-		List<String> emails = room.getMemberRooms()
+		List<String> emails = memberRoomRepository.findAllByRoomId(roomId)
 			.stream()
 			.map(memberRoom -> memberRoom.getMember().getEmail())
 			.toList();

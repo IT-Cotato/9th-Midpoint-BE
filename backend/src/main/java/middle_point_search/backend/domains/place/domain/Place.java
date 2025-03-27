@@ -65,8 +65,7 @@ public class Place {
 		this.googlePlaceId = googlePlaceId;
 	}
 
-	public static Place
-	from(
+	public static Place from(
 		SavePlaceRequest request,
 		Room room,
 		Member member,
