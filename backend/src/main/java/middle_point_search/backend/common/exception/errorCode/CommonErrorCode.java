@@ -23,7 +23,10 @@ public enum CommonErrorCode implements ErrorCode {
 
 	// 4XX
 	INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "C-401", "서버 내부에서 에러가 발생하였습니다."),
-	EXTERNAL_SERVER_ERROR(HttpStatus.BAD_REQUEST, "C-402", "외부 서버로의 요청이 실패하였습니다.");
+	EXTERNAL_SERVER_ERROR(HttpStatus.BAD_REQUEST, "C-402", "외부 서버로의 요청이 실패하였습니다."),
+
+	// 5XX
+	FILE_IO_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "C-501", "파일 입출력 에러가 발생하였습니다."),
 	;
 
 	private final HttpStatus httpStatus;
