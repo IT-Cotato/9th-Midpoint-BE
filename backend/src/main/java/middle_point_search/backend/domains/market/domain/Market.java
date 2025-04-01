@@ -8,9 +8,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import middle_point_search.backend.domains.market.dto.response.MarketApiData;
 
 @Entity
 @Getter
@@ -25,11 +25,7 @@ public class Market {
 	@Column(nullable = false)
 	private String name;
 
-	@Column(nullable = false)
-	private String siGunGu;
-
-	@Column(nullable = false)
-	private String siDo;
+	private String address;
 
 	@Column(nullable = false)
 	private Double addressLatitude;
@@ -37,43 +33,17 @@ public class Market {
 	@Column(nullable = false)
 	private Double addressLongitude;
 
-	private Market(String name, String siGunGu, String siDo, Double addressLatitude,
-		Double addressLongitude) {
+	@Builder
+	public Market(
+		String name,
+		String address,
+		Double addressLatitude,
+		Double addressLongitude
+	) {
 		this.name = name;
-		this.siGunGu = siGunGu;
-		this.siDo = siDo;
+		this.address = address;
 		this.addressLatitude = addressLatitude;
 		this.addressLongitude = addressLongitude;
-	}
-
-	public static Market from(MarketApiData marketApiData) {
-		String name = parseName(marketApiData.getName());
-		String siGunGu = marketApiData.getSiGunGu();
-		String siDo = marketApiData.getSiDo();
-		Double addressLatitude = parseCoordinatesToLatitude(marketApiData.getCoordinates());
-		Double addressLongitude = parseCoordinatesToLongitude(marketApiData.getCoordinates());
-
-		return new Market(name, siGunGu, siDo, addressLatitude, addressLongitude);
-	}
-
-	private static String parseName(String name) {
-		String[] s = name.split("_");
-
-		return s[0];
-	}
-
-	private static Double parseCoordinatesToLatitude(String coordinates) {
-		String coordinate = coordinates.split("\\|")[0];
-		String[] coordinateParts = coordinate.split(",");
-
-		return Double.parseDouble(coordinateParts[1]);
-	}
-
-	private static Double parseCoordinatesToLongitude(String coordinates) {
-		String coordinate = coordinates.split("\\|")[0];
-		String[] coordinateParts = coordinate.split(",");
-
-		return Double.parseDouble(coordinateParts[0]);
 	}
 
 	@Override

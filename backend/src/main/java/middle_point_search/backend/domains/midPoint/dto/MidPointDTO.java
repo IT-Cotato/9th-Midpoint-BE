@@ -52,18 +52,14 @@ public class MidPointDTO {
 	public static class FindMidPointsResponse {
 
 		private String name;
-		private String siDo;
-		private String siGunGu;
-		private String roadNameAddress;
+		private String address;
 		private Double addressLat;
 		private Double addressLong;
 
 		public static FindMidPointsResponse from(Market market) {
 			return new FindMidPointsResponse(
 				market.getName(),
-				market.getSiDo(),
-				market.getSiGunGu(),
-				null,
+				market.getAddress(),
 				market.getAddressLatitude(),
 				market.getAddressLongitude()
 			);
