@@ -12,12 +12,14 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import middle_point_search.backend.common.exception.CustomException;
 import middle_point_search.backend.common.properties.GoogleProperties;
 import middle_point_search.backend.common.properties.KakaoProperties;
 import middle_point_search.backend.common.properties.MarketProperties;
 import reactor.core.publisher.Mono;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class WebClientUtil {
@@ -45,10 +47,16 @@ public class WebClientUtil {
 				.queryParams(params)
 				.build())
 			.retrieve()
-			.onStatus(HttpStatusCode::is4xxClientError,
-				clientResponse -> Mono.error(CustomException.from(BAD_REQUEST)))
-			.onStatus(HttpStatusCode::is5xxServerError,
-				clientResponse -> Mono.error(CustomException.from(API_INTERNAL_SERVER_ERROR)))
+			.onStatus(HttpStatusCode::is4xxClientError, clientResponse ->
+				clientResponse.bodyToMono(String.class)
+					.doOnNext(body -> log.warn("4xx error body: {}", body))
+					.flatMap(body -> Mono.error(CustomException.from(BAD_REQUEST)))
+			)
+			.onStatus(HttpStatusCode::is5xxServerError, clientResponse ->
+				clientResponse.bodyToMono(String.class)
+					.doOnNext(body -> log.error("5xx error body: {}", body))
+					.flatMap(body -> Mono.error(CustomException.from(API_INTERNAL_SERVER_ERROR)))
+			)
 			.bodyToMono(response)
 			.block();
 	}
@@ -63,10 +71,16 @@ public class WebClientUtil {
 				.queryParams(params)
 				.build())
 			.retrieve()
-			.onStatus(HttpStatusCode::is4xxClientError,
-				clientResponse -> Mono.error(CustomException.from(BAD_REQUEST)))
-			.onStatus(HttpStatusCode::is5xxServerError,
-				clientResponse -> Mono.error(CustomException.from(API_INTERNAL_SERVER_ERROR)))
+			.onStatus(HttpStatusCode::is4xxClientError, clientResponse ->
+				clientResponse.bodyToMono(String.class)
+					.doOnNext(body -> log.warn("4xx error body: {}", body))
+					.flatMap(body -> Mono.error(CustomException.from(BAD_REQUEST)))
+			)
+			.onStatus(HttpStatusCode::is5xxServerError, clientResponse ->
+				clientResponse.bodyToMono(String.class)
+					.doOnNext(body -> log.error("5xx error body: {}", body))
+					.flatMap(body -> Mono.error(CustomException.from(API_INTERNAL_SERVER_ERROR)))
+			)
 			.bodyToMono(response);
 	}
 
@@ -80,10 +94,16 @@ public class WebClientUtil {
 				.build())
 			.header(HttpHeaders.AUTHORIZATION, kakaoProperties.getKey())
 			.retrieve()
-			.onStatus(HttpStatusCode::is4xxClientError,
-				clientResponse -> Mono.error(CustomException.from(BAD_REQUEST)))
-			.onStatus(HttpStatusCode::is5xxServerError,
-				clientResponse -> Mono.error(CustomException.from(API_INTERNAL_SERVER_ERROR)))
+			.onStatus(HttpStatusCode::is4xxClientError, clientResponse ->
+				clientResponse.bodyToMono(String.class)
+					.doOnNext(body -> log.warn("kakao 4xx error body: {}", body))
+					.flatMap(body -> Mono.error(CustomException.from(BAD_REQUEST)))
+			)
+			.onStatus(HttpStatusCode::is5xxServerError, clientResponse ->
+				clientResponse.bodyToMono(String.class)
+					.doOnNext(body -> log.error("kakao 5xx error body: {}", body))
+					.flatMap(body -> Mono.error(CustomException.from(API_INTERNAL_SERVER_ERROR)))
+			)
 			.bodyToMono(response)
 			.block();
 	}
@@ -98,10 +118,16 @@ public class WebClientUtil {
 				.queryParam(googleProperties.getKeyName(), googleProperties.getKey())
 				.build())
 			.retrieve()
-			.onStatus(HttpStatusCode::is4xxClientError,
-				clientResponse -> Mono.error(CustomException.from(API_INTERNAL_SERVER_ERROR)))
-			.onStatus(HttpStatusCode::is5xxServerError,
-				clientResponse -> Mono.error(CustomException.from(API_INTERNAL_SERVER_ERROR)))
+			.onStatus(HttpStatusCode::is4xxClientError, clientResponse ->
+				clientResponse.bodyToMono(String.class)
+					.doOnNext(body -> log.warn("google 4xx error body: {}", body))
+					.flatMap(body -> Mono.error(CustomException.from(BAD_REQUEST)))
+			)
+			.onStatus(HttpStatusCode::is5xxServerError, clientResponse ->
+				clientResponse.bodyToMono(String.class)
+					.doOnNext(body -> log.error("google 5xx error body: {}", body))
+					.flatMap(body -> Mono.error(CustomException.from(API_INTERNAL_SERVER_ERROR)))
+			)
 			.bodyToMono(response)
 			.block();
 	}

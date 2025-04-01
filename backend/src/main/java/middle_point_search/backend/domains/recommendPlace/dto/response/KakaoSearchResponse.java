@@ -16,11 +16,11 @@ public class KakaoSearchResponse {
 	@Getter
 	@NoArgsConstructor(access = AccessLevel.PRIVATE)
 	public static class Meta {
+		private Boolean is_end;
 		private SameName same_name;
 		@Setter
-		private int pageable_count;
-		private int total_count;
-		private boolean is_end;
+		private Integer pageable_count;
+		private Integer total_count;
 
 		@Getter
 		@NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -46,6 +46,5 @@ public class KakaoSearchResponse {
 		private String category_group_name;
 		private String x;
 		private String y;
-
 	}
 }
