@@ -202,7 +202,7 @@ public class TimeVoteService {
 	private List<TimeVotePerDate> getOtherVotes(TimeVoteRoom timeVoteRoom, Member member) {
 		List<TimeVotePerDate> otherVotes = new ArrayList<>();
 
-		List<MeetingDate> meetingDates = timeVoteRoom.getMeetingDates();
+		List<MeetingDate> meetingDates = meetingDateRepository.findAllByTimeVoteRoom(timeVoteRoom);
 
 		for (MeetingDate meetingDate : meetingDates) {
 			// 미팅 날 별로 다른 사람들의 투표 정보 가져오기

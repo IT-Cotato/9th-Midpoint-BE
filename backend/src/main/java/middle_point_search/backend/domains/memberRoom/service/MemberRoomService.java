@@ -17,6 +17,7 @@ import middle_point_search.backend.domains.memberRoom.dto.MemberRoomDTO.FindRoom
 import middle_point_search.backend.domains.memberRoom.repository.MemberRoomRepository;
 import middle_point_search.backend.domains.room.domain.Room;
 import middle_point_search.backend.domains.room.repository.RoomRepository;
+import middle_point_search.backend.domains.room.service.RoomService;
 import middle_point_search.backend.domains.room.service.RoomValidationService;
 
 @Service
@@ -29,6 +30,7 @@ public class MemberRoomService {
 	private final RoomRepository roomRepository;
 	private final RoomValidationService roomValidationService;
 	private final MemberRepository memberRepository;
+	private final RoomService roomService;
 
 	// 회원방을 DTO로 저장
 	@Transactional(rollbackFor = CustomException.class)
@@ -76,7 +78,8 @@ public class MemberRoomService {
 
 		// 방에 멤버가 없으면 방 삭제
 		if (!memberRoomRepository.existsByRoomId(roomId)) {
-			roomRepository.deleteById(roomId);
+			// 방 삭제시 Place, PlaceVoteRoom, TimeVoteRoom 등 모든 연관관계 한번에 삭제
+			roomService.deleteRoomAndAssociatedEntities(roomId);
 		}
 	}
 }

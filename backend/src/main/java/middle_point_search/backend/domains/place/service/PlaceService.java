@@ -108,6 +108,6 @@ public class PlaceService {
 		// 회원이 방에 속해있는지 확인
 		memberRoomValidateService.validateAuthorizedMember(memberId, place.getRoom().getId());
 
-		placeRepository.deleteByIdAndRoom_Id(placeId, place.getRoom().getId());
+		placeRepository.delete(place);
 	}
 }

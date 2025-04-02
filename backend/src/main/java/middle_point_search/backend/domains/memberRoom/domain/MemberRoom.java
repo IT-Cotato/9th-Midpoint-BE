@@ -32,21 +32,7 @@ public class MemberRoom {
 
 	@Builder
 	private MemberRoom(Member member, Room room) {
-		setMember(member);
-		setRoom(room);
-	}
-
-	private MemberRoom setMember(Member member) {
 		this.member = member;
-		member.getMemberRooms().add(this);
-
-		return this;
-	}
-
-	private MemberRoom setRoom(Room room) {
 		this.room = room;
-		room.getMemberRooms().add(this);
-
-		return this;
 	}
 }

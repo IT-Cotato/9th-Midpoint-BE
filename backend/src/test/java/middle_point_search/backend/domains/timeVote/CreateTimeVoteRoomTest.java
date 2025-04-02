@@ -29,6 +29,7 @@ import middle_point_search.backend.domains.room.repository.RoomRepository;
 import middle_point_search.backend.domains.timeVoteRoom.domain.MeetingDate;
 import middle_point_search.backend.domains.timeVoteRoom.domain.TimeVoteRoom;
 import middle_point_search.backend.domains.timeVoteRoom.dto.request.CreateTimeVoteRoomRequest;
+import middle_point_search.backend.domains.timeVoteRoom.repository.MeetingDateRepository;
 import middle_point_search.backend.domains.timeVoteRoom.repository.TimeVoteRoomRepository;
 
 @DisplayName("시간 투표 방 생성 테스트")
@@ -45,6 +46,8 @@ public class CreateTimeVoteRoomTest extends BaseIntegrationTest {
 	private MemberRepository memberRepository;
 	@Autowired
 	private TimeVoteRoomRepository timeVoteRoomRepository;
+	@Autowired
+	private MeetingDateRepository meetingDateRepository;
 
 	@BeforeEach
 	void setUp() throws Exception {
@@ -98,7 +101,7 @@ public class CreateTimeVoteRoomTest extends BaseIntegrationTest {
 		// 시간 투표 방 생성 확인
 		TimeVoteRoom timeVoteRoom = timeVoteRoomRepository.findByRoom_Id(roomId)
 			.orElseThrow(() -> new IllegalArgumentException("시간 투표 방이 존재하지 않습니다."));
-		List<MeetingDate> meetingDates = timeVoteRoom.getMeetingDates();
+		List<MeetingDate> meetingDates = meetingDateRepository.findAllByTimeVoteRoom(timeVoteRoom);
 		MeetingDate meetingDate = meetingDates.get(0);
 		assertThat(meetingDate.getDate()).isEqualTo(localDate1);
 	}

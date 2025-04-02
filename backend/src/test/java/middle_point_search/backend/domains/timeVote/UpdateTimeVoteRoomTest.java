@@ -24,6 +24,7 @@ import middle_point_search.backend.domains.room.domain.Room;
 import middle_point_search.backend.domains.room.repository.RoomRepository;
 import middle_point_search.backend.domains.timeVoteRoom.domain.TimeVoteRoom;
 import middle_point_search.backend.domains.timeVoteRoom.dto.request.UpdateTimeVoteRoomRequest;
+import middle_point_search.backend.domains.timeVoteRoom.repository.MeetingDateRepository;
 import middle_point_search.backend.domains.timeVoteRoom.repository.TimeVoteRoomRepository;
 
 @DisplayName("시간 투표 방 수정 테스트")
@@ -40,6 +41,8 @@ public class UpdateTimeVoteRoomTest extends BaseIntegrationTest {
 	private MemberRepository memberRepository;
 	@Autowired
 	private TimeVoteRoomRepository timeVoteRoomRepository;
+	@Autowired
+	private MeetingDateRepository meetingDateRepository;
 
 	@BeforeEach
 	void setUp() throws Exception {
@@ -95,7 +98,7 @@ public class UpdateTimeVoteRoomTest extends BaseIntegrationTest {
 		// 시간 투표방 수정 확인
 		TimeVoteRoom timeVoteRoom = timeVoteRoomRepository.findByRoom_Id(roomId)
 			.orElseThrow(() -> new IllegalArgumentException("시간 투표방을 찾을 수 없습니다."));
-		Assertions.assertEquals(localDate, timeVoteRoom.getMeetingDates().get(0).getDate());
+		Assertions.assertEquals(localDate, meetingDateRepository.findAllByTimeVoteRoom(timeVoteRoom).get(0).getDate());
 	}
 
 	@Test

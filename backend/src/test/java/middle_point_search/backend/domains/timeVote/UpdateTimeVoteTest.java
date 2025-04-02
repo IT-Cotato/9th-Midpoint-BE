@@ -28,6 +28,7 @@ import middle_point_search.backend.domains.timeVoteRoom.domain.TimeVote;
 import middle_point_search.backend.domains.timeVoteRoom.domain.TimeVoteRoom;
 import middle_point_search.backend.domains.timeVoteRoom.dto.dto.TimeRange;
 import middle_point_search.backend.domains.timeVoteRoom.dto.request.UpdateTimeVoteRequest;
+import middle_point_search.backend.domains.timeVoteRoom.repository.MeetingDateRepository;
 import middle_point_search.backend.domains.timeVoteRoom.repository.TimeVoteRepository;
 import middle_point_search.backend.domains.timeVoteRoom.repository.TimeVoteRoomRepository;
 
@@ -47,6 +48,8 @@ public class UpdateTimeVoteTest extends BaseIntegrationTest {
 	private TimeVoteRoomRepository timeVoteRoomRepository;
 	@Autowired
 	private TimeVoteRepository timeVoteRepository;
+	@Autowired
+	private MeetingDateRepository meetingDateRepository;
 
 	@BeforeEach
 	void setUp() throws Exception {
@@ -88,7 +91,7 @@ public class UpdateTimeVoteTest extends BaseIntegrationTest {
 
 		TimeVoteRoom timeVoteRoom = new TimeVoteRoom(room);
 		MeetingDate meetingDate = new MeetingDate(timeVoteRoom, localDate); // 만나는 날
-		timeVoteRoom.addMeetingDate(meetingDate);
+		meetingDateRepository.save(meetingDate);
 		timeVoteRoomRepository.save(timeVoteRoom);
 
 		// 시간투표 생성
@@ -149,7 +152,7 @@ public class UpdateTimeVoteTest extends BaseIntegrationTest {
 
 		TimeVoteRoom timeVoteRoom = new TimeVoteRoom(room);
 		MeetingDate meetingDate = new MeetingDate(timeVoteRoom, localDate); // 만나는 날
-		timeVoteRoom.addMeetingDate(meetingDate);
+		meetingDateRepository.save(meetingDate);
 		timeVoteRoomRepository.save(timeVoteRoom);
 
 		// when
@@ -187,7 +190,7 @@ public class UpdateTimeVoteTest extends BaseIntegrationTest {
 
 		TimeVoteRoom timeVoteRoom = new TimeVoteRoom(room);
 		MeetingDate meetingDate = new MeetingDate(timeVoteRoom, localDate); // 만나는 날
-		timeVoteRoom.addMeetingDate(meetingDate);
+		meetingDateRepository.save(meetingDate);
 		timeVoteRoomRepository.save(timeVoteRoom);
 
 		// 시간투표 수정
@@ -279,7 +282,7 @@ public class UpdateTimeVoteTest extends BaseIntegrationTest {
 
 		TimeVoteRoom timeVoteRoom = new TimeVoteRoom(room);
 		MeetingDate meetingDate = new MeetingDate(timeVoteRoom, localDate); // 만나는 날
-		timeVoteRoom.addMeetingDate(meetingDate);
+		meetingDateRepository.save(meetingDate);
 		timeVoteRoomRepository.save(timeVoteRoom);
 
 		// 시간투표 생성

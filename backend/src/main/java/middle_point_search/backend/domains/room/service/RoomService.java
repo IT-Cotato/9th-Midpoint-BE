@@ -12,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.exception.CustomException;
 import middle_point_search.backend.domains.memberRoom.repository.MemberRoomRepository;
 import middle_point_search.backend.domains.memberRoom.service.MemberRoomValidateService;
+import middle_point_search.backend.domains.place.repository.PlaceRepository;
+import middle_point_search.backend.domains.placeVoteRoom.service.PlaceVoteRoomService;
 import middle_point_search.backend.domains.room.domain.Room;
 import middle_point_search.backend.domains.room.dto.request.CreateRoomRequest;
 import middle_point_search.backend.domains.room.dto.request.UpdateRoomMemoRequest;
@@ -20,6 +22,7 @@ import middle_point_search.backend.domains.room.dto.response.CreateRoomResponse;
 import middle_point_search.backend.domains.room.dto.response.ExistRoomResponse;
 import middle_point_search.backend.domains.room.dto.response.FindRoomDetailResponse;
 import middle_point_search.backend.domains.room.repository.RoomRepository;
+import middle_point_search.backend.domains.timeVoteRoom.service.TimeVoteRoomService;
 
 @Service
 @Transactional(readOnly = true)
@@ -30,6 +33,9 @@ public class RoomService {
 	private final MemberRoomValidateService memberRoomValidateService;
 	private final MemberRoomRepository memberRoomRepository;
 	private final RoomValidationService roomValidationService;
+	private final TimeVoteRoomService timeVoteRoomService;
+	private final PlaceVoteRoomService placeVoteRoomService;
+	private final PlaceRepository placeRepository;
 
 	// Room 저장하기 및 Room에 회원 저장
 	@Transactional
@@ -98,5 +104,17 @@ public class RoomService {
 			.toList();
 
 		return FindRoomDetailResponse.from(room, emails);
+	}
+
+	// 방과 연관 데이터 삭제
+	@Transactional(rollbackFor = CustomException.class)
+	public void deleteRoomAndAssociatedEntities(String roomId) {
+		roomRepository.findById(roomId)
+			.ifPresent((room) -> {
+				timeVoteRoomService.deleteTimeVoteRoomAndAssociatedEntities(roomId);
+				placeVoteRoomService.deletePlaceVoteRoomAndAssociatedEntities(roomId);
+				placeRepository.deleteAllByRoom_Id(roomId);
+				roomRepository.deleteById(roomId);
+			});
 	}
 }

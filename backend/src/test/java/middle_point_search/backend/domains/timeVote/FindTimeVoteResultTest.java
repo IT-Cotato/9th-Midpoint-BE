@@ -23,6 +23,7 @@ import middle_point_search.backend.domains.room.repository.RoomRepository;
 import middle_point_search.backend.domains.timeVoteRoom.domain.MeetingDate;
 import middle_point_search.backend.domains.timeVoteRoom.domain.TimeVote;
 import middle_point_search.backend.domains.timeVoteRoom.domain.TimeVoteRoom;
+import middle_point_search.backend.domains.timeVoteRoom.repository.MeetingDateRepository;
 import middle_point_search.backend.domains.timeVoteRoom.repository.TimeVoteRepository;
 import middle_point_search.backend.domains.timeVoteRoom.repository.TimeVoteRoomRepository;
 
@@ -44,6 +45,8 @@ public class FindTimeVoteResultTest extends BaseIntegrationTest {
 	private TimeVoteRoomRepository timeVoteRoomRepository;
 	@Autowired
 	private TimeVoteRepository timeVoteRepository;
+	@Autowired
+	private MeetingDateRepository meetingDateRepository;
 
 	@BeforeEach
 	void setUp() throws Exception {
@@ -90,9 +93,9 @@ public class FindTimeVoteResultTest extends BaseIntegrationTest {
 		// 시간 투표 방 생성
 		TimeVoteRoom timeVoteRoom = new TimeVoteRoom(room);
 		MeetingDate meetingDateEntity1 = new MeetingDate(timeVoteRoom, meetingDate1);
-		timeVoteRoom.addMeetingDate(meetingDateEntity1);
+		meetingDateRepository.save(meetingDateEntity1);
 		MeetingDate meetingDateEntity2 = new MeetingDate(timeVoteRoom, meetingDate2);
-		timeVoteRoom.addMeetingDate(meetingDateEntity2);
+		meetingDateRepository.save(meetingDateEntity2);
 		timeVoteRoomRepository.save(timeVoteRoom);
 
 		// 시간 투표1 생성
@@ -213,7 +216,7 @@ public class FindTimeVoteResultTest extends BaseIntegrationTest {
 		// 시간 투표 방 생성
 		TimeVoteRoom timeVoteRoom = new TimeVoteRoom(room);
 		MeetingDate meetingDateEntity1 = new MeetingDate(timeVoteRoom, meetingDate);
-		timeVoteRoom.addMeetingDate(meetingDateEntity1);
+		meetingDateRepository.save(meetingDateEntity1);
 		timeVoteRoomRepository.save(timeVoteRoom);
 
 		// when
@@ -222,7 +225,6 @@ public class FindTimeVoteResultTest extends BaseIntegrationTest {
 				.header("Authorization", "Bearer " + memberAccessToken)
 				.param("roomId", roomId)
 		);
-
 
 		// then
 		String formattedMeetingDate = meetingDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
@@ -253,7 +255,7 @@ public class FindTimeVoteResultTest extends BaseIntegrationTest {
 		// 시간 투표 방 생성
 		TimeVoteRoom timeVoteRoom = new TimeVoteRoom(room);
 		MeetingDate meetingDateEntity1 = new MeetingDate(timeVoteRoom, meetingDate1);
-		timeVoteRoom.addMeetingDate(meetingDateEntity1);
+		meetingDateRepository.save(meetingDateEntity1);
 		timeVoteRoomRepository.save(timeVoteRoom);
 
 		// when
