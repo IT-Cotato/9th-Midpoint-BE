@@ -30,6 +30,7 @@ import middle_point_search.backend.domains.timeVoteRoom.domain.TimeVote;
 import middle_point_search.backend.domains.timeVoteRoom.domain.TimeVoteRoom;
 import middle_point_search.backend.domains.timeVoteRoom.dto.dto.TimeRange;
 import middle_point_search.backend.domains.timeVoteRoom.dto.request.CreateTimeVoteRequest;
+import middle_point_search.backend.domains.timeVoteRoom.repository.MeetingDateRepository;
 import middle_point_search.backend.domains.timeVoteRoom.repository.TimeVoteRepository;
 import middle_point_search.backend.domains.timeVoteRoom.repository.TimeVoteRoomRepository;
 
@@ -51,6 +52,8 @@ public class CreateTimeVoteTest extends BaseIntegrationTest {
 	EntityManager entityManager;
 	@Autowired
 	private TimeVoteRepository timeVoteRepository;
+	@Autowired
+	private MeetingDateRepository meetingDateRepository;
 
 	@BeforeEach
 	void setUp() throws Exception {
@@ -84,7 +87,7 @@ public class CreateTimeVoteTest extends BaseIntegrationTest {
 		// 시간 투표방 생성
 		final LocalDate localDate = LocalDate.now(); // 만나는 날짜
 		TimeVoteRoom timeVoteRoom = new TimeVoteRoom(room);
-		timeVoteRoom.addMeetingDate(new MeetingDate(timeVoteRoom, localDate));
+		meetingDateRepository.save(new MeetingDate(timeVoteRoom, localDate));
 		timeVoteRoomRepository.save(timeVoteRoom);
 
 		// 투표할 시간
@@ -116,7 +119,7 @@ public class CreateTimeVoteTest extends BaseIntegrationTest {
 		timeVoteRoom = timeVoteRoomRepository.findByRoom_Id(roomId)
 			.orElseThrow(() -> new IllegalArgumentException("시간 투표 방이 존재하지 않습니다."));
 
-		TimeVote timeVote = timeVoteRoom.getTimeVotes().get(0);
+		TimeVote timeVote = timeVoteRepository.findAllByTimeVoteRoomAndMember(timeVoteRoom, member).get(0);
 		Assertions.assertEquals(timeVote.getMemberAvailableStartTime(), startTime);
 		Assertions.assertEquals(timeVote.getMemberAvailableEndTime(), endTime);
 		Assertions.assertEquals(timeVote.getMeetingDate().getDate(), localDate);
@@ -139,7 +142,7 @@ public class CreateTimeVoteTest extends BaseIntegrationTest {
 		// 시간 투표방 생성
 		final LocalDate localDate = LocalDate.now(); // 만나는 날짜
 		TimeVoteRoom timeVoteRoom = new TimeVoteRoom(room);
-		timeVoteRoom.addMeetingDate(new MeetingDate(timeVoteRoom, localDate));
+		meetingDateRepository.save(new MeetingDate(timeVoteRoom, localDate));
 		timeVoteRoomRepository.save(timeVoteRoom);
 
 		// 투표할 시간
@@ -240,7 +243,7 @@ public class CreateTimeVoteTest extends BaseIntegrationTest {
 
 		// 시간 투표방 생성
 		TimeVoteRoom timeVoteRoom = new TimeVoteRoom(room);
-		timeVoteRoom.addMeetingDate(new MeetingDate(timeVoteRoom, localDate));
+		meetingDateRepository.save(new MeetingDate(timeVoteRoom, localDate));
 		timeVoteRoomRepository.save(timeVoteRoom);
 
 		// 투표할 시간
@@ -299,7 +302,7 @@ public class CreateTimeVoteTest extends BaseIntegrationTest {
 		// 시간 투표방 생성
 		TimeVoteRoom timeVoteRoom = new TimeVoteRoom(room);
 		MeetingDate meetingDate = new MeetingDate(timeVoteRoom, localDate); // 만나는 날짜
-		timeVoteRoom.addMeetingDate(meetingDate);
+		meetingDateRepository.save(meetingDate);
 		timeVoteRoomRepository.save(timeVoteRoom);
 
 		// 투표 저장

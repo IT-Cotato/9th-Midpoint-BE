@@ -18,6 +18,8 @@ import middle_point_search.backend.domains.placeVoteRoom.dto.request.CreatePlace
 import middle_point_search.backend.domains.placeVoteRoom.dto.request.UpdatePlaceVoteRoomRequest;
 import middle_point_search.backend.domains.placeVoteRoom.dto.response.CreatePlaceVoteRoomResponse;
 import middle_point_search.backend.domains.placeVoteRoom.dto.response.FindPlaceVoteCandidatesResponse;
+import middle_point_search.backend.domains.placeVoteRoom.repository.PlaceVoteCandidateRepository;
+import middle_point_search.backend.domains.placeVoteRoom.repository.PlaceVoteRepository;
 import middle_point_search.backend.domains.placeVoteRoom.repository.PlaceVoteRoomRepository;
 import middle_point_search.backend.domains.room.domain.Room;
 import middle_point_search.backend.domains.room.repository.RoomRepository;
@@ -30,6 +32,8 @@ public class PlaceVoteRoomService {
 	private final PlaceVoteRoomRepository placeVoteRoomRepository;
 	private final RoomRepository roomRepository;
 	private final MemberRoomValidateService memberRoomValidateService;
+	private final PlaceVoteRepository placeVoteRepository;
+	private final PlaceVoteCandidateRepository placeVoteCandidateRepository;
 
 	// 장소투표방 생성
 	@Transactional(rollbackFor = {CustomException.class})
@@ -52,7 +56,7 @@ public class PlaceVoteRoomService {
 		PlaceVoteRoom placeVoteRoom = new PlaceVoteRoom(room);
 		request.placeCandidates().stream()
 			.map(placeCandidateInfo -> new PlaceVoteCandidate(placeCandidateInfo, placeVoteRoom))
-			.forEach(placeVoteRoom::addPlaceVoteCandidate);
+			.forEach(placeVoteCandidateRepository::save);
 
 		PlaceVoteRoom savedPlaceVoteRoom = placeVoteRoomRepository.save(placeVoteRoom);
 
@@ -69,12 +73,12 @@ public class PlaceVoteRoomService {
 			.orElseThrow(() -> CustomException.from(PLACE_VOTE_ROOM_NOT_FOUND));
 
 		// 장소투표방 리셋
-		placeVoteRoom.resetPlaceVoteRoom();
+		placeVoteCandidateRepository.deleteAllByPlaceVoteRoom(placeVoteRoom);
 
 		// 장소투표 후보 추가
 		request.placeCandidates().stream()
 			.map(placeCandidateInfo -> new PlaceVoteCandidate(placeCandidateInfo, placeVoteRoom))
-			.forEach(placeVoteRoom::addPlaceVoteCandidate);
+			.forEach(placeVoteCandidateRepository::save);
 	}
 
 	// 장소투표방 조회
@@ -99,7 +103,8 @@ public class PlaceVoteRoomService {
 
 		return placeVoteRoomOptional
 			.map(placeVoteRoom -> {
-				List<FindPlaceVoteCandidatesResponse.PlaceCandidate> placeCandidates = placeVoteRoom.getPlaceVoteCandidates()
+				List<FindPlaceVoteCandidatesResponse.PlaceCandidate> placeCandidates = placeVoteCandidateRepository
+					.findAllByPlaceVoteRoom(placeVoteRoom)
 					.stream()
 					.map(candidate -> new FindPlaceVoteCandidatesResponse.PlaceCandidate(candidate.getId(),
 						candidate.getName(), candidate.getSiDo(),
@@ -110,5 +115,17 @@ public class PlaceVoteRoomService {
 				return FindPlaceVoteCandidatesResponse.from(true, placeCandidates);
 			})
 			.orElseGet(() -> FindPlaceVoteCandidatesResponse.from(false, null));
+	}
+
+	// 장소 투표방 삭제
+	@Transactional(rollbackFor = {CustomException.class})
+	public void deletePlaceVoteRoomAndAssociatedEntities(String roomId) {
+		placeVoteRoomRepository.findByRoom_Id(roomId)
+			.ifPresent(placeVoteRoom -> {
+				//삭제
+				placeVoteRepository.deleteAllByPlaceVoteRoom(placeVoteRoom);
+				placeVoteCandidateRepository.deleteAllByPlaceVoteRoom(placeVoteRoom);
+				placeVoteRoomRepository.delete(placeVoteRoom);
+			});
 	}
 }

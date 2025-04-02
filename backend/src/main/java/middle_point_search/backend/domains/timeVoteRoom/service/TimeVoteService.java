@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.exception.CustomException;
 import middle_point_search.backend.domains.member.domain.Member;
+import middle_point_search.backend.domains.member.repository.MemberRepository;
 import middle_point_search.backend.domains.memberRoom.service.MemberRoomValidateService;
 import middle_point_search.backend.domains.timeVoteRoom.domain.MeetingDate;
 import middle_point_search.backend.domains.timeVoteRoom.domain.TimeVote;
@@ -39,17 +40,20 @@ public class TimeVoteService {
 	private final TimeVoteRoomRepository timeVoteRoomRepository;
 	private final MemberRoomValidateService memberRoomValidateService;
 	private final MeetingDateRepository meetingDateRepository;
+	private final MemberRepository memberRepository;
 
 	//시간투표하기
 	@Transactional(rollbackFor = {CustomException.class})
 	public void createTimeVote(
-		Member member,
+		Long memberId,
 		String roomId,
 		CreateTimeVoteRequest request
 	) {
 		// 방에 대한 회원인지 확인
-		memberRoomValidateService.validateAuthorizedMember(member.getId(), roomId);
+		memberRoomValidateService.validateAuthorizedMember(memberId, roomId);
 
+		Member member = memberRepository.findById(memberId)
+			.orElseThrow(() -> CustomException.from(MEMBER_NOT_FOUND));
 		TimeVoteRoom timeVoteRoom = timeVoteRoomRepository.findByRoom_Id(roomId)
 			.orElseThrow(() -> CustomException.from(VOTE_ROOM_NOT_FOUND));
 
@@ -69,13 +73,15 @@ public class TimeVoteService {
 	// 시간 투표 수정
 	@Transactional(rollbackFor = {CustomException.class})
 	public void updateTimeVote(
-		Member member,
+		Long memberId,
 		String roomId,
 		UpdateTimeVoteRequest request
 	) {
 		// 방에 대한 회원인지 확인
-		memberRoomValidateService.validateAuthorizedMember(member.getId(), roomId);
+		memberRoomValidateService.validateAuthorizedMember(memberId, roomId);
 
+		Member member = memberRepository.findById(memberId)
+			.orElseThrow(() -> CustomException.from(MEMBER_NOT_FOUND));
 		TimeVoteRoom timeVoteRoom = timeVoteRoomRepository.findByRoom_Id(roomId)
 			.orElseThrow(() -> CustomException.from(VOTE_ROOM_NOT_FOUND));
 
@@ -136,7 +142,7 @@ public class TimeVoteService {
 		Map<String, List<TimeVoteDetail>> result = new LinkedHashMap<>();
 
 		for (MeetingDate meetingDate : meetingDates) {
-				// 해당 날짜의 모든 투표 정보 가져오기
+			// 해당 날짜의 모든 투표 정보 가져오기
 			List<TimeVote> timeVotes = timeVoteRepository.findAllByTimeVoteRoomAndMeetingDate(
 				timeVoteRoom,
 				meetingDate);
@@ -160,10 +166,12 @@ public class TimeVoteService {
 	}
 
 	// 투표 여부 및 투표 아이템 가져오기
-	public FindOngoingTimeVoteStatusResponse findOngoingTimeVoteStatus(Member member, String roomId) {
+	public FindOngoingTimeVoteStatusResponse findOngoingTimeVoteStatus(Long memberId, String roomId) {
 		// 방에 대한 회원인지 확인
-		memberRoomValidateService.validateAuthorizedMember(member.getId(), roomId);
+		memberRoomValidateService.validateAuthorizedMember(memberId, roomId);
 
+		Member member = memberRepository.findById(memberId)
+			.orElseThrow(() -> CustomException.from(MEMBER_NOT_FOUND));
 		TimeVoteRoom timeVoteRoom = timeVoteRoomRepository.findByRoom_Id(roomId)
 			.orElseThrow(() -> CustomException.from(VOTE_ROOM_NOT_FOUND));
 
@@ -194,7 +202,7 @@ public class TimeVoteService {
 	private List<TimeVotePerDate> getOtherVotes(TimeVoteRoom timeVoteRoom, Member member) {
 		List<TimeVotePerDate> otherVotes = new ArrayList<>();
 
-		List<MeetingDate> meetingDates = timeVoteRoom.getMeetingDates();
+		List<MeetingDate> meetingDates = meetingDateRepository.findAllByTimeVoteRoom(timeVoteRoom);
 
 		for (MeetingDate meetingDate : meetingDates) {
 			// 미팅 날 별로 다른 사람들의 투표 정보 가져오기

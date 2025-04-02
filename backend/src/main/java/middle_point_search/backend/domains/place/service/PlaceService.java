@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import middle_point_search.backend.common.exception.CustomException;
 import middle_point_search.backend.domains.google.service.GoogleService;
 import middle_point_search.backend.domains.member.domain.Member;
+import middle_point_search.backend.domains.member.repository.MemberRepository;
 import middle_point_search.backend.domains.memberRoom.service.MemberRoomValidateService;
 import middle_point_search.backend.domains.place.domain.Place;
 import middle_point_search.backend.domains.place.dto.request.SavePlaceRequest;
@@ -32,6 +33,7 @@ public class PlaceService {
 	private final RoomRepository roomRepository;
 	private final MemberRoomValidateService memberRoomValidateService;
 	private final GoogleService googleService;
+	private final MemberRepository memberRepository;
 
 	// 장소 조회
 	public FindPlacesResponse findPlaces(Long memberId, String roomId) {
@@ -59,9 +61,12 @@ public class PlaceService {
 
 	//장소 저장
 	@Transactional(rollbackFor = {CustomException.class})
-	public SavePlaceResponse savePlace(String roomId, Member member, SavePlaceRequest request) {
+	public SavePlaceResponse savePlace(String roomId, Long memberId, SavePlaceRequest request) {
+		Member member = memberRepository.findById(memberId)
+			.orElseThrow(() -> CustomException.from(MEMBER_NOT_FOUND));
+
 		// 회원이 방에 속해있는지 확인
-		memberRoomValidateService.validateAuthorizedMember(member.getId(), roomId);
+		memberRoomValidateService.validateAuthorizedMember(memberId, roomId);
 
 		Room room = roomRepository.findById(roomId)
 			.orElseThrow(() -> CustomException.from(ROOM_NOT_FOUND));
@@ -76,15 +81,15 @@ public class PlaceService {
 
 	//장소 업데이트
 	@Transactional(rollbackFor = {CustomException.class})
-	public void updatePlace(String roomId, Member member, UpdatePlaceRequest request) {
+	public void updatePlace(String roomId, Long memberId, UpdatePlaceRequest request) {
 		// 회원이 방에 속해있는지 확인
-		memberRoomValidateService.validateAuthorizedMember(member.getId(), roomId);
+		memberRoomValidateService.validateAuthorizedMember(memberId, roomId);
 
 		// 구글 placeId 조회
 		String googlePlaceId = googleService.findGooglePlaceId(request.addressLat(), request.addressLong());
 
 		placeRepository.updatePlace(
-			member.getId(),
+			memberId,
 			request.placeId(),
 			googlePlaceId,
 			request.siDo(),
@@ -103,6 +108,6 @@ public class PlaceService {
 		// 회원이 방에 속해있는지 확인
 		memberRoomValidateService.validateAuthorizedMember(memberId, place.getRoom().getId());
 
-		placeRepository.deleteByIdAndRoom_Id(placeId, place.getRoom().getId());
+		placeRepository.delete(place);
 	}
 }

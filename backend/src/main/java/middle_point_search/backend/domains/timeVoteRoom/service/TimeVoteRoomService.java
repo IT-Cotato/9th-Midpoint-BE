@@ -19,6 +19,8 @@ import middle_point_search.backend.domains.timeVoteRoom.dto.request.CreateTimeVo
 import middle_point_search.backend.domains.timeVoteRoom.dto.request.UpdateTimeVoteRoomRequest;
 import middle_point_search.backend.domains.timeVoteRoom.dto.response.CreateTimeVoteRoomResponse;
 import middle_point_search.backend.domains.timeVoteRoom.dto.response.FindTimeVoteRoomResponse;
+import middle_point_search.backend.domains.timeVoteRoom.repository.MeetingDateRepository;
+import middle_point_search.backend.domains.timeVoteRoom.repository.TimeVoteRepository;
 import middle_point_search.backend.domains.timeVoteRoom.repository.TimeVoteRoomRepository;
 
 @Service
@@ -29,6 +31,8 @@ public class TimeVoteRoomService {
 	private final TimeVoteRoomRepository timeVoteRoomRepository;
 	private final RoomRepository roomRepository;
 	private final MemberRoomValidateService memberRoomValidateService;
+	private final TimeVoteRepository timeVoteRepository;
+	private final MeetingDateRepository meetingDateRepository;
 
 	// 시간 투표방 생성
 	@Transactional(rollbackFor = {CustomException.class})
@@ -50,7 +54,7 @@ public class TimeVoteRoomService {
 		request.dates()
 			.stream()
 			.map(date -> new MeetingDate(timeVoteRoom, date))
-			.forEach(timeVoteRoom::addMeetingDate);
+			.forEach(meetingDateRepository::save);
 
 		return CreateTimeVoteRoomResponse.from(timeVoteRoomRepository.save(timeVoteRoom).getId());
 	}
@@ -65,12 +69,14 @@ public class TimeVoteRoomService {
 		TimeVoteRoom timeVoteRoom = timeVoteRoomRepository.findByRoom_Id(roomId)
 			.orElseThrow(() -> CustomException.from(TIME_VOTE_ROOM_NOT_FOUND));
 
-		timeVoteRoom.resetTimeVoteRoom();
+		// 시간투표방 초기화
+		timeVoteRepository.deleteAllByTimeVoteRoom(timeVoteRoom);
+		meetingDateRepository.deleteAllByTimeVoteRoom(timeVoteRoom);
 
 		request.dates()
 			.stream()
 			.map(date -> new MeetingDate(timeVoteRoom, date))
-			.forEach(timeVoteRoom::addMeetingDate);
+			.forEach(meetingDateRepository::save);
 	}
 
 	// 시간투표방 조회
@@ -80,7 +86,7 @@ public class TimeVoteRoomService {
 
 		return timeVoteRoomRepository.findByRoom_Id(roomId)
 			.map(timeVoteRoom -> {
-				List<LocalDate> dates = timeVoteRoom.getMeetingDates()
+				List<LocalDate> dates = meetingDateRepository.findAllByTimeVoteRoom(timeVoteRoom)
 					.stream()
 					.map(MeetingDate::getDate)
 					.toList();
@@ -88,5 +94,16 @@ public class TimeVoteRoomService {
 				return FindTimeVoteRoomResponse.from(true, dates);
 			})
 			.orElseGet(() -> FindTimeVoteRoomResponse.from(false, null));
+	}
+
+	// 시간투표방 삭제(시간 투표, 만나는 날도 함께 삭제)
+	@Transactional(rollbackFor = {CustomException.class})
+	public void deleteTimeVoteRoomAndAssociatedEntities(String roomId) {
+		timeVoteRoomRepository.findByRoom_Id(roomId)
+				.ifPresent(timeVoteRoom -> {
+					timeVoteRepository.deleteAllByTimeVoteRoom(timeVoteRoom);
+					meetingDateRepository.deleteAllByTimeVoteRoom(timeVoteRoom);
+					timeVoteRoomRepository.delete(timeVoteRoom);
+				});
 	}
 }

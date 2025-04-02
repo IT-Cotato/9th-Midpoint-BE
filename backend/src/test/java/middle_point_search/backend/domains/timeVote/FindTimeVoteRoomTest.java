@@ -22,6 +22,7 @@ import middle_point_search.backend.domains.room.domain.Room;
 import middle_point_search.backend.domains.room.repository.RoomRepository;
 import middle_point_search.backend.domains.timeVoteRoom.domain.MeetingDate;
 import middle_point_search.backend.domains.timeVoteRoom.domain.TimeVoteRoom;
+import middle_point_search.backend.domains.timeVoteRoom.repository.MeetingDateRepository;
 import middle_point_search.backend.domains.timeVoteRoom.repository.TimeVoteRoomRepository;
 
 @DisplayName("시간 투표 방 조회 테스트")
@@ -38,6 +39,8 @@ public class FindTimeVoteRoomTest extends BaseIntegrationTest {
 	private MemberRepository memberRepository;
 	@Autowired
 	private TimeVoteRoomRepository timeVoteRoomRepository;
+	@Autowired
+	private MeetingDateRepository meetingDateRepository;
 
 	@BeforeEach
 	void setUp() throws Exception {
@@ -73,7 +76,7 @@ public class FindTimeVoteRoomTest extends BaseIntegrationTest {
 		LocalDate localDate = LocalDate.now();
 
 		TimeVoteRoom timeVoteRoom = new TimeVoteRoom(room);
-		timeVoteRoom.addMeetingDate(new MeetingDate(timeVoteRoom, localDate));
+		meetingDateRepository.save(new MeetingDate(timeVoteRoom, localDate));
 		timeVoteRoomRepository.save(timeVoteRoom);
 
 		// when
@@ -114,8 +117,8 @@ public class FindTimeVoteRoomTest extends BaseIntegrationTest {
 		LocalDate localDate2 = LocalDate.now().plusDays(1);
 
 		TimeVoteRoom timeVoteRoom = new TimeVoteRoom(room);
-		timeVoteRoom.addMeetingDate(new MeetingDate(timeVoteRoom, localDate1));
-		timeVoteRoom.addMeetingDate(new MeetingDate(timeVoteRoom, localDate2));
+		meetingDateRepository.save(new MeetingDate(timeVoteRoom, localDate1));
+		meetingDateRepository.save(new MeetingDate(timeVoteRoom, localDate2));
 		timeVoteRoomRepository.save(timeVoteRoom);
 
 		// when

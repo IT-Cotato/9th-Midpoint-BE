@@ -60,7 +60,7 @@ public class Place {
 		this.roadNameAddress = roadNameAddress;
 		this.addressLatitude = addressLatitude;
 		this.addressLongitude = addressLongitude;
-		addRoom(room);
+		this.room = room;
 		this.member = member;
 		this.googlePlaceId = googlePlaceId;
 	}
@@ -81,10 +81,5 @@ public class Place {
 			member,
 			googlePlaceId
 		);
-	}
-
-	private void addRoom(Room room) {
-		this.room = room;
-		room.getPlaces().add(this);
 	}
 }

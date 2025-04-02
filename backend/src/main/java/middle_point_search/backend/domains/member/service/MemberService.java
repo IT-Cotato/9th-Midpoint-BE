@@ -35,7 +35,7 @@ import middle_point_search.backend.domains.member.repository.MemberRepository;
 import middle_point_search.backend.domains.member.repository.MemberWithdrawalReasonRepository;
 import middle_point_search.backend.domains.memberRoom.repository.MemberRoomRepository;
 import middle_point_search.backend.domains.place.repository.PlaceRepository;
-import middle_point_search.backend.domains.placeVoteRoom.repository.PlaceVoteCandidateMemberRepository;
+import middle_point_search.backend.domains.placeVoteRoom.repository.PlaceVoteRepository;
 import middle_point_search.backend.domains.refreshToken.service.RefreshTokenService;
 import middle_point_search.backend.domains.s3.S3Service;
 import middle_point_search.backend.domains.s3.dto.response.CreatePreSignedUrlResponse;
@@ -58,7 +58,7 @@ public class MemberService {
 	private final S3Service s3Service;
 	private final MemberRoomRepository memberRoomRepository;
 	private final PlaceRepository placeRepository;
-	private final PlaceVoteCandidateMemberRepository placeVoteCandidateMemberRepository;
+	private final PlaceVoteRepository placeVoteRepository;
 	private final TimeVoteRepository timeVoteRepository;
 	private final MemberWithdrawalReasonRepository memberWithdrawalReasonRepository;
 
@@ -277,7 +277,7 @@ public class MemberService {
 	@Transactional
 	public void deleteMember(Long memberId, DeleteMemberRequest request, String accessToken) {
 		memberRoomRepository.deleteAllByMemberId(memberId);
-		placeVoteCandidateMemberRepository.deleteAllByMemberId(memberId);
+		placeVoteRepository.deleteAllByMemberId(memberId);
 		timeVoteRepository.deleteAllByMemberId(memberId);
 		placeRepository.deleteAllByMemberId(memberId);
 		memberRepository.deleteById(memberId);

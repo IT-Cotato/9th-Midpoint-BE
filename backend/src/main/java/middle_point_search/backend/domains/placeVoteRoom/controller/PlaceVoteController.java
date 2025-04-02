@@ -21,7 +21,6 @@ import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.dto.DataResponse;
 import middle_point_search.backend.common.dto.ErrorResponse;
 import middle_point_search.backend.common.util.MemberLoader;
-import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.placeVoteRoom.dto.request.UpdatePlaceVoteRequest;
 import middle_point_search.backend.domains.placeVoteRoom.dto.request.VotePlaceRequest;
 import middle_point_search.backend.domains.placeVoteRoom.dto.response.FindPlaceVoteResultsResponse;
@@ -137,9 +136,9 @@ public class PlaceVoteController {
 		@PathVariable("roomId") String roomId,
 		@RequestBody @Valid VotePlaceRequest request
 	) {
-		Member member = memberLoader.getMember();
+		Long memberId = memberLoader.getMemberId();
 
-		placeVoteRoomService.votePlace(member, roomId, request);
+		placeVoteRoomService.votePlace(memberId, roomId, request);
 		return ResponseEntity.ok(DataResponse.ok());
 	}
 
@@ -188,9 +187,9 @@ public class PlaceVoteController {
 		@PathVariable("roomId") String roomId,
 		@RequestBody @Valid UpdatePlaceVoteRequest request
 	) {
-		Member member = memberLoader.getMember();
+		Long memberId = memberLoader.getMemberId();
 
-		placeVoteRoomService.updateVote(member, roomId, request);
+		placeVoteRoomService.updateVote(memberId, roomId, request);
 		return ResponseEntity.ok(DataResponse.ok());
 	}
 
@@ -229,9 +228,9 @@ public class PlaceVoteController {
 	public ResponseEntity<DataResponse<FindVotedAndVoteItemResponse>> findVotedAndVoteItem(
 		@PathVariable("roomId") String roomId
 	) {
-		Member member = memberLoader.getMember();
+		Long memberId = memberLoader.getMemberId();
 
-		FindVotedAndVoteItemResponse response = placeVoteRoomService.findVotedAndVoteItem(member, roomId);
+		FindVotedAndVoteItemResponse response = placeVoteRoomService.findVotedAndVoteItem(memberId, roomId);
 		return ResponseEntity.ok(DataResponse.from(response));
 	}
 }

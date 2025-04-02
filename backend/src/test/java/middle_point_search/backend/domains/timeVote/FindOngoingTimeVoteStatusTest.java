@@ -24,6 +24,7 @@ import middle_point_search.backend.domains.room.repository.RoomRepository;
 import middle_point_search.backend.domains.timeVoteRoom.domain.MeetingDate;
 import middle_point_search.backend.domains.timeVoteRoom.domain.TimeVote;
 import middle_point_search.backend.domains.timeVoteRoom.domain.TimeVoteRoom;
+import middle_point_search.backend.domains.timeVoteRoom.repository.MeetingDateRepository;
 import middle_point_search.backend.domains.timeVoteRoom.repository.TimeVoteRepository;
 import middle_point_search.backend.domains.timeVoteRoom.repository.TimeVoteRoomRepository;
 
@@ -44,6 +45,8 @@ public class FindOngoingTimeVoteStatusTest extends BaseIntegrationTest {
 	private TimeVoteRoomRepository timeVoteRoomRepository;
 	@Autowired
 	private TimeVoteRepository timeVoteRepository;
+	@Autowired
+	private MeetingDateRepository meetingDateRepository;
 
 	@BeforeEach
 	void setUp() throws Exception {
@@ -87,7 +90,7 @@ public class FindOngoingTimeVoteStatusTest extends BaseIntegrationTest {
 		// 시간투표 방 생성
 		TimeVoteRoom timeVoteRoom = new TimeVoteRoom(room);
 		MeetingDate meetingDate = new MeetingDate(timeVoteRoom, localDate);
-		timeVoteRoom.addMeetingDate(meetingDate);
+		meetingDateRepository.save(meetingDate);
 		timeVoteRoomRepository.save(timeVoteRoom);
 
 		// 시간투표 생성
@@ -154,7 +157,7 @@ public class FindOngoingTimeVoteStatusTest extends BaseIntegrationTest {
 		// 시간투표 방 생성
 		TimeVoteRoom timeVoteRoom = new TimeVoteRoom(room);
 		MeetingDate meetingDate = new MeetingDate(timeVoteRoom, localDate);
-		timeVoteRoom.addMeetingDate(meetingDate);
+		meetingDateRepository.save(meetingDate);
 		timeVoteRoomRepository.save(timeVoteRoom);
 
 		// 친구 시간투표 생성
@@ -214,7 +217,7 @@ public class FindOngoingTimeVoteStatusTest extends BaseIntegrationTest {
 		// 시간투표 방 생성
 		TimeVoteRoom timeVoteRoom = new TimeVoteRoom(room);
 		MeetingDate meetingDate = new MeetingDate(timeVoteRoom, localDate);
-		timeVoteRoom.addMeetingDate(meetingDate);
+		meetingDateRepository.save(meetingDate);
 		timeVoteRoomRepository.save(timeVoteRoom);
 
 		// when
@@ -257,7 +260,7 @@ public class FindOngoingTimeVoteStatusTest extends BaseIntegrationTest {
 		// 시간투표 방 생성
 		TimeVoteRoom timeVoteRoom = new TimeVoteRoom(room);
 		MeetingDate meetingDate = new MeetingDate(timeVoteRoom, localDate);
-		timeVoteRoom.addMeetingDate(meetingDate);
+		meetingDateRepository.save(meetingDate);
 		timeVoteRoomRepository.save(timeVoteRoom);
 
 		// 시간투표 생성

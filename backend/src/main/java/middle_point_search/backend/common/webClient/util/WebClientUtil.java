@@ -97,7 +97,7 @@ public class WebClientUtil {
 			.onStatus(HttpStatusCode::is4xxClientError, clientResponse ->
 				clientResponse.bodyToMono(String.class)
 					.doOnNext(body -> log.warn("kakao 4xx error body: {}", body))
-					.flatMap(body -> Mono.error(CustomException.from(BAD_REQUEST)))
+					.flatMap(body -> Mono.error(CustomException.from(API_INTERNAL_SERVER_ERROR)))
 			)
 			.onStatus(HttpStatusCode::is5xxServerError, clientResponse ->
 				clientResponse.bodyToMono(String.class)
@@ -121,7 +121,7 @@ public class WebClientUtil {
 			.onStatus(HttpStatusCode::is4xxClientError, clientResponse ->
 				clientResponse.bodyToMono(String.class)
 					.doOnNext(body -> log.warn("google 4xx error body: {}", body))
-					.flatMap(body -> Mono.error(CustomException.from(BAD_REQUEST)))
+					.flatMap(body -> Mono.error(CustomException.from(API_INTERNAL_SERVER_ERROR)))
 			)
 			.onStatus(HttpStatusCode::is5xxServerError, clientResponse ->
 				clientResponse.bodyToMono(String.class)

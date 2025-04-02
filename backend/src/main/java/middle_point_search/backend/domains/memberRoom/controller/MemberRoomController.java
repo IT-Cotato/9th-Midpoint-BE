@@ -19,7 +19,6 @@ import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.dto.DataResponse;
 import middle_point_search.backend.common.dto.ErrorResponse;
 import middle_point_search.backend.common.util.MemberLoader;
-import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.memberRoom.dto.MemberRoomDTO.ExistsMemberRoomResponse;
 import middle_point_search.backend.domains.memberRoom.dto.MemberRoomDTO.FindRoomsByMemberIdResponse;
 import middle_point_search.backend.domains.memberRoom.service.MemberRoomService;
@@ -67,9 +66,9 @@ public class MemberRoomController {
 		}
 	)
 	public ResponseEntity<DataResponse<Void>> saveMemberToRoom(@PathVariable("roomId") String roomId) {
-		Member member = memberLoader.getMember();
+		Long memberId = memberLoader.getMemberId();
 
-		memberRoomService.saveMemberToRoom(member, roomId);
+		memberRoomService.saveMemberToRoom(memberId, roomId);
 
 		return ResponseEntity.ok(DataResponse.ok());
 	}

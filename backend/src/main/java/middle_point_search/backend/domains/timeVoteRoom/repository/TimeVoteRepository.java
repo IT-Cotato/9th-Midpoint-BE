@@ -25,5 +25,7 @@ public interface TimeVoteRepository extends JpaRepository<TimeVote, Long> {
 	// 특정 TimeVoteRoom에 해당하는 투표들을 멥버로 distinct하게 가져온다.
 	@Query("select count(distinct tv.member) from TimeVote tv where tv.timeVoteRoom = :timeVoteRoom")
 	int countByTimeVoteRoomDistinctByMember(TimeVoteRoom timeVoteRoom);
+
+	void deleteAllByTimeVoteRoom(TimeVoteRoom timeVoteRoom);
 }
 

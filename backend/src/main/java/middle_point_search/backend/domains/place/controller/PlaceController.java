@@ -20,7 +20,6 @@ import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.dto.DataResponse;
 import middle_point_search.backend.common.dto.ErrorResponse;
 import middle_point_search.backend.common.util.MemberLoader;
-import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.place.dto.request.SavePlaceRequest;
 import middle_point_search.backend.domains.place.dto.request.UpdatePlaceRequest;
 import middle_point_search.backend.domains.place.dto.response.FindPlacesResponse;
@@ -76,9 +75,9 @@ public class PlaceController {
 		@PathVariable("roomId") String roomId,
 		@RequestBody @Valid SavePlaceRequest request
 	) {
-		Member member = memberLoader.getMember();
+		Long memberId = memberLoader.getMemberId();
 
-		SavePlaceResponse response = placeService.savePlace(roomId, member, request);
+		SavePlaceResponse response = placeService.savePlace(roomId, memberId, request);
 
 		return ResponseEntity.ok(DataResponse.from(response));
 	}
@@ -123,9 +122,9 @@ public class PlaceController {
 		@PathVariable("roomId") String roomId,
 		@RequestBody @Valid UpdatePlaceRequest request
 	) {
-		Member member = memberLoader.getMember();
+		Long memberId = memberLoader.getMemberId();
 
-		placeService.updatePlace(roomId, member, request);
+		placeService.updatePlace(roomId, memberId, request);
 
 		return ResponseEntity.ok(DataResponse.ok());
 	}

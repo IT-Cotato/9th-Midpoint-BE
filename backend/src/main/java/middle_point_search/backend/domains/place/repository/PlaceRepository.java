@@ -13,8 +13,6 @@ public interface PlaceRepository extends JpaRepository<Place, Long> {
 
 	List<Place> findAllByRoom_Id(String roomId);
 
-	void deleteByIdAndRoom_Id(Long placeId, String roomId);
-
 	@Modifying
 	@Query("UPDATE Place p " +
 		"SET p.member.id = :memberId, " +
@@ -37,4 +35,6 @@ public interface PlaceRepository extends JpaRepository<Place, Long> {
 	);
 
 	void deleteAllByMemberId(Long memberId);
+
+	void deleteAllByRoom_Id(String roomId);
 }
