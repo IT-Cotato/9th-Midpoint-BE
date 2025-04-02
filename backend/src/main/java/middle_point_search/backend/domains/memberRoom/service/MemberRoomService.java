@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.exception.CustomException;
 import middle_point_search.backend.domains.member.domain.Member;
+import middle_point_search.backend.domains.member.repository.MemberRepository;
 import middle_point_search.backend.domains.memberRoom.domain.MemberRoom;
 import middle_point_search.backend.domains.memberRoom.dto.MemberRoomDTO.ExistsMemberRoomResponse;
 import middle_point_search.backend.domains.memberRoom.dto.MemberRoomDTO.FindRoomsByMemberIdResponse;
@@ -27,11 +28,13 @@ public class MemberRoomService {
 	private final MemberRoomValidateService memberRoomValidateService;
 	private final RoomRepository roomRepository;
 	private final RoomValidationService roomValidationService;
+	private final MemberRepository memberRepository;
 
 	// 회원방을 DTO로 저장
 	@Transactional(rollbackFor = CustomException.class)
-	public void saveMemberToRoom(Member member, String roomId) {
-		// 방조회
+	public void saveMemberToRoom(Long memberId, String roomId) {
+		Member member = memberRepository.findById(memberId)
+			.orElseThrow(() -> CustomException.from(MEMBER_NOT_FOUND));
 		Room room = roomRepository.findById(roomId)
 			.orElseThrow(() -> CustomException.from(ROOM_NOT_FOUND));
 

@@ -63,7 +63,7 @@ public class UpdateRoomIntegrationTest extends BaseIntegrationTest {
 
 		// 회원1을 방에 등록
 		Member member = memberRepository.findByEmail(member1Email).get();
-		memberRoomService.saveMemberToRoom(member, roomId);
+		memberRoomService.saveMemberToRoom(member.getId(), roomId);
 	}
 
 	@Nested

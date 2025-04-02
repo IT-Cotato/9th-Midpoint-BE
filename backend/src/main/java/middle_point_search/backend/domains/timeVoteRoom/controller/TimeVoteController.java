@@ -19,7 +19,6 @@ import lombok.RequiredArgsConstructor;
 import middle_point_search.backend.common.dto.DataResponse;
 import middle_point_search.backend.common.dto.ErrorResponse;
 import middle_point_search.backend.common.util.MemberLoader;
-import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.timeVoteRoom.dto.request.CreateTimeVoteRequest;
 import middle_point_search.backend.domains.timeVoteRoom.dto.request.UpdateTimeVoteRequest;
 import middle_point_search.backend.domains.timeVoteRoom.dto.response.FindOngoingTimeVoteStatusResponse;
@@ -85,9 +84,9 @@ public class TimeVoteController {
 		@PathVariable String roomId,
 		@RequestBody @Valid CreateTimeVoteRequest request
 	) {
-		Member member = memberLoader.getMember();
+		Long memberId = memberLoader.getMemberId();
 
-		timeVoteRoomService.createTimeVote(member, roomId, request);
+		timeVoteRoomService.createTimeVote(memberId, roomId, request);
 
 		return ResponseEntity.ok(DataResponse.ok());
 	}
@@ -137,9 +136,9 @@ public class TimeVoteController {
 		@PathVariable String roomId,
 		@RequestBody @Valid UpdateTimeVoteRequest request
 	) {
-		Member member = memberLoader.getMember();
+		Long memberId = memberLoader.getMemberId();
 
-		timeVoteRoomService.updateTimeVote(member, roomId, request);
+		timeVoteRoomService.updateTimeVote(memberId, roomId, request);
 
 		return ResponseEntity.ok(DataResponse.ok());
 	}
@@ -183,9 +182,9 @@ public class TimeVoteController {
 	public ResponseEntity<DataResponse<FindOngoingTimeVoteStatusResponse>> findOngoingTimeVoteStatus(
 		@PathVariable String roomId
 	) {
-		Member member = memberLoader.getMember();
+		Long memberId = memberLoader.getMemberId();
 
-		FindOngoingTimeVoteStatusResponse response = timeVoteRoomService.findOngoingTimeVoteStatus(member, roomId);
+		FindOngoingTimeVoteStatusResponse response = timeVoteRoomService.findOngoingTimeVoteStatus(memberId, roomId);
 
 		return ResponseEntity.ok(DataResponse.from(response));
 	}
