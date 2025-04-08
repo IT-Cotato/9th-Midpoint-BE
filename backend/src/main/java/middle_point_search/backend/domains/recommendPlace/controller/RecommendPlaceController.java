@@ -1,7 +1,6 @@
 package middle_point_search.backend.domains.recommendPlace.controller;
 
 import org.springdoc.core.annotations.ParameterObject;
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -18,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import middle_point_search.backend.common.dto.DataResponse;
 import middle_point_search.backend.common.dto.ErrorResponse;
+import middle_point_search.backend.common.dto.PageResponse;
 import middle_point_search.backend.domains.recommendPlace.dto.request.RecommendPlacesFindRequest;
 import middle_point_search.backend.domains.recommendPlace.dto.response.FindRecommendPlacesResponse;
 import middle_point_search.backend.domains.recommendPlace.service.RecommendPlaceService;
@@ -66,10 +66,10 @@ public class RecommendPlaceController {
 			)
 		}
 	)
-	public ResponseEntity<DataResponse<Page<FindRecommendPlacesResponse>>> findRecommendPlaces(
+	public ResponseEntity<DataResponse<PageResponse<FindRecommendPlacesResponse>>> findRecommendPlaces(
 		@Valid @ModelAttribute @ParameterObject RecommendPlacesFindRequest request
 	) {
-		Page<FindRecommendPlacesResponse> recommendPlaces = recommendPlaceService.findRecommendPlaces(request);
+		PageResponse<FindRecommendPlacesResponse> recommendPlaces = recommendPlaceService.findRecommendPlaces(request);
 
 		return ResponseEntity.ok(DataResponse.from(recommendPlaces));
 	}
