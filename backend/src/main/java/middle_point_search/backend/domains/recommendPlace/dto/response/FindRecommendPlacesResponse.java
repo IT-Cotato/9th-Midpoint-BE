@@ -3,23 +3,25 @@ package middle_point_search.backend.domains.recommendPlace.dto.response;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import middle_point_search.backend.domains.market.domain.PlaceStandard;
 import middle_point_search.backend.domains.recommendPlace.dto.response.KakaoSearchResponse.Document;
 
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class FindRecommendPlacesResponse implements Comparable<FindRecommendPlacesResponse> {
 
-	private final String name;
-	private final String siDo;
-	private final String siGunGu;
-	private final String roadNameAddress;
-	private final Double addressLat;
-	private final Double addressLong;
-	private final String phoneNumber;
-	private final String placeUrl;
-	private final PlaceStandard placeStandard;
-	private final String distance;
+	private String name;
+	private String siDo;
+	private String siGunGu;
+	private String roadNameAddress;
+	private Double addressLat;
+	private Double addressLong;
+	private String phoneNumber;
+	private String placeUrl;
+	private PlaceStandard placeStandard;
+	private String distance;
 
 	public static FindRecommendPlacesResponse from(Document document, PlaceStandard placeStandard) {
 

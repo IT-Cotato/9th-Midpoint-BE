@@ -5,7 +5,7 @@ on:
     branches: [ "develop", "master" ]
 
 jobs:
-  build:
+  build-deploy:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -24,6 +24,9 @@ jobs:
         touch ./backend/src/main/resources/application-common.properties
         echo "${{ secrets.COMMON_PROPERTIES }}" > ./backend/src/main/resources/application-common.properties
 
+        touch ./backend/src/main/resources/application-ci.properties
+        echo "${{ secrets.CI_PROPERTIES }}" > ./backend/src/main/resources/application-ci.properties
+
     # ✅ 환경별 application-main.properties 또는 application-dev.properties 설정
     - run: |
         if [[ "${{ github.ref }}" == "refs/heads/master" ]]; then
@@ -39,62 +42,77 @@ jobs:
 
     - name: Set Gradle Wrapper executable permission
       run: chmod +x ./backend/gradlew
+      
+    - name: Run tests with CI profile
+      run: cd backend/ && ./gradlew test -Dspring.profiles.active=ci,common
 
     - name: Build with Gradle Wrapper
       run: cd backend/ && ./gradlew build
 
-    - name: Upload build artifact
-      uses: actions/upload-artifact@v4
+    - name: Copy to DEV EC2
+      if: github.ref == 'refs/heads/develop'
+      uses: appleboy/scp-action@v0.1.4
       with:
-        name: backend
-        path: ./backend/build/libs/backend-0.0.1-SNAPSHOT.jar
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Download build artifact
-      uses: actions/download-artifact@v4
+        host: ${{ secrets.DEV_EC2_HOST }}
+        username: ${{ secrets.EC2_USERNAME }}
+        key: ${{ secrets.DEV_EC2_PEM }}
+        port: 22
+        source: ./build/libs/*.jar
+        target: /home/ubuntu/
+    - name: Copy to MAIN EC2
+      if: github.ref == 'refs/heads/master'
+      uses: appleboy/scp-action@v0.1.4
       with:
-        name: backend
-        path: ./backend/build/libs/
+        host: ${{ secrets.MAIN_EC2_HOST }}
+        username: ${{ secrets.EC2_USERNAME }}
+        key: ${{ secrets.MAIN_EC2_PEM }}
+        port: 22
+        source: ./build/libs/*.jar
+        target: /home/ubuntu/
 
-    - name: Deploy to EC2
-      run: |
-        if [[ "${{ github.ref }}" == "refs/heads/master" ]]; then
-          echo "${{ secrets.MAIN_EC2_PEM }}" > sync_spot.pem
-          scp_host="${{ secrets.MAIN_EC2_HOST }}"
-          profile="common,main"
-        else
-          echo "${{ secrets.DEV_EC2_PEM }}" > sync_spot.pem
-          scp_host="${{ secrets.DEV_EC2_HOST }}"
-          profile="common,dev"
-        fi
-
-        chmod 600 sync_spot.pem
-
-        # ✅ SSH 연결 테스트 (연결 실패 시 종료)
-        echo "Testing SSH connection to $scp_host..."
-        ssh -i sync_spot.pem -o StrictHostKeyChecking=no -o ConnectTimeout=10 ${{ secrets.EC2_USERNAME }}@$scp_host "echo 'SSH connection successful.'" || { echo "SSH connection failed"; exit 255; }
-
-        # ✅ 기존 실행 중인 프로세스를 안전하게 종료
-        echo "Stopping existing Java process on EC2..."
-        ssh -i sync_spot.pem -o StrictHostKeyChecking=no -o ServerAliveInterval=60 ${{ secrets.EC2_USERNAME }}@$scp_host "
-          if pgrep java; then pkill -9 -f 'java'; echo 'Process stopped'; else echo 'No Java process found'; fi
-        "
-
-        # ✅ 빌드된 JAR 파일 배포 (디버깅 모드 추가)
-        echo "Uploading new application..."
-        scp -v -i sync_spot.pem -o StrictHostKeyChecking=no -o ConnectTimeout=30 -o ServerAliveInterval=60 \
-          ./backend/build/libs/backend-0.0.1-SNAPSHOT.jar \
-          ${{ secrets.EC2_USERNAME }}@$scp_host:/home/${{ secrets.EC2_USERNAME }}/backend-0.0.1-SNAPSHOT.jar
-
-        # ✅ 새 애플리케이션 실행 (SSH 세션 안정성 확보)
-        echo "Starting new application..."
-        ssh -i sync_spot.pem -o StrictHostKeyChecking=no -o ServerAliveInterval=60 ${{ secrets.EC2_USERNAME }}@$scp_host "
-          nohup java -jar /home/${{ secrets.EC2_USERNAME }}/backend-0.0.1-SNAPSHOT.jar --spring.profiles.active=$profile > /dev/null 2>&1 & disown
-        "
-
-        # ✅ SSH 키 파일 삭제
-        rm -f sync_spot.pem
+    # ✅ develop 브랜치: DEV 서버에 스크립트 복사 및 실행
+    - name: Copy deploy script file to DEV EC2
+      if: github.ref == 'refs/heads/develop'
+      uses: appleboy/scp-action@v0.1.4
+      with:
+        username: ec2-user
+        host: ${{ secrets.DEV_EC2_HOST }}
+        key: ${{ secrets.DEV_EC2_PEM }}
+        source: ".github/workflows/deploy.sh"
+        target: "/home/ubuntu/cicd"
+    
+    - name: Execute deploy script on DEV EC2
+      if: github.ref == 'refs/heads/develop'
+      uses: appleboy/ssh-action@v0.1.10
+      with:
+        username: ec2-user
+        host: ${{ secrets.DEV_EC2_HOST }}
+        key: ${{ secrets.DEV_EC2_PEM }}
+        script_stop: true
+        script: |
+          chmod +x /home/ubuntu/cicd/deploy.sh
+          sh /home/ubuntu/cicd/deploy.sh
+    
+    
+    # ✅ master 브랜치: MAIN 서버에 스크립트 복사 및 실행
+    - name: Copy deploy script file to MAIN EC2
+      if: github.ref == 'refs/heads/master'
+      uses: appleboy/scp-action@v0.1.4
+      with:
+        username: ec2-user
+        host: ${{ secrets.MAIN_EC2_HOST }}
+        key: ${{ secrets.MAIN_EC2_PEM }}
+        source: ".github/workflows/deploy.sh"
+        target: "/home/ubuntu/cicd"
+    
+    - name: Execute deploy script on MAIN EC2
+      if: github.ref == 'refs/heads/master'
+      uses: appleboy/ssh-action@v0.1.10
+      with:
+        username: ec2-user
+        host: ${{ secrets.MAIN_EC2_HOST }}
+        key: ${{ secrets.MAIN_EC2_PEM }}
+        script_stop: true
+        script: |
+          chmod +x /home/ubuntu/cicd/deploy.sh
+          sh /home/ubuntu/cicd/deploy.sh

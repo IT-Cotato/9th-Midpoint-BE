@@ -5,7 +5,7 @@ import static java.nio.charset.StandardCharsets.*;
 import java.net.URLEncoder;
 import java.util.Collections;
 
-import org.springframework.data.domain.Page;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -16,6 +16,7 @@ import org.springframework.util.MultiValueMap;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import middle_point_search.backend.common.dto.PageResponse;
 import middle_point_search.backend.common.exception.CustomException;
 import middle_point_search.backend.common.exception.errorCode.CommonErrorCode;
 import middle_point_search.backend.common.properties.KakaoProperties;
@@ -23,9 +24,9 @@ import middle_point_search.backend.common.webClient.util.WebClientUtil;
 import middle_point_search.backend.domains.market.domain.PlaceStandard;
 import middle_point_search.backend.domains.recommendPlace.dto.KakaoRequestDTO;
 import middle_point_search.backend.domains.recommendPlace.dto.request.RecommendPlacesFindRequest;
+import middle_point_search.backend.domains.recommendPlace.dto.response.FindRecommendPlacesResponse;
 import middle_point_search.backend.domains.recommendPlace.dto.response.KakaoSearchResponse;
 import middle_point_search.backend.domains.recommendPlace.dto.response.RecommendPlacesDto;
-import middle_point_search.backend.domains.recommendPlace.dto.response.FindRecommendPlacesResponse;
 
 @Slf4j
 @Service
@@ -38,7 +39,11 @@ public class RecommendPlaceService {
 	private final WebClientUtil webClientUtil;
 
 	// 키워드로 주위 장소 조회
-	public Page<FindRecommendPlacesResponse> findRecommendPlaces(RecommendPlacesFindRequest request) {
+	@Cacheable(
+		cacheNames = "dayTermCache",
+		key = "'recommend-places:log:' + #request.addressLong + ':lat:' + #request.addressLat +':place-standard:' + #request.placeStandard"
+	)
+	public PageResponse<FindRecommendPlacesResponse> findRecommendPlaces(RecommendPlacesFindRequest request) {
 		String x = request.getAddressLong().toString();
 		String y = request.getAddressLat().toString();
 		int page = request.getPage();
@@ -49,10 +54,10 @@ public class RecommendPlaceService {
 
 		RecommendPlacesDto response = checkPlaceStandardAndGetResponse(request, kakaoRequestDTO);
 
-		return new PageImpl<>(
+		return PageResponse.from(new PageImpl<>(
 			response.getRecommendPlaces(),
 			pageable,
-			response.getPageableCount());
+			response.getPageableCount()));
 	}
 
 	//PlaceStandard에 따라 KakaoSearchResponse를 가져오는 메서드
