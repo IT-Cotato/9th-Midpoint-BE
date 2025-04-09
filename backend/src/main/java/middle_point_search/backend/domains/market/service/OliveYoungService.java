@@ -65,8 +65,6 @@ public class OliveYoungService {
 		KakaoSearchResponse response = searchOliveYoungMetaOnly(x1, y1, x2, y2);
 		int totalCount = response.getMeta().getTotal_count();
 
-		System.out.println("x1: " + x1 + ", y1: " + y1 + ", x2: " + x2 + ", y2: " + y2 + ", totalCount: " + totalCount);
-
 		if (totalCount <= 45) {
 			// 데이터가 많지 않으면 전체 페이지를 돌며 실제 데이터 수집
 			results.addAll(searchOliveYoungFromKakao(x1, y1, x2, y2));
