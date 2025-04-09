@@ -4,6 +4,7 @@ import static middle_point_search.backend.common.exception.errorCode.CommonError
 
 import java.util.List;
 
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -15,14 +16,12 @@ import middle_point_search.backend.domains.market.dto.dto.StationDto;
 @RequiredArgsConstructor
 public class StationService {
 
-	// 모든 지하철역 위치 알아오기
 	public List<StationDto> getAllStations() {
-		// 역 데이터 위치
-		final String stationFilePath = "src/main/resources/static/stationData/stations_2025_03_30.xlsx";
-
-		List<StationDto> stations;
 		try {
-			stations = ExcelUtil.parseExcelFile(stationFilePath)
+			// JAR 내 리소스 접근
+			ClassPathResource resource = new ClassPathResource("static/stationData/stations_2025_03_30.xlsx");
+
+			List<StationDto> stations = ExcelUtil.parseExcelFile(resource.getInputStream())
 				.stream()
 				.map(row -> {
 					String name = row.get("Station Name (Korean)");
@@ -35,10 +34,9 @@ public class StationService {
 				.distinct()
 				.toList();
 
+			return stations;
 		} catch (Exception e) {
 			throw CustomException.from(FILE_IO_ERROR);
 		}
-
-		return stations;
 	}
 }

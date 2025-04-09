@@ -28,9 +28,8 @@ public class MarketServiceImpl2 implements MarketService {
 	@Override
 	@Transactional
 	public void updateMarket() {
-
-		List<OliveYoungDto> oliveYoungs = oliveYoungService.getAllOliveYoung();
 		List<StationDto> stations = stationService.getAllStations();
+		List<OliveYoungDto> oliveYoungs = oliveYoungService.getAllOliveYoung();
 
 		List<Market> markets = new ArrayList<>();
 		Set<String> usedOliveYoung = new HashSet<>();

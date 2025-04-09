@@ -1,7 +1,5 @@
 package middle_point_search.backend.common.util;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,11 +16,9 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 public class ExcelUtil {
 
 	// 엑셀 파일을 파싱하여 데이터 리스트로 반환하는 메서드
-	public static List<Map<String, String>> parseExcelFile(String filePath) throws Exception {
+	public static List<Map<String, String>> parseExcelFile(InputStream is) throws Exception {
 		List<Map<String, String>> rows = new ArrayList<>();
-		try (InputStream is = new FileInputStream(new File(filePath));
-			 Workbook workbook = new XSSFWorkbook(is)) {
-
+		try (Workbook workbook = new XSSFWorkbook(is)) {
 			Sheet sheet = workbook.getSheetAt(0);
 			Row headerRow = sheet.getRow(0);
 			List<String> headers = new ArrayList<>();
