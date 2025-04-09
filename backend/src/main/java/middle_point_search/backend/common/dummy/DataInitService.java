@@ -15,7 +15,7 @@ import middle_point_search.backend.common.dummy.dto.MemberDummyDto;
 import middle_point_search.backend.common.dummy.dto.MemberRoomDummyDto;
 import middle_point_search.backend.common.dummy.dto.PlaceDummyDto;
 import middle_point_search.backend.common.dummy.dto.PlaceVoteCandidateDummyDto;
-import middle_point_search.backend.common.dummy.dto.PlaceVoteCandidateMemberDummyDto;
+import middle_point_search.backend.common.dummy.dto.PlaceVoteDummyDto;
 import middle_point_search.backend.common.dummy.dto.PlaceVoteRoomDummyDto;
 import middle_point_search.backend.common.dummy.dto.RoomDummyDto;
 import middle_point_search.backend.common.dummy.dto.TimeVoteDummyDto;
@@ -108,7 +108,7 @@ public class DataInitService {
 	public void initializePlaceVote() {
 		initializePlaceVoteRoom(); // Room 필요
 		initializePlaceVoteCandidateData(); // PlaceVoteRoom 필요
-		initializePlaceVoteCandidateMemberData(); // Member, PlaceVoteCandidate 필요
+		initializePlaceVoteData(); // Member, PlaceVoteCandidate 필요
 	}
 
 	// PlaceVoteRoom 더미데이터 초기화
@@ -149,17 +149,17 @@ public class DataInitService {
 	}
 
 	// PlaceVoteCandidateMember 더미데이터 초기화
-	private void initializePlaceVoteCandidateMemberData() {
+	private void initializePlaceVoteData() {
 		// PlaceVoteCandidateMembers 생성
-		List<PlaceVoteCandidateMemberDummyDto>	placeVoteCandidateMembers = new ArrayList<>();
+		List<PlaceVoteDummyDto>	placeVotes = new ArrayList<>();
 		for (int i = 1; i <= DummyDataConstant.PLACE_VOTE_CANDIDATE_MEMBER_COUNT.count; i++) {
-			PlaceVoteCandidateMemberDummyDto placeVoteCandidateMember = new PlaceVoteCandidateMemberDummyDto(
+			PlaceVoteDummyDto placeVote = new PlaceVoteDummyDto(
 				(long)i, // memberId
 				(long)i // placeVoteCandidateId
 			);
-			placeVoteCandidateMembers.add(placeVoteCandidateMember);
+			placeVotes.add(placeVote);
 		}
-		jdbcRepository.saveAllPlaceVoteCandidateMembers(placeVoteCandidateMembers);
+		jdbcRepository.saveAllPlaceMembers(placeVotes);
 	}
 
 	// TimeVoteRoom, MeetingDate, TimeVote 더미데이터 초기화

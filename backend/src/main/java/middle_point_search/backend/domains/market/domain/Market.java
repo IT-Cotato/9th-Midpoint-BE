@@ -25,7 +25,14 @@ public class Market {
 	@Column(nullable = false)
 	private String name;
 
-	private String address;
+	@Column(nullable = false)
+	private String siGunGu;
+
+	@Column(nullable = false)
+	private String siDo;
+
+	@Column(nullable = false)
+	private String roadNameAddress;
 
 	@Column(nullable = false)
 	private Double addressLatitude;
@@ -36,12 +43,16 @@ public class Market {
 	@Builder
 	public Market(
 		String name,
-		String address,
+		String siDo,
+		String siGunGu,
+		String roadNameAddress,
 		Double addressLatitude,
 		Double addressLongitude
 	) {
 		this.name = name;
-		this.address = address;
+		this.siDo = siDo;
+		this.siGunGu = siGunGu;
+		this.roadNameAddress = roadNameAddress;
 		this.addressLatitude = addressLatitude;
 		this.addressLongitude = addressLongitude;
 	}

@@ -20,7 +20,7 @@ import middle_point_search.backend.domains.member.domain.Member;
 public class PlaceVote {
 
 	@Id
-	@Column(name = "place_vote_candidate_member_id")
+	@Column(name = "place_vote_id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 

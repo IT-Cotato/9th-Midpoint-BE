@@ -14,7 +14,7 @@ import middle_point_search.backend.common.dummy.dto.MemberDummyDto;
 import middle_point_search.backend.common.dummy.dto.MemberRoomDummyDto;
 import middle_point_search.backend.common.dummy.dto.PlaceDummyDto;
 import middle_point_search.backend.common.dummy.dto.PlaceVoteCandidateDummyDto;
-import middle_point_search.backend.common.dummy.dto.PlaceVoteCandidateMemberDummyDto;
+import middle_point_search.backend.common.dummy.dto.PlaceVoteDummyDto;
 import middle_point_search.backend.common.dummy.dto.PlaceVoteRoomDummyDto;
 import middle_point_search.backend.common.dummy.dto.RoomDummyDto;
 import middle_point_search.backend.common.dummy.dto.TimeVoteDummyDto;
@@ -127,14 +127,14 @@ public class JDBCRepository {
 	}
 
 	// 모든 PlaceVoteCandidateMember bulk 저장
-	public void saveAllPlaceVoteCandidateMembers(List<PlaceVoteCandidateMemberDummyDto> placeVoteCandidateMembers) {
-		String sql = "INSERT INTO place_vote_candidate_member (member_id, place_vote_candidate_id) " +
+	public void saveAllPlaceMembers(List<PlaceVoteDummyDto> placeVoteMembers) {
+		String sql = "INSERT INTO place_vote (member_id, place_vote_candidate_id) " +
 			"VALUES (?, ?)";
 
 		jdbcTemplate.batchUpdate(sql,
-			placeVoteCandidateMembers,
-			placeVoteCandidateMembers.size(),
-			(PreparedStatement ps, PlaceVoteCandidateMemberDummyDto placeVoteCandidateMember) -> {
+			placeVoteMembers,
+			placeVoteMembers.size(),
+			(PreparedStatement ps, PlaceVoteDummyDto placeVoteCandidateMember) -> {
 				ps.setLong(1, placeVoteCandidateMember.memberId());
 				ps.setLong(2, placeVoteCandidateMember.placeVoteCandidateId());
 			});

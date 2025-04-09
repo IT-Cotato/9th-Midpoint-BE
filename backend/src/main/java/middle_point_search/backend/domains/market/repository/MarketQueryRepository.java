@@ -18,17 +18,20 @@ public class MarketQueryRepository {
 
 	@Transactional
 	public void saveAll(List<Market> markets) {
-		String sql = "INSERT INTO market (name, address, address_latitude, address_longitude) " +
-			"VALUES (?, ?, ?, ?)";
+		String sql = "INSERT INTO market (name, si_do, si_gun_gu, road_name_address, address_latitude, address_longitude) "
+			+
+			"VALUES (?, ?, ?, ?, ?, ?)";
 
 		jdbcTemplate.batchUpdate(sql,
 			markets,
 			markets.size(),
 			(PreparedStatement ps, Market market) -> {
 				ps.setString(1, market.getName());
-				ps.setString(2, market.getAddress());
-				ps.setDouble(3, market.getAddressLatitude());
-				ps.setDouble(4, market.getAddressLongitude());
+				ps.setString(2, market.getSiDo());
+				ps.setString(3, market.getSiGunGu());
+				ps.setString(4, market.getRoadNameAddress());
+				ps.setDouble(5, market.getAddressLatitude());
+				ps.setDouble(6, market.getAddressLongitude());
 			});
 	}
 }
