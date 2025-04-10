@@ -62,6 +62,6 @@ public class MarketServiceImpl2 implements MarketService {
 		double distance = Math.sqrt(
 			Math.pow(station.latitude() - olive.latitude(), 2) + Math.pow(station.longitude() - olive.longitude(), 2)
 		);
-		return distance < 0.05;
+		return distance < 0.006;
 	}
 }
