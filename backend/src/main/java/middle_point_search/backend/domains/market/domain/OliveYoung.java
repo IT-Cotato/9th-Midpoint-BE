@@ -1,5 +1,6 @@
 package middle_point_search.backend.domains.market.domain;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -15,6 +16,7 @@ import lombok.NoArgsConstructor;
 public class OliveYoung {
 
 	@Id
+	@Column(name = "olive_young_id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
