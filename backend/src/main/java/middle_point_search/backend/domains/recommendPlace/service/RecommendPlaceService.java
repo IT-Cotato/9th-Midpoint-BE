@@ -41,7 +41,7 @@ public class RecommendPlaceService {
 	// 키워드로 주위 장소 조회
 	@Cacheable(
 		cacheNames = "dayTermCache",
-		key = "'recommend-places:log:' + #request.addressLong + ':lat:' + #request.addressLat +':place-standard:' + #request.placeStandard"
+		key = "'recommend-places:log:' + #request.addressLong + ':lat:' + #request.addressLat +':place-standard:' + #request.placeStandard + ':page:' + #request.page"
 	)
 	public PageResponse<FindRecommendPlacesResponse> findRecommendPlaces(RecommendPlacesFindRequest request) {
 		String x = request.getAddressLong().toString();
