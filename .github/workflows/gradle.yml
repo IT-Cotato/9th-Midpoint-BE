@@ -22,10 +22,10 @@ jobs:
     # ✅ 공통 application-common.properties 생성
     - run: |
         touch ./backend/src/main/resources/application-common.properties
-        echo "${{ secrets.COMMON_PROPERTIES }}" > ./backend/src/main/resources/application-common.properties
+        echo -e "${{ secrets.COMMON_PROPERTIES }}" > ./backend/src/main/resources/application-common.properties
 
         touch ./backend/src/main/resources/application-ci.properties
-        echo "${{ secrets.TEST_PROPERTIES }}" > ./backend/src/main/resources/application-test.properties
+        echo -e "${{ secrets.TEST_PROPERTIES }}" > ./backend/src/main/resources/application-test.properties
 
     # ✅ 환경별 application-main.properties 또는 application-dev.properties 설정
     - run: |
