@@ -25,7 +25,7 @@ jobs:
         echo "${{ secrets.COMMON_PROPERTIES }}" > ./backend/src/main/resources/application-common.properties
 
         touch ./backend/src/main/resources/application-ci.properties
-        echo "${{ secrets.CI_PROPERTIES }}" > ./backend/src/main/resources/application-ci.properties
+        echo "${{ secrets.TEST_PROPERTIES }}" > ./backend/src/main/resources/application-test.properties
 
     # ✅ 환경별 application-main.properties 또는 application-dev.properties 설정
     - run: |
@@ -44,7 +44,7 @@ jobs:
       run: chmod +x ./backend/gradlew
       
     - name: Run tests with CI profile
-      run: cd backend/ && ./gradlew test -Dspring.profiles.active=ci,common
+      run: cd backend/ && ./gradlew test -Dspring.profiles.active=test,common
 
     - name: Build with Gradle Wrapper
       run: cd backend/ && ./gradlew build
