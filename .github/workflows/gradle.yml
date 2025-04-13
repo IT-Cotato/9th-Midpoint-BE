@@ -48,12 +48,11 @@ jobs:
     - name: Set Gradle Wrapper executable permission
       run: chmod +x ./backend/gradlew
       
-    # - name: Run tests with CI profile
-    #   run: cd backend/ && ./gradlew test -Dspring.profiles.active=test,common
+    - name: Run tests with CI profile
+      run: cd backend/ && ./gradlew test -Dspring.profiles.active=test,common
 
     - name: Build with Gradle Wrapper
-      # run: cd backend/ && ./gradlew build
-      run: cd backend/ && ./gradlew bootJar
+      run: cd backend/ && ./gradlew build
 
     - name: Copy to DEV EC2
       if: github.ref == 'refs/heads/develop'
