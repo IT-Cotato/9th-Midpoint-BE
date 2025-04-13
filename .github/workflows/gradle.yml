@@ -80,7 +80,7 @@ jobs:
       if: github.ref == 'refs/heads/develop'
       uses: appleboy/scp-action@v0.1.4
       with:
-        username: ec2-user
+        username: ${{ secrets.EC2_USERNAME }}
         host: ${{ secrets.DEV_EC2_HOST }}
         key: ${{ secrets.DEV_EC2_PEM }}
         source: ".github/workflows/deploy.sh"
@@ -90,7 +90,7 @@ jobs:
       if: github.ref == 'refs/heads/develop'
       uses: appleboy/ssh-action@v0.1.10
       with:
-        username: ec2-user
+        username: ${{ secrets.EC2_USERNAME }}
         host: ${{ secrets.DEV_EC2_HOST }}
         key: ${{ secrets.DEV_EC2_PEM }}
         script_stop: true
@@ -104,7 +104,7 @@ jobs:
       if: github.ref == 'refs/heads/master'
       uses: appleboy/scp-action@v0.1.4
       with:
-        username: ec2-user
+        username: ${{ secrets.EC2_USERNAME }}
         host: ${{ secrets.MAIN_EC2_HOST }}
         key: ${{ secrets.MAIN_EC2_PEM }}
         source: ".github/workflows/deploy.sh"
@@ -114,7 +114,7 @@ jobs:
       if: github.ref == 'refs/heads/master'
       uses: appleboy/ssh-action@v0.1.10
       with:
-        username: ec2-user
+        username: ${{ secrets.EC2_USERNAME }}
         host: ${{ secrets.MAIN_EC2_HOST }}
         key: ${{ secrets.MAIN_EC2_PEM }}
         script_stop: true
