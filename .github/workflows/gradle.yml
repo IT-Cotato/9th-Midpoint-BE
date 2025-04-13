@@ -85,6 +85,7 @@ jobs:
         key: ${{ secrets.DEV_EC2_PEM }}
         source: ".github/workflows/deploy.sh"
         target: "/home/ubuntu/cicd"
+        strip_components: 2
     
     - name: Execute deploy script on DEV EC2
       if: github.ref == 'refs/heads/develop'
@@ -109,6 +110,7 @@ jobs:
         key: ${{ secrets.MAIN_EC2_PEM }}
         source: ".github/workflows/deploy.sh"
         target: "/home/ubuntu/cicd"
+        strip_components: 2
     
     - name: Execute deploy script on MAIN EC2
       if: github.ref == 'refs/heads/master'
