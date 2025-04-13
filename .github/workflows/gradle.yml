@@ -19,6 +19,11 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
+    - name: Start Redis
+      uses: supercharge/redis-github-action@1.1.0
+      with:
+        redis-version: 6
+
     # ✅ 공통 application-common.properties 생성
     - run: |
         touch ./backend/src/main/resources/application-common.properties
