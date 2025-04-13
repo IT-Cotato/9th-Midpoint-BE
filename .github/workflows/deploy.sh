@@ -12,5 +12,5 @@
  JAR_PATH=$(ls -t /home/ubuntu/cicd/*.jar | grep -v 'plain.jar' | head -n 1)
  echo "jar path : $JAR_PATH"
  chmod +x $JAR_PATH
- nohup java -jar $JAR_PATH > /dev/null 2> /dev/null < /dev/null &
+ nohup java -jar $JAR_PATH 1> /dev/null 2>&1 &
  echo "jar fild deploy success"
