@@ -86,7 +86,7 @@ jobs:
         username: ${{ secrets.EC2_USERNAME }}
         host: ${{ secrets.DEV_EC2_HOST }}
         key: ${{ secrets.DEV_EC2_PEM }}
-        source: ".github/workflows/deploy.sh"
+        source: ".github/workflows/deploy_dev.sh"
         target: "/home/ubuntu/cicd"
         strip_components: 2
     
@@ -99,8 +99,8 @@ jobs:
         key: ${{ secrets.DEV_EC2_PEM }}
         script_stop: true
         script: |
-          chmod +x /home/ubuntu/cicd/deploy.sh
-          sh /home/ubuntu/cicd/deploy.sh
+          chmod +x /home/ubuntu/cicd/deploy_dev.sh
+          sh /home/ubuntu/cicd/deploy_dev.sh
     
     
     # ✅ master 브랜치: MAIN 서버에 스크립트 복사 및 실행
@@ -111,7 +111,7 @@ jobs:
         username: ${{ secrets.EC2_USERNAME }}
         host: ${{ secrets.MAIN_EC2_HOST }}
         key: ${{ secrets.MAIN_EC2_PEM }}
-        source: ".github/workflows/deploy.sh"
+        source: ".github/workflows/deploy_main.sh"
         target: "/home/ubuntu/cicd"
         strip_components: 2
     
@@ -124,5 +124,5 @@ jobs:
         key: ${{ secrets.MAIN_EC2_PEM }}
         script_stop: true
         script: |
-          chmod +x /home/ubuntu/cicd/deploy.sh
-          sh /home/ubuntu/cicd/deploy.sh
+          chmod +x /home/ubuntu/cicd/deploy_main.sh
+          sh /home/ubuntu/cicd/deploy_main.sh
