@@ -62,7 +62,7 @@ jobs:
         username: ${{ secrets.EC2_USERNAME }}
         key: ${{ secrets.DEV_EC2_PEM }}
         port: 22
-        source: ./build/libs/*.jar
+        source: ./backend/build/libs/*.jar
         target: /home/ubuntu/
     - name: Copy to MAIN EC2
       if: github.ref == 'refs/heads/master'
@@ -72,7 +72,7 @@ jobs:
         username: ${{ secrets.EC2_USERNAME }}
         key: ${{ secrets.MAIN_EC2_PEM }}
         port: 22
-        source: ./build/libs/*.jar
+        source: ./backend/build/libs/*.jar
         target: /home/ubuntu/
 
     # ✅ develop 브랜치: DEV 서버에 스크립트 복사 및 실행
