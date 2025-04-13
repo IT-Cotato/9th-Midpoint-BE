@@ -63,7 +63,7 @@ jobs:
         key: ${{ secrets.DEV_EC2_PEM }}
         port: 22
         source: ./backend/build/libs/*.jar
-        target: /home/ubuntu/
+        target: /home/ubuntu/cicd
         strip_components: 3
     - name: Copy to MAIN EC2
       if: github.ref == 'refs/heads/master'
@@ -74,7 +74,7 @@ jobs:
         key: ${{ secrets.MAIN_EC2_PEM }}
         port: 22
         source: ./backend/build/libs/*.jar
-        target: /home/ubuntu/
+        target: /home/ubuntu/cicd
         strip_components: 3
 
     # ✅ develop 브랜치: DEV 서버에 스크립트 복사 및 실행
