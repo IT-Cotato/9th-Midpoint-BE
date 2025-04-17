@@ -23,6 +23,7 @@ import middle_point_search.backend.domains.placeVoteRoom.repository.PlaceVoteRep
 import middle_point_search.backend.domains.placeVoteRoom.repository.PlaceVoteRoomRepository;
 import middle_point_search.backend.domains.room.domain.Room;
 import middle_point_search.backend.domains.room.repository.RoomRepository;
+import middle_point_search.backend.domains.room.service.RoomValidationService;
 
 @Service
 @RequiredArgsConstructor
@@ -34,6 +35,7 @@ public class PlaceVoteRoomService {
 	private final MemberRoomValidateService memberRoomValidateService;
 	private final PlaceVoteRepository placeVoteRepository;
 	private final PlaceVoteCandidateRepository placeVoteCandidateRepository;
+	private final RoomValidationService roomValidationService;
 
 	// 장소투표방 생성
 	@Transactional(rollbackFor = {CustomException.class})
@@ -42,13 +44,10 @@ public class PlaceVoteRoomService {
 		String roomId,
 		CreatePlaceVoteRoomRequest request
 	) {
-		// 방에 대한 회원인지 확인
+		roomValidationService.validateRoomExisting(roomId);
 		memberRoomValidateService.validateAuthorizedMember(memberId, roomId);
-
-		// 장소투표방 존재여부 확인
 		validateDuplicatePlaceVoteRoom(roomId);
 
-		// 방 조회
 		Room room = roomRepository.findById(roomId)
 			.orElseThrow(() -> CustomException.from(ROOM_NOT_FOUND));
 
@@ -66,7 +65,6 @@ public class PlaceVoteRoomService {
 	//장소투표방 리셋
 	@Transactional(rollbackFor = {CustomException.class})
 	public void UpdatePlaceVoteRoom(Long memberId, String roomId, UpdatePlaceVoteRoomRequest request) {
-		// 방에 대한 회원인지 확인
 		memberRoomValidateService.validateAuthorizedMember(memberId, roomId);
 
 		PlaceVoteRoom placeVoteRoom = placeVoteRoomRepository.findByRoom_Id(roomId)
@@ -96,23 +94,19 @@ public class PlaceVoteRoomService {
 
 	// 장소투표방 존재 여부 확인, 존재시 true, 존재하지 않을시 false 반환
 	public FindPlaceVoteCandidatesResponse findPlaceVoteCandidates(Long memberId, String roomId) {
-		// 방에 대한 회원인지 확인
 		memberRoomValidateService.validateAuthorizedMember(memberId, roomId);
 
 		Optional<PlaceVoteRoom> placeVoteRoomOptional = placeVoteRoomRepository.findByRoom_Id(roomId);
 
 		return placeVoteRoomOptional
 			.map(placeVoteRoom -> {
-				List<FindPlaceVoteCandidatesResponse.PlaceCandidate> placeCandidates = placeVoteCandidateRepository
+				List<FindPlaceVoteCandidatesResponse.PlaceCandidateDto> placeCandidateDtos = placeVoteCandidateRepository
 					.findAllByPlaceVoteRoom(placeVoteRoom)
 					.stream()
-					.map(candidate -> new FindPlaceVoteCandidatesResponse.PlaceCandidate(candidate.getId(),
-						candidate.getName(), candidate.getSiDo(),
-						candidate.getSiGunGu(), candidate.getRoadNameAddress(), candidate.getAddressLatitude(),
-						candidate.getAddressLongitude()))
+					.map(FindPlaceVoteCandidatesResponse.PlaceCandidateDto::from)
 					.collect(Collectors.toList());
 
-				return FindPlaceVoteCandidatesResponse.from(true, placeCandidates);
+				return FindPlaceVoteCandidatesResponse.from(true, placeCandidateDtos);
 			})
 			.orElseGet(() -> FindPlaceVoteCandidatesResponse.from(false, null));
 	}
@@ -122,7 +116,7 @@ public class PlaceVoteRoomService {
 	public void deletePlaceVoteRoomAndAssociatedEntities(String roomId) {
 		placeVoteRoomRepository.findByRoom_Id(roomId)
 			.ifPresent(placeVoteRoom -> {
-				//삭제
+				// 장소 투표 방과 관련된 투표, 투표 후보, 투표 방 삭제
 				placeVoteRepository.deleteAllByPlaceVoteRoom(placeVoteRoom);
 				placeVoteCandidateRepository.deleteAllByPlaceVoteRoom(placeVoteRoom);
 				placeVoteRoomRepository.delete(placeVoteRoom);

@@ -3,12 +3,11 @@ package middle_point_search.backend.domains.placeVoteRoom.dto.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
 public class PlaceCandidateInfo {
 
 	@NotBlank(message = "name은 비어 있을 수 없습니다.")
