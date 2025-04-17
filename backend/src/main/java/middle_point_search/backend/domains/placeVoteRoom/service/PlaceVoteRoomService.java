@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import middle_point_search.backend.common.exception.CustomException;
 import middle_point_search.backend.domains.memberRoom.service.MemberRoomValidateService;
 import middle_point_search.backend.domains.placeVoteRoom.domain.PlaceVoteCandidate;
@@ -25,6 +26,7 @@ import middle_point_search.backend.domains.room.domain.Room;
 import middle_point_search.backend.domains.room.repository.RoomRepository;
 import middle_point_search.backend.domains.room.service.RoomValidationService;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -52,14 +54,12 @@ public class PlaceVoteRoomService {
 			.orElseThrow(() -> CustomException.from(ROOM_NOT_FOUND));
 
 		// 장소투표방 엔티티 생성 및 저장
-		PlaceVoteRoom placeVoteRoom = new PlaceVoteRoom(room);
+		PlaceVoteRoom placeVoteRoom = placeVoteRoomRepository.save(new PlaceVoteRoom(room));
 		request.placeCandidates().stream()
 			.map(placeCandidateInfo -> new PlaceVoteCandidate(placeCandidateInfo, placeVoteRoom))
 			.forEach(placeVoteCandidateRepository::save);
 
-		PlaceVoteRoom savedPlaceVoteRoom = placeVoteRoomRepository.save(placeVoteRoom);
-
-		return CreatePlaceVoteRoomResponse.from(savedPlaceVoteRoom.getId());
+		return CreatePlaceVoteRoomResponse.from(placeVoteRoom.getId());
 	}
 
 	//장소투표방 리셋
