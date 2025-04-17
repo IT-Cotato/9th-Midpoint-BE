@@ -9,7 +9,7 @@ import middle_point_search.backend.domains.placeVoteRoom.domain.PlaceVoteCandida
 public record FindPlaceVoteCandidatesResponse(
 	Boolean existence,
 	@JsonInclude(JsonInclude.Include.NON_NULL)
-	List<PlaceCandidateDto> placeCandidateDtos
+	List<PlaceCandidateDto> placeCandidates
 ) {
 	public static FindPlaceVoteCandidatesResponse from(Boolean existence, List<PlaceCandidateDto> placeCandidateDtos) {
 		return new FindPlaceVoteCandidatesResponse(existence, placeCandidateDtos);
