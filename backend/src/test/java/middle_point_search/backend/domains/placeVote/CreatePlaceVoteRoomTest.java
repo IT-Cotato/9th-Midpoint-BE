@@ -1,5 +1,6 @@
 package middle_point_search.backend.domains.placeVote;
 
+import static org.assertj.core.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -21,9 +22,11 @@ import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.member.repository.MemberRepository;
 import middle_point_search.backend.domains.memberRoom.domain.MemberRoom;
 import middle_point_search.backend.domains.memberRoom.repository.MemberRoomRepository;
+import middle_point_search.backend.domains.placeVoteRoom.domain.PlaceVoteCandidate;
 import middle_point_search.backend.domains.placeVoteRoom.domain.PlaceVoteRoom;
 import middle_point_search.backend.domains.placeVoteRoom.dto.dto.PlaceCandidateInfo;
 import middle_point_search.backend.domains.placeVoteRoom.dto.request.CreatePlaceVoteRoomRequest;
+import middle_point_search.backend.domains.placeVoteRoom.repository.PlaceVoteCandidateRepository;
 import middle_point_search.backend.domains.placeVoteRoom.repository.PlaceVoteRoomRepository;
 import middle_point_search.backend.domains.room.domain.Room;
 import middle_point_search.backend.domains.room.repository.RoomRepository;
@@ -42,6 +45,8 @@ public class CreatePlaceVoteRoomTest extends BaseIntegrationTest {
 	private MemberRoomRepository memberRoomRepository;
 	@Autowired
 	private PlaceVoteRoomRepository placeVoteRoomRepository;
+	@Autowired
+	private PlaceVoteCandidateRepository placeVoteCandidateRepository;
 
 	@BeforeEach
 	void setUp() throws Exception {
@@ -73,26 +78,26 @@ public class CreatePlaceVoteRoomTest extends BaseIntegrationTest {
 			.member(member)
 			.build());
 
-		CreatePlaceVoteRoomRequest request = new CreatePlaceVoteRoomRequest(
-			List.of(
-				new PlaceCandidateInfo(
-					"장소1",
-					"서울",
-					"강남구",
-					"강남대로 123",
-					37.123456,
-					127.123456
-				),
-				new PlaceCandidateInfo(
-					"장소2",
-					"서울",
-					"강남구",
-					"역삼로 456",
-					37.654321,
-					127.654321
-				)
+		// 장소 투표 후보 정보 생성
+		List<PlaceCandidateInfo> placeCandidates = List.of(
+			new PlaceCandidateInfo(
+				"장소1",
+				"서울",
+				"강남구",
+				"강남대로 123",
+				37.123456,
+				127.123456
+			),
+			new PlaceCandidateInfo(
+				"장소2",
+				"서울",
+				"강남구",
+				"역삼로 456",
+				37.654321,
+				127.654321
 			)
 		);
+		CreatePlaceVoteRoomRequest request = new CreatePlaceVoteRoomRequest(placeCandidates);
 
 		// when
 		ResultActions resultActions = mockMvc.perform(post("/api/place-vote-rooms/rooms/{roomId}", roomId)
@@ -107,6 +112,22 @@ public class CreatePlaceVoteRoomTest extends BaseIntegrationTest {
 
 		resultActions.andExpect(status().isOk())
 			.andExpect(jsonPath("$.data.id").value(placeVoteRoom.getId()));
+
+		List<PlaceVoteCandidate> placeVoteCandidates = placeVoteCandidateRepository
+			.findAllByPlaceVoteRoom(placeVoteRoom);
+		assertThat(placeVoteCandidates.size()).isEqualTo(2);
+
+		for (int i = 0; i < placeVoteCandidates.size(); i++) {
+			PlaceVoteCandidate placeVoteCandidate = placeVoteCandidates.get(i);
+			PlaceCandidateInfo placeCandidateInfo = placeCandidates.get(i);
+
+			assertThat(placeVoteCandidate.getName()).isEqualTo(placeCandidateInfo.getName());
+			assertThat(placeVoteCandidate.getSiDo()).isEqualTo(placeCandidateInfo.getSiDo());
+			assertThat(placeVoteCandidate.getSiGunGu()).isEqualTo(placeCandidateInfo.getSiGunGu());
+			assertThat(placeVoteCandidate.getRoadNameAddress()).isEqualTo(placeCandidateInfo.getRoadNameAddress());
+			assertThat(placeVoteCandidate.getAddressLatitude()).isEqualTo(placeCandidateInfo.getAddressLat());
+			assertThat(placeVoteCandidate.getAddressLongitude()).isEqualTo(placeCandidateInfo.getAddressLong());
+		}
 	}
 
 	@Test
