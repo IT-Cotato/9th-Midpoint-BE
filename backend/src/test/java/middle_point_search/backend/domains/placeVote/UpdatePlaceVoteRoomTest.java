@@ -1,5 +1,6 @@
 package middle_point_search.backend.domains.placeVote;
 
+import static middle_point_search.backend.common.exception.errorCode.UserErrorCode.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -17,6 +18,7 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import middle_point_search.backend.common.BaseIntegrationTest;
 import middle_point_search.backend.common.dto.AccessTokenAndRefreshToken;
+import middle_point_search.backend.common.exception.CustomException;
 import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.member.repository.MemberRepository;
 import middle_point_search.backend.domains.memberRoom.domain.MemberRoom;
@@ -69,7 +71,7 @@ public class UpdatePlaceVoteRoomTest extends BaseIntegrationTest {
 
 		// 회원 id 조회
 		Member member = memberRepository.findByEmail(memberEmail)
-			.orElseThrow(() -> new RuntimeException("Member not found"));
+			.orElseThrow(() -> CustomException.from(MEMBER_NOT_FOUND));
 
 		// 방에 회원 저장
 		memberRoomRepository.save(MemberRoom.builder()
@@ -148,7 +150,7 @@ public class UpdatePlaceVoteRoomTest extends BaseIntegrationTest {
 		// given
 		// 방 생성
 		final String roomId = "roomId";
-		Room room = roomRepository.save(Room.builder()
+		roomRepository.save(Room.builder()
 			.id(roomId)
 			.name("roomName")
 			.memo("roomMemo")
@@ -191,7 +193,7 @@ public class UpdatePlaceVoteRoomTest extends BaseIntegrationTest {
 			.build());
 
 		Member member = memberRepository.findByEmail(memberEmail)
-			.orElseThrow(() -> new RuntimeException("Member not found"));
+			.orElseThrow(() -> CustomException.from(MEMBER_NOT_FOUND));
 
 		memberRoomRepository.save(MemberRoom.builder()
 			.room(room)

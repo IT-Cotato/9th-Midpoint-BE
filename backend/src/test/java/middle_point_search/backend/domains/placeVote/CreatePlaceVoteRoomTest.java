@@ -1,5 +1,6 @@
 package middle_point_search.backend.domains.placeVote;
 
+import static middle_point_search.backend.common.exception.errorCode.UserErrorCode.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -18,6 +19,7 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import middle_point_search.backend.common.BaseIntegrationTest;
 import middle_point_search.backend.common.dto.AccessTokenAndRefreshToken;
+import middle_point_search.backend.common.exception.CustomException;
 import middle_point_search.backend.domains.member.domain.Member;
 import middle_point_search.backend.domains.member.repository.MemberRepository;
 import middle_point_search.backend.domains.memberRoom.domain.MemberRoom;
@@ -70,7 +72,7 @@ public class CreatePlaceVoteRoomTest extends BaseIntegrationTest {
 
 		// 회원 id 조회
 		Member member = memberRepository.findByEmail(memberEmail)
-			.orElseThrow(() -> new IllegalArgumentException("회원이 존재하지 않습니다."));
+			.orElseThrow(() -> CustomException.from(MEMBER_NOT_FOUND));
 
 		// 방에 회원 저장
 		memberRoomRepository.save(MemberRoom.builder()
@@ -192,7 +194,7 @@ public class CreatePlaceVoteRoomTest extends BaseIntegrationTest {
 
 		// 회원 id 조회
 		Member member = memberRepository.findByEmail(memberEmail)
-			.orElseThrow(() -> new IllegalArgumentException("회원이 존재하지 않습니다."));
+			.orElseThrow(() -> CustomException.from(MEMBER_NOT_FOUND));
 
 		// 방에 회원 저장
 		memberRoomRepository.save(MemberRoom.builder()
@@ -292,7 +294,7 @@ public class CreatePlaceVoteRoomTest extends BaseIntegrationTest {
 
 		// 회원 id 조회
 		Member member = memberRepository.findByEmail(memberEmail)
-			.orElseThrow(() -> new IllegalArgumentException("회원이 존재하지 않습니다."));
+			.orElseThrow(() -> CustomException.from(MEMBER_NOT_FOUND));
 
 		// 방에 회원 저장
 		memberRoomRepository.save(MemberRoom.builder()
