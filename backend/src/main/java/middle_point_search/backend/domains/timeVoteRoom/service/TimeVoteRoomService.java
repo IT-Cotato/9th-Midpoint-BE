@@ -13,6 +13,7 @@ import middle_point_search.backend.common.exception.CustomException;
 import middle_point_search.backend.domains.memberRoom.service.MemberRoomValidateService;
 import middle_point_search.backend.domains.room.domain.Room;
 import middle_point_search.backend.domains.room.repository.RoomRepository;
+import middle_point_search.backend.domains.room.service.RoomValidationService;
 import middle_point_search.backend.domains.timeVoteRoom.domain.MeetingDate;
 import middle_point_search.backend.domains.timeVoteRoom.domain.TimeVoteRoom;
 import middle_point_search.backend.domains.timeVoteRoom.dto.request.CreateTimeVoteRoomRequest;
@@ -33,39 +34,40 @@ public class TimeVoteRoomService {
 	private final MemberRoomValidateService memberRoomValidateService;
 	private final TimeVoteRepository timeVoteRepository;
 	private final MeetingDateRepository meetingDateRepository;
+	private final RoomValidationService roomValidationService;
 
 	// 시간 투표방 생성
 	@Transactional(rollbackFor = {CustomException.class})
 	public CreateTimeVoteRoomResponse createTimeVoteRoom(Long memberId, String roomId, CreateTimeVoteRoomRequest request) {
-		// 방에 대한 회원인지 확인
+		roomValidationService.validateRoomExisting(roomId);
 		memberRoomValidateService.validateAuthorizedMember(memberId, roomId);
+		validateDuplicateTimeVoteRoom(roomId);
 
-		// 방존재여부 확인
-		if (timeVoteRoomRepository.existsByRoom_Id(roomId)) {
-			throw CustomException.from(DUPLICATE_VOTE_ROOM);
-		}
-
-		// 방 조회
 		Room room = roomRepository.findById(roomId)
 			.orElseThrow(() -> CustomException.from(ROOM_NOT_FOUND));
 
 		// 시간 투표방 생성
-		TimeVoteRoom timeVoteRoom = new TimeVoteRoom(room);
+		TimeVoteRoom timeVoteRoom = timeVoteRoomRepository.save(new TimeVoteRoom(room));
 		request.dates()
 			.stream()
 			.map(date -> new MeetingDate(timeVoteRoom, date))
 			.forEach(meetingDateRepository::save);
 
-		return CreateTimeVoteRoomResponse.from(timeVoteRoomRepository.save(timeVoteRoom).getId());
+		return CreateTimeVoteRoomResponse.from(timeVoteRoom.getId());
+	}
+
+	// 시간 투표방이 이미 존재하면 에러 반환
+	private void validateDuplicateTimeVoteRoom(String roomId) {
+		if (timeVoteRoomRepository.existsByRoom_Id(roomId)) {
+			throw CustomException.from(DUPLICATE_VOTE_ROOM);
+		}
 	}
 
 	//시간투표방 변경하기
 	@Transactional(rollbackFor = {CustomException.class})
 	public void updateTimeVoteRoom(Long memberId, String roomId, UpdateTimeVoteRoomRequest request) {
-		// 방에 대한 회원인지 확인
 		memberRoomValidateService.validateAuthorizedMember(memberId, roomId);
 
-		// 시간 투표방 조회
 		TimeVoteRoom timeVoteRoom = timeVoteRoomRepository.findByRoom_Id(roomId)
 			.orElseThrow(() -> CustomException.from(TIME_VOTE_ROOM_NOT_FOUND));
 
@@ -81,7 +83,6 @@ public class TimeVoteRoomService {
 
 	// 시간투표방 조회
 	public FindTimeVoteRoomResponse findTimeVoteRoomAndMakeDTO(Long memberId, String roomId) {
-		// 방에 대한 회원인지 확인
 		memberRoomValidateService.validateAuthorizedMember(memberId, roomId);
 
 		return timeVoteRoomRepository.findByRoom_Id(roomId)
