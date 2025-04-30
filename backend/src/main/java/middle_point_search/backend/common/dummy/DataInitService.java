@@ -33,6 +33,8 @@ public class DataInitService {
 	private final JDBCRepository jdbcRepository;
 	private final GoogleService googleService;
 
+	private final int BATCH_SIZE = 5000;
+
 	// 멤버 더미데이터 초기화
 	public void initializeMemberData() {
 		List<MemberDummyDto> memberDtos = new ArrayList<>();
@@ -44,6 +46,11 @@ public class DataInitService {
 				"user" + i,
 				Role.USER);
 			memberDtos.add(member);
+
+			if (memberDtos.size() % BATCH_SIZE == 0) {
+				jdbcRepository.saveAllMembers(memberDtos);
+				memberDtos.clear();
+			}
 		}
 		jdbcRepository.saveAllMembers(memberDtos);
 	}
@@ -59,6 +66,11 @@ public class DataInitService {
 				"memo" + i
 			);
 			rooms.add(room);
+
+			if (rooms.size() % BATCH_SIZE == 0) {
+				jdbcRepository.saveAllRooms(rooms);
+				rooms.clear();
+			}
 		}
 		jdbcRepository.saveAllRooms(rooms);
 	}
@@ -73,6 +85,11 @@ public class DataInitService {
 				String.valueOf(i) // roomId
 			);
 			memberRooms.add(memberRoom);
+
+			if (memberRooms.size() % BATCH_SIZE == 0) {
+				jdbcRepository.saveAllMemberRooms(memberRooms);
+				memberRooms.clear();
+			}
 		}
 		jdbcRepository.saveAllMemberRooms(memberRooms);
 	}
@@ -100,6 +117,11 @@ public class DataInitService {
 				googlePlaceId
 			);
 			places.add(place);
+
+			if (places.size() % BATCH_SIZE == 0) {
+				jdbcRepository.saveAllPlaces(places);
+				places.clear();
+			}
 		}
 		jdbcRepository.saveAllPlaces(places);
 	}
@@ -119,6 +141,11 @@ public class DataInitService {
 				String.valueOf(i) // roomId
 			);
 			placeVoteRooms.add(placeVoteRoom);
+
+			if (placeVoteRooms.size() % BATCH_SIZE == 0) {
+				jdbcRepository.saveAllPlaceVoteRooms(placeVoteRooms);
+				placeVoteRooms.clear();
+			}
 		}
 		jdbcRepository.saveAllPlaceVoteRooms(placeVoteRooms);
 	}
@@ -144,6 +171,11 @@ public class DataInitService {
 				(long)i // placeVoteRoomId
 			);
 			placeVoteCandidates.add(placeVoteCandidate);
+
+			if (placeVoteCandidates.size() % BATCH_SIZE == 0) {
+				jdbcRepository.saveAllPlaceVoteCandidates(placeVoteCandidates);
+				placeVoteCandidates.clear();
+			}
 		}
 		jdbcRepository.saveAllPlaceVoteCandidates(placeVoteCandidates);
 	}
@@ -158,6 +190,11 @@ public class DataInitService {
 				(long)i // placeVoteCandidateId
 			);
 			placeVotes.add(placeVote);
+
+			if (placeVotes.size() % BATCH_SIZE == 0) {
+				jdbcRepository.saveAllPlaceMembers(placeVotes);
+				placeVotes.clear();
+			}
 		}
 		jdbcRepository.saveAllPlaceMembers(placeVotes);
 	}
@@ -181,6 +218,11 @@ public class DataInitService {
 				String.valueOf(i) // roomId
 			);
 			timeVoteRooms.add(timeVoteRoom);
+
+			if (timeVoteRooms.size() % BATCH_SIZE == 0) {
+				jdbcRepository.saveAllTimeVoteRooms(timeVoteRooms);
+				timeVoteRooms.clear();
+			}
 		}
 		jdbcRepository.saveAllTimeVoteRooms(timeVoteRooms);
 	}
@@ -194,6 +236,11 @@ public class DataInitService {
 				date
 			);
 			meetingDates.add(meetingDate);
+
+			if (meetingDates.size() % BATCH_SIZE == 0) {
+				jdbcRepository.saveAllMeetingDates(meetingDates);
+				meetingDates.clear();
+			}
 		}
 		jdbcRepository.saveAllMeetingDates(meetingDates);
 	}
@@ -210,6 +257,11 @@ public class DataInitService {
 				end
 			);
 			timeVotes.add(timeVote);
+
+			if (timeVotes.size() % BATCH_SIZE == 0) {
+				jdbcRepository.saveAllTimeVotes(timeVotes);
+				timeVotes.clear();
+			}
 		}
 		jdbcRepository.saveAllTimeVotes(timeVotes);
 	}
